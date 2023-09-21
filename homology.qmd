@@ -1,0 +1,3 @@
+# Simplicial homology
+
+Introduzir homologia como modo de contar buracos. Ideia intuitiva, depois formalização 

@@ -1,0 +1,59 @@
+# Topology
+
+## What is topology?
+
+Topology is the study of topological spaces. This is not enough to close this chapter.
+
+A topological space can be thought of as a set with little "scales" called *open sets*. Each of these open sets represent the notion of *continuity* or *connectivity* that we sense when we look at an object: the feeling that it is just "one single piece of a thing", like the scales in a fish.
+
+!!!melhorar aqui. inserir imagem sobre princípio de gestalt
+do livro de storytelling
+
+!!!inserir outras imagens?
+
+More formally,
+
+::: {#def-def}
+A topological space is a pair $(X, \tau)$ where
+
+- $X$ is a set;
+
+- $\tau$ is a set of subsets of $X$, that is: each $U \in \tau$ is a set $U \subseteq X$.
+
+The set $\tau$ has the following properties:
+
+- the intersection of a finite number of open sets is also an open set;
+
+- the union of an arbitrary (even infinity) number of open sets is also an open set;
+
+- the $\emptyset$ and $X$ are open sets.
+:::
+
+An example that should be always brought to the mind is the set $\mathbb{R}$ of real numbers, with open sets given by the open intervals $(a, b) \subseteq \mathbb{R}$ (and its unions).
+
+!!! falar sobre topologia gerada por um subconjunto de $P(X)$ tomando interseções e uniões.
+
+When an open set $U$ cannot be written as the disjoint union of two open sets, we say that $U$ is *connected*. These connected open sets give a notion of "being a single piece".
+
+## The notion of "sameness" in topology
+
+:::{#def-def}
+Given two topological spaces $(X, \tau)$ and $(Y, \sigma)$, a function $f: X \to Y$ is said to be *continuous* if the inverse image of any open set of $Y$ is also an open set of $X$. In symbols:
+
+$$
+\forall \; V \in \sigma, \; f^{-1}(V) \in \tau
+$$
+:::
+
+Cup and donut
+
+Topology only looks to open sets
+
+Advantages?
+
+## Introdução 
+Topologia: estudo dos objetos geométricos elásticos 
+Dar exemplo da rosquinha e da caneca
+Comentar que é estranho que sejam "o mesmo objeto"
+Topologia enxerga o que? Dar exemplo do relógio: dois relógios bem diferentes podem dar a mesma hora
+Ideia de isomorfismo em categorias

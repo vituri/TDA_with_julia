@@ -1,0 +1,14 @@
+.theorem, .definition {
+    /* display: block; */
+    /* font-style: italic; */
+    /* font-size: 24px; */
+    /* font-family: "Times New Roman"; */
+    /* color: black; */
+    /* margin: 5px; */
+    /* border-radius: 10px; */
+    background-color: rgb(240,240,240);
+    /* box-shadow: 5px 10px 8px #888888; */
+}
+/* .theorem p {
+    padding: 15px 15px 15px 15px;
+} */

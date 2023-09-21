@@ -1,0 +1,58 @@
+[
+  {
+    "objectID": "topology.html#what-is-topology",
+    "href": "topology.html#what-is-topology",
+    "title": "2  Topology",
+    "section": "2.1 What is topology?",
+    "text": "2.1 What is topology?\nTopology is the study of topological spaces. Unfortunately, that doesn’t help too much.\nA topological space can be thought of as a set with little “scales” called open sets. Each of these open sets represent the notion of continuity or connectivity that we sense when we look at an object: the feeling that it is just “one single piece of a thing”, like the scales in a fish.\n!!!melhorar aqui. inserir imagem sobre princípio de gestalt do livro de storytelling\n!!!inserir outras imagens?\nMore formally,\n\nDefinition 2.1 A topological space is a pair \\((X, \\tau)\\) where\n\n\\(X\\) is a set;\n\\(\\tau\\) is a set of subsets of \\(X\\), that is: each \\(U \\in \\tau\\) is a set \\(U \\subseteq X\\).\n\nThe set \\(\\tau\\) has the following properties:\n\nthe intersection of a finite number of open sets is also an open set;\nthe union of an arbitrary (even infinity) number of open sets is also an open set;\nthe \\(\\emptyset\\) and \\(X\\) are open sets.\n\n\nAn example that should be always brought to the mind is the set \\(\\mathbb{R}\\) of real numbers, with open sets given by the open intervals \\((a, b) \\subseteq \\mathbb{R}\\) (and its unions).\n!!! falar sobre topologia gerada por um subconjunto de \\(P(X)\\) tomando interseções e uniões.\nWhen an open set \\(U\\) cannot be written as the disjoint union of two open sets, we say that \\(U\\) is connected. These connected open sets give a notion of “being a single piece”."
+  },
+  {
+    "objectID": "topology.html#introdução",
+    "href": "topology.html#introdução",
+    "title": "2  Topology",
+    "section": "2.2 Introdução",
+    "text": "2.2 Introdução\nTopologia: estudo dos objetos geométricos elásticos Dar exemplo da rosquinha e da caneca Comentar que é estranho que sejam “o mesmo objeto” Topologia enxerga o que? Dar exemplo do relógio: dois relógios bem diferentes podem dar a mesma hora Ideia de isomorfismo em categorias\nDefinir função topologia, função contínua, etc"
+  },
+  {
+    "objectID": "intro.html",
+    "href": "intro.html",
+    "title": "1  Introduction",
+    "section": "",
+    "text": "This is a book created from markdown and executable code.\nSee Knuth (1984) for additional discussion of literate programming.\n\n1 + 1\n\n[1] 2\n\n\n\n\n\n\nKnuth, Donald E. 1984. “Literate Programming.” Comput. J. 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97."
+  },
+  {
+    "objectID": "simplicial.html",
+    "href": "simplicial.html",
+    "title": "3  Simplicial complexes",
+    "section": "",
+    "text": "Falar sobre complexos simpliciais e sua aproximação da realidade"
+  },
+  {
+    "objectID": "homology.html",
+    "href": "homology.html",
+    "title": "4  Simplicial homology",
+    "section": "",
+    "text": "Introduzir homologia como modo de contar buracos. Ideia intuitiva, depois formalização"
+  },
+  {
+    "objectID": "summary.html",
+    "href": "summary.html",
+    "title": "5  Summary",
+    "section": "",
+    "text": "In summary, this book has no content whatsoever.\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "references.html",
+    "href": "references.html",
+    "title": "References",
+    "section": "",
+    "text": "Knuth, Donald E. 1984. “Literate Programming.” Comput.\nJ. 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Topological Data Analysis with Julia",
+    "section": "",
+    "text": "Preface\nThis is a Quarto book.\nTo learn more about Quarto books visit https://quarto.org/docs/books."
+  }
+]

@@ -1,0 +1,3 @@
+# Simplicial complexes
+
+Falar sobre complexos simpliciais e sua aproximação da realidade

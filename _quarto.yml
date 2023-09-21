@@ -1,0 +1,38 @@
+project:
+  type: book
+  output-dir: docs
+
+execute:
+  freeze: auto  # re-render only when source changes
+
+book:
+  title: "Topological Data Analysis with Julia"
+  author: "G. Vituri"
+  date: "2023-09-01"
+  chapters:
+    - index.qmd
+    - intro.qmd
+    - part: "Classical topology (or: topology without data nor analysis)"
+      chapters: 
+      - topology.qmd
+      - simplicial.qmd
+      - homology.qmd
+    - part: "Topological data analysis (or: topology meets reality)"
+    - part: "Case studies"
+      chapters: 
+      - digits.qmd
+    - part: "Closing"
+      chapters:
+      - references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: cosmo
+    css: style.css
+  pdf:
+    documentclass: scrreprt
+
+
+
