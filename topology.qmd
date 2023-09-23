@@ -1,8 +1,11 @@
 # Topology
 
+> "[...] mathematics stands above everything. The works of Abel and Kronecker are as good today as they were four hundred years ago, and it will always be so. New roads arise, but the old ones lead on. They do not become overgrown. There... there you have eternity. Only mathematics does not fear it. Up there, I understood how final it is. And strong. There was nothing like it. And the fact that I had to struggle was also good. I slaved away at it, and when I couldn't sleep I would go over, in my mind, the material I had studied that day." \
+> --- Stanisław Lem, in "Return from the stars"
+
 ## What is topology?
 
-Topology is the study of topological spaces. This is not enough to close this chapter.
+Topology is the study of topological spaces. Unfortunately, this is not enough to close this chapter.
 
 A topological space can be thought of as a set with little "scales" called *open sets*. Each of these open sets represent the notion of *continuity* or *connectivity* that we sense when we look at an object: the feeling that it is just "one single piece of a thing", like the scales in a fish.
 

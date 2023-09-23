@@ -78,3 +78,29 @@ plot_digit(pt, excentricity)
 # calcula excentricidade, densidade
 
 #
+
+
+
+# Now we will use a random forest classifier to predict each class. The training process consists of two lines
+
+# ```{julia}
+# using DecisionTree
+# model = RandomForestClassifier(n_subfeatures = 50, n_trees = 50, max_depth = 10)
+# fit!(model, X, y)
+# ```
+
+# We can get the predicted labels 
+
+# ```{julia}
+# pred_y = predict(model, X)
+# ```
+
+# and calculate the accuracy:
+
+# ```{julia}
+# accuracy = sum(pred_y .== y) / length(y)
+# accuracy = round(accuracy * 100, digits = 2)
+# println("The accuracy was $accuracy %!")
+# ```
+
+# We got a `julia accuracy`% accuracy! That was pretty good, taking into account that we only used the excentricity sublevel filtration. 

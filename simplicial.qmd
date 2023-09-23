@@ -1,3 +1,6 @@
 # Simplicial complexes
 
+> "Thank God for giving you a glimpse of heaven, but do not imagine yourself a bird because you can flap your wings." \
+> --- Alfred de Musset, in "The confession of a child of the century"
+
 Falar sobre complexos simpliciais e sua aproximação da realidade

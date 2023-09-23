@@ -1,73 +1,88 @@
 # Classifying hand-written digits
 
+> "Ven you’re a married man, Samivel, you’ll understand a good many things as you don’t understand now; but vether it’s worth while goin’ through so much, to learn so little, as the charity-boy said ven he got to the end of the alphabet, is a matter o’ taste. I rayther think it isn’t." \
+> --- Charles Dickens, in "The Pickwick Papers"
+
 In this tutorial, we will try to classify hand-written digits using the tools seen in previous chapters.
 
 ## Loading packages
 ```{julia}
-using MLDatasets
+import MLDatasets
 using Images, Makie, CairoMakie
 using Distances
-using Ripserer, PersistenceDiagrams#, Plots
+using Ripserer, PersistenceDiagrams
 using StatsBase: mean
 import Plots;
+using FreqTables
 ```
 
 ## The dataset
 
-MNIST is a dataset consisting of ??? hand-written digits. Each digit is a 28x28 grayscale image, that is: a 28x28 matrix of values 0 to 1. To get this dataset, run
+MNIST is a dataset consisting of 70.000 hand-written digits. Each digit is a 28x28 grayscale image, that is: a 28x28 matrix of values from 0 to 1. To get this dataset, run
 
 ```{julia}
-n_total = 60000
-train_x, train_y = MNIST(split=:train)[:];
-train_x = train_x[:, :, 1:n_total]
-train_y = train_y[1:n_total]
+n_train = 8_000
+mnist_digits, mnist_labels = MLDatasets.MNIST(split=:train)[:];
+mnist_digits = mnist_digits[:, :, 1:n_train]
+mnist_labels = mnist_labels[1:n_train];
 ```
 
 If the console asks you to download some data, just press `y`.
 
-Next, we transpose the digits and plot some of them in a mosaic
+Notice that we only get the first `n_train` images so this notebook doesn't take too much time to run. You can increase `n_train` to 60000 if you like to live dangerously and have enough RAM memory.
+
+Next, we transpose the digits and save them in a vector
 
 ```{julia}
 # store all digits in a figs variable
-figs = [train_x[:, :, i]' |> Matrix for i ∈ 1:size(train_x)[3]]
+figs = [mnist_digits[:, :, i]' |> Matrix for i ∈ 1:size(mnist_digits)[3]];
 ```
+
+The first digit, for example, is the following matrix:
+
+```{julia}
+figs[1]
+```
+
+We can see a mosaic with the first 10^2 digits
 
 ```{julia}
 n = 10
-
-# convert to Gray so we can plot a mosaic
 figs_plot = [fig .|> Gray for fig in figs[1:n^2]]
 mosaicview(figs_plot, nrow = n, rowmajor = true)
 ```
 
 ## Preparing for war
 
-What topological tools can be useful to distinguish between different numbers?
+What topological tools can be useful to distinguish between different digits?
 
-Persistence homology alone won't be of much help. All digits are connected, so the 0-persistence is useless. For the 1-dimensional persistence,
+Persistence homology with Vietoris-Rips filtration won't be of much help: all digits are connected, so the 0-persistence is useless; for the 1-dimensional persistence,
 
-- 0, 2 (not always), 6, 8 and 9 contain holes;
-- 1, 3, 4, 5, 7 do not contain holes.
+- 1, 3, 5, 7 do not contain holes;
+- 2 and 4 sometimes contain one hole (depending on the way you write it);
+- 0, 6, 9 contain one hole each; 
+- 8 contains two holes.
 
-What if we starting chopping the digits with sublevels of some functions? Two come readily to the mind: the density and the excentricity. The excentricity is able to detect "edges" of our figures, and the density will see where there are many points together.
+What if we starting chopping the digits with sublevels of some functions? The *excentricity* function is able to highlight edges. Doing a sublevel filtration with the excentricity function will permit us to separate digits by the amount of edges they have. So 1 and 3 and 7, for example, will have different persistence diagrams.
 
-### From matrices to points in the plane
+### From square matrices to points in the plane
 
-In order to calculate the excentricity, we need to convert the digits to points in $\mathbb{R}^2$. A simple function can do that:
+In order to calculate the excentricity, we need to convert the "image digits" (28x28 matrices) to points in $\mathbb{R}^2$ (matrices with 2 columns, one for each dimension, which we will call *pointclouds*). A simple function can do that:
 
 ```{julia}
 function img_to_points(img, threshold = 0.3)
     ids = findall(x -> x >= threshold, img)
     pts = getindex.(ids, [1 2])
-end
+end;
 ```
 
 Notice that we had to define a threshold: coordinates with values less than the threshold are not considered.
 
-Let's also define a function to plot the digit in $\mathbb{R}^2$:
+Let's also define a function to plot a digit:
 
 ```{julia}
-function plot_digit(pt, values = :black)
+function plot_digit(fig, values = :black)
+    pt = img_to_points(fig)
     f = Figure();
     ax = Makie.Axis(f[1, 1], autolimitaspect = 1, yreversed = true)
     scatter!(ax, pt[:, 2], pt[:, 1]; markersize = 40, marker = :rect, color = values)
@@ -75,18 +90,25 @@ function plot_digit(pt, values = :black)
         Colorbar(f[1, 2])
     end
     f
-end
+end;
 ```
 
-We can see that it works as expected:
+We can see that it works as expected
 
 ```{julia}
-pts = img_to_points.(figs);
-pt = pts[1];
-plot_digit(pt)
+fig = figs[3]
+heatmap(fig)
 ```
 
-The excentricity of a metric space $(X, d)$ is a measure of how far a point is from the "center". It is defined as follows for each $x \in X$:
+but the image is flipped. This is easily fixed:
+
+```{julia}
+heatmap(fig |> rotr90)
+```
+
+### Excentricity
+
+Getting into details: the *excentricity* of a metric space $(X, d)$ is a measure of how far a point is from the "center". It is defined as follows for each $x \in X$:
 
 $$
 e(x) = \sum_{y \in X} \frac{d(x, y)}{N}
@@ -94,72 +116,89 @@ $$
 
 where $N$ is the amount of points of $X$.
 
-Define a function that takes a digit in $\mathbb{R}^2$ and return ???
+Define a function that takes a digit in $\mathbb{R}^2$ and return the excentricity as an 28x28 image
 
 ```{julia}
-function pt_to_excen(pt)
+function excentricity(fig)
+    pt = img_to_points(fig)
     dists = pairwise(Euclidean(), pt')
     excentricity = [mean(c) for c ∈ eachcol(dists)]
-    exc = zeros(28, 28)
-
-    m = maximum(excentricity)
-    # excentricity = m .- excentricity
+    exc_matrix = zeros(28, 28)
 
     for (row, (i, j)) ∈ enumerate(eachrow(pt))
-        exc[i, j] = excentricity[row]
+        exc_matrix[i, j] = excentricity[row]
     end
 
-    return exc, excentricity
-end
-```
-
-```{julia}
-excs = pt_to_excen.(pts);
-```
-
-Plot a digit with it's corresponding excentricity
-
-```{julia}
-i = 5
-pt = pts[i]
-exc_2d, exc = excs[i]
-plot_digit(pt, exc)
-```
-
-Looks good! Now the image-version as a heatmap:
-
-```{julia}
-heatmap(exc_2d |> rotr90)
-```
-
-Calculate all the persistence diagrams using sublevel filtration
-
-```{julia}
-pds = map(excs) do ex
-    m = maximum(ex[1])
-    e2 = m .- ex[1]
-    ripserer(Cubical(e2), cutoff = 0.5)
+    return exc_matrix
 end;
 ```
 
-and check the first one
+We store all the excentricities in the `excs` vector
+
+```{julia}
+excs = excentricity.(figs);
+```
+
+and plot a digit with it's corresponding excentricity
+
+```{julia}
+i = 5
+fig = figs[i]
+exc = excs[i]
+heatmap(exc |> rotr90)
+```
+
+Looks good! Time to chop it.
+
+### Persistence images
+
+Now we calculate all the persistence diagrams using sublevel filtration. This can take some seconds. Julia is incredibly fast, but does not perform miracles (yet!).
+
+```{julia}
+pds = map(excs) do ex
+    m = maximum(ex)
+    ex = m .- ex
+    ripserer(Cubical(ex), cutoff = 0.5)
+end;
+```
+
+We check the first one
 
 ```{julia}
 pd = pds[i]
 pd |> barcode
 ```
 
+Compare it with the corresponding heatmap above. There are 3 main edges (and one really small one). It seems ok!
+
+We can see the "step-by-step" creation of these connected components in the following mosaic.
+
+```{julia}
+r = range(minimum(exc), maximum(exc), length = 25) |> reverse
+figs_filtration = map(r) do v
+    replace(x -> x ≤ v ? 0 : 1, exc) .|> Gray
+end
+
+mosaicview(figs_filtration..., rowmajor = true, nrow = 5, npad = 20)
+```
+
+Now we create the persistence images of all these barcodes in dimension 0 and 1. We pass the entire collection of barcodes to the `PersistenceImage` function, and it will ensure that all of them are comparable (ie. are on the same grid).
+
 ```{julia}
 pds_0 = pds .|> first
 pds_1 = pds .|> last
-imgs_0 = PersistenceImage(pds_0; sigma = 1, size = 5)
-imgs_1 = PersistenceImage(pds_1; sigma = 1, size = 5)
+imgs_0 = PersistenceImage(pds_0; sigma = 1, size = 8)
+imgs_1 = PersistenceImage(pds_1; sigma = 1, size = 8);
 ```
 
+The persistence images look ok too:
+
 ```{julia}
+#| fig-cap: "Top left: the barcode of a digit with respect to sublevels using the excentricity function. Top right: the corresponding persistence diagram. Bottom: 0 and 1 dimensional persistence images. They create a pixelated view of the persistence diagram, using a gaussian blur."
+
 Plots.plot(
-    Plots.plot(pds[i]; persistence=true)
-    , barcode(pds[i])
+    barcode(pds[i])
+    , Plots.plot(pds[i]; persistence = true)
     , Plots.heatmap(imgs_0(pds[i][1]); aspect_ratio=1)
     ,  Plots.heatmap(imgs_1(pds[i][2]); aspect_ratio=1)
     , layout = (2, 2)
@@ -168,59 +207,350 @@ Plots.plot(
 
 ## Fitting a model
 
-```{julia}
-persims = [
-    [vec(imgs_0(pds_0[i])); 
-        vec(imgs_1(pds_1[i]))
-    ] for i in 1:length(pds)]
+In order to use these persistence images in a machine learning model, we first need to vectorize them, ie, transform them into a vector. Machine learning models love vectors! The easist way is to just concatenate the persistence images as follows:
 
-X = reduce(hcat, persims)'
-y = train_y .|> string
+```{julia}
+function concatenate_pds(imgs_0, pds_0, imgs_1, pds_1)
+    persims = [
+        [vec(imgs_0(pds_0[i])); vec(imgs_1(pds_1[i])) ] for i in 1:length(pds)
+        ]
+
+    X = reduce(hcat, persims)'
+    X
+end
+
+X = concatenate_pds(imgs_0, pds_0, imgs_1, pds_1)
+y = mnist_labels .|> string;
+```
+
+```{julia}
+#| output: asis
+#| echo: false
+"""
+We can see that `X` is a matrix with $(size(X)[1]) rows (the amount of digits) and $(size(X)[2]) columns (the persistence images concatenated).
+""" |> print
 ```
 
 
-```{julia}
-using DecisionTree
-```
-
 
 ```{julia}
-features = X
-labels   = y
+X
 ```
 
+It was also important to convert the `mnist_labels` to strings, because we want to classify the digits (and not do a regression on them).
+
+We now have a vector for each image. What can we do? We need a model that takes a large vector of numbers and try to predict the digit. Neural networks are excellent in finding non-linear relations on vectors. Let's try one!
+
+Create the layers
 
 ```{julia}
-# model = DecisionTreeClassifier(max_depth = 5)
-model = RandomForestClassifier()
-fit!(model, features, labels)
-# print_tree(model)
-pred_y = predict(model, X)
+using Flux, ProgressMeter
+function nn_model(X)
+  model = Chain(
+      Dense(size(X)[2] => 64)
+      ,Dense(64 => 10)
+  )
+end
+
+model = nn_model(X)
 ```
+
+the loader
+
+```{julia}
+target = Flux.onehotbatch(y, 0:9 .|> string)
+loader = Flux.DataLoader((X' .|> Float32, target), batchsize=32, shuffle=true);
+```
+
+the optimiser
+
+```{julia}
+optim = Flux.setup(Flux.Adam(0.01), model);
+```
+
+and train it
+
+```{julia}
+#| echo: false
+@showprogress for epoch in 1:100
+    Flux.train!(model, loader, optim) do m, x, y
+        y_hat = m(x)
+        Flux.logitcrossentropy(y_hat, y)
+    end
+end;
+```
+
+The predictions can be made with
+
+```{julia}
+pred_y = model(X' .|> Float32)
+pred_y = Flux.onecold(pred_y, 0:9 .|> string);
+```
+
+And the accuracy
 
 ```{julia}
 accuracy = sum(pred_y .== y) / length(y)
 accuracy = round(accuracy * 100, digits = 2)
-println("The accuracy was $accuracy %!")
+println("The accuracy on the train set was $accuracy %!")
 ```
 
-## Analysing the errors
+Not bad, taking into account that we only used the excentricity sublevel filtration.
+
+The confusion matrix is the following:
 
 ```{julia}
-errors = findall(pred_y .!= y)
+tbl = freqtable(y, pred_y)
 ```
 
+Calculating the proportion of prediction for each digit, we get
 
 ```{julia}
-i = errors[7]
+round2(x) = round(100*x, digits = 1)
+
+function prop_table(y1, y2)
+    tbl = freqtable(y1, y2)
+    tbl_prop = prop(tbl, margins = 1) .|> round2
+    tbl_prop
+end
+
+prop_table(y, pred_y)
+```
+
+!!!We see that the majority of 9 were classified as 6; the majority of 5 were wrong too. The only well predicted digits (>90%) were 0 and 1.
+
+!!! fazer dictionary aqui pra pegar os piores erros
+
+!!! usar dataframes pra criar tabela de maiores erros
+
+!!! passar pra rede também a excentricidade total e densidade? dividir em 10 blocos?
+
+### The perils of isometric spaces
+
+How to separate "6" and "9"? They are isometric! For some people, "2" and "5" are also isometric (just mirror on the x-axis). Functions that only "see" the metric (like the excentricity) will never be able to separate these digits. In digits, the position of the features is important, so let's add more slicing filtrations to our arsenal.
+
+To avoid writing all the above code-blocks again, we encapsulate the whole process into a function
+
+```{julia}
+function whole_process(
+    mnist_digits, mnist_labels, f
+    ; imgs_0 = nothing, imgs_1 = nothing
+    , dim_max = 1, sigma = 1, size_persistence_image = 8
+    )
+    figs = [mnist_digits[:, :, i]' |> Matrix for i ∈ 1:size(mnist_digits)[3]]
+
+    excs = f.(figs);
+
+    pds = map(excs) do ex
+        m = maximum(ex)
+        ex = m .- ex
+        ripserer(Cubical(ex), cutoff = 0.5, dim_max = dim_max)
+    end;
+
+    pds_0 = pds .|> first
+    pds_1 = pds .|> last
+
+    if isnothing(imgs_0) 
+        imgs_0 = PersistenceImage(pds_0; sigma = sigma, size = size_persistence_image) 
+    end
+    if isnothing(imgs_1) 
+        imgs_1 = PersistenceImage(pds_1; sigma = sigma, size = size_persistence_image) 
+    end
+
+    persims = [
+    [vec(imgs_0(pds_0[i])); vec(imgs_1(pds_1[i])) ] for i in eachindex(pds)
+    ]
+
+    X = reduce(hcat, persims)'
+    y = mnist_labels .|> string
+
+    return X, y, pds_0, pds_1, imgs_0, imgs_1
+end
+```
+
+We now create the sideways filtrations: from the side and from above.
+
+```{julia}
+set_value(x, threshold = 0.5, value = 0) = x ≥ threshold ? value : 0
+
+function filtration_sideways(fig; axis = 1, invert = false)
+
+  fig2 = copy(fig)
+  if axis == 2 fig2 = fig2' |> Matrix end
+
+  for i ∈ 1:28
+    if invert k = 29 - i else k = i end
+    fig2[i, :] .= set_value.(fig2[i, :], 0.5, k)
+  end
+
+  fig2
+
+end;
+```
+
+and calculate all 4 persistence diagrams. Warning: this can take a few seconds if you are using 60000 digits!
+
+```{julia}
+#| echo: false
+fs = [
+    x -> filtration_sideways(x, axis = 1, invert = false)
+    ,x -> filtration_sideways(x, axis = 2, invert = false)
+    ,x -> filtration_sideways(x, axis = 1, invert = true)
+    ,x -> filtration_sideways(x, axis = 2, invert = true)
+]
+
+ret = @showprogress map(fs) do f
+    whole_process(
+        mnist_digits, mnist_labels, f
+        ,size_persistence_image = 8
+    )
+end;
+```
+
+We concatenate all the vectors
+
+```{julia}
+X_list = ret .|> first
+X_all = hcat(X, X_list...);
+```
+
+and try again with a new model:
+
+```{julia}
+#| echo: false
+model = nn_model(X_all)
+
+target = Flux.onehotbatch(y, 0:9 .|> string)
+loader = Flux.DataLoader((X_all' .|> Float32, target), batchsize=64, shuffle=true);
+
+optim = Flux.setup(Flux.Adam(0.01), model)
+
+@showprogress for epoch in 1:50
+    Flux.train!(model, loader, optim) do m, x, y
+        y_hat = m(x)
+        Flux.logitcrossentropy(y_hat, y)
+    end
+end;
+```
+
+Now we have
+
+```{julia}
+pred_y = model(X_all' .|> Float32)
+pred_y = Flux.onecold(pred_y, 0:9 .|> string)
+
+accuracy = sum(pred_y .== y) / length(y)
+accuracy = round(accuracy * 100, digits = 2)
+println("The accuracy on the train set was $accuracy %!")
+```
+
+which is certainly an improvement!
+
+The proportional confusion matrix is
+
+```{julia}
+prop_table(y, pred_y)
+```
+
+## Learning from your mistakes
+
+Let's explore a bit where the model is making mistakes. Collect all the errors
+
+```{julia}
+errors = findall(pred_y .!= y);
+```
+
+and plot the first 3
+
+```{julia}
+i = errors[1]
 println("The model predicted a $(pred_y[i]) but it was a $(y[i])")
-plot_digit(pts[i])
+plot_digit(figs[i])
 ```
 
 ```{julia}
-figs[i] |> rotr90 |> image
+i = errors[2]
+println("The model predicted a $(pred_y[i]) but it was a $(y[i])")
+plot_digit(figs[i])
 ```
 
-How to separate "6" and "9"? They are isometric! We need more tools than functions that only take the metric into account.
+```{julia}
+i = errors[3]
+println("The model predicted a $(pred_y[i]) but it was a $(y[i])")
+plot_digit(figs[i])
+```
 
-!!! Ver se deu overfitting
+We can make a mosaic with the first 100 errors
+
+```{julia}
+n = 10
+figs_plot = [figs[i] .|> Gray for i in errors[1:n^2]]
+mosaicview(figs_plot, nrow = n, rowmajor = true)
+```
+
+## Getting new data
+
+Now we want to see if our model really learned something, or if it just repeated what he saw in the training data. To check data, we need to get new data and calculate the accuracy of the same model on this new data.
+
+```{julia}
+n_test = 1_000
+new_mnist_digits, new_mnist_labels = MLDatasets.MNIST(split=:test)[:];
+new_mnist_digits = new_mnist_digits[:, :, 1:n_test]
+new_mnist_labels = new_mnist_labels[1:n_test];
+```
+
+and obtaning `X` and `y` to feed the model
+
+```{julia}
+#| echo: false
+fs = [
+    x -> excentricity(x)
+    ,x -> filtration_sideways(x, axis = 1, invert = false)
+    ,x -> filtration_sideways(x, axis = 2, invert = false)
+    ,x -> filtration_sideways(x, axis = 1, invert = true)
+    ,x -> filtration_sideways(x, axis = 2, invert = true)
+]
+
+ret = @showprogress map(fs) do f
+    whole_process(
+        new_mnist_digits, new_mnist_labels, f
+        ,size_persistence_image = 8
+    )
+end;
+```
+
+Define our new `X` and `y`
+
+```{julia}
+new_X = ret .|> first
+new_X = hcat(new_X...)
+new_y = ret[1][2]
+
+new_pred_y = model(new_X' .|> Float32)
+new_pred_y = Flux.onecold(new_pred_y, 0:9 .|> string);
+```
+
+and calculate the accuracy:
+
+```{julia}
+accuracy = sum(new_pred_y .== new_y) / length(new_y)
+accuracy = round(accuracy * 100, digits = 2)
+println("The accuracy on the test data was $accuracy %!")
+```
+
+A bit less than the training set, but not so bad.
+
+Let's check the confusion matrix
+
+```{julia}
+tbl = prop_table(new_y, new_pred_y)
+```
+
+## Closing remarks
+
+Even though we used heavy machinery from topology, at the end our persistence images were vectors that indicated the birth and death of edges. Apart from that, the only machine learning algorithm we used was a [simple dense neural network](https://en.wikipedia.org/wiki/Artificial_neural_network) to fit these vectors to the correct labels in a non-linear way. State-of-art machine learning models on the MNIST dataset usually can [get more than 99% of accuracy](https://paperswithcode.com/sota/image-classification-on-mnist), but they use some [complicated neural networks](https://en.wikipedia.org/wiki/Convolutional_neural_network) with many layers, and the output prediction are [hard to explain](https://en.wikipedia.org/wiki/Black_box). These methods, however, are not excludent of each other: we can use the persistence images (and any other vectorized output from TDA) together with other algorithms.
+
+A curious exercise to the reader is to check if a neural network with two parallel inputs
+- one for the digits images, followed by convolutional layers
+- other for the vector of persistence images, followed by dense layers
+can achieve a better result than the convolutional alone.

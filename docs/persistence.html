@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Topological Data Analysis with Julia - 2&nbsp; Topology</title>
+<title>Topological Data Analysis with Julia - 5&nbsp; Persistent homology</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,8 +30,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./simplicial.html" rel="next">
-<link href="./intro.html" rel="prev">
+<link href="./digits.html" rel="next">
+<link href="./homology.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -62,8 +62,6 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <link rel="stylesheet" href="style.css">
 </head>
@@ -77,7 +75,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./topology.html">Classical topology (or: topology without data nor analysis)</a></li><li class="breadcrumb-item"><a href="./topology.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Topology</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./persistence.html">Topological data analysis (or: topology meets reality)</a></li><li class="breadcrumb-item"><a href="./persistence.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Persistent homology</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -125,7 +123,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./topology.html" class="sidebar-item-text sidebar-link active">
+  <a href="./topology.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Topology</span></span></a>
   </div>
 </li>
@@ -144,8 +142,21 @@ ul.task-list li input[type="checkbox"] {
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
-      <span class="sidebar-item-text sidebar-link text-start">
- <span class="menu-text">Topological data analysis (or: topology meets reality)</span></span>
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Topological data analysis (or: topology meets reality)</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./persistence.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Persistent homology</span></span></a>
+  </div>
+</li>
+      </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
@@ -159,7 +170,7 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./digits.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Classifying hand-written digits</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Classifying hand-written digits</span></span></a>
   </div>
 </li>
       </ul>
@@ -187,22 +198,14 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
-   
-  <ul>
-  <li><a href="#what-is-topology" id="toc-what-is-topology" class="nav-link active" data-scroll-target="#what-is-topology"><span class="header-section-number">2.1</span> What is topology?</a></li>
-  <li><a href="#the-notion-of-sameness-in-topology" id="toc-the-notion-of-sameness-in-topology" class="nav-link" data-scroll-target="#the-notion-of-sameness-in-topology"><span class="header-section-number">2.2</span> The notion of “sameness” in topology</a></li>
-  <li><a href="#introdução" id="toc-introdução" class="nav-link" data-scroll-target="#introdução"><span class="header-section-number">2.3</span> Introdução</a></li>
-  </ul>
-</nav>
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Topology</span></h1>
+<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Persistent homology</span></h1>
 </div>
 
 
@@ -218,51 +221,11 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 <blockquote class="blockquote">
-<p>“[…] mathematics stands above everything. The works of Abel and Kronecker are as good today as they were four hundred years ago, and it will always be so. New roads arise, but the old ones lead on. They do not become overgrown. There… there you have eternity. Only mathematics does not fear it. Up there, I understood how final it is. And strong. There was nothing like it. And the fact that I had to struggle was also good. I slaved away at it, and when I couldn’t sleep I would go over, in my mind, the material I had studied that day.”<br>
-— Stanisław Lem, in “Return from the stars”</p>
+<p>“The essence of this architecture is movement synchronized towards a precise objective. We observe a fraction of the process, like hearing the vibration of a single string in an orchestra of supergiants. We know, but cannot grasp, that above and below, beyond the limits of perception or imagination, thousands and millions of simultaneous transformations are at work, interlinked like a musical score by mathematical counterpoint. It has been described as a symphony in geometry, but we lack the ears to hear it.”<br>
+— Stanisław Lem, in “Solaris”</p>
 </blockquote>
-<section id="what-is-topology" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="what-is-topology"><span class="header-section-number">2.1</span> What is topology?</h2>
-<p>Topology is the study of topological spaces. Unfortunately, this is not enough to close this chapter.</p>
-<p>A topological space can be thought of as a set with little “scales” called <em>open sets</em>. Each of these open sets represent the notion of <em>continuity</em> or <em>connectivity</em> that we sense when we look at an object: the feeling that it is just “one single piece of a thing”, like the scales in a fish.</p>
-<p>!!!melhorar aqui. inserir imagem sobre princípio de gestalt do livro de storytelling</p>
-<p>!!!inserir outras imagens?</p>
-<p>More formally,</p>
-<div id="def-def" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 2.1 </strong></span>A topological space is a pair <span class="math inline">\((X, \tau)\)</span> where</p>
-<ul>
-<li><p><span class="math inline">\(X\)</span> is a set;</p></li>
-<li><p><span class="math inline">\(\tau\)</span> is a set of subsets of <span class="math inline">\(X\)</span>, that is: each <span class="math inline">\(U \in \tau\)</span> is a set <span class="math inline">\(U \subseteq X\)</span>.</p></li>
-</ul>
-<p>The set <span class="math inline">\(\tau\)</span> has the following properties:</p>
-<ul>
-<li><p>the intersection of a finite number of open sets is also an open set;</p></li>
-<li><p>the union of an arbitrary (even infinity) number of open sets is also an open set;</p></li>
-<li><p>the <span class="math inline">\(\emptyset\)</span> and <span class="math inline">\(X\)</span> are open sets.</p></li>
-</ul>
-</div>
-<p>An example that should be always brought to the mind is the set <span class="math inline">\(\mathbb{R}\)</span> of real numbers, with open sets given by the open intervals <span class="math inline">\((a, b) \subseteq \mathbb{R}\)</span> (and its unions).</p>
-<p>!!! falar sobre topologia gerada por um subconjunto de <span class="math inline">\(P(X)\)</span> tomando interseções e uniões.</p>
-<p>When an open set <span class="math inline">\(U\)</span> cannot be written as the disjoint union of two open sets, we say that <span class="math inline">\(U\)</span> is <em>connected</em>. These connected open sets give a notion of “being a single piece”.</p>
-</section>
-<section id="the-notion-of-sameness-in-topology" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="the-notion-of-sameness-in-topology"><span class="header-section-number">2.2</span> The notion of “sameness” in topology</h2>
-<div id="def-def" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 2.2 </strong></span>Given two topological spaces <span class="math inline">\((X, \tau)\)</span> and <span class="math inline">\((Y, \sigma)\)</span>, a function <span class="math inline">\(f: X \to Y\)</span> is said to be <em>continuous</em> if the inverse image of any open set of <span class="math inline">\(Y\)</span> is also an open set of <span class="math inline">\(X\)</span>. In symbols:</p>
-<p><span class="math display">\[
-\forall \; V \in \sigma, \; f^{-1}(V) \in \tau
-\]</span></p>
-</div>
-<p>Cup and donut</p>
-<p>Topology only looks to open sets</p>
-<p>Advantages?</p>
-</section>
-<section id="introdução" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="introdução"><span class="header-section-number">2.3</span> Introdução</h2>
-<p>Topologia: estudo dos objetos geométricos elásticos Dar exemplo da rosquinha e da caneca Comentar que é estranho que sejam “o mesmo objeto” Topologia enxerga o que? Dar exemplo do relógio: dois relógios bem diferentes podem dar a mesma hora Ideia de isomorfismo em categorias</p>
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -500,13 +463,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./intro.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span>
+      <a href="./homology.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Simplicial homology</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./simplicial.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Simplicial complexes</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./digits.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Classifying hand-written digits</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

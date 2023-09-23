@@ -3,7 +3,8 @@ project:
   output-dir: docs
 
 execute:
-  freeze: auto  # re-render only when source changes
+  freeze: true  # re-render only when source changes
+  cache: true
 
 book:
   title: "Topological Data Analysis with Julia"
@@ -18,6 +19,8 @@ book:
       - simplicial.qmd
       - homology.qmd
     - part: "Topological data analysis (or: topology meets reality)"
+      chapters: 
+      - persistence.qmd
     - part: "Case studies"
       chapters: 
       - digits.qmd
