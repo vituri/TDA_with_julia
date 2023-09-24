@@ -1,7 +1,7 @@
 # Classifying hand-written digits
 
-> "Ven you’re a married man, Samivel, you’ll understand a good many things as you don’t understand now; but vether it’s worth while goin’ through so much, to learn so little, as the charity-boy said ven he got to the end of the alphabet, is a matter o’ taste. I rayther think it isn’t." \
-> --- Charles Dickens, in "The Pickwick Papers"
+> "Thank God for giving you a glimpse of heaven, but do not imagine yourself a bird because you can flap your wings." \
+> --- Alfred de Musset, in "The confession of a child of the century"
 
 In this tutorial, we will try to classify hand-written digits using the tools seen in previous chapters.
 
@@ -13,7 +13,7 @@ using Distances
 using Ripserer, PersistenceDiagrams
 using StatsBase: mean
 import Plots;
-using FreqTables
+using DataFrames, FreqTables, PrettyTables
 ```
 
 ## The dataset
@@ -34,7 +34,6 @@ Notice that we only get the first `n_train` images so this notebook doesn't take
 Next, we transpose the digits and save them in a vector
 
 ```{julia}
-# store all digits in a figs variable
 figs = [mnist_digits[:, :, i]' |> Matrix for i ∈ 1:size(mnist_digits)[3]];
 ```
 
@@ -271,7 +270,7 @@ optim = Flux.setup(Flux.Adam(0.01), model);
 and train it
 
 ```{julia}
-#| echo: false
+#| output: false
 @showprogress for epoch in 1:100
     Flux.train!(model, loader, optim) do m, x, y
         y_hat = m(x)
@@ -314,16 +313,31 @@ function prop_table(y1, y2)
     tbl_prop
 end
 
-prop_table(y, pred_y)
+tbl_p = prop_table(y, pred_y)
 ```
 
-!!!We see that the majority of 9 were classified as 6; the majority of 5 were wrong too. The only well predicted digits (>90%) were 0 and 1.
+We see that the biggest errors are the following:
 
-!!! fazer dictionary aqui pra pegar os piores erros
+```{julia}
+function top_errors(tbl_p)
+    df = DataFrame(
+        Digit = Integer[]
+        , Prediction = Integer[]
+        , Percentage = Float64[]
+        )
+    
+    for i = eachindex(IndexCartesian(), tbl_p)
+        push!(df, (i[1]-1, i[2]-1, tbl_p[i]))    
+    end   
+   
+    filter!(row -> row.Digit != row.Prediction, df)
+    sort!(df, :Percentage, rev = true)
+    df[1:10, :]    
+end
 
-!!! usar dataframes pra criar tabela de maiores erros
-
-!!! passar pra rede também a excentricidade total e densidade? dividir em 10 blocos?
+df_errors = top_errors(tbl_p)
+df_errors |> pretty_table
+```
 
 ### The perils of isometric spaces
 
@@ -391,7 +405,7 @@ end;
 and calculate all 4 persistence diagrams. Warning: this can take a few seconds if you are using 60000 digits!
 
 ```{julia}
-#| echo: false
+#| output: false
 fs = [
     x -> filtration_sideways(x, axis = 1, invert = false)
     ,x -> filtration_sideways(x, axis = 2, invert = false)
@@ -417,7 +431,7 @@ X_all = hcat(X, X_list...);
 and try again with a new model:
 
 ```{julia}
-#| echo: false
+#| output: false
 model = nn_model(X_all)
 
 target = Flux.onehotbatch(y, 0:9 .|> string)
@@ -488,6 +502,8 @@ figs_plot = [figs[i] .|> Gray for i in errors[1:n^2]]
 mosaicview(figs_plot, nrow = n, rowmajor = true)
 ```
 
+Many of these digits are really ugly! This makes them hard to classify with our sublevel filtrations. Some other functions could be explored.
+
 ## Getting new data
 
 Now we want to see if our model really learned something, or if it just repeated what he saw in the training data. To check data, we need to get new data and calculate the accuracy of the same model on this new data.
@@ -502,7 +518,7 @@ new_mnist_labels = new_mnist_labels[1:n_test];
 and obtaning `X` and `y` to feed the model
 
 ```{julia}
-#| echo: false
+#| output: false
 fs = [
     x -> excentricity(x)
     ,x -> filtration_sideways(x, axis = 1, invert = false)
