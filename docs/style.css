@@ -6,9 +6,35 @@
     /* color: black; */
     /* margin: 5px; */
     /* border-radius: 10px; */
-    background-color: rgb(240,240,240);
-    /* box-shadow: 5px 10px 8px #888888; */
+    /* background-color: rgb(240,240,240); */
+    border-left: 5px solid;
+    border-right: 1px solid #dee2e6;
+    border-top: 1px solid #dee2e6;
+    border-bottom: 1px solid #dee2e6;
+    border-left-color: #2780e3;
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
+    border-radius: 0.25rem;
+    box-sizing: border-box;
+    display: block;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-top: 0.5em;
 }
-/* .theorem p {
-    padding: 15px 15px 15px 15px;
-} */
+
+.theorem-title {
+    /* background-color: #e0e0e0; */
+
+}
+
+.theorem-title::after {
+    content: "\a";
+    white-space: pre;
+}
+
+.blockquote {    
+    padding-left: 15rem;
+    border-right: 0.25rem solid #e9ecef;
+    border-left: 0px solid #e9ecef;
+}
+

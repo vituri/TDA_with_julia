@@ -1,6 +1,7 @@
 project:
   type: book
   output-dir: docs
+  
 
 execute:
   freeze: true  # re-render only when source changes

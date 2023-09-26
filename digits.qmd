@@ -14,6 +14,8 @@ using Ripserer, PersistenceDiagrams
 using StatsBase: mean
 import Plots;
 using DataFrames, FreqTables, PrettyTables
+using Flux, ProgressMeter
+
 ```
 
 ## The dataset
@@ -231,11 +233,6 @@ We can see that `X` is a matrix with $(size(X)[1]) rows (the amount of digits) a
 ```
 
 
-
-```{julia}
-X
-```
-
 It was also important to convert the `mnist_labels` to strings, because we want to classify the digits (and not do a regression on them).
 
 We now have a vector for each image. What can we do? We need a model that takes a large vector of numbers and try to predict the digit. Neural networks are excellent in finding non-linear relations on vectors. Let's try one!
@@ -243,7 +240,6 @@ We now have a vector for each image. What can we do? We need a model that takes 
 Create the layers
 
 ```{julia}
-using Flux, ProgressMeter
 function nn_model(X)
   model = Chain(
       Dense(size(X)[2] => 64)
@@ -379,7 +375,7 @@ function whole_process(
     y = mnist_labels .|> string
 
     return X, y, pds_0, pds_1, imgs_0, imgs_1
-end
+end;
 ```
 
 We now create the sideways filtrations: from the side and from above.

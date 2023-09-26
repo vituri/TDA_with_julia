@@ -1,6 +1,5 @@
 # Simplicial complexes
 
-> "Thank God for giving you a glimpse of heaven, but do not imagine yourself a bird because you can flap your wings." \
+> "Perfection does not exist; to comprehend it is the triumph of human intelligence; to desire to possess it, the most dangerous of follies." \
 > --- Alfred de Musset, in "The confession of a child of the century"
 
-Falar sobre complexos simpliciais e sua aproximação da realidade
