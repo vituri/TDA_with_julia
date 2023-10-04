@@ -2,3 +2,11 @@
 
 > "The essence of this architecture is movement synchronized towards a precise objective. We observe a fraction of the process, like hearing the vibration of a single string in an orchestra of supergiants. We know, but cannot grasp, that above and below, beyond the limits of perception or imagination, thousands and millions of simultaneous transformations are at work, interlinked like a musical score by mathematical counterpoint. It has been described as a symphony in geometry, but we lack the ears to hear it." \
 > --- Stanisław Lem, in "Solaris"
+
+## Clustering revisited
+
+Staticians are smart people.
+
+Dendrograms as a 0-dimensional persistence
+
+Vietoris-Rips e primos

@@ -11,7 +11,7 @@ In this chapter we will define topological spaces and some of its properties, th
 
 A topological space can be thought of as a set with little "scales" called *open sets*. Each of these open sets represent the notion of local *continuity* or *connectivity* that we sense when we look at an object: the feeling that it is just "one single piece of a thing", like the scales in a fish. We can stretch these scales, but can't rip them apart. In a sense, topological spaces are elastic. Because of that, there is an old joke that a topologist can't distinguish between a cup and a donut.
 
-![A continuous transformation of a cup to a donut. A true topologist will try to bite all these cups. Source: Wikipedia.^[https://commons.wikimedia.org/wiki/File:Topology_joke.jpg]](https://upload.wikimedia.org/wikipedia/commons/d/d0/Topology_joke.jpg){width=100%}
+![A continuous transformation of a cup to a donut. A true topologist will try to bite all these cups. Source: Wikipedia.^[https://commons.wikimedia.org/wiki/File:Topology_joke.jpg]](images/Topology_joke.jpg){width=100%}
 
 More formally,
 

@@ -1,7 +1,9 @@
 project:
   type: book
   output-dir: docs
-  
+  preview: 
+    port: 4200
+    browser: true
 
 execute:
   freeze: true  # re-render only when source changes
@@ -9,18 +11,26 @@ execute:
 
 book:
   title: "Topological Data Analysis with Julia"
+  reader-mode: true
+  # subtitle: "With examples in Julia"
+  site-url: https://vituri.github.io/TDA_with_julia/
+  repo-url: https://github.com/vituri/TDA_with_julia
   author: "G. Vituri"
   date: "2023-09-01"
+  # sharing: [twitter, linkedin]
+  downloads: [pdf, epub]
+
   chapters:
     - index.qmd
     - intro.qmd
-    - part: "Classical topology (or: topology without data nor analysis)"
+    - part: "Topology"
       chapters: 
       - topology.qmd
       - simplicial.qmd
       - homology.qmd
-    - part: "Topological data analysis (or: topology meets reality)"
+    - part: "Data Analysis"
       chapters: 
+      - clustering.qmd
       - persistence.qmd
     - part: "Case studies"
       chapters: 
@@ -35,6 +45,9 @@ format:
   html:
     theme: cosmo
     css: style.css
+    code-link: true
+    page-layout: full
+    max-width: 90vw
   pdf:
     documentclass: scrreprt
 

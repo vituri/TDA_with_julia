@@ -6,6 +6,14 @@
 In this tutorial, we will try to classify hand-written digits using the tools seen in previous chapters.
 
 ## Loading packages
+
+```{julia}
+#| include: false
+#| echo: false
+#| warning: false
+using Flux
+```
+
 ```{julia}
 import MLDatasets
 using Images, Makie, CairoMakie
@@ -15,7 +23,6 @@ using StatsBase: mean
 import Plots;
 using DataFrames, FreqTables, PrettyTables
 using Flux, ProgressMeter
-
 ```
 
 ## The dataset
@@ -23,7 +30,7 @@ using Flux, ProgressMeter
 MNIST is a dataset consisting of 70.000 hand-written digits. Each digit is a 28x28 grayscale image, that is: a 28x28 matrix of values from 0 to 1. To get this dataset, run
 
 ```{julia}
-n_train = 8_000
+n_train = 10_000
 mnist_digits, mnist_labels = MLDatasets.MNIST(split=:train)[:];
 mnist_digits = mnist_digits[:, :, 1:n_train]
 mnist_labels = mnist_labels[1:n_train];
@@ -505,7 +512,7 @@ Many of these digits are really ugly! This makes them hard to classify with our 
 Now we want to see if our model really learned something, or if it just repeated what he saw in the training data. To check data, we need to get new data and calculate the accuracy of the same model on this new data.
 
 ```{julia}
-n_test = 1_000
+n_test = 5_000
 new_mnist_digits, new_mnist_labels = MLDatasets.MNIST(split=:test)[:];
 new_mnist_digits = new_mnist_digits[:, :, 1:n_test]
 new_mnist_labels = new_mnist_labels[1:n_test];

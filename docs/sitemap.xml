@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://vituri.github.io/TDA_with_julia/index.html</loc>
+    <lastmod>2023-10-03T06:35:40.010Z</lastmod>
+  </url>
+  <url>
+    <loc>https://vituri.github.io/TDA_with_julia/intro.html</loc>
+    <lastmod>2023-10-03T06:06:00.135Z</lastmod>
+  </url>
+  <url>
+    <loc>https://vituri.github.io/TDA_with_julia/topology.html</loc>
+    <lastmod>2023-10-03T06:06:00.531Z</lastmod>
+  </url>
+  <url>
+    <loc>https://vituri.github.io/TDA_with_julia/persistence.html</loc>
+    <lastmod>2023-10-03T06:08:46.642Z</lastmod>
+  </url>
+  <url>
+    <loc>https://vituri.github.io/TDA_with_julia/clustering.html</loc>
+    <lastmod>2023-10-04T07:34:55.488Z</lastmod>
+  </url>
+</urlset>
