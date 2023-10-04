@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Topological Data Analysis with Julia - 2&nbsp; Topology</title>
+<title>Topological Data Analysis with Julia - 7&nbsp; (Classical) mapper</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,8 +64,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./simplicial.html" rel="next">
-<link href="./intro.html" rel="prev">
+<link href="./ballmapper.html" rel="next">
+<link href="./tomato.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -77,7 +111,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./topology.html">Topology</a></li><li class="breadcrumb-item"><a href="./topology.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Topology</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./tomato.html">Topological Data Analysis</a></li><li class="breadcrumb-item"><a href="./mapper.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">(Classical) mapper</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -150,7 +184,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./topology.html" class="sidebar-item-text sidebar-link active">
+  <a href="./topology.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Topology</span></span></a>
   </div>
 </li>
@@ -202,7 +236,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./mapper.html" class="sidebar-item-text sidebar-link">
+  <a href="./mapper.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">(Classical) mapper</span></span></a>
   </div>
 </li>
@@ -270,9 +304,12 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#what-is-topology" id="toc-what-is-topology" class="nav-link active" data-scroll-target="#what-is-topology"><span class="header-section-number">2.1</span> What is topology?</a></li>
-  <li><a href="#continuity" id="toc-continuity" class="nav-link" data-scroll-target="#continuity"><span class="header-section-number">2.2</span> Continuity</a></li>
-  <li><a href="#the-notion-of-sameness-in-topology" id="toc-the-notion-of-sameness-in-topology" class="nav-link" data-scroll-target="#the-notion-of-sameness-in-topology"><span class="header-section-number">2.3</span> The notion of “sameness” in topology</a></li>
+  <li><a href="#some-theory" id="toc-some-theory" class="nav-link active" data-scroll-target="#some-theory"><span class="header-section-number">7.1</span> Some theory</a>
+  <ul class="collapse">
+  <li><a href="#reeb-graph" id="toc-reeb-graph" class="nav-link" data-scroll-target="#reeb-graph"><span class="header-section-number">7.1.1</span> Reeb graph</a></li>
+  <li><a href="#the-classical-mapper" id="toc-the-classical-mapper" class="nav-link" data-scroll-target="#the-classical-mapper"><span class="header-section-number">7.1.2</span> The (classical) mapper</a></li>
+  </ul></li>
+  <li><a href="#less-theory-more-julia" id="toc-less-theory-more-julia" class="nav-link" data-scroll-target="#less-theory-more-julia"><span class="header-section-number">7.2</span> Less theory, more Julia!</a></li>
   </ul>
 </nav>
     </div>
@@ -281,7 +318,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Topology</span></h1>
+<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">(Classical) mapper</span></h1>
 </div>
 
 
@@ -296,101 +333,128 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<blockquote class="blockquote">
-<p>“[…] mathematics stands above everything. The works of Abel and Kronecker are as good today as they were four hundred years ago, and it will always be so. New roads arise, but the old ones lead on. They do not become overgrown. There… there you have eternity. Only mathematics does not fear it. Up there, I understood how final it is. And strong. There was nothing like it. And the fact that I had to struggle was also good. I slaved away at it, and when I couldn’t sleep I would go over, in my mind, the material I had studied that day.”<br>
-— Stanisław Lem, in “Return from the stars”</p>
-</blockquote>
-<p>In this chapter we will define topological spaces and some of its properties, the notion of homeomorphism and so on.</p>
-<section id="what-is-topology" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="what-is-topology"><span class="header-section-number">2.1</span> What is topology?</h2>
-<p><a href="https://en.wikipedia.org/wiki/Topology">Topology</a> is the study of topological spaces and its properties. Unfortunately, this is not enough to close this chapter.</p>
-<p>A topological space can be thought of as a set with little “scales” called <em>open sets</em>. Each of these open sets represent the notion of local <em>continuity</em> or <em>connectivity</em> that we sense when we look at an object: the feeling that it is just “one single piece of a thing”, like the scales in a fish. We can stretch these scales, but can’t rip them apart. In a sense, topological spaces are elastic. Because of that, there is an old joke that a topologist can’t distinguish between a cup and a donut.</p>
+<section id="some-theory" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="some-theory"><span class="header-section-number">7.1</span> Some theory</h2>
+<section id="reeb-graph" class="level3" data-number="7.1.1">
+<h3 data-number="7.1.1" class="anchored" data-anchor-id="reeb-graph"><span class="header-section-number">7.1.1</span> Reeb graph</h3>
+<p>In topology, there are many ways by which we try to see what can’t be seen, in particular high-dimensional sets. The <a href="https://en.wikipedia.org/wiki/Reeb_graph">Reeb graph</a> is one of those ways: given a topological space <span class="math inline">\(X\)</span> and a continuous function <span class="math inline">\(f: X \to \mathbb{R}\)</span>, we can collapse the connected components of its pre-images to get a graph that reflects the level-sets of <span class="math inline">\(f\)</span>.</p>
+<p>More formally, we define a relation <span class="math inline">\(\sim\)</span> on <span class="math inline">\(X\)</span> such that <span class="math inline">\(p \sim q\)</span> if-and-only-if <span class="math inline">\(p\)</span> and <span class="math inline">\(q\)</span> belong to the same connected component of <span class="math inline">\(f^{-1}(c)\)</span> for some <span class="math inline">\(c \in \mathbb{R}\)</span>.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/Topology_joke.jpg" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">A continuous transformation of a cup to a donut. A true topologist will try to bite all these cups. Source: Wikipedia.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></figcaption>
+<p><img src="images/reeb.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">The Reeb graph of a torus using the projection on the z-axis.</figcaption>
 </figure>
 </div>
-<p>More formally,</p>
-<div id="def-" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 2.1 </strong></span>A topological space is a pair <span class="math inline">\((X, \tau)\)</span> where</p>
-<ul>
-<li><p><span class="math inline">\(X\)</span> is a set;</p></li>
-<li><p><span class="math inline">\(\tau\)</span> is a set of subsets of <span class="math inline">\(X\)</span>, that is: each <span class="math inline">\(U \in \tau\)</span> is a set <span class="math inline">\(U \subseteq X\)</span>.</p></li>
-</ul>
-<p>The set <span class="math inline">\(\tau\)</span> has the following properties:</p>
-<ul>
-<li><p>the intersection of a finite number of open sets is also an open set;</p></li>
-<li><p>the union of an arbitrary (even infinity) number of open sets is also an open set;</p></li>
-<li><p>the <span class="math inline">\(\emptyset\)</span> and <span class="math inline">\(X\)</span> are open sets.</p></li>
-</ul>
-<p>The set <span class="math inline">\(\tau\)</span> is called a <em>topology</em> on <span class="math inline">\(X\)</span>.</p>
-</div>
-<p>We often omit <span class="math inline">\(\tau\)</span> and simply write “a topological space <span class="math inline">\(X\)</span>”. Sometimes we omit the “topological” too. We love omiting!</p>
-<div id="def-" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 2.2 </strong></span>The set of all subsets (or “parts”) of <span class="math inline">\(X\)</span> is denoted by <span class="math inline">\(P(X)\)</span>, that is,</p>
-<p><span class="math display">\[
-P(X) = \{ U \; | \; U \subseteq X \}.
-\]</span></p>
-</div>
-<p>Given a set <span class="math inline">\(X\)</span>, there is a easy way to generate a topology on it:</p>
-<div id="def-" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 2.3 </strong></span>Let <span class="math inline">\(X\)</span> be a set and <span class="math inline">\(S \subseteq P(X)\)</span>. Define <span class="math inline">\(\tau\)</span> <span class="math inline">\(\{\emptyset, X\}\)</span> united with finite intersections and arbitrary unions of elements of <span class="math inline">\(S\)</span>. The pair <span class="math inline">\((X, \tau)\)</span> is a topological space, and <span class="math inline">\(\tau\)</span> is said to be “generated by <span class="math inline">\(S\)</span>”. We also say that <span class="math inline">\(S\)</span> is a generator set for <span class="math inline">\(\tau\)</span>.</p>
-</div>
-<p>Don’t let the abstractions hurt you! Whenever you see a new definition or theorem, think of an example of objects that fit in it. One very useful example is the following:</p>
-<div id="exm-" class="theorem example">
-<p><span class="theorem-title"><strong>Example 2.1 </strong></span>The standard topology on the set <span class="math inline">\(\mathbb{R}\)</span> of real numbers is generated by the open intervals <span class="math inline">\((a, b) \subseteq \mathbb{R}\)</span>.</p>
-</div>
-<p>In the above case, an open set is a set in which one can always “walk a little more without reaching the end of the set”. More precisely, given <span class="math inline">\(x \in (a, b)\)</span> there is always a small enough <span class="math inline">\(\epsilon &gt; 0\)</span> such the interval <span class="math inline">\((x - \epsilon, x + \epsilon)\)</span> is contained in <span class="math inline">\((a, b)\)</span>.</p>
-<p>!![fora de lugar] When an open set <span class="math inline">\(U\)</span> cannot be written as the disjoint union of two open sets, we say that <span class="math inline">\(U\)</span> is <em>connected</em>. These connected open sets give a notion of “being a single piece”.</p>
 </section>
-<section id="continuity" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="continuity"><span class="header-section-number">2.2</span> Continuity</h2>
-<p>We learn in Calculus that a function <span class="math inline">\(f: \mathbb{R} \to \mathbb{R}\)</span> is <em>continuous</em> when we can draw its graph “without lifting the pencil from the paper”. Formalizing this notion of continuity took centuries and made many mathematicians go crazy.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> Let’s try to formalize what is “to lift the pencil from the paper” with the following example:</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/discontinuous.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">An example of a discontinuous function. Source: byjus.com<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></figcaption>
-</figure>
-</div>
-<p>We notice that no matter how close to 3 we choose some <span class="math inline">\(x \in \mathbb{R}\)</span>, its image <span class="math inline">\(f(x)\)</span> will end up being far away from <span class="math inline">\(f(3)\)</span>. A bit more precisely, there is a small interval around <span class="math inline">\(f(3)\)</span>, say <span class="math inline">\((f(3) - \epsilon, f(3) + \epsilon)\)</span>, such that no matter how small we chose an interval around <span class="math inline">\(3\)</span>, say <span class="math inline">\((3 - \delta, 3 + \delta)\)</span> we will have that</p>
+<section id="the-classical-mapper" class="level3" data-number="7.1.2">
+<h3 data-number="7.1.2" class="anchored" data-anchor-id="the-classical-mapper"><span class="header-section-number">7.1.2</span> The (classical) mapper</h3>
+<p>The (classical) mapper is an algorithm to create <a href="https://en.wikipedia.org/wiki/Graph_theory">graphs</a> from <a href="https://en.wikipedia.org/wiki/Metric_space">metric spaces</a>, and can be seen as an “statistical” version of the Reeb graph.</p>
+<p>To be able to mimick the Reeb graph, we need to change some objects from the continuous setting to the discrete setting:</p>
+<ul>
+<li><span class="math inline">\(X = (X, d)\)</span> is now a finite metric space, also called a <em>point cloud</em>;</li>
+<li><span class="math inline">\(f: X \to \mathbb{R}\)</span> can be any function (since <span class="math inline">\(X\)</span> is discrete, <span class="math inline">\(f\)</span> is automatically continuous);</li>
+<li>instead of inverse images of <em>points</em> of <span class="math inline">\(\mathbb{R}\)</span>, we calculate inverse images of <em>subsets</em> of <span class="math inline">\(\mathbb{R}\)</span> (usually intervals);</li>
+<li>instead of connected components (which are trivial in the discrete setting), we use some clustering algorithm (DBSCAN, single linkage, etc.) and consider these clusterings as “connected pieces of <span class="math inline">\(X\)</span>”.</li>
+</ul>
+<p><img src="images/mapper.png" class="img-fluid"></p>
+<p>The mapper graph can shed light to the geometry of <span class="math inline">\(X\)</span>:</p>
+<ul>
+<li>nodes are clusters of points of <span class="math inline">\(X\)</span>;</li>
+<li>the color of the nodes can summarise some information about the points of <span class="math inline">\(X\)</span> that represent this node;</li>
+<li>edges denote some proximity (in the metric of <span class="math inline">\(d\)</span> of <span class="math inline">\(X\)</span>) between the nodes.</li>
+</ul>
+<p>To be more precise, to calculate the mapper of a metric space <span class="math inline">\(X\)</span>, we need the following ingredients:</p>
+<ul>
+<li>a function <span class="math inline">\(f: X \to \mathbb{R}\)</span> that measures something interesting in <span class="math inline">\(X\)</span>, as, for example, the excentricity, the first coordinate of PCA, and so on;</li>
+<li>a covering <span class="math inline">\(C\)</span> of the image <span class="math inline">\(f(X) \subset \mathbb{R}\)</span>;</li>
+<li>a method <span class="math inline">\(l\)</span> to cluster each <span class="math inline">\(f^{-1}(c)\)</span> for <span class="math inline">\(c \in C\)</span>.</li>
+</ul>
+<p>When all of this is chosen, we have a covering of <span class="math inline">\(X\)</span> by clustering each pre-image of the elements of <span class="math inline">\(C\)</span>, that is:</p>
 <p><span class="math display">\[
-f(x) \notin (f(3) - \epsilon, f(3) + \epsilon), \; \text{for some } x \in (3 - \delta, 3 + \delta).
+V = \{ l(p); \; p = f^{-1}(c) \; \text{for} \; c \in C\}
 \]</span></p>
-<p>!![checar se faz sentido] This is equivalent to the fact that the inverse image of <span class="math inline">\((f(3) - \epsilon, f(3) + \epsilon)\)</span> is <em>not</em> an open set: if it were an open set, we could always “walk a little” on this interval, and still be sent by <span class="math inline">\(f\)</span> to <span class="math inline">\((f(3) - \epsilon, f(3) + \epsilon)\)</span>.</p>
-<p>Inspired by that, we define the following in the much more general context of topological spaces:</p>
-<div id="def-" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 2.4 </strong></span>Given two topological spaces <span class="math inline">\((X, \tau)\)</span> and <span class="math inline">\((Y, \sigma)\)</span>, a function <span class="math inline">\(f: X \to Y\)</span> is said to be <em>continuous</em> if the inverse image of any open set of <span class="math inline">\(Y\)</span> is also an open set of <span class="math inline">\(X\)</span>. In symbols:</p>
+<p>We then calculate the <a href="https://en.wikipedia.org/wiki/Nerve_complex">1-dimensional nerve</a> of <span class="math inline">\(V\)</span>: we define the set of edges <span class="math inline">\(E \subset V \times V\)</span> by</p>
 <p><span class="math display">\[
-\forall \; V \in \sigma, \; f^{-1}(V) \in \tau.
+(v_1, v_2) \in E \leftrightarrow v_1 \cap v_2 \neq \emptyset
 \]</span></p>
-</div>
-<div class="remark proof">
-<p><span class="proof-title"><em>Remark</em>. </span>Negating what we obtained in our example above leads us to the definition of continuity of real functions, and to the most terrifying single line of math of first-year students: a function <span class="math inline">\(f: \mathbb{R} \to \mathbb{R}\)</span> is <em>continuous</em> if for every point <span class="math inline">\(a \in \mathbb{R}\)</span> we have</p>
-<p><span class="math display">\[
-\forall \epsilon &gt; 0, \exists \delta &gt; 0 \text{ such that } x \in (a - \delta, a + \delta) \text{ implies } f(x) \in (f(a) - \epsilon, f(a) + \epsilon),
-\]</span></p>
-<p>which is equivalent to <span class="math inline">\(\lim_{x \to a} f(x) = a\)</span>.</p>
-</div>
+<p>In words, we have an edge between <span class="math inline">\(v_1\)</span> and <span class="math inline">\(v_2\)</span> if there is some point in both <span class="math inline">\(v_1\)</span> and <span class="math inline">\(v_2\)</span> at the same time.</p>
 </section>
-<section id="the-notion-of-sameness-in-topology" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="the-notion-of-sameness-in-topology"><span class="header-section-number">2.3</span> The notion of “sameness” in topology</h2>
-<p>Let’s digress a little.</p>
-<p>A topological space is completely define by a set <span class="math inline">\(X\)</span> and its open sets <span class="math inline">\(\tau\)</span>. If we just “rename” the elements of <span class="math inline">\(X\)</span>, then it is intuitive that this new topological space is as similar to <span class="math inline">\(X\)</span> as possible; in fact, they are indistinguishable from each other: every topological property (ie: properties related to open sets) that the first has, the second also has.</p>
-<p>Renaming points is just a informally way to say “bijection of sets”. So, two topological spaces <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are “the same thing, topologically speaking” if there is a bijection <span class="math inline">\(f: X \to Y\)</span> such that <span class="math inline">\(U \subseteq X\)</span> is open if and only if <span class="math inline">\(f(X) \subseteq Y\)</span> is open. More precisely,</p>
-<div id="def-" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 2.5 </strong></span>We say that two topological spaces <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are <em>homeomorphic</em> if there exists a continuous bijection <span class="math inline">\(f: X \to Y\)</span> such that <span class="math inline">\(f^{-1}\)</span> is also continuous. In this case, <span class="math inline">\(f\)</span> is called an <em>homeomorphism</em>.</p>
+</section>
+<section id="less-theory-more-julia" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="less-theory-more-julia"><span class="header-section-number">7.2</span> Less theory, more Julia!</h2>
+<p>Let’s import some packages:</p>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">TDAmapper;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> <span class="bu">GeometricDatasets </span>as gd;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>and define <span class="math inline">\(X\)</span> as a torus with the usual Euclidean distance</p>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> gd.<span class="fu">torus</span>(<span class="fl">2000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<pre><code>3×2000 Matrix{Float64}:
+ -1.47279   -0.713709   2.37068   …  -0.20223    2.57742    2.30574
+  2.71141    3.80782   -3.09023      -3.03162   -2.5925    -0.666437
+ -0.996331  -0.485686  -0.446418      0.999264  -0.755023   0.800092</code></pre>
+</div>
+</div>
+<p><strong>Important</strong>: when using TDAmapper, your point cloud must be in column-major order. That is: each point of <span class="math inline">\(X\)</span> must be a column of <code>X</code>, not a row (as is usual with dataframes). This is so because <a href="https://github.com/JuliaStats/Distances.jl">Distances.jl</a>, <a href="https://github.com/KristofferC/NearestNeighbors.jl">NearestNeighbors.jl</a>, <a href="https://github.com/JuliaStats/Clustering.jl">Clustering.jl</a> and many other packages for calculations with metric spaces use the column-major order for performance reasons.</p>
+<p>We define the function <span class="math inline">\(f: X \to \mathbb{R}\)</span> as the projection on the <span class="math inline">\(x\)</span>-axis because our torus is laying down compared to the one in the Reeb graph example.</p>
+<p>Let <code>fv</code> be a vector such that <code>fv[i]</code> is the <span class="math inline">\(x\)</span>-axis projection of the point <span class="math inline">\(x_i\)</span> of <span class="math inline">\(X\)</span>:</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fv <span class="op">=</span> X[<span class="fl">1</span>, <span class="op">:</span>];</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>You can plot <span class="math inline">\(X\)</span> colored by <span class="math inline">\(f\)</span> as follows:</p>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">CairoMakie;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter</span>(X[<span class="fl">1</span>, <span class="op">:</span>], X[<span class="fl">2</span>, <span class="op">:</span>], X[<span class="fl">3</span>, <span class="op">:</span>], color <span class="op">=</span> fv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<p><img src="mapper_files/figure-html/cell-5-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p><strong>Important:</strong> the plots will be interactive when running in Julia if you change <code>CairoMakie</code> to <code>GLMakie</code>. Give it a try!</p>
+<p>Define the covering intervals <code>cv</code> as follows:</p>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> <span class="fu">uniform</span>(fv, overlap <span class="op">=</span> <span class="fl">150</span>);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>You can check the first five intervals of this covering:</p>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>C[<span class="fl">1</span><span class="op">:</span><span class="fl">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<pre><code>5-element Vector{Interval}:
+ Interval(-4.706857f0, -3.708342f0)
+ Interval(-4.136277f0, -3.1377618f0)
+ Interval(-3.565697f0, -2.5671818f0)
+ Interval(-2.995117f0, -1.9966017f0)
+ Interval(-2.4245367f0, -1.4260216f0)</code></pre>
+</div>
+</div>
+<p>For the clustering algorithm we choose the DBSCAN with radius 1:</p>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>clustering <span class="op">=</span> <span class="fu">cluster_dbscan</span>(radius <span class="op">=</span> <span class="fl">1</span>);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then the mapper graph of <span class="math inline">\(X\)</span> can be calculated by</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># the mapper function needs:</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># X</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># the values of f(X)</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># the covering C</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># the clustering function</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>mp <span class="op">=</span> <span class="fu">mapper</span>(X, fv, C; clustering <span class="op">=</span> clustering)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And plotted with</p>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define the value of each node as the maximum of</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># values of fv </span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>node_values <span class="op">=</span> <span class="fu">node_colors</span>(mp, fv)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mapper_plot</span>(mp, node_values <span class="op">=</span> node_values)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<p><img src="mapper_files/figure-html/cell-10-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Compare it with the Reeb graph from the start. If this isn’t nice, what is?</p>
 
 
-</section>
-<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
-<hr>
-<ol>
-<li id="fn1"><p>https://commons.wikimedia.org/wiki/File:Topology_joke.jpg<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2"><p>I just invented this. Maybe some of them really got crazy, who knows?<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3"><p>https://byjus.com/maths/discontinuity/<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-</ol>
 </section>
 
 </main> <!-- /main -->
@@ -629,13 +693,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="./intro.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span>
+      <a href="./tomato.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">ToMATo</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./simplicial.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Simplicial complexes</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./ballmapper.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ball mapper</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

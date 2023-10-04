@@ -1,0 +1,129 @@
+---
+title: "(Classical) mapper"
+---
+
+## Some theory
+
+### Reeb graph
+
+In topology, there are many ways by which we try to see what can't be seen, in particular high-dimensional sets. The [Reeb graph](https://en.wikipedia.org/wiki/Reeb_graph) is one of those ways: given a topological space $X$ and a continuous function $f: X \to \mathbb{R}$, we can collapse the connected components of its pre-images to get a graph that reflects the level-sets of $f$.
+
+More formally, we define a relation $\sim$ on $X$ such that $p \sim q$ if-and-only-if $p$ and $q$ belong to the same connected component of $f^{-1}(c)$ for some $c \in \mathbb{R}$.
+
+![The Reeb graph of a torus using the projection on the z-axis.](images/reeb.png)
+
+### The (classical) mapper
+
+The (classical) mapper is an algorithm to create [graphs](https://en.wikipedia.org/wiki/Graph_theory) from [metric spaces](https://en.wikipedia.org/wiki/Metric_space), and can be seen as an "statistical" version of the Reeb graph. 
+
+To be able to mimick the Reeb graph, we need to change some objects from the continuous setting to the discrete setting:
+
+- $X = (X, d)$ is now a finite metric space, also called a *point cloud*;
+- $f: X \to \mathbb{R}$ can be any function (since $X$ is discrete, $f$ is automatically continuous);
+- instead of inverse images of *points* of $\mathbb{R}$, we calculate inverse images of *subsets* of $\mathbb{R}$ (usually intervals);
+- instead of connected components (which are trivial in the discrete setting), we use some clustering algorithm (DBSCAN, single linkage, etc.) and consider these clusterings as "connected pieces of $X$".
+
+![](images/mapper.png)
+
+The mapper graph can shed light to the geometry of $X$: 
+
+- nodes are clusters of points of $X$;
+- the color of the nodes can summarise some information about the points of $X$ that represent this node;
+- edges denote some proximity (in the metric of $d$ of $X$) between the nodes.
+
+To be more precise, to calculate the mapper of a metric space $X$, we need the following ingredients:
+
+- a function $f: X \to \mathbb{R}$ that measures something interesting in $X$, as, for example, the excentricity, the first coordinate of PCA, and so on;
+- a covering $C$ of the image $f(X) \subset \mathbb{R}$;
+- a method $l$ to cluster each $f^{-1}(c)$ for $c \in C$.
+
+When all of this is chosen, we have a covering of $X$ by clustering each pre-image of the elements of $C$, that is:
+
+$$
+V = \{ l(p); \; p = f^{-1}(c) \; \text{for} \; c \in C\}
+$$
+
+We then calculate the [1-dimensional nerve](https://en.wikipedia.org/wiki/Nerve_complex) of $V$: we define the set of edges $E \subset V \times V$ by
+
+$$
+(v_1, v_2) \in E \leftrightarrow v_1 \cap v_2 \neq \emptyset
+$$
+
+In words, we have an edge between $v_1$ and $v_2$ if there is some point in both $v_1$ and $v_2$ at the same time.
+
+## Less theory, more Julia!
+
+Let's import some packages:
+
+```{julia}
+using TDAmapper;
+import GeometricDatasets as gd;
+```
+
+and define $X$ as a torus with the usual Euclidean distance
+
+```{julia}
+X = gd.torus(2000)
+```
+
+**Important**: when using TDAmapper, your point cloud must be in column-major order. That is: each point of $X$ must be a column of  `X`, not a row (as is usual with dataframes). This is so because [Distances.jl](https://github.com/JuliaStats/Distances.jl), [NearestNeighbors.jl](https://github.com/KristofferC/NearestNeighbors.jl), [Clustering.jl](https://github.com/JuliaStats/Clustering.jl) and many other packages for calculations with metric spaces use the column-major order for performance reasons.
+
+We define the function $f: X \to \mathbb{R}$ as the projection on the $x$-axis because our torus is laying down compared to the one in the Reeb graph example.
+
+Let `fv` be a vector such that `fv[i]` is the $x$-axis projection of the point $x_i$ of $X$:
+
+```{julia}
+fv = X[1, :];
+```
+
+You can plot $X$ colored by $f$ as follows:
+
+```{julia}
+using CairoMakie;
+scatter(X[1, :], X[2, :], X[3, :], color = fv)
+```
+
+**Important:** the plots will be interactive when running in Julia if you change `CairoMakie` to `GLMakie`. Give it a try!
+
+Define the covering intervals `cv` as follows:
+
+```{julia}
+C = uniform(fv, overlap = 150);
+```
+
+You can check the first five intervals of this covering:
+
+```{julia}
+C[1:5]
+```
+
+For the clustering algorithm we choose the DBSCAN with radius 1:
+
+```{julia}
+clustering = cluster_dbscan(radius = 1);
+```
+
+Then the mapper graph of $X$ can be calculated by
+
+```{julia}
+#| output: false
+
+# the mapper function needs:
+# X
+# the values of f(X)
+# the covering C
+# the clustering function
+mp = mapper(X, fv, C; clustering = clustering)
+```
+
+And plotted with
+
+```{julia}
+# define the value of each node as the maximum of
+# values of fv 
+node_values = node_colors(mp, fv)
+
+mapper_plot(mp, node_values = node_values)
+```
+
+Compare it with the Reeb graph from the start. If this isn't nice, what is?

@@ -20,40 +20,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 /* CSS for citations */
 div.csl-bib-body { }
 div.csl-entry {
@@ -83,7 +49,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./persistence.html" rel="next">
+<link href="./tomato.html" rel="next">
 <link href="./homology.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -236,18 +202,12 @@ div.csl-indent {
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Clustering</span></span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./persistence.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Persistent homology</span></span></a>
-  </div>
-</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
- <span class="menu-text">Case studies</span></a>
+ <span class="menu-text">Topological Data Analysis</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -255,8 +215,32 @@ div.csl-indent {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./digits.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Classifying hand-written digits</span></span></a>
+  <a href="./tomato.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">ToMATo</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mapper.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">(Classical) mapper</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ballmapper.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ball mapper</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mapper-general.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./persistence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Persistent homology</span></span></a>
   </div>
 </li>
       </ul>
@@ -264,12 +248,29 @@ div.csl-indent {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
- <span class="menu-text">Closing</span></a>
+ <span class="menu-text">Case studies</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./digits.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Classifying hand-written digits</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+ <span class="menu-text">Closing</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./references.html" class="sidebar-item-text sidebar-link">
@@ -288,14 +289,7 @@ div.csl-indent {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#tomato" id="toc-tomato" class="nav-link active" data-scroll-target="#tomato"><span class="header-section-number">5.1</span> ToMATo</a>
-  <ul class="collapse">
-  <li><a href="#density" id="toc-density" class="nav-link" data-scroll-target="#density"><span class="header-section-number">5.1.1</span> Density</a></li>
-  <li><a href="#climbing-mount-topology" id="toc-climbing-mount-topology" class="nav-link" data-scroll-target="#climbing-mount-topology"><span class="header-section-number">5.1.2</span> Climbing mount topology</a></li>
-  <li><a href="#the-comedy-of-errors" id="toc-the-comedy-of-errors" class="nav-link" data-scroll-target="#the-comedy-of-errors"><span class="header-section-number">5.1.3</span> The Comedy of Errors</a></li>
-  <li><a href="#the-formal-algorithm" id="toc-the-formal-algorithm" class="nav-link" data-scroll-target="#the-formal-algorithm"><span class="header-section-number">5.1.4</span> The formal algorithm</a></li>
-  </ul></li>
-  <li><a href="#datasets" id="toc-datasets" class="nav-link" data-scroll-target="#datasets"><span class="header-section-number">5.2</span> Datasets</a></li>
+  <li><a href="#datasets" id="toc-datasets" class="nav-link active" data-scroll-target="#datasets"><span class="header-section-number">5.1</span> Datasets</a></li>
   </ul>
 </nav>
     </div>
@@ -325,221 +319,8 @@ div.csl-indent {
 <p>A clustering method is a function <span class="math inline">\(f: X \to \mathbb{N}\)</span> that associates each point <span class="math inline">\(x \in X\)</span> with its clusters <span class="math inline">\(f(x)\)</span>.</p>
 </div>
 <p>There are several famous clustering methods such as [citar]. We will focus on the ToMATo algorithm, which uses tools from topology.</p>
-<section id="tomato" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="tomato"><span class="header-section-number">5.1</span> ToMATo</h2>
-<p>Given a pointcloud <span class="math inline">\(X\)</span>, how topology can help us in creating clusters?</p>
-<p>Let’s understand the ToMATo algorithm with an example and pretend we are actually inventing it. How fun!</p>
-<p>Let’s load some packages first</p>
-<div class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">ToMATo</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> <span class="bu">GeometricDatasets </span>as gd</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">AlgebraOfGraphics</span>, </span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># CairoMakie, </span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="bu">GLMakie;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Suppose <span class="math inline">\(X\)</span> is the following dataset:</p>
-<div class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> <span class="fu">hcat</span>(<span class="fu">randn</span>(<span class="fl">2</span>, <span class="fl">800</span>), <span class="fu">randn</span>(<span class="fl">2</span>, <span class="fl">800</span>) <span class="op">.*</span> <span class="fl">0.8</span> <span class="op">.+</span> (<span class="fl">4</span>, <span class="op">-</span><span class="fl">4</span>), <span class="fu">randn</span>(<span class="fl">2</span>, <span class="fl">100</span>) <span class="op">.*</span> <span class="fl">0.3</span> <span class="op">.-</span> (<span class="fl">2</span>, <span class="op">-</span><span class="fl">2</span>))</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> (x1 <span class="op">=</span> X[<span class="fl">1</span>, <span class="op">:</span>], x2 <span class="op">=</span> X[<span class="fl">2</span>, <span class="op">:</span>])</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>plt <span class="op">=</span> <span class="fu">data</span>(df) <span class="op">*</span> <span class="fu">mapping</span>(<span class="op">:</span>x1, <span class="op">:</span>x2)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">draw</span>(plt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="3">
-<p><img src="clustering_files/figure-html/cell-3-output-1.png" class="img-fluid"></p>
-</div>
-</div>
-<p>We can see two big clusters and possibly a small one.</p>
-<p>Let’s make a note-so-absurd supposition that our data is generated by some normal distribuitions (in our case, it really is; in general this can be false). Then, intuitively, the mean of each distribution is the point with the highest density, ie, with more points close to it, because it is in the center of the distribution.</p>
-<section id="density" class="level3" data-number="5.1.1">
-<h3 data-number="5.1.1" class="anchored" data-anchor-id="density"><span class="header-section-number">5.1.1</span> Density</h3>
-<p>We can estimate the density of a dataset as follows</p>
-<div class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> gd.<span class="fu">density_estimation</span>(X, h <span class="op">=</span> <span class="fl">0.5</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> (x1 <span class="op">=</span> X[<span class="fl">1</span>, <span class="op">:</span>], x2 <span class="op">=</span> X[<span class="fl">2</span>, <span class="op">:</span>], ds <span class="op">=</span> ds)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>plt <span class="op">=</span> <span class="fu">data</span>(df) <span class="op">*</span> <span class="fu">mapping</span>(<span class="op">:</span>x1, <span class="op">:</span>x2, color <span class="op">=</span> <span class="op">:</span>ds)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">draw</span>(plt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="4">
-<p><img src="clustering_files/figure-html/cell-4-output-1.png" class="img-fluid"></p>
-</div>
-</div>
-<p>The precise definition of the density of a point <span class="math inline">\(x \in X\)</span> is</p>
-<p><span class="math display">\[
-\text{dens}(x) = \dfrac{1}{|X|} \cdot \sum_{y \in X} \text{exp} \left(-\dfrac{d(x, y)^2}{h^2} \right)
-\]</span></p>
-<p>where <span class="math inline">\(\text{exp}(x) = e^x\)</span>. Informally, we want that points close (ie. small distance) to many other points have a high density; this is way we calculate the distance from <span class="math inline">\(x\)</span> to <span class="math inline">\(y\)</span> and put it inside an exponential with a minus sign. We then calculate the mean of all these values.</p>
-<p>Now we put this density estimation on another axis and plot it</p>
-<div class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>axis <span class="op">=</span> (<span class="kw">type</span> <span class="op">=</span> Axis3, width <span class="op">=</span> <span class="fl">800</span>, height <span class="op">=</span> <span class="fl">450</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> (x1 <span class="op">=</span> X[<span class="fl">1</span>, <span class="op">:</span>], x2 <span class="op">=</span> X[<span class="fl">2</span>, <span class="op">:</span>], ds <span class="op">=</span> ds)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>plt <span class="op">=</span> <span class="fu">data</span>(df) <span class="op">*</span> <span class="fu">mapping</span>(<span class="op">:</span>x1, <span class="op">:</span>x2, <span class="op">:</span>ds, color <span class="op">=</span> <span class="op">:</span>ds)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">draw</span>(plt; axis <span class="op">=</span> axis)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="5">
-<p><img src="clustering_files/figure-html/cell-5-output-1.png" class="img-fluid"></p>
-</div>
-</div>
-<p>Good!</p>
-</section>
-<section id="climbing-mount-topology" class="level3" data-number="5.1.2">
-<h3 data-number="5.1.2" class="anchored" data-anchor-id="climbing-mount-topology"><span class="header-section-number">5.1.2</span> Climbing mount topology</h3>
-<p>The idea now is that given a point <span class="math inline">\(x\)</span>:</p>
-<ul>
-<li>if <span class="math inline">\(x\)</span> is the highest point in its corresponding mountain, then it is a new cluster;</li>
-<li>otherwise, we will we seek for the highest neighbor of <span class="math inline">\(x\)</span>, say <span class="math inline">\(x'\)</span> and say that the cluster of <span class="math inline">\(x\)</span> is the same of <span class="math inline">\(x'\)</span>.</li>
-</ul>
-<p>To do that, we need to define a notion of “neighborhood” in this dataset. The easiest way is to define a graph whose vertex set is <span class="math inline">\(X\)</span> and edges connect neighbor points. Fortunately, the <code>ToMATo</code> package has a function that does exactly that. You are welcome!</p>
-<div class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> <span class="fu">proximity_graph</span>(X, <span class="fl">0.2</span>, max_k_ball <span class="op">=</span> <span class="fl">4</span>, k_nn <span class="op">=</span> <span class="fl">3</span>, min_k_ball <span class="op">=</span> <span class="fl">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="6">
-<pre><code>{1700, 4793} undirected simple Int64 graph</code></pre>
-</div>
-</div>
-<p>The graph <span class="math inline">\(g\)</span> above is constructed as follows: given <span class="math inline">\(x \in X\)</span>, we create a ball with radius <span class="math inline">\(0.2\)</span> around <span class="math inline">\(X\)</span> and do the following:</p>
-<ul>
-<li>Are there less than 2 points in the ball? If yes, then we connect <span class="math inline">\(x\)</span> to its 2 closest points; if no, we connect <span class="math inline">\(x\)</span> to its 6 (at maximum) closest points in the ball. In short: if the ball has not the amount of points we stipulated, then we use knn search.</li>
-</ul>
-<p>These numbers obviously are arbitrary and can be changed at will.</p>
-<p>Let’s see the result of our algorithm:</p>
-<div class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>X2 <span class="op">=</span> <span class="fu">vcat</span>(X, ds<span class="op">'</span>)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>clusters, _ <span class="op">=</span> <span class="fu">tomato</span>(X, g, ds, <span class="fl">0</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>fig, ax, plt <span class="op">=</span> <span class="fu">graph_plot</span>(X2, g, clusters <span class="op">.|&gt;</span> string)</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>┌ Warning: Axis got passed, but also axis attributes. Ignoring axis attributes (type = Axis3, width = 600, height = 600).
-└ @ AlgebraOfGraphics ~/.julia/packages/AlgebraOfGraphics/yhdjr/src/draw.jl:19</code></pre>
-</div>
-<div class="cell-output cell-output-display" data-execution_count="7">
-<p><img src="clustering_files/figure-html/cell-7-output-2.png" class="img-fluid"></p>
-</div>
-</div>
-<p>Look how many clusters! This is obviously wrong.</p>
-</section>
-<section id="the-comedy-of-errors" class="level3" data-number="5.1.3">
-<h3 data-number="5.1.3" class="anchored" data-anchor-id="the-comedy-of-errors"><span class="header-section-number">5.1.3</span> The Comedy of Errors</h3>
-<p>This <sub>tragedy</sub> happened because we did not take into account the “false peaks”: peaks that are just a little slump (!!!) and not a real peak. To merge these false-peaks into the big ones, we need to add the following step:</p>
-<p>Let <span class="math inline">\(\tau\)</span> be a number that denotes how small a slump must be to be merged (we will show how to calculate <span class="math inline">\(\tau\)</span> below). Given <span class="math inline">\(x \in X\)</span>, let <span class="math inline">\(N\)</span> be the set of its neighbors higher than <span class="math inline">\(x\)</span>. Denote by <span class="math inline">\(x_max\)</span> the highest point in <span class="math inline">\(N\)</span>, and <span class="math inline">\(c_max\)</span> its cluster. Now, for each <span class="math inline">\(y \in N\)</span>, ask the following:</p>
-<ul>
-<li>Is the difference of heights of <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> less than <span class="math inline">\(\tau\)</span>? If yes, we merge the cluster of <span class="math inline">\(y\)</span> with the cluster of <span class="math inline">\(x_max\)</span>. Otherwise, do nothing.</li>
-</ul>
-<div class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>τ <span class="op">=</span> <span class="fl">0.02</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>clusters, _ <span class="op">=</span> <span class="fu">tomato</span>(X, g, ds, τ, max_cluster_height <span class="op">=</span> τ)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>X2 <span class="op">=</span> <span class="fu">vcat</span>(X, ds<span class="op">'</span>)</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>fig, ax, plt <span class="op">=</span> <span class="fu">graph_plot</span>(X2, g, clusters <span class="op">.|&gt;</span> string)</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>┌ Warning: Axis got passed, but also axis attributes. Ignoring axis attributes (type = Axis3, width = 600, height = 600).
-└ @ AlgebraOfGraphics ~/.julia/packages/AlgebraOfGraphics/yhdjr/src/draw.jl:19</code></pre>
-</div>
-<div class="cell-output cell-output-display" data-execution_count="8">
-<p><img src="clustering_files/figure-html/cell-8-output-2.png" class="img-fluid"></p>
-</div>
-</div>
-<p>Now we got something!</p>
-<p>But how did we calculate this magic <span class="math inline">\(\tau\)</span>? Should we just go on guessing real numbers? I hope not!</p>
-<p>We usually run the ToMATo algorithm twice. The first time, we put <span class="math inline">\(\tau = \inf\)</span> and see how the montains of <span class="math inline">\(X\)</span> merged: we plot the time each one of these mountains survived.</p>
-<div class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>_, births_and_deaths <span class="op">=</span> <span class="fu">tomato</span>(X, g, ds, <span class="cn">Inf</span>)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_births_and_deaths</span>(births_and_deaths)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="9">
-<p><img src="clustering_files/figure-html/cell-9-output-1.png" class="img-fluid"></p>
-</div>
-</div>
-<p>Choosing a bigger <span class="math inline">\(\tau\)</span> (say 0.04) will also merge the small clusters on the left</p>
-<div class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>τ <span class="op">=</span> <span class="fl">0.04</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>clusters, _ <span class="op">=</span> <span class="fu">tomato</span>(X, g, ds, τ, max_cluster_height <span class="op">=</span> τ)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>X2 <span class="op">=</span> <span class="fu">vcat</span>(X, ds<span class="op">'</span>)</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>fig, ax, plt <span class="op">=</span> <span class="fu">graph_plot</span>(X2, g, clusters <span class="op">.|&gt;</span> string)</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>┌ Warning: Axis got passed, but also axis attributes. Ignoring axis attributes (type = Axis3, width = 600, height = 600).
-└ @ AlgebraOfGraphics ~/.julia/packages/AlgebraOfGraphics/yhdjr/src/draw.jl:19</code></pre>
-</div>
-<div class="cell-output cell-output-display" data-execution_count="10">
-<p><img src="clustering_files/figure-html/cell-10-output-2.png" class="img-fluid"></p>
-</div>
-</div>
-<p>At the end of the day you will still need to define how bigger a slump you can accept before merging it.</p>
-</section>
-<section id="the-formal-algorithm" class="level3" data-number="5.1.4">
-<h3 data-number="5.1.4" class="anchored" data-anchor-id="the-formal-algorithm"><span class="header-section-number">5.1.4</span> The formal algorithm</h3>
-<p>After all this talk, maybe the original algorithm can be better understood</p>
-<p><img src="images/tomato-algorithm.png" class="img-fluid"></p>
-<p>For the curious reader, the math above is easily translated to Julia</p>
-<div class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">tomato</span>(</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    X<span class="op">::</span><span class="dt">PointCloud</span>, g<span class="op">::</span><span class="dt">Graph</span>, ds<span class="op">::</span><span class="dt">Vector{&lt;:Real}</span>, τ<span class="op">::</span><span class="dt">Real </span><span class="op">=</span> <span class="cn">Inf</span>;</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    max_cluster_height<span class="op">::</span><span class="dt">Real </span><span class="op">=</span> <span class="fl">0</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    sorted_ids <span class="op">=</span> <span class="fu">sortperm</span>(ds, rev <span class="op">=</span> <span class="cn">true</span>)</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    clusters <span class="op">=</span> <span class="fu">zeros</span>(<span class="dt">Int64</span>, <span class="fu">size</span>(X)[<span class="fl">2</span>])</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    births_and_deaths <span class="op">=</span> <span class="fu">Dict</span><span class="dt">{Int64, Vector{&lt;: Real}}</span>()</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="op">∈</span> sorted_ids</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>        N <span class="op">=</span> <span class="fu">neighbors</span>(g, i) <span class="op">|&gt;</span> copy</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">filter!</span>(x <span class="op">-&gt;</span> ds[x] <span class="op">&gt;</span> ds[i], N)</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>        <span class="co"># if there is no upper-neighbor</span></span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="fu">length</span>(N) <span class="op">==</span> <span class="fl">0</span></span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>            clusters[i] <span class="op">=</span> i</span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>            births_and_deaths[i] <span class="op">=</span> [ds[i], <span class="cn">Inf</span>]</span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span></span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">end</span></span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>        c_max <span class="op">=</span> clusters[<span class="fu">argmax</span>(x <span class="op">-&gt;</span> ds[x], N)]</span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>        clusters[i] <span class="op">=</span> c_max</span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> j <span class="op">∈</span> N</span>
-<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>            c_j <span class="op">=</span> clusters[j]</span>
-<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>            <span class="co"># if the clusters are equal, skip</span></span>
-<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>            c_max <span class="op">==</span> c_j <span class="op">&amp;&amp;</span> <span class="cf">continue</span></span>
-<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>            <span class="co"># if c_j has no cluster, put j on c_max</span></span>
-<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> c_j <span class="op">==</span> <span class="fl">0</span></span>
-<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>                <span class="fu">update_cluster!</span>(clusters, j, c_max)</span>
-<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>                <span class="cf">continue</span></span>
-<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>            <span class="cf">end</span></span>
-<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>            <span class="co"># If the lowest of them is just a bit below the current height ds[i],        </span></span>
-<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>            <span class="co"># we merge the clusters        </span></span>
-<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="fu">min</span>(ds[c_max], ds[c_j]) <span class="op">&lt;</span> ds[i] <span class="op">+</span> τ</span>
-<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>                from, to <span class="op">=</span> <span class="fu">sort</span>([c_max, c_j], by <span class="op">=</span> x <span class="op">-&gt;</span> ds[x])</span>
-<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>                births_and_deaths[from][<span class="fl">2</span>] <span class="op">=</span> ds[i]</span>
-<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>                <span class="fu">replace!</span>(clusters, from <span class="op">=&gt;</span> to)</span>
-<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a>            <span class="cf">end</span></span>
-<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>        <span class="cf">end</span>    </span>
-<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
-<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-45"><a href="#cb14-45" aria-hidden="true" tabindex="-1"></a>    sorted_clusters <span class="op">=</span> <span class="fu">sort</span>(clusters <span class="op">|&gt;</span> unique, by <span class="op">=</span> x <span class="op">-&gt;</span> ds[x], rev <span class="op">=</span> <span class="cn">true</span>)</span>
-<span id="cb14-46"><a href="#cb14-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-47"><a href="#cb14-47" aria-hidden="true" tabindex="-1"></a>    cluster_dict <span class="op">=</span> </span>
-<span id="cb14-48"><a href="#cb14-48" aria-hidden="true" tabindex="-1"></a>        <span class="fu">map</span>(sorted_clusters) <span class="cf">do</span> cl</span>
-<span id="cb14-49"><a href="#cb14-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-50"><a href="#cb14-50" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span>  (ds[cl] <span class="op">&lt;</span> max_cluster_height)</span>
-<span id="cb14-51"><a href="#cb14-51" aria-hidden="true" tabindex="-1"></a>                true_number <span class="op">=</span> <span class="fl">0</span></span>
-<span id="cb14-52"><a href="#cb14-52" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span></span>
-<span id="cb14-53"><a href="#cb14-53" aria-hidden="true" tabindex="-1"></a>                true_number <span class="op">=</span> <span class="fu">findfirst</span>(x <span class="op">-&gt;</span> x <span class="op">==</span> cl, sorted_clusters)</span>
-<span id="cb14-54"><a href="#cb14-54" aria-hidden="true" tabindex="-1"></a>            <span class="cf">end</span></span>
-<span id="cb14-55"><a href="#cb14-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-56"><a href="#cb14-56" aria-hidden="true" tabindex="-1"></a>            <span class="fu">Dict</span>(cl <span class="op">=&gt;</span> true_number)</span>
-<span id="cb14-57"><a href="#cb14-57" aria-hidden="true" tabindex="-1"></a>        <span class="cf">end</span></span>
-<span id="cb14-58"><a href="#cb14-58" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb14-59"><a href="#cb14-59" aria-hidden="true" tabindex="-1"></a>    cluster_dict <span class="op">=</span> <span class="fu">merge</span>(cluster_dict<span class="op">...</span>)</span>
-<span id="cb14-60"><a href="#cb14-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-61"><a href="#cb14-61" aria-hidden="true" tabindex="-1"></a>    final_clusters <span class="op">=</span> <span class="fu">replace</span>(clusters, cluster_dict<span class="op">...</span>)</span>
-<span id="cb14-62"><a href="#cb14-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-63"><a href="#cb14-63" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> final_clusters, births_and_deaths</span>
-<span id="cb14-64"><a href="#cb14-64" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb14-65"><a href="#cb14-65" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-</section>
-<section id="datasets" class="level2" data-number="5.2">
-<h2 data-number="5.2" class="anchored" data-anchor-id="datasets"><span class="header-section-number">5.2</span> Datasets</h2>
+<section id="datasets" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="datasets"><span class="header-section-number">5.1</span> Datasets</h2>
 <p>The datasets are taken from <span class="citation" data-cites="data5010013">(<a href="references.html#ref-data5010013" role="doc-biblioref">Ultsch and Lötsch 2020</a>)</span></p>
 
 
@@ -791,8 +572,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./persistence.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Persistent homology</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./tomato.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">ToMATo</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

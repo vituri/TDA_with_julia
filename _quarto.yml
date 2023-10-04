@@ -31,6 +31,12 @@ book:
     - part: "Data Analysis"
       chapters: 
       - clustering.qmd
+    - part: Topological Data Analysis
+      chapters:
+      - tomato.qmd
+      - mapper.qmd
+      - ballmapper.qmd
+      - mapper-general.qmd
       - persistence.qmd
     - part: "Case studies"
       chapters: 

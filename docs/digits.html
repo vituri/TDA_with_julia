@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Topological Data Analysis with Julia - 6&nbsp; Classifying hand-written digits</title>
+<title>Topological Data Analysis with Julia - 11&nbsp; Classifying hand-written digits</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -76,11 +76,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
-  "location": "navbar",
+  "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
-  "panel-placement": "end",
-  "type": "overlay",
+  "panel-placement": "start",
+  "type": "textbox",
   "limit": 20,
   "language": {
     "search-no-results-text": "No results",
@@ -105,74 +105,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="style.css">
 </head>
 
-<body class="nav-sidebar floating nav-fixed">
+<body class="nav-sidebar floating">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
-      <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
-    <a class="navbar-brand" href="./index.html">
-    <span class="navbar-title">Topological Data Analysis with Julia</span>
-    </a>
-  </div>
-            <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-  <span class="navbar-toggler-icon"></span>
-</button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
-  <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/vituri/TDA_with_julia" rel="" target=""><i class="bi bi-github" role="img" aria-label="GitHub">
-</i> 
- <span class="menu-text"></span></a>
-  </li>  
-</ul>
-            <div class="quarto-navbar-tools">
-    <div class="dropdown">
-      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download"><i class="bi bi-download"></i></a>
-      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="quarto-navigation-tool-dropdown-0">
-          <li>
-            <a class="dropdown-item quarto-navbar-tools-item" href="./Topological-Data-Analysis-with-Julia.pdf">
-              <i class="bi bi-bi-file-pdf pe-1"></i>
-            Download PDF
-            </a>
-          </li>
-          <li>
-            <a class="dropdown-item quarto-navbar-tools-item" href="./Topological-Data-Analysis-with-Julia.epub">
-              <i class="bi bi-bi-journal pe-1"></i>
-            Download ePub
-            </a>
-          </li>
-      </ul>
-    </div>
-    <div class="dropdown">
-      <a href="" title="Share" id="quarto-navigation-tool-dropdown-1" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Share"><i class="bi bi-share"></i></a>
-      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="quarto-navigation-tool-dropdown-1">
-          <li>
-            <a class="dropdown-item quarto-navbar-tools-item" href="https://twitter.com/intent/tweet?url=|url|">
-              <i class="bi bi-bi-twitter pe-1"></i>
-            Twitter
-            </a>
-          </li>
-          <li>
-            <a class="dropdown-item quarto-navbar-tools-item" href="https://www.linkedin.com/sharing/share-offsite/?url=|url|">
-              <i class="bi bi-bi-linkedin pe-1"></i>
-            LinkedIn
-            </a>
-          </li>
-      </ul>
-    </div>
-</div>
-          </div> <!-- /navcollapse -->
-      </div> <!-- /container-fluid -->
-    </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./digits.html">Case studies</a></li><li class="breadcrumb-item"><a href="./digits.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Classifying hand-written digits</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./digits.html">Case studies</a></li><li class="breadcrumb-item"><a href="./digits.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Classifying hand-written digits</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -182,9 +124,39 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Topological Data Analysis with Julia</a> 
+        <div class="sidebar-tools-main tools-wide">
+    <a href="https://github.com/vituri/TDA_with_julia" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <div class="dropdown">
+      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download"><i class="bi bi-download"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="./Topological-Data-Analysis-with-Julia.pdf">
+              <i class="bi bi-bi-file-pdf pe-1"></i>
+            Download PDF
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="./Topological-Data-Analysis-with-Julia.epub">
+              <i class="bi bi-bi-journal pe-1"></i>
+            Download ePub
+            </a>
+          </li>
+      </ul>
+    </div>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
         <div class="sidebar-search">
         <div id="quarto-search" class="" title="Search"></div>
@@ -207,7 +179,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
- <span class="menu-text">Classical topology (or: topology without data nor analysis)</span></a>
+ <span class="menu-text">Topology</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -236,7 +208,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
- <span class="menu-text">Topological data analysis (or: topology meets reality)</span></a>
+ <span class="menu-text">Data Analysis</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -244,8 +216,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./persistence.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Persistent homology</span></span></a>
+  <a href="./clustering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Clustering</span></span></a>
   </div>
 </li>
       </ul>
@@ -253,7 +225,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
- <span class="menu-text">Case studies</span></a>
+ <span class="menu-text">Topological Data Analysis</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -261,8 +233,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./digits.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Classifying hand-written digits</span></span></a>
+  <a href="./tomato.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">ToMATo</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mapper.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">(Classical) mapper</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ballmapper.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Ball mapper</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mapper-general.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./persistence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Persistent homology</span></span></a>
   </div>
 </li>
       </ul>
@@ -270,12 +266,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
- <span class="menu-text">Closing</span></a>
+ <span class="menu-text">Case studies</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./digits.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Classifying hand-written digits</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+ <span class="menu-text">Closing</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./references.html" class="sidebar-item-text sidebar-link">
@@ -294,30 +307,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#loading-packages" id="toc-loading-packages" class="nav-link active" data-scroll-target="#loading-packages"><span class="header-section-number">6.1</span> Loading packages</a></li>
-  <li><a href="#the-dataset" id="toc-the-dataset" class="nav-link" data-scroll-target="#the-dataset"><span class="header-section-number">6.2</span> The dataset</a></li>
-  <li><a href="#preparing-for-war" id="toc-preparing-for-war" class="nav-link" data-scroll-target="#preparing-for-war"><span class="header-section-number">6.3</span> Preparing for war</a>
+  <li><a href="#loading-packages" id="toc-loading-packages" class="nav-link active" data-scroll-target="#loading-packages"><span class="header-section-number">11.1</span> Loading packages</a></li>
+  <li><a href="#the-dataset" id="toc-the-dataset" class="nav-link" data-scroll-target="#the-dataset"><span class="header-section-number">11.2</span> The dataset</a></li>
+  <li><a href="#preparing-for-war" id="toc-preparing-for-war" class="nav-link" data-scroll-target="#preparing-for-war"><span class="header-section-number">11.3</span> Preparing for war</a>
   <ul class="collapse">
-  <li><a href="#from-square-matrices-to-points-in-the-plane" id="toc-from-square-matrices-to-points-in-the-plane" class="nav-link" data-scroll-target="#from-square-matrices-to-points-in-the-plane"><span class="header-section-number">6.3.1</span> From square matrices to points in the plane</a></li>
-  <li><a href="#excentricity" id="toc-excentricity" class="nav-link" data-scroll-target="#excentricity"><span class="header-section-number">6.3.2</span> Excentricity</a></li>
-  <li><a href="#persistence-images" id="toc-persistence-images" class="nav-link" data-scroll-target="#persistence-images"><span class="header-section-number">6.3.3</span> Persistence images</a></li>
+  <li><a href="#from-square-matrices-to-points-in-the-plane" id="toc-from-square-matrices-to-points-in-the-plane" class="nav-link" data-scroll-target="#from-square-matrices-to-points-in-the-plane"><span class="header-section-number">11.3.1</span> From square matrices to points in the plane</a></li>
+  <li><a href="#excentricity" id="toc-excentricity" class="nav-link" data-scroll-target="#excentricity"><span class="header-section-number">11.3.2</span> Excentricity</a></li>
+  <li><a href="#persistence-images" id="toc-persistence-images" class="nav-link" data-scroll-target="#persistence-images"><span class="header-section-number">11.3.3</span> Persistence images</a></li>
   </ul></li>
-  <li><a href="#fitting-a-model" id="toc-fitting-a-model" class="nav-link" data-scroll-target="#fitting-a-model"><span class="header-section-number">6.4</span> Fitting a model</a>
+  <li><a href="#fitting-a-model" id="toc-fitting-a-model" class="nav-link" data-scroll-target="#fitting-a-model"><span class="header-section-number">11.4</span> Fitting a model</a>
   <ul class="collapse">
-  <li><a href="#the-perils-of-isometric-spaces" id="toc-the-perils-of-isometric-spaces" class="nav-link" data-scroll-target="#the-perils-of-isometric-spaces"><span class="header-section-number">6.4.1</span> The perils of isometric spaces</a></li>
+  <li><a href="#the-perils-of-isometric-spaces" id="toc-the-perils-of-isometric-spaces" class="nav-link" data-scroll-target="#the-perils-of-isometric-spaces"><span class="header-section-number">11.4.1</span> The perils of isometric spaces</a></li>
   </ul></li>
-  <li><a href="#learning-from-your-mistakes" id="toc-learning-from-your-mistakes" class="nav-link" data-scroll-target="#learning-from-your-mistakes"><span class="header-section-number">6.5</span> Learning from your mistakes</a></li>
-  <li><a href="#getting-new-data" id="toc-getting-new-data" class="nav-link" data-scroll-target="#getting-new-data"><span class="header-section-number">6.6</span> Getting new data</a></li>
-  <li><a href="#closing-remarks" id="toc-closing-remarks" class="nav-link" data-scroll-target="#closing-remarks"><span class="header-section-number">6.7</span> Closing remarks</a></li>
+  <li><a href="#learning-from-your-mistakes" id="toc-learning-from-your-mistakes" class="nav-link" data-scroll-target="#learning-from-your-mistakes"><span class="header-section-number">11.5</span> Learning from your mistakes</a></li>
+  <li><a href="#getting-new-data" id="toc-getting-new-data" class="nav-link" data-scroll-target="#getting-new-data"><span class="header-section-number">11.6</span> Getting new data</a></li>
+  <li><a href="#closing-remarks" id="toc-closing-remarks" class="nav-link" data-scroll-target="#closing-remarks"><span class="header-section-number">11.7</span> Closing remarks</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content column-body" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Classifying hand-written digits</span></h1>
+<h1 class="title"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Classifying hand-written digits</span></h1>
 </div>
 
 
@@ -337,8 +350,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 — Alfred de Musset, in “The confession of a child of the century”</p>
 </blockquote>
 <p>In this tutorial, we will try to classify hand-written digits using the tools seen in previous chapters.</p>
-<section id="loading-packages" class="level2" data-number="6.1">
-<h2 data-number="6.1" class="anchored" data-anchor-id="loading-packages"><span class="header-section-number">6.1</span> Loading packages</h2>
+<section id="loading-packages" class="level2" data-number="11.1">
+<h2 data-number="11.1" class="anchored" data-anchor-id="loading-packages"><span class="header-section-number">11.1</span> Loading packages</h2>
 <div class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> <span class="bu">MLDatasets</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Images</span>, <span class="bu">Makie</span>, <span class="bu">CairoMakie</span></span>
@@ -350,8 +363,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Flux</span>, <span class="bu">ProgressMeter</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="the-dataset" class="level2" data-number="6.2">
-<h2 data-number="6.2" class="anchored" data-anchor-id="the-dataset"><span class="header-section-number">6.2</span> The dataset</h2>
+<section id="the-dataset" class="level2" data-number="11.2">
+<h2 data-number="11.2" class="anchored" data-anchor-id="the-dataset"><span class="header-section-number">11.2</span> The dataset</h2>
 <p>MNIST is a dataset consisting of 70.000 hand-written digits. Each digit is a 28x28 grayscale image, that is: a 28x28 matrix of values from 0 to 1. To get this dataset, run</p>
 <div class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>n_train <span class="op">=</span> <span class="fl">10_000</span></span>
@@ -408,8 +421,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="preparing-for-war" class="level2" data-number="6.3">
-<h2 data-number="6.3" class="anchored" data-anchor-id="preparing-for-war"><span class="header-section-number">6.3</span> Preparing for war</h2>
+<section id="preparing-for-war" class="level2" data-number="11.3">
+<h2 data-number="11.3" class="anchored" data-anchor-id="preparing-for-war"><span class="header-section-number">11.3</span> Preparing for war</h2>
 <p>What topological tools can be useful to distinguish between different digits?</p>
 <p>Persistence homology with Vietoris-Rips filtration won’t be of much help: all digits are connected, so the 0-persistence is useless; for the 1-dimensional persistence,</p>
 <ul>
@@ -419,8 +432,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>8 contains two holes.</li>
 </ul>
 <p>What if we starting chopping the digits with sublevels of some functions? The <em>excentricity</em> function is able to highlight edges. Doing a sublevel filtration with the excentricity function will permit us to separate digits by the amount of edges they have. So 1 and 3 and 7, for example, will have different persistence diagrams.</p>
-<section id="from-square-matrices-to-points-in-the-plane" class="level3" data-number="6.3.1">
-<h3 data-number="6.3.1" class="anchored" data-anchor-id="from-square-matrices-to-points-in-the-plane"><span class="header-section-number">6.3.1</span> From square matrices to points in the plane</h3>
+<section id="from-square-matrices-to-points-in-the-plane" class="level3" data-number="11.3.1">
+<h3 data-number="11.3.1" class="anchored" data-anchor-id="from-square-matrices-to-points-in-the-plane"><span class="header-section-number">11.3.1</span> From square matrices to points in the plane</h3>
 <p>In order to calculate the excentricity, we need to convert the “image digits” (28x28 matrices) to points in <span class="math inline">\(\mathbb{R}^2\)</span> (matrices with 2 columns, one for each dimension, which we will call <em>pointclouds</em>). A simple function can do that:</p>
 <div class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">img_to_points</span>(img, threshold <span class="op">=</span> <span class="fl">0.3</span>)</span>
@@ -458,8 +471,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="excentricity" class="level3" data-number="6.3.2">
-<h3 data-number="6.3.2" class="anchored" data-anchor-id="excentricity"><span class="header-section-number">6.3.2</span> Excentricity</h3>
+<section id="excentricity" class="level3" data-number="11.3.2">
+<h3 data-number="11.3.2" class="anchored" data-anchor-id="excentricity"><span class="header-section-number">11.3.2</span> Excentricity</h3>
 <p>Getting into details: the <em>excentricity</em> of a metric space <span class="math inline">\((X, d)\)</span> is a measure of how far a point is from the “center”. It is defined as follows for each <span class="math inline">\(x \in X\)</span>:</p>
 <p><span class="math display">\[
 e(x) = \sum_{y \in X} \frac{d(x, y)}{N}
@@ -496,8 +509,8 @@ e(x) = \sum_{y \in X} \frac{d(x, y)}{N}
 </div>
 <p>Looks good! Time to chop it.</p>
 </section>
-<section id="persistence-images" class="level3" data-number="6.3.3">
-<h3 data-number="6.3.3" class="anchored" data-anchor-id="persistence-images"><span class="header-section-number">6.3.3</span> Persistence images</h3>
+<section id="persistence-images" class="level3" data-number="11.3.3">
+<h3 data-number="11.3.3" class="anchored" data-anchor-id="persistence-images"><span class="header-section-number">11.3.3</span> Persistence images</h3>
 <p>Now we calculate all the persistence diagrams using sublevel filtration. This can take some seconds. Julia is incredibly fast, but does not perform miracles (yet!).</p>
 <div class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>pds <span class="op">=</span> <span class="fu">map</span>(excs) <span class="cf">do</span> ex</span>
@@ -919,8 +932,8 @@ EgMe+wJKDDjiBJQY8P/2BZQYsDsHlBiYYyauKTHwP/BB51mxeNTxAAAAAElFTkSuQmCC
 </div>
 </section>
 </section>
-<section id="fitting-a-model" class="level2" data-number="6.4">
-<h2 data-number="6.4" class="anchored" data-anchor-id="fitting-a-model"><span class="header-section-number">6.4</span> Fitting a model</h2>
+<section id="fitting-a-model" class="level2" data-number="11.4">
+<h2 data-number="11.4" class="anchored" data-anchor-id="fitting-a-model"><span class="header-section-number">11.4</span> Fitting a model</h2>
 <p>In order to use these persistence images in a machine learning model, we first need to vectorize them, ie, transform them into a vector. Machine learning models love vectors! The easist way is to just concatenate the persistence images as follows:</p>
 <div class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">concatenate_pds</span>(imgs_0, pds_0, imgs_1, pds_1)</span>
@@ -1074,8 +1087,8 @@ Dim1 ╲ Dim2 │    0     1     2     3     4     5     6     7     8     9
 └─────────┴────────────┴────────────┘</code></pre>
 </div>
 </div>
-<section id="the-perils-of-isometric-spaces" class="level3" data-number="6.4.1">
-<h3 data-number="6.4.1" class="anchored" data-anchor-id="the-perils-of-isometric-spaces"><span class="header-section-number">6.4.1</span> The perils of isometric spaces</h3>
+<section id="the-perils-of-isometric-spaces" class="level3" data-number="11.4.1">
+<h3 data-number="11.4.1" class="anchored" data-anchor-id="the-perils-of-isometric-spaces"><span class="header-section-number">11.4.1</span> The perils of isometric spaces</h3>
 <p>How to separate “6” and “9”? They are isometric! For some people, “2” and “5” are also isometric (just mirror on the x-axis). Functions that only “see” the metric (like the excentricity) will never be able to separate these digits. In digits, the position of the features is important, so let’s add more slicing filtrations to our arsenal.</p>
 <p>To avoid writing all the above code-blocks again, we encapsulate the whole process into a function</p>
 <div class="cell" data-execution_count="31">
@@ -1203,8 +1216,8 @@ Dim1 ╲ Dim2 │    0     1     2     3     4     5     6     7     8     9
 </div>
 </section>
 </section>
-<section id="learning-from-your-mistakes" class="level2" data-number="6.5">
-<h2 data-number="6.5" class="anchored" data-anchor-id="learning-from-your-mistakes"><span class="header-section-number">6.5</span> Learning from your mistakes</h2>
+<section id="learning-from-your-mistakes" class="level2" data-number="11.5">
+<h2 data-number="11.5" class="anchored" data-anchor-id="learning-from-your-mistakes"><span class="header-section-number">11.5</span> Learning from your mistakes</h2>
 <p>Let’s explore a bit where the model is making mistakes. Collect all the errors</p>
 <div class="cell" data-execution_count="38">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>errors <span class="op">=</span> <span class="fu">findall</span>(pred_y <span class="op">.!=</span> y);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1254,8 +1267,8 @@ Dim1 ╲ Dim2 │    0     1     2     3     4     5     6     7     8     9
 </div>
 <p>Many of these digits are really ugly! This makes them hard to classify with our sublevel filtrations. Some other functions could be explored.</p>
 </section>
-<section id="getting-new-data" class="level2" data-number="6.6">
-<h2 data-number="6.6" class="anchored" data-anchor-id="getting-new-data"><span class="header-section-number">6.6</span> Getting new data</h2>
+<section id="getting-new-data" class="level2" data-number="11.6">
+<h2 data-number="11.6" class="anchored" data-anchor-id="getting-new-data"><span class="header-section-number">11.6</span> Getting new data</h2>
 <p>Now we want to see if our model really learned something, or if it just repeated what he saw in the training data. To check data, we need to get new data and calculate the accuracy of the same model on this new data.</p>
 <div class="cell" data-execution_count="43">
 <div class="sourceCode cell-code" id="cb50"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>n_test <span class="op">=</span> <span class="fl">5_000</span></span>
@@ -1319,8 +1332,8 @@ Dim1 ╲ Dim2 │    0     1     2     3     4     5     6     7     8     9
 </div>
 </div>
 </section>
-<section id="closing-remarks" class="level2" data-number="6.7">
-<h2 data-number="6.7" class="anchored" data-anchor-id="closing-remarks"><span class="header-section-number">6.7</span> Closing remarks</h2>
+<section id="closing-remarks" class="level2" data-number="11.7">
+<h2 data-number="11.7" class="anchored" data-anchor-id="closing-remarks"><span class="header-section-number">11.7</span> Closing remarks</h2>
 <p>Even though we used heavy machinery from topology, at the end our persistence images were vectors that indicated the birth and death of edges. Apart from that, the only machine learning algorithm we used was a <a href="https://en.wikipedia.org/wiki/Artificial_neural_network">simple dense neural network</a> to fit these vectors to the correct labels in a non-linear way. State-of-art machine learning models on the MNIST dataset usually can <a href="https://paperswithcode.com/sota/image-classification-on-mnist">get more than 99% of accuracy</a>, but they use some <a href="https://en.wikipedia.org/wiki/Convolutional_neural_network">complicated neural networks</a> with many layers, and the output prediction are <a href="https://en.wikipedia.org/wiki/Black_box">hard to explain</a>. These methods, however, are not excludent of each other: we can use the persistence images (and any other vectorized output from TDA) together with other algorithms.</p>
 <p>A curious exercise to the reader is to check if a neural network with two parallel inputs - one for the digits images, followed by convolutional layers - other for the vector of persistence images, followed by dense layers can achieve a better result than the convolutional alone.</p>
 
@@ -1561,10 +1574,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<nav class="page-navigation">
+<nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
       <a href="./persistence.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Persistent homology</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Persistent homology</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
