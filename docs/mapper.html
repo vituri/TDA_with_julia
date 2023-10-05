@@ -304,12 +304,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#some-theory" id="toc-some-theory" class="nav-link active" data-scroll-target="#some-theory"><span class="header-section-number">7.1</span> Some theory</a>
+  <li><a href="#reeb-graph" id="toc-reeb-graph" class="nav-link active" data-scroll-target="#reeb-graph"><span class="header-section-number">7.1</span> Reeb graph</a>
   <ul class="collapse">
-  <li><a href="#reeb-graph" id="toc-reeb-graph" class="nav-link" data-scroll-target="#reeb-graph"><span class="header-section-number">7.1.1</span> Reeb graph</a></li>
-  <li><a href="#the-classical-mapper" id="toc-the-classical-mapper" class="nav-link" data-scroll-target="#the-classical-mapper"><span class="header-section-number">7.1.2</span> The (classical) mapper</a></li>
+  <li><a href="#the-classical-mapper" id="toc-the-classical-mapper" class="nav-link" data-scroll-target="#the-classical-mapper"><span class="header-section-number">7.1.1</span> The (classical) mapper</a></li>
   </ul></li>
-  <li><a href="#less-theory-more-julia" id="toc-less-theory-more-julia" class="nav-link" data-scroll-target="#less-theory-more-julia"><span class="header-section-number">7.2</span> Less theory, more Julia!</a></li>
+  <li><a href="#an-example-in-julia" id="toc-an-example-in-julia" class="nav-link" data-scroll-target="#an-example-in-julia"><span class="header-section-number">7.2</span> An example in Julia</a></li>
   </ul>
 </nav>
     </div>
@@ -333,26 +332,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<section id="some-theory" class="level2" data-number="7.1">
-<h2 data-number="7.1" class="anchored" data-anchor-id="some-theory"><span class="header-section-number">7.1</span> Some theory</h2>
-<section id="reeb-graph" class="level3" data-number="7.1.1">
-<h3 data-number="7.1.1" class="anchored" data-anchor-id="reeb-graph"><span class="header-section-number">7.1.1</span> Reeb graph</h3>
-<p>In topology, there are many ways by which we try to see what can’t be seen, in particular high-dimensional sets. The <a href="https://en.wikipedia.org/wiki/Reeb_graph">Reeb graph</a> is one of those ways: given a topological space <span class="math inline">\(X\)</span> and a continuous function <span class="math inline">\(f: X \to \mathbb{R}\)</span>, we can collapse the connected components of its pre-images to get a graph that reflects the level-sets of <span class="math inline">\(f\)</span>.</p>
+<section id="reeb-graph" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="reeb-graph"><span class="header-section-number">7.1</span> Reeb graph</h2>
+<p>In topology, there are many ways by which we try to see what can’t be seen, in particular high-dimensional sets. The <a href="https://en.wikipedia.org/wiki/Reeb_graph">Reeb graph</a> is one of those ways: given a topological space <span class="math inline">\(X\)</span> and a map <span class="math inline">\(f: X \to \mathbb{R}\)</span>, we can collapse the connected components of its pre-images to get a graph that reflects the level-sets of <span class="math inline">\(f\)</span>.</p>
 <p>More formally, we define a relation <span class="math inline">\(\sim\)</span> on <span class="math inline">\(X\)</span> such that <span class="math inline">\(p \sim q\)</span> if-and-only-if <span class="math inline">\(p\)</span> and <span class="math inline">\(q\)</span> belong to the same connected component of <span class="math inline">\(f^{-1}(c)\)</span> for some <span class="math inline">\(c \in \mathbb{R}\)</span>.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/reeb.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">The Reeb graph of a torus using the projection on the z-axis.</figcaption>
+<figcaption class="figure-caption">The Reeb graph of a torus using the projection on the z-axis. Source: Wikipedia<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></figcaption>
 </figure>
 </div>
-</section>
-<section id="the-classical-mapper" class="level3" data-number="7.1.2">
-<h3 data-number="7.1.2" class="anchored" data-anchor-id="the-classical-mapper"><span class="header-section-number">7.1.2</span> The (classical) mapper</h3>
+<section id="the-classical-mapper" class="level3" data-number="7.1.1">
+<h3 data-number="7.1.1" class="anchored" data-anchor-id="the-classical-mapper"><span class="header-section-number">7.1.1</span> The (classical) mapper</h3>
 <p>The (classical) mapper is an algorithm to create <a href="https://en.wikipedia.org/wiki/Graph_theory">graphs</a> from <a href="https://en.wikipedia.org/wiki/Metric_space">metric spaces</a>, and can be seen as an “statistical” version of the Reeb graph.</p>
 <p>To be able to mimick the Reeb graph, we need to change some objects from the continuous setting to the discrete setting:</p>
 <ul>
 <li><span class="math inline">\(X = (X, d)\)</span> is now a finite metric space, also called a <em>point cloud</em>;</li>
-<li><span class="math inline">\(f: X \to \mathbb{R}\)</span> can be any function (since <span class="math inline">\(X\)</span> is discrete, <span class="math inline">\(f\)</span> is automatically continuous);</li>
+<li><span class="math inline">\(f: X \to \mathbb{R}\)</span> can be any function (since <span class="math inline">\(X\)</span> is discrete, <span class="math inline">\(f\)</span> is always continuous);</li>
 <li>instead of inverse images of <em>points</em> of <span class="math inline">\(\mathbb{R}\)</span>, we calculate inverse images of <em>subsets</em> of <span class="math inline">\(\mathbb{R}\)</span> (usually intervals);</li>
 <li>instead of connected components (which are trivial in the discrete setting), we use some clustering algorithm (DBSCAN, single linkage, etc.) and consider these clusterings as “connected pieces of <span class="math inline">\(X\)</span>”.</li>
 </ul>
@@ -380,8 +376,8 @@ V = \{ l(p); \; p = f^{-1}(c) \; \text{for} \; c \in C\}
 <p>In words, we have an edge between <span class="math inline">\(v_1\)</span> and <span class="math inline">\(v_2\)</span> if there is some point in both <span class="math inline">\(v_1\)</span> and <span class="math inline">\(v_2\)</span> at the same time.</p>
 </section>
 </section>
-<section id="less-theory-more-julia" class="level2" data-number="7.2">
-<h2 data-number="7.2" class="anchored" data-anchor-id="less-theory-more-julia"><span class="header-section-number">7.2</span> Less theory, more Julia!</h2>
+<section id="an-example-in-julia" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="an-example-in-julia"><span class="header-section-number">7.2</span> An example in Julia</h2>
 <p>Let’s import some packages:</p>
 <div class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">TDAmapper;</span></span>
@@ -392,9 +388,9 @@ V = \{ l(p); \; p = f^{-1}(c) \; \text{for} \; c \in C\}
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> gd.<span class="fu">torus</span>(<span class="fl">2000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <pre><code>3×2000 Matrix{Float64}:
- -1.47279   -0.713709   2.37068   …  -0.20223    2.57742    2.30574
-  2.71141    3.80782   -3.09023      -3.03162   -2.5925    -0.666437
- -0.996331  -0.485686  -0.446418      0.999264  -0.755023   0.800092</code></pre>
+ 3.31687   3.01965   2.86135   -1.18996   …  2.52688    3.98365     0.271879
+ 1.99244   2.03354  -1.65949   -2.14445      0.570201  -0.360719    2.33906
+ 0.494297  0.76792   0.951466   0.836795     0.912271   0.00970037  0.764024</code></pre>
 </div>
 </div>
 <p><strong>Important</strong>: when using TDAmapper, your point cloud must be in column-major order. That is: each point of <span class="math inline">\(X\)</span> must be a column of <code>X</code>, not a row (as is usual with dataframes). This is so because <a href="https://github.com/JuliaStats/Distances.jl">Distances.jl</a>, <a href="https://github.com/KristofferC/NearestNeighbors.jl">NearestNeighbors.jl</a>, <a href="https://github.com/JuliaStats/Clustering.jl">Clustering.jl</a> and many other packages for calculations with metric spaces use the column-major order for performance reasons.</p>
@@ -421,11 +417,11 @@ V = \{ l(p); \; p = f^{-1}(c) \; \text{for} \; c \in C\}
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>C[<span class="fl">1</span><span class="op">:</span><span class="fl">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="7">
 <pre><code>5-element Vector{Interval}:
- Interval(-4.706857f0, -3.708342f0)
- Interval(-4.136277f0, -3.1377618f0)
- Interval(-3.565697f0, -2.5671818f0)
- Interval(-2.995117f0, -1.9966017f0)
- Interval(-2.4245367f0, -1.4260216f0)</code></pre>
+ Interval(-4.7024693f0, -3.7038724f0)
+ Interval(-4.1318426f0, -3.1332457f0)
+ Interval(-3.5612159f0, -2.562619f0)
+ Interval(-2.9905891f0, -1.9919922f0)
+ Interval(-2.4199622f0, -1.4213654f0)</code></pre>
 </div>
 </div>
 <p>For the clustering algorithm we choose the DBSCAN with radius 1:</p>
@@ -436,7 +432,7 @@ V = \{ l(p); \; p = f^{-1}(c) \; \text{for} \; c \in C\}
 <div class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># the mapper function needs:</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># X</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># the values of f(X)</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># fv, the values of f(X)</span></span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># the covering C</span></span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># the clustering function</span></span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>mp <span class="op">=</span> <span class="fu">mapper</span>(X, fv, C; clustering <span class="op">=</span> clustering)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -455,6 +451,12 @@ V = \{ l(p); \; p = f^{-1}(c) \; \text{for} \; c \in C\}
 <p>Compare it with the Reeb graph from the start. If this isn’t nice, what is?</p>
 
 
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>https://commons.wikimedia.org/wiki/File:3D-Leveltorus-Reebgraph.png<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
 </section>
 
 </main> <!-- /main -->

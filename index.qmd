@@ -7,14 +7,16 @@ Welcome!
 
 This is the first draft of **"Topological data analysis with Julia"**.
 
-The secret knowledge of Topological Data Analysis (TDA, for short) is spread in hundreds of papers and a few books. None, however, gives a consistent treatment of theory and examples with code. Code is essential to transform theory into real data analysis.
+The secret knowledge of Topological Data Analysis (TDA, for short) is spread in hundreds of papers and a few books. None, however, gives a consistent treatment of topology, data analysis and examples with code. Code is essential to transform theory into real data analysis.
 
 This book tries to fill this gap. In it, we will outline the main methods used to analyse data with topology, and try to give some non-trivial examples. Besides, it is a healthy way I found to practice Julia and study TDA again.
 
-The readers who are afraid of Mathematics are urged to at least understand the intuitive notions of the definitions and results presented here. This is why I will give many informal descriptions of the ideas and objects before formalising them. Keep in mind, however, that Mathematics is the language that best describes abstractions and the use of logic, and **you only can learn a language by using it**.
+The readers who are afraid of Mathematics are urged to at least understand the intuitive notions of the definitions and results presented here. This is why I will give many informal descriptions of the ideas and objects before formalising them. Keep in mind, however, that Mathematics is the language that best describes abstractions and the use of logic, and **you only can learn a language by using it**. For those who love math, I hope the "intuitive notions" won't seem too boring.
 
-This book will teach the basics of topology needed to understand TDA, and in the examples will give some directions on data analysis; but unfortunately we will not teach you Julia. For that, there are many excellent resources. See, for example:
+This book will teach the basics of topology and data analysis needed to understand TDA; unfortunately, **we will not teach you Julia** directly. For that, there are many excellent resources. See, for example:
 
 - [Think Julia](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html)
 - [Julia for Optimization and Learning](https://juliateachingctu.github.io/Julia-for-Optimization-and-Learning/dev/)
 - [Data Science in Julia for Hackers](https://datasciencejuliahackers.com/)
+
+You can, however, learn something from the code examples and modify them to your needs.

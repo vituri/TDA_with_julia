@@ -1,3 +1,7 @@
 # Simplicial homology
 
-Introduzir homologia como modo de contar buracos. Ideia intuitiva, depois formalização 
+> Her thoughts were theorems, her words a problem, \
+> As if she deem'd that mystery would ennoble 'em. \
+> --- Lord Byron, in "Don Juan"
+
+homology as a tool to count holes; describe the algebra intuitively, formalise later

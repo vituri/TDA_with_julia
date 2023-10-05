@@ -400,14 +400,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <p>To do that, we need to define a notion of “neighborhood” in this dataset. The easiest way is to define a graph whose vertex set is <span class="math inline">\(X\)</span> and edges connect neighbor points. Fortunately, the <code>ToMATo</code> package has a function that does exactly that. You are welcome!</p>
 <div class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> <span class="fu">proximity_graph</span>(X, <span class="fl">0.2</span>, max_k_ball <span class="op">=</span> <span class="fl">4</span>, k_nn <span class="op">=</span> <span class="fl">3</span>, min_k_ball <span class="op">=</span> <span class="fl">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> <span class="fu">proximity_graph</span>(X, <span class="fl">0.2</span>, max_k_ball <span class="op">=</span> <span class="fl">6</span>, k_nn <span class="op">=</span> <span class="fl">3</span>, min_k_ball <span class="op">=</span> <span class="fl">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
-<pre><code>{1700, 4755} undirected simple Int64 graph</code></pre>
+<pre><code>{1700, 6154} undirected simple Int64 graph</code></pre>
 </div>
 </div>
 <p>The graph <span class="math inline">\(g\)</span> above is constructed as follows: given <span class="math inline">\(x \in X\)</span>, we create a ball with radius <span class="math inline">\(0.2\)</span> around <span class="math inline">\(X\)</span> and do the following:</p>
 <ul>
-<li>Are there less than 2 points in the ball? If yes, then we connect <span class="math inline">\(x\)</span> to its 2 closest points; if no, we connect <span class="math inline">\(x\)</span> to its 6 (at maximum) closest points in the ball. In short: if the ball has not the amount of points we stipulated, then we use knn search.</li>
+<li>Are there less than 3 points in the ball? If yes, then we connect <span class="math inline">\(x\)</span> to its 3 closest points; if no, we connect <span class="math inline">\(x\)</span> to its 6 (at maximum) closest points in the ball. In short: if the ball has not the amount of points we stipulated, then we use knn search.</li>
 </ul>
 <p>These numbers obviously are arbitrary and can be changed at will.</p>
 <p>Let’s see the result of our algorithm:</p>
@@ -429,9 +429,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="the-comedy-of-errors" class="level2" data-number="6.3">
 <h2 data-number="6.3" class="anchored" data-anchor-id="the-comedy-of-errors"><span class="header-section-number">6.3</span> The Comedy of Errors</h2>
 <p>This <del>tragedy</del> happened because we did not take into account the “false peaks”: peaks that are just a little bump and not a real peak. To merge these small-peaks into the big ones, we need to add the following step:</p>
-<p>Let <span class="math inline">\(\tau\)</span> be a number that denotes how small a bump must be to be merged (we will show how to calculate <span class="math inline">\(\tau\)</span> below). Given <span class="math inline">\(x \in X\)</span>, let <span class="math inline">\(N\)</span> be the set of its neighbors higher than <span class="math inline">\(x\)</span>. Denote by <span class="math inline">\(x_max\)</span> the highest point in <span class="math inline">\(N\)</span>, and <span class="math inline">\(c_max\)</span> its cluster. Now, for each <span class="math inline">\(y \in N\)</span>, ask the following:</p>
+<p>Let <span class="math inline">\(\tau\)</span> be a number that denotes how small a bump must be to be merged (we will show how to calculate <span class="math inline">\(\tau\)</span> below). Given <span class="math inline">\(x \in X\)</span>, let <span class="math inline">\(N\)</span> be the set of its neighbors higher than <span class="math inline">\(x\)</span>. Denote by <span class="math inline">\(x_{max}\)</span> the highest point in <span class="math inline">\(N\)</span>, and <span class="math inline">\(c_max\)</span> its cluster. Now, for each <span class="math inline">\(y \in N\)</span>, ask the following:</p>
 <ul>
-<li>Is the difference of heights of <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> less than <span class="math inline">\(\tau\)</span>? If yes, we merge the cluster of <span class="math inline">\(y\)</span> with the cluster of <span class="math inline">\(x_max\)</span>. Otherwise, do nothing.</li>
+<li>Is the difference of heights of <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> less than <span class="math inline">\(\tau\)</span>? If yes, we merge the cluster of <span class="math inline">\(y\)</span> with the cluster of <span class="math inline">\(x_{max}\)</span>. Otherwise, do nothing.</li>
 </ul>
 <div class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>τ <span class="op">=</span> <span class="fl">0.02</span></span>

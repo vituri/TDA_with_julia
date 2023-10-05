@@ -11,7 +11,7 @@ In this chapter we will define topological spaces and some of its properties, th
 
 A topological space can be thought of as a set with little "scales" called *open sets*. Each of these open sets represent the notion of local *continuity* or *connectivity* that we sense when we look at an object: the feeling that it is just "one single piece of a thing", like the scales in a fish. We can stretch these scales, but can't rip them apart. In a sense, topological spaces are elastic. Because of that, there is an old joke that a topologist can't distinguish between a cup and a donut.
 
-![A continuous transformation of a cup to a donut. A true topologist will try to bite all these cups. Source: Wikipedia.^[https://commons.wikimedia.org/wiki/File:Topology_joke.jpg]](images/Topology_joke.jpg){width=100%}
+![A continuous transformation of a cup to a donut. A true topologist will try to bite all these cups. Source: Wikipedia.^[https://commons.wikimedia.org/wiki/File:Topology_joke.jpg]](images/Topology_joke.jpg){width=100% #fig-topology_joke}
 
 More formally,
 
@@ -65,15 +65,26 @@ We learn in Calculus that a function $f: \mathbb{R} \to \mathbb{R}$ is *continuo
 
 ![An example of a discontinuous function. Source: byjus.com^[https://byjus.com/maths/discontinuity/]](images/discontinuous.png)
 
-We notice that no matter how close to 3 we choose some $x \in \mathbb{R}$, its image $f(x)$ will end up being far away from $f(3)$. A bit more precisely, there is a small interval around $f(3)$, say $(f(3) - \epsilon, f(3) + \epsilon)$, such that no matter how small we chose an interval around $3$, say $(3 - \delta, 3 + \delta)$ we will have that 
+We notice that no matter how close to 3 we choose some $x \in \mathbb{R}$, its image $f(x)$ will end up being far away from $f(3)$. A bit more precisely, there is a small interval around $f(3)$, say 
+$$
+(f(3) - \epsilon, f(3) + \epsilon),
+$$ 
+
+such that no matter how small we chose an interval around $3$, say 
+
+$$
+(3 - \delta, 3 + \delta),
+$$
+
+ we will have that 
 
 $$
 f(x) \notin (f(3) - \epsilon, f(3) + \epsilon), \; \text{for some } x \in (3 - \delta, 3 + \delta).
 $$
 
-!!![checar se faz sentido] This is equivalent to the fact that the inverse image of $(f(3) - \epsilon, f(3) + \epsilon)$ is *not* an open set: if it were an open set, we could always "walk a little" on this interval, and still be sent by $f$ to $(f(3) - \epsilon, f(3) + \epsilon)$.
+This is equivalent to the fact that the inverse image of $(f(3) - \epsilon, f(3) + \epsilon)$ is *not* an open set containing 3: if it were an open set, we could always "walk a little" on this interval and still be sent by $f$ to $(f(3) - \epsilon, f(3) + \epsilon)$.
 
-Inspired by that, we define the following in the much more general context of topological spaces:
+Now that we understood what is a *discontinuous* function, we define the following in the much more general context of topological spaces:
 
 :::{#def-}
 Given two topological spaces $(X, \tau)$ and $(Y, \sigma)$, a function $f: X \to Y$ is said to be *continuous* if the inverse image of any open set of $Y$ is also an open set of $X$. In symbols:
@@ -104,5 +115,51 @@ A topological space is completely define by a set $X$ and its open sets $\tau$. 
 Renaming points is just a informally way to say "bijection of sets". So, two topological spaces $X$ and $Y$ are "the same thing, topologically speaking" if there is a bijection $f: X \to Y$ such that $U \subseteq X$ is open if and only if $f(X) \subseteq Y$ is open. More precisely,
 
 :::{#def-}
-We say that two topological spaces $X$ and $Y$ are *homeomorphic* if there exists a continuous bijection $f: X \to Y$ such that $f^{-1}$ is also continuous. In this case, $f$ is called an *homeomorphism*.
+We say that two topological spaces $X$ and $Y$ are *homeomorphic*, and denote it by $X \approx Y$, if there exists a continuous bijection $f: X \to Y$ such that $f^{-1}$ is also continuous. In this case, $f$ is called an *homeomorphism*.
 :::
+
+Two spaces are homeomorphic, then, if it is possible to deform one into another; this deformation include stretching and twisting, but never "gluing" points together (because of the bijection) and neither tearing them apart (because of the continuity). Note that the relation $\approx$ is 
+
+- simmetric: $X \approx X$;
+- reflexive: $X \approx Y$ implies $Y \approx X$; 
+- transitive: $X \approx Y$ and $Y \approx Z$ implies $X \approx Z$.
+
+:::{#exm-}
+The real line $\mathbb{R}$ is homeomorphic to a single interval $(a, b)$.
+
+**Proof**: First, note that $(a, b)$ is homeomorphic to $I = (- \pi / 2, \pi / 2)$. Consider then the map $\tan: I \to \mathbb{R}$, the tangent. Then $\tan$ is continuous, bijective and its inverse $\tan^{-1}$ is also continuous. Therefore, 
+$$
+(a, b) \approx I \approx \mathbb{R}.
+$$
+:::
+
+## The opposite of sameness
+
+All the topological spaces of figure @fig-topology_joke are homeomorphic to each other. To show that, it is enough to exhibit a homeomorphism between them. But how can we prove that two spaces are *not* homeomorphic? How can we show that it is impossible to stretch and twist and rotate one object into another? There are can be infinite maps from one space to another! 
+
+Proving that spaces are homeomorphic (or not) is one of the central problems in topology, and many complex tools where created to solve it. Let's see below one general idea to solve it.
+
+Let $X$ and $Y$ be two spaces. We suspect that they are not homeomorphic; to confirm our suspicion, suppose they are homeomorphic and let's arrive at an absurd. So let $f: X \to Y$ be an homeomorphism. If we have some kind of "simplification map" $H$ that transform $X$ into a much simpler object $H(X)$ (and equivalently $Y$ into $H(Y)$), and, moreover, transform the map 
+
+$$
+f: X \to Y
+$$
+
+into a map between these new objects
+
+$$
+H(f): H(X) \to H(Y)
+$$
+
+then we can start looking for some paradox in these new and much simpler objects. 
+
+Let's be even more optimistic: suppose that $H$ is so well-behaved that $f$ is transformed into an isomorphism^[ie. $H(f)$ will have the same notion of "sameness" in this context as homeomorphisms have in the context of topological spaces. So if $H(X)$ is a vector space and $H(f)$ is a linear transformation, then it is also an isomorphism of vector spaces; if $H(X)$ is a group and $H(f)$ is a homomorphism, then it is also an isomorphism of groups, and so on]. It is enough, then, to prove that $H(X)$ is not isomorphic to $H(Y)$. We could simplify even more and demand that $H(X)$ is just a number, and $H(f)$ is an equality; then 
+$$
+H(X) \text{\; different from\; } H(Y) \Rightarrow \text{$X$ and $Y$ are not homeomorphic}.
+$$
+
+This transformation of "topological spaces + maps" to "things + maps between things" is called a *functor*. We are starting to dip our toes into the mathematical field called **category theory**, which is a kind of meta-mathematics.
+
+## Category theory??????????
+
+??????????????????????????

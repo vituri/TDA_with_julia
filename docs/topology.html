@@ -273,6 +273,8 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#what-is-topology" id="toc-what-is-topology" class="nav-link active" data-scroll-target="#what-is-topology"><span class="header-section-number">2.1</span> What is topology?</a></li>
   <li><a href="#continuity" id="toc-continuity" class="nav-link" data-scroll-target="#continuity"><span class="header-section-number">2.2</span> Continuity</a></li>
   <li><a href="#the-notion-of-sameness-in-topology" id="toc-the-notion-of-sameness-in-topology" class="nav-link" data-scroll-target="#the-notion-of-sameness-in-topology"><span class="header-section-number">2.3</span> The notion of “sameness” in topology</a></li>
+  <li><a href="#the-opposite-of-sameness" id="toc-the-opposite-of-sameness" class="nav-link" data-scroll-target="#the-opposite-of-sameness"><span class="header-section-number">2.4</span> The opposite of sameness</a></li>
+  <li><a href="#category-theory" id="toc-category-theory" class="nav-link" data-scroll-target="#category-theory"><span class="header-section-number">2.5</span> Category theory??????????</a></li>
   </ul>
 </nav>
     </div>
@@ -305,10 +307,10 @@ ul.task-list li input[type="checkbox"] {
 <h2 data-number="2.1" class="anchored" data-anchor-id="what-is-topology"><span class="header-section-number">2.1</span> What is topology?</h2>
 <p><a href="https://en.wikipedia.org/wiki/Topology">Topology</a> is the study of topological spaces and its properties. Unfortunately, this is not enough to close this chapter.</p>
 <p>A topological space can be thought of as a set with little “scales” called <em>open sets</em>. Each of these open sets represent the notion of local <em>continuity</em> or <em>connectivity</em> that we sense when we look at an object: the feeling that it is just “one single piece of a thing”, like the scales in a fish. We can stretch these scales, but can’t rip them apart. In a sense, topological spaces are elastic. Because of that, there is an old joke that a topologist can’t distinguish between a cup and a donut.</p>
-<div class="quarto-figure quarto-figure-center">
+<div id="fig-topology_joke" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="images/Topology_joke.jpg" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">A continuous transformation of a cup to a donut. A true topologist will try to bite all these cups. Source: Wikipedia.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></figcaption>
+<figcaption class="figure-caption">Figure&nbsp;2.1: A continuous transformation of a cup to a donut. A true topologist will try to bite all these cups. Source: Wikipedia.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></figcaption>
 </figure>
 </div>
 <p>More formally,</p>
@@ -353,12 +355,19 @@ P(X) = \{ U \; | \; U \subseteq X \}.
 <figcaption class="figure-caption">An example of a discontinuous function. Source: byjus.com<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></figcaption>
 </figure>
 </div>
-<p>We notice that no matter how close to 3 we choose some <span class="math inline">\(x \in \mathbb{R}\)</span>, its image <span class="math inline">\(f(x)\)</span> will end up being far away from <span class="math inline">\(f(3)\)</span>. A bit more precisely, there is a small interval around <span class="math inline">\(f(3)\)</span>, say <span class="math inline">\((f(3) - \epsilon, f(3) + \epsilon)\)</span>, such that no matter how small we chose an interval around <span class="math inline">\(3\)</span>, say <span class="math inline">\((3 - \delta, 3 + \delta)\)</span> we will have that</p>
+<p>We notice that no matter how close to 3 we choose some <span class="math inline">\(x \in \mathbb{R}\)</span>, its image <span class="math inline">\(f(x)\)</span> will end up being far away from <span class="math inline">\(f(3)\)</span>. A bit more precisely, there is a small interval around <span class="math inline">\(f(3)\)</span>, say <span class="math display">\[
+(f(3) - \epsilon, f(3) + \epsilon),
+\]</span></p>
+<p>such that no matter how small we chose an interval around <span class="math inline">\(3\)</span>, say</p>
+<p><span class="math display">\[
+(3 - \delta, 3 + \delta),
+\]</span></p>
+<p>we will have that</p>
 <p><span class="math display">\[
 f(x) \notin (f(3) - \epsilon, f(3) + \epsilon), \; \text{for some } x \in (3 - \delta, 3 + \delta).
 \]</span></p>
-<p>!![checar se faz sentido] This is equivalent to the fact that the inverse image of <span class="math inline">\((f(3) - \epsilon, f(3) + \epsilon)\)</span> is <em>not</em> an open set: if it were an open set, we could always “walk a little” on this interval, and still be sent by <span class="math inline">\(f\)</span> to <span class="math inline">\((f(3) - \epsilon, f(3) + \epsilon)\)</span>.</p>
-<p>Inspired by that, we define the following in the much more general context of topological spaces:</p>
+<p>This is equivalent to the fact that the inverse image of <span class="math inline">\((f(3) - \epsilon, f(3) + \epsilon)\)</span> is <em>not</em> an open set containing 3: if it were an open set, we could always “walk a little” on this interval and still be sent by <span class="math inline">\(f\)</span> to <span class="math inline">\((f(3) - \epsilon, f(3) + \epsilon)\)</span>.</p>
+<p>Now that we understood what is a <em>discontinuous</em> function, we define the following in the much more general context of topological spaces:</p>
 <div id="def-" class="theorem definition">
 <p><span class="theorem-title"><strong>Definition 2.4 </strong></span>Given two topological spaces <span class="math inline">\((X, \tau)\)</span> and <span class="math inline">\((Y, \sigma)\)</span>, a function <span class="math inline">\(f: X \to Y\)</span> is said to be <em>continuous</em> if the inverse image of any open set of <span class="math inline">\(Y\)</span> is also an open set of <span class="math inline">\(X\)</span>. In symbols:</p>
 <p><span class="math display">\[
@@ -379,8 +388,42 @@ f(x) \notin (f(3) - \epsilon, f(3) + \epsilon), \; \text{for some } x \in (3 - \
 <p>A topological space is completely define by a set <span class="math inline">\(X\)</span> and its open sets <span class="math inline">\(\tau\)</span>. If we just “rename” the elements of <span class="math inline">\(X\)</span>, then it is intuitive that this new topological space is as similar to <span class="math inline">\(X\)</span> as possible; in fact, they are indistinguishable from each other: every topological property (ie: properties related to open sets) that the first has, the second also has.</p>
 <p>Renaming points is just a informally way to say “bijection of sets”. So, two topological spaces <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are “the same thing, topologically speaking” if there is a bijection <span class="math inline">\(f: X \to Y\)</span> such that <span class="math inline">\(U \subseteq X\)</span> is open if and only if <span class="math inline">\(f(X) \subseteq Y\)</span> is open. More precisely,</p>
 <div id="def-" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 2.5 </strong></span>We say that two topological spaces <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are <em>homeomorphic</em> if there exists a continuous bijection <span class="math inline">\(f: X \to Y\)</span> such that <span class="math inline">\(f^{-1}\)</span> is also continuous. In this case, <span class="math inline">\(f\)</span> is called an <em>homeomorphism</em>.</p>
+<p><span class="theorem-title"><strong>Definition 2.5 </strong></span>We say that two topological spaces <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are <em>homeomorphic</em>, and denote it by <span class="math inline">\(X \approx Y\)</span>, if there exists a continuous bijection <span class="math inline">\(f: X \to Y\)</span> such that <span class="math inline">\(f^{-1}\)</span> is also continuous. In this case, <span class="math inline">\(f\)</span> is called an <em>homeomorphism</em>.</p>
 </div>
+<p>Two spaces are homeomorphic, then, if it is possible to deform one into another; this deformation include stretching and twisting, but never “gluing” points together (because of the bijection) and neither tearing them apart (because of the continuity). Note that the relation <span class="math inline">\(\approx\)</span> is</p>
+<ul>
+<li>simmetric: <span class="math inline">\(X \approx X\)</span>;</li>
+<li>reflexive: <span class="math inline">\(X \approx Y\)</span> implies <span class="math inline">\(Y \approx X\)</span>;</li>
+<li>transitive: <span class="math inline">\(X \approx Y\)</span> and <span class="math inline">\(Y \approx Z\)</span> implies <span class="math inline">\(X \approx Z\)</span>.</li>
+</ul>
+<div id="exm-" class="theorem example">
+<p><span class="theorem-title"><strong>Example 2.2 </strong></span>The real line <span class="math inline">\(\mathbb{R}\)</span> is homeomorphic to a single interval <span class="math inline">\((a, b)\)</span>.</p>
+<p><strong>Proof</strong>: First, note that <span class="math inline">\((a, b)\)</span> is homeomorphic to <span class="math inline">\(I = (- \pi / 2, \pi / 2)\)</span>. Consider then the map <span class="math inline">\(\tan: I \to \mathbb{R}\)</span>, the tangent. Then <span class="math inline">\(\tan\)</span> is continuous, bijective and its inverse <span class="math inline">\(\tan^{-1}\)</span> is also continuous. Therefore, <span class="math display">\[
+(a, b) \approx I \approx \mathbb{R}.
+\]</span></p>
+</div>
+</section>
+<section id="the-opposite-of-sameness" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="the-opposite-of-sameness"><span class="header-section-number">2.4</span> The opposite of sameness</h2>
+<p>All the topological spaces of figure <a href="#fig-topology_joke">Figure&nbsp;<span>2.1</span></a> are homeomorphic to each other. To show that, it is enough to exhibit a homeomorphism between them. But how can we prove that two spaces are <em>not</em> homeomorphic? How can we show that it is impossible to stretch and twist and rotate one object into another? There are can be infinite maps from one space to another!</p>
+<p>Proving that spaces are homeomorphic (or not) is one of the central problems in topology, and many complex tools where created to solve it. Let’s see below one general idea to solve it.</p>
+<p>Let <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> be two spaces. We suspect that they are not homeomorphic; to confirm our suspicion, suppose they are homeomorphic and let’s arrive at an absurd. So let <span class="math inline">\(f: X \to Y\)</span> be an homeomorphism. If we have some kind of “simplification map” <span class="math inline">\(H\)</span> that transform <span class="math inline">\(X\)</span> into a much simpler object <span class="math inline">\(H(X)\)</span> (and equivalently <span class="math inline">\(Y\)</span> into <span class="math inline">\(H(Y)\)</span>), and, moreover, transform the map</p>
+<p><span class="math display">\[
+f: X \to Y
+\]</span></p>
+<p>into a map between these new objects</p>
+<p><span class="math display">\[
+H(f): H(X) \to H(Y)
+\]</span></p>
+<p>then we can start looking for some paradox in these new and much simpler objects.</p>
+<p>Let’s be even more optimistic: suppose that <span class="math inline">\(H\)</span> is so well-behaved that <span class="math inline">\(f\)</span> is transformed into an isomorphism<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>. It is enough, then, to prove that <span class="math inline">\(H(X)\)</span> is not isomorphic to <span class="math inline">\(H(Y)\)</span>. We could simplify even more and demand that <span class="math inline">\(H(X)\)</span> is just a number, and <span class="math inline">\(H(f)\)</span> is an equality; then <span class="math display">\[
+H(X) \text{\; different from\; } H(Y) \Rightarrow \text{$X$ and $Y$ are not homeomorphic}.
+\]</span></p>
+<p>This transformation of “topological spaces + maps” to “things + maps between things” is called a <em>functor</em>. We are starting to dip our toes into the mathematical field called <strong>category theory</strong>, which is a kind of meta-mathematics.</p>
+</section>
+<section id="category-theory" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="category-theory"><span class="header-section-number">2.5</span> Category theory??????????</h2>
+<p>??????????????????????????</p>
 
 
 </section>
@@ -390,6 +433,7 @@ f(x) \notin (f(3) - \epsilon, f(3) + \epsilon), \; \text{for some } x \in (3 - \
 <li id="fn1"><p>https://commons.wikimedia.org/wiki/File:Topology_joke.jpg<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn2"><p>I just invented this. Maybe some of them really got crazy, who knows?<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn3"><p>https://byjus.com/maths/discontinuity/<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>ie. <span class="math inline">\(H(f)\)</span> will have the same notion of “sameness” in this context as homeomorphisms have in the context of topological spaces. So if <span class="math inline">\(H(X)\)</span> is a vector space and <span class="math inline">\(H(f)\)</span> is a linear transformation, then it is also an isomorphism of vector spaces; if <span class="math inline">\(H(X)\)</span> is a group and <span class="math inline">\(H(f)\)</span> is a homomorphism, then it is also an isomorphism of groups, and so on<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 

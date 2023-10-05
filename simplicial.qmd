@@ -1,5 +1,11 @@
 # Simplicial complexes
 
-> "Perfection does not exist; to comprehend it is the triumph of human intelligence; to desire to possess it, the most dangerous of follies." \
+> "> Are you a man, Octave? Do you see the leaves falling from the trees, the sun rising and setting? Do you hear the ticking of the horologe of time with each pulsation of your heart? Is there, then, such a difference between the love of a year and the love of an hour? I challenge you to answer that, you fool, as you sit there looking out at the infinite through a window not larger than your hand." \
 > --- Alfred de Musset, in "The confession of a child of the century"
+
+from infinite to finite
+
+abstract simplicial complexes as approximation of other objects
+
+standard embedding
 
