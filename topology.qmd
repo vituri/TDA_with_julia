@@ -153,13 +153,10 @@ $$
 
 then we can start looking for some paradox in these new and much simpler objects. 
 
-Let's be even more optimistic: suppose that $H$ is so well-behaved that $f$ is transformed into an isomorphism^[ie. $H(f)$ will have the same notion of "sameness" in this context as homeomorphisms have in the context of topological spaces. So if $H(X)$ is a vector space and $H(f)$ is a linear transformation, then it is also an isomorphism of vector spaces; if $H(X)$ is a group and $H(f)$ is a homomorphism, then it is also an isomorphism of groups, and so on]. It is enough, then, to prove that $H(X)$ is not isomorphic to $H(Y)$. We could simplify even more and demand that $H(X)$ is just a number, and $H(f)$ is an equality; then 
+Let's be even more optimistic: suppose that $H$ is so well-behaved that $f$ is transformed into an isomorphism^[ie. $H(f)$ will have the same notion of "sameness" in this context as homeomorphisms have in the context of topological spaces. So if $H(X)$ is a vector space and $H(f)$ is a linear transformation, then it is also an isomorphism of vector spaces; if $H(X)$ is a group and $H(f)$ is a homomorphism, then it is also an isomorphism of groups, and so on]. It is enough, then, to prove that $H(X)$ is not isomorphic to $H(Y)$. We could simplify even more and demand that $H(X)$ is just a number, and $H(f)$ is an equality; then
+
 $$
 H(X) \text{\; different from\; } H(Y) \Rightarrow \text{$X$ and $Y$ are not homeomorphic}.
 $$
 
-This transformation of "topological spaces + maps" to "things + maps between things" is called a *functor*. We are starting to dip our toes into the mathematical field called **category theory**, which is a kind of meta-mathematics.
-
-## Category theory??????????
-
-??????????????????????????
+This transformation of "topological spaces + maps" to "things + maps between things" is called a *functor*. We are starting to dip our toes into the mathematical field called **category theory**, which is a kind of meta-mathematics. We will see more about functors in the chapter about homology.

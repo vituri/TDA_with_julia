@@ -54,6 +54,8 @@ format:
     code-link: true
     page-layout: full
     max-width: 90vw
+    preview-links: true
+    
   pdf:
     documentclass: scrreprt
 

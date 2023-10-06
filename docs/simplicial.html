@@ -62,6 +62,8 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <link rel="stylesheet" href="style.css">
 </head>
@@ -263,11 +265,22 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-infinite-through-a-window" id="toc-the-infinite-through-a-window" class="nav-link active" data-scroll-target="#the-infinite-through-a-window"><span class="header-section-number">3.1</span> The infinite through a window</a></li>
+  <li><a href="#graphs" id="toc-graphs" class="nav-link" data-scroll-target="#graphs"><span class="header-section-number">3.2</span> Graphs</a>
+  <ul class="collapse">
+  <li><a href="#the-essence-of-a-circle" id="toc-the-essence-of-a-circle" class="nav-link" data-scroll-target="#the-essence-of-a-circle"><span class="header-section-number">3.2.1</span> The essence of a circle</a></li>
+  </ul></li>
+  <li><a href="#simplicial-complexes" id="toc-simplicial-complexes" class="nav-link" data-scroll-target="#simplicial-complexes"><span class="header-section-number">3.3</span> Simplicial complexes</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page-right" id="quarto-document-content">
+<main class="content column-body" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -287,14 +300,103 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 <blockquote class="blockquote">
-<p>“&gt; Are you a man, Octave? Do you see the leaves falling from the trees, the sun rising and setting? Do you hear the ticking of the horologe of time with each pulsation of your heart? Is there, then, such a difference between the love of a year and the love of an hour? I challenge you to answer that, you fool, as you sit there looking out at the infinite through a window not larger than your hand.”<br>
+<p>“Are you a man, Octave? Do you see the leaves falling from the trees, the sun rising and setting? Do you hear the ticking of the horologe of time with each pulsation of your heart? Is there, then, such a difference between the love of a year and the love of an hour? I challenge you to answer that, you fool, as you sit there looking out at the infinite through a window not larger than your hand.”<br>
 — Alfred de Musset, in “The confession of a child of the century”</p>
 </blockquote>
-<p>from infinite to finite</p>
-<p>abstract simplicial complexes as approximation of other objects</p>
-<p>standard embedding</p>
+<section id="the-infinite-through-a-window" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="the-infinite-through-a-window"><span class="header-section-number">3.1</span> The infinite through a window</h2>
+<p>Topological spaces are nice, but all the interesting ones have an infinite amount of points: torus, circle, the real line, mobius band, projective plane, and so on. Topology usually is not interested in finite sets because their standard topology is trivial: just take every point as an open set.</p>
+<p>We, as humans, can’t really grasp the infinite. Our universe is finite, and so ir our mind. To think about the infinite, we need to use finite “tricks”. Take, for example, the way we prove something is valid for all the infinite natural numbers, a principle called <a href="https://en.wikipedia.org/wiki/Mathematical_induction">finite induction</a>:</p>
+<ul>
+<li>first prove that a certain property <span class="math inline">\(P\)</span> is true for 1;</li>
+<li>then, prove that if it is valid for <span class="math inline">\(n\)</span>, then it is also valid for <span class="math inline">\(n+1\)</span>.</li>
+</ul>
+<p>Peano <a href="https://en.wikipedia.org/wiki/Peano_axioms">needed an axiom</a> to guarantee that these 2 conditions are enough to prove that <span class="math inline">\(P\)</span> is valid for all <span class="math inline">\(\mathbb{N}\)</span>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/Dominoeffect.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">The finite induction principle can be tought of as a domino falling and pushing the next piece. But with infinite domino pieces and infinite patience. Source: Wikipedia<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></figcaption>
+</figure>
+</div>
+<p>As another example, when studying linear algebra we see the concept of <a href="https://en.wikipedia.org/wiki/Basis_(linear_algebra)">basis</a> of a vector space <span class="math inline">\(V\)</span>. With basis, we can describe exactly any point <span class="math inline">\(v \in V\)</span> using a finite combination of its base elements, say <span class="math inline">\(v = \lambda_1 e_1 + \ldots \lambda_n e_n\)</span>. The infinite amount of points in <span class="math inline">\(V\)</span> can then be written as sums of finite objects that we can map mentally.</p>
+<p>Finding a finite representation of a mathematical object is often desired, and with topological spaces it was not different.</p>
+</section>
+<section id="graphs" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="graphs"><span class="header-section-number">3.2</span> Graphs</h2>
+<p>Graphs were created by Euler in 1736 because he wanted to visit Königsberg but was too lazy<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> to walk around like a normal person, and then tried to <a href="https://en.wikipedia.org/wiki/Seven_Bridges_of_K%C3%B6nigsberg">cross all its bridges just one time</a>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/sc-bridge.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Can you walk through the city crossing each of those bridges once and only once? Spoiler: no, you can’t. Stop trying! Source: Wikipedia<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></figcaption>
+</figure>
+</div>
+<p>We can abstract away this map with its bridges and just think about the bridges and the portions of land:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/sc-bridges2.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">The map of Königsberg if the city was a green carpet. Source: Wikipedia<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></figcaption>
+</figure>
+</div>
+<p>Euler did even better! He needed just two things to represent this object:</p>
+<ul>
+<li>points: the portions of the cities;</li>
+<li>edges: bridges that connect two points.</li>
+</ul>
+<p>The result is the following:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/sc-bridges3.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">A graph representing the original problem. Source: Wikipedia<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></figcaption>
+</figure>
+</div>
+<p>Oops, Euler just invented <a href="https://en.wikipedia.org/wiki/Graph_(discrete_mathematics)">graphs</a>!</p>
+<p>Formally,</p>
+<div id="def-graphs" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 3.1 </strong></span>A <em>directed graph</em> is a pair <span class="math inline">\(G = (V, E)\)</span> where <span class="math inline">\(V\)</span> is a set called <em>vertices</em> and <span class="math inline">\(E \subseteq V \times V\)</span> is a set of <em>edges</em> between the vertices. An element <span class="math inline">\((v, w) \in E\)</span> can also be represented as <span class="math inline">\(v \to w\)</span>.</p>
+<p>!!! falar sobre grafo indireto; usar {v, w} em vez de pares</p>
+</div>
+<p>He noticed that when you travel to a green point <span class="math inline">\(v\)</span>, you need to take another bridge to get out of <span class="math inline">\(v\)</span>. Thus, the number of edges need to be <em>even</em> for all the points we visit during the middle of our journey (excluding the beginning and the end). But all points in the above graph have an odd number of edges! Therefore, it is impossible to travel cross each bridge just once and still visit all the green points.</p>
+<p>Graphs can be used whenever we need to represent a set of objects and a pairwise relation between these objects.</p>
+<section id="the-essence-of-a-circle" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="the-essence-of-a-circle"><span class="header-section-number">3.2.1</span> The essence of a circle</h3>
+<p>What is a circle, really? The boring answer is “the set of points that dist <span class="math inline">\(r\)</span> of a point <span class="math inline">\(p\)</span>”. But in a topological view, a circle is just a 1-dimensional closed real interval with its extremities glued together, forming a hole inside.</p>
+<p>The following graph, when seen as a subset of <span class="math inline">\(\mathbb{R}^2\)</span> is homeomorphic to a circle:</p>
+<div id="fig-" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/sc-circle.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure&nbsp;3.1: A poorly drawn graph representing a circle.</figcaption>
+</figure>
+</div>
+<p>With this horrendous graph<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a> we can represent a circle in a finite way: three points <span class="math inline">\(a, b, c\)</span> and all possible edges: <span class="math inline">\(a \to b\)</span>, <span class="math inline">\(b \to c\)</span>, <span class="math inline">\(c \to a\)</span>.</p>
+</section>
+</section>
+<section id="simplicial-complexes" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="simplicial-complexes"><span class="header-section-number">3.3</span> Simplicial complexes</h2>
+<p>Why stop with vertices and edges? Edges are just pairs of edges. Why not take triples and quadruples and so on?</p>
+<p>Well, now you’ve reinvented <a href="https://en.wikipedia.org/wiki/Simplicial_complex">simplicial complexes</a>! Congratulations!</p>
+<div id="def-" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 3.2 </strong></span>A simplicial complex <span class="math inline">\(\Sigma\)</span> is a set of subsets of <span class="math inline">\(X\)</span> with the following property:</p>
+<ul>
+<li>for any <span class="math inline">\(\sigma \in \Sigma\)</span>, every subset of <span class="math inline">\(\sigma\)</span> (also called <em>a face</em> of <span class="math inline">\(\sigma\)</span>) is also in <span class="math inline">\(\Sigma\)</span>;</li>
+<li>given non-empty <span class="math inline">\(\sigma_1, \sigma_2 \in \Sigma\)</span>, the intersection <span class="math inline">\(\sigma_1 \cap \sigma_2\)</span> is also in <span class="math inline">\(\Sigma\)</span>.</li>
+</ul>
+</div>
+<p>!!!abstract simplicial complexes as approximation of other objects</p>
+<p>!!!standard embedding</p>
 
 
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>https://commons.wikimedia.org/wiki/File:Dominoeffect.png<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>The original text is in Latin, so I just invented this.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>https://en.wikipedia.org/wiki/File:Konigsberg_bridges.png<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>https://en.wikipedia.org/wiki/File:7_bridges.svg<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p><a href="">https://en.wikipedia.org/wiki/File:K%C3%B6nigsberg_graph.svg</a><a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>See <a href="">https://en.wikipedia.org/wiki/Monster_group</a> for more terror tales in mathematics.<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -530,7 +632,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<nav class="page-navigation column-page-right">
+<nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
       <a href="./topology.html" class="pagination-link">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Topology</span></span>
