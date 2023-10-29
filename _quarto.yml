@@ -38,9 +38,10 @@ book:
       - ballmapper.qmd
       - mapper-general.qmd
       - persistence.qmd
-    - part: "Case studies"
+    - part: "Applications"
       chapters: 
       - digits.qmd
+      - clustering_tomato.qmd
     - part: "Closing"
       chapters:
       - references.qmd

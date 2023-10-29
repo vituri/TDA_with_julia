@@ -54,7 +54,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -263,7 +282,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
- <span class="menu-text">Case studies</span></a>
+ <span class="menu-text">Applications</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -273,6 +292,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="sidebar-item-container"> 
   <a href="./digits.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Classifying hand-written digits</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./clustering_tomato.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Clustering with ToMATo</span></span></a>
   </div>
 </li>
       </ul>
@@ -309,10 +334,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#density" id="toc-density" class="nav-link" data-scroll-target="#density"><span class="header-section-number">6.1.1</span> Density</a></li>
   </ul></li>
   <li><a href="#climbing-mount-topology" id="toc-climbing-mount-topology" class="nav-link" data-scroll-target="#climbing-mount-topology"><span class="header-section-number">6.2</span> Climbing mount topology</a></li>
-  <li><a href="#the-comedy-of-errors" id="toc-the-comedy-of-errors" class="nav-link" data-scroll-target="#the-comedy-of-errors"><span class="header-section-number">6.3</span> The Comedy of Errors</a>
-  <ul class="collapse">
-  <li><a href="#the-formal-algorithm" id="toc-the-formal-algorithm" class="nav-link" data-scroll-target="#the-formal-algorithm"><span class="header-section-number">6.3.1</span> The formal algorithm</a></li>
-  </ul></li>
+  <li><a href="#the-comedy-of-errors" id="toc-the-comedy-of-errors" class="nav-link" data-scroll-target="#the-comedy-of-errors"><span class="header-section-number">6.3</span> The Comedy of Errors</a></li>
+  <li><a href="#the-original-algorithm" id="toc-the-original-algorithm" class="nav-link" data-scroll-target="#the-original-algorithm"><span class="header-section-number">6.4</span> The original algorithm</a></li>
+  <li><a href="#summing-up" id="toc-summing-up" class="nav-link" data-scroll-target="#summing-up"><span class="header-section-number">6.5</span> Summing up</a></li>
   </ul>
 </nav>
     </div>
@@ -337,33 +361,37 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 <p>Given a pointcloud <span class="math inline">\(X\)</span>, how topology can help us in creating clusters?</p>
-<p>Let’s understand the ToMATo algorithm with an example and pretend we are actually inventing it. How fun!</p>
+<p>Let’s understand the ToMATo algorithm (see the original paper <span class="citation" data-cites="tomato">(<a href="references.html#ref-tomato" role="doc-biblioref">Chazal et al. 2011</a>)</span>) with an example and pretend we are actually inventing it. How fun!</p>
 <section id="inspiration" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="inspiration"><span class="header-section-number">6.1</span> Inspiration</h2>
 <p>Let’s load some packages first</p>
-<div class="cell" data-execution_count="1">
+<div class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">ToMATo</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> <span class="bu">GeometricDatasets </span>as gd</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">AlgebraOfGraphics</span>, </span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># CairoMakie, </span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="bu">GLMakie;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">AlgebraOfGraphics</span>, <span class="bu">GLMakie;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Random;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Suppose <span class="math inline">\(X\)</span> is the following dataset:</p>
-<div class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> <span class="fu">hcat</span>(<span class="fu">randn</span>(<span class="fl">2</span>, <span class="fl">800</span>), <span class="fu">randn</span>(<span class="fl">2</span>, <span class="fl">800</span>) <span class="op">.*</span> <span class="fl">0.8</span> <span class="op">.+</span> (<span class="fl">4</span>, <span class="op">-</span><span class="fl">4</span>), <span class="fu">randn</span>(<span class="fl">2</span>, <span class="fl">100</span>) <span class="op">.*</span> <span class="fl">0.3</span> <span class="op">.-</span> (<span class="fl">2</span>, <span class="op">-</span><span class="fl">2</span>))</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> (x1 <span class="op">=</span> X[<span class="fl">1</span>, <span class="op">:</span>], x2 <span class="op">=</span> X[<span class="fl">2</span>, <span class="op">:</span>])</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>plt <span class="op">=</span> <span class="fu">data</span>(df) <span class="op">*</span> <span class="fu">mapping</span>(<span class="op">:</span>x1, <span class="op">:</span>x2)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">draw</span>(plt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>seed <span class="op">=</span> <span class="fu">MersenneTwister</span>(<span class="fl">0</span>) <span class="co"># setting some seed </span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> <span class="fu">hcat</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">randn</span>(seed, <span class="fl">2</span>, <span class="fl">800</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    , <span class="fu">randn</span>(seed, <span class="fl">2</span>, <span class="fl">800</span>) <span class="op">.*</span> <span class="fl">0.8</span> <span class="op">.+</span> (<span class="fl">4</span>, <span class="op">-</span><span class="fl">4</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    , <span class="fu">randn</span>(seed, <span class="fl">2</span>, <span class="fl">100</span>) <span class="op">.*</span> <span class="fl">0.3</span> <span class="op">.-</span> (<span class="fl">2</span>, <span class="op">-</span><span class="fl">2</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> (x1 <span class="op">=</span> X[<span class="fl">1</span>, <span class="op">:</span>], x2 <span class="op">=</span> X[<span class="fl">2</span>, <span class="op">:</span>])</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>plt <span class="op">=</span> <span class="fu">data</span>(df) <span class="op">*</span> <span class="fu">mapping</span>(<span class="op">:</span>x1, <span class="op">:</span>x2)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">draw</span>(plt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <p><img src="tomato_files/figure-html/cell-3-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>We can see two big clusters and possibly a small one.</p>
-<p>Let’s make a note-so-absurd supposition that our data is generated by some normal distribuitions (in our case, it really is; in general this can be false). Then, intuitively, the mean of each distribution is the point with the highest density, ie, with more points close to it, because it is in the center of the distribution.</p>
+<p>Let’s make a note-so-absurd supposition that our data is generated by some normal distribuitions (in our case, it really is; in general this can be false). Then, intuitively, the mean (or the <em>center</em>) of each distribution is the point with the highest density, ie, with more points close to it, because it is in the mean of the distribution.</p>
 <section id="density" class="level3" data-number="6.1.1">
 <h3 data-number="6.1.1" class="anchored" data-anchor-id="density"><span class="header-section-number">6.1.1</span> Density</h3>
 <p>We can estimate the density of a dataset as follows</p>
-<div class="cell" data-execution_count="3">
+<div class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> gd.<span class="fu">density_estimation</span>(X, h <span class="op">=</span> <span class="fl">0.5</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> (x1 <span class="op">=</span> X[<span class="fl">1</span>, <span class="op">:</span>], x2 <span class="op">=</span> X[<span class="fl">2</span>, <span class="op">:</span>], ds <span class="op">=</span> ds)</span>
@@ -377,9 +405,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><span class="math display">\[
 \text{dens}(x) = \dfrac{1}{|X|} \cdot \sum_{y \in X} \text{exp} \left(-\dfrac{d(x, y)^2}{h^2} \right)
 \]</span></p>
-<p>where <span class="math inline">\(\text{exp}(x) = e^x\)</span>. Informally, we want that points close (ie. small distance) to many other points have a high density; this is way we calculate the distance from <span class="math inline">\(x\)</span> to <span class="math inline">\(y\)</span> and put it inside an exponential with a minus sign. We then calculate the mean of all these values.</p>
+<p>where <span class="math inline">\(\text{exp}(x) = e^x\)</span>. Informally, we want that points close (ie. small distance) to many other points have a high density; this is why we calculate the distance from <span class="math inline">\(x\)</span> to <span class="math inline">\(y\)</span> and put it inside an exponential with a minus sign. We then calculate the mean of all these values.</p>
 <p>Now we put this density estimation on another axis and plot it</p>
-<div class="cell" data-execution_count="4">
+<div class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>axis <span class="op">=</span> (<span class="kw">type</span> <span class="op">=</span> Axis3, width <span class="op">=</span> <span class="fl">800</span>, height <span class="op">=</span> <span class="fl">450</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> (x1 <span class="op">=</span> X[<span class="fl">1</span>, <span class="op">:</span>], x2 <span class="op">=</span> X[<span class="fl">2</span>, <span class="op">:</span>], ds <span class="op">=</span> ds)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>plt <span class="op">=</span> <span class="fu">data</span>(df) <span class="op">*</span> <span class="fu">mapping</span>(<span class="op">:</span>x1, <span class="op">:</span>x2, <span class="op">:</span>ds, color <span class="op">=</span> <span class="op">:</span>ds)</span>
@@ -388,30 +416,33 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="tomato_files/figure-html/cell-5-output-1.png" class="img-fluid"></p>
 </div>
 </div>
-<p>Good!</p>
+<p>Now we have mountains. Next, we will describe a sort of “mountain climbing” algorithm that will assign each point to its direct peak, like the path a point would take to climb the mountain in the fastest way.</p>
 </section>
 </section>
 <section id="climbing-mount-topology" class="level2" data-number="6.2">
 <h2 data-number="6.2" class="anchored" data-anchor-id="climbing-mount-topology"><span class="header-section-number">6.2</span> Climbing mount topology</h2>
 <p>The idea now is that given a point <span class="math inline">\(x\)</span>:</p>
 <ul>
-<li>if <span class="math inline">\(x\)</span> is the highest point in its corresponding mountain, then it is a new cluster;</li>
-<li>otherwise, we will we seek for the highest neighbor of <span class="math inline">\(x\)</span>, say <span class="math inline">\(x'\)</span> and say that the cluster of <span class="math inline">\(x\)</span> is the same of <span class="math inline">\(x'\)</span>.</li>
+<li><p>if <span class="math inline">\(x\)</span> is the highest point in its corresponding mountain, then it is a new cluster;</p></li>
+<li><p>otherwise, we will we seek for the highest neighbor of <span class="math inline">\(x\)</span>, say <span class="math inline">\(x'\)</span> and say that the cluster of <span class="math inline">\(x\)</span> is the same of <span class="math inline">\(x'\)</span>.</p></li>
 </ul>
 <p>To do that, we need to define a notion of “neighborhood” in this dataset. The easiest way is to define a graph whose vertex set is <span class="math inline">\(X\)</span> and edges connect neighbor points. Fortunately, the <code>ToMATo</code> package has a function that does exactly that. You are welcome!</p>
-<div class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> <span class="fu">proximity_graph</span>(X, <span class="fl">0.2</span>, max_k_ball <span class="op">=</span> <span class="fl">6</span>, k_nn <span class="op">=</span> <span class="fl">3</span>, min_k_ball <span class="op">=</span> <span class="fl">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> <span class="fu">proximity_graph</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    X</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    , <span class="fu">epsilon_ball_or_knn</span>(<span class="fl">0.5</span>, min_ball_points <span class="op">=</span> <span class="fl">4</span>, max_ball_points <span class="op">=</span> <span class="fl">6</span>, knn_points <span class="op">=</span> <span class="fl">3</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
-<pre><code>{1700, 6154} undirected simple Int64 graph</code></pre>
+<pre><code>{1700, 9139} undirected simple Int64 graph</code></pre>
 </div>
 </div>
 <p>The graph <span class="math inline">\(g\)</span> above is constructed as follows: given <span class="math inline">\(x \in X\)</span>, we create a ball with radius <span class="math inline">\(0.2\)</span> around <span class="math inline">\(X\)</span> and do the following:</p>
 <ul>
-<li>Are there less than 3 points in the ball? If yes, then we connect <span class="math inline">\(x\)</span> to its 3 closest points; if no, we connect <span class="math inline">\(x\)</span> to its 6 (at maximum) closest points in the ball. In short: if the ball has not the amount of points we stipulated, then we use knn search.</li>
+<li>Are there less than 4 points in the ball? If yes, then we connect <span class="math inline">\(x\)</span> to its 2 closest points; if no, we connect <span class="math inline">\(x\)</span> to its 6 (at maximum) closest points in the ball. In short: if the ball has not the amount of points we stipulated, then we use knn search.</li>
 </ul>
 <p>These numbers obviously are arbitrary and can be changed at will.</p>
 <p>Let’s see the result of our algorithm:</p>
-<div class="cell" data-execution_count="6">
+<div class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>X2 <span class="op">=</span> <span class="fu">vcat</span>(X, ds<span class="op">'</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>clusters, _ <span class="op">=</span> <span class="fu">tomato</span>(X, g, ds, <span class="fl">0</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>fig, ax, plt <span class="op">=</span> <span class="fu">graph_plot</span>(X2, g, clusters <span class="op">.|&gt;</span> string)</span>
@@ -429,11 +460,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="the-comedy-of-errors" class="level2" data-number="6.3">
 <h2 data-number="6.3" class="anchored" data-anchor-id="the-comedy-of-errors"><span class="header-section-number">6.3</span> The Comedy of Errors</h2>
 <p>This <del>tragedy</del> happened because we did not take into account the “false peaks”: peaks that are just a little bump and not a real peak. To merge these small-peaks into the big ones, we need to add the following step:</p>
-<p>Let <span class="math inline">\(\tau\)</span> be a number that denotes how small a bump must be to be merged (we will show how to calculate <span class="math inline">\(\tau\)</span> below). Given <span class="math inline">\(x \in X\)</span>, let <span class="math inline">\(N\)</span> be the set of its neighbors higher than <span class="math inline">\(x\)</span>. Denote by <span class="math inline">\(x_{max}\)</span> the highest point in <span class="math inline">\(N\)</span>, and <span class="math inline">\(c_max\)</span> its cluster. Now, for each <span class="math inline">\(y \in N\)</span>, ask the following:</p>
+<p>Let <span class="math inline">\(\tau\)</span> be a number that denotes how small (in height) a bump must be to be merged (we will show how to calculate <span class="math inline">\(\tau\)</span> below). Given <span class="math inline">\(x \in X\)</span>, let <span class="math inline">\(N\)</span> be the set of its neighbors higher than <span class="math inline">\(x\)</span>. Denote by <span class="math inline">\(x_{max}\)</span> the highest point in <span class="math inline">\(N\)</span>, and <span class="math inline">\(c_{max}\)</span> its cluster. Now, for each <span class="math inline">\(y \in N\)</span>, ask the following:</p>
 <ul>
-<li>Is the difference of heights of <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> less than <span class="math inline">\(\tau\)</span>? If yes, we merge the cluster of <span class="math inline">\(y\)</span> with the cluster of <span class="math inline">\(x_{max}\)</span>. Otherwise, do nothing.</li>
+<li>Is the difference of heights of <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> less than <span class="math inline">\(\tau\)</span>? If yes, we merge the cluster of <span class="math inline">\(y\)</span> with the cluster of <span class="math inline">\(x_{max}\)</span> (that is: <span class="math inline">\(c_{max}\)</span>). Otherwise, do nothing.</li>
 </ul>
-<div class="cell" data-execution_count="7">
+<div class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>τ <span class="op">=</span> <span class="fl">0.02</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>clusters, _ <span class="op">=</span> <span class="fu">tomato</span>(X, g, ds, τ, max_cluster_height <span class="op">=</span> τ)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -450,8 +481,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Now we got something!</p>
 <p>But how did we calculate this magic <span class="math inline">\(\tau\)</span>? Should we just go on guessing real numbers? I hope not!</p>
-<p>We usually run the ToMATo algorithm twice. The first time, we put <span class="math inline">\(\tau = \inf\)</span> and see how the montains of <span class="math inline">\(X\)</span> merged: we plot the time each one of these mountains survived.</p>
-<div class="cell" data-execution_count="8">
+<p>We usually run the ToMATo algorithm twice. The first time, we put <span class="math inline">\(\tau = \inf\)</span> and see how the montains of <span class="math inline">\(X\)</span> merged: we plot the amount of time that each one of these mountains survived.</p>
+<div class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>_, births_and_deaths <span class="op">=</span> <span class="fu">tomato</span>(X, g, ds, <span class="cn">Inf</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_births_and_deaths</span>(births_and_deaths)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="9">
@@ -459,7 +490,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>Choosing a bigger <span class="math inline">\(\tau\)</span> (say 0.04) will also merge the small clusters on the left</p>
-<div class="cell" data-execution_count="9">
+<div class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>τ <span class="op">=</span> <span class="fl">0.04</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>clusters, _ <span class="op">=</span> <span class="fu">tomato</span>(X, g, ds, τ, max_cluster_height <span class="op">=</span> τ)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -474,19 +505,37 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="tomato_files/figure-html/cell-10-output-2.png" class="img-fluid"></p>
 </div>
 </div>
-<p>At the end of the day you will still need to define how bigger a bump you can accept before merging it.</p>
-<section id="the-formal-algorithm" class="level3" data-number="6.3.1">
-<h3 data-number="6.3.1" class="anchored" data-anchor-id="the-formal-algorithm"><span class="header-section-number">6.3.1</span> The formal algorithm</h3>
+<p>At the end of the day you will still need to define how high a bump can be before merging it.</p>
+</section>
+<section id="the-original-algorithm" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="the-original-algorithm"><span class="header-section-number">6.4</span> The original algorithm</h2>
 <p>After all this talk, maybe the original algorithm can be better understood!</p>
+<p>Here is what we can read in <span class="citation" data-cites="tomato">(<a href="references.html#ref-tomato" role="doc-biblioref">Chazal et al. 2011</a>)</span>:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/tomato-algorithm.png" class="img-fluid figure-img"></p>
 <figcaption class="figure-caption">The original ToMATo algorithm. Here, <span class="math inline">\(G\)</span> is the proximity graph, <span class="math inline">\(\tilde{f}\)</span> is the density vector, <span class="math inline">\(\tau\)</span> is like above, <span class="math inline">\(\mathbfcal{N}\)</span> is the neighborhood of <span class="math inline">\(x\)</span> with points higher than <span class="math inline">\(x\)</span> (ie higher density), <span class="math inline">\(r\)</span> stores the cluster of each point</figcaption>
 </figure>
 </div>
-
-
 </section>
+<section id="summing-up" class="level2" data-number="6.5">
+<h2 data-number="6.5" class="anchored" data-anchor-id="summing-up"><span class="header-section-number">6.5</span> Summing up</h2>
+<p>The ToMATo algorithm needs the following ingredients:</p>
+<ul>
+<li>A metric space <span class="math inline">\(X\)</span>;</li>
+<li>A density function <span class="math inline">\(f\)</span>;</li>
+<li>A graph <span class="math inline">\(g\)</span> whose vertex set is <span class="math inline">\(X\)</span> and whose edges mean “these two points are neighbors”;</li>
+<li>A parameter <span class="math inline">\(\tau\)</span> (which can be calculated as above) that define how high a peak can be and be taken as a “false peak” which we can just merge in the biggest peak close to it.</li>
+</ul>
+<p>There are many natural choices for <span class="math inline">\(f\)</span>. The Gaussian density we used has a parameter <span class="math inline">\(h\)</span> that must be defined. Other nice choice is the <em>distance to measure</em> (as seen in <span class="citation" data-cites="tomato">(<a href="references.html#ref-tomato" role="doc-biblioref">Chazal et al. 2011</a>)</span>): it calculates the distance between <span class="math inline">\(x\)</span> and its <span class="math inline">\(n\)</span> nearest neighbors, where <span class="math inline">\(n\)</span> need to be defined.</p>
+<p>Choosing <span class="math inline">\(g\)</span> is tricky; which notion of “neighborhood of a point” in <span class="math inline">\(X\)</span> can you allow? In the example above I chose an method that tries to take points in an <span class="math inline">\(\epsilon\)</span>-ball and, in case there are too few, take then some of the nearest points.</p>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-tomato" class="csl-entry" role="listitem">
+Chazal, Frédéric, Leonidas Guibas, Steve Oudot, and Primoz Skraba. 2011. <span>“Persistence-Based Clustering in Riemannian Manifolds.”</span> <em>Journal of the ACM</em> 60 (June). <a href="https://doi.org/10.1145/1998196.1998212">https://doi.org/10.1145/1998196.1998212</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->

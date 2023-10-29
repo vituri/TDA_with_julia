@@ -5,8 +5,6 @@
 
 ## Clustering revisited
 
-Staticians are smart people.
-
-Dendrograms as a 0-dimensional persistence
+dendrograms as a 0-dimensional persistence
 
 Vietoris-Rips e primos

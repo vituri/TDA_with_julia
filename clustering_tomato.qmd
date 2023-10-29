@@ -1,0 +1,132 @@
+# Clustering with ToMATo
+
+Let's play with some known datasets.
+
+## Spiral dataset
+
+Import data from [this file](https://raw.githubusercontent.com/MathieuCarriere/sklearn-tda/master/example/inputs/spiral_w_o_density.txt) and extract a subset of 10000 points
+
+```{julia}
+using DelimitedFiles, Random;
+using AlgebraOfGraphics, GLMakie;
+import GeometricDatasets as gd;
+using ToMATo
+
+X = readdlm("datasets/spiral.txt");
+seed = MersenneTwister(0);
+ids = rand(seed, 1:size(X)[1], 15_000)
+X = X[ids, :]' |> Matrix;
+
+X
+```
+
+plot $X$
+
+```{julia}
+scatter(X)
+```
+
+calculate the density
+
+```{julia}
+ds = gd.density_estimation(X, h = 100)
+
+df = (x1 = X[1, :], x2 = X[2, :], ds = ds)
+plt = data(df) * mapping(:x1, :x2, color = :ds)
+draw(plt)
+```
+
+plot it in 3d
+
+```{julia}
+axis = (type = Axis3, width = 800, height = 450)
+df = (x1 = X[1, :], x2 = X[2, :], ds = ds)
+plt = data(df) * mapping(:x1, :x2, :ds, color = :ds)
+draw(plt; axis = axis)
+```
+
+calculate the proximity graph $g$
+
+```{julia}
+g = proximity_graph(
+    X
+    , epsilon_ball_or_knn(30, min_ball_points = 10, max_ball_points = 25, knn_points = 10)
+    )
+```
+
+estimate $\tau$
+
+```{julia}
+_, births_and_deaths = tomato(X, g, ds, Inf)
+plot_births_and_deaths(births_and_deaths)
+```
+
+choose $\tau = 0.01$, calculate the ToMATo clustering
+
+```{julia}
+τ = 0.01
+clusters, _ = tomato(X, g, ds, τ, max_cluster_height = τ);
+```
+
+and plot it
+
+```{julia}
+axis = (type = Axis, width = 800, height = 450)
+df = (x1 = X[1, :], x2 = X[2, :], cluster = clusters .|> string)
+plt = data(df) * mapping(:x1, :x2, color = :cluster)
+draw(plt; axis = axis)
+```
+
+## Toy example
+
+The next example can be found [in this link](https://raw.githubusercontent.com/MathieuCarriere/sklearn-tda/master/example/inputs/toy_example_w_o_density.txt)
+
+```{julia}
+X = readdlm("datasets/toy_example.txt");
+X = X' |> Matrix;
+
+X
+```
+
+```{julia}
+scatter(X)
+```
+
+```{julia}
+ds = gd.density_estimation(X, h = 0.5)
+
+df = (x1 = X[1, :], x2 = X[2, :], ds = ds)
+plt = data(df) * mapping(:x1, :x2, color = :ds)
+draw(plt)
+```
+
+```{julia}
+axis = (type = Axis3, width = 800, height = 450)
+df = (x1 = X[1, :], x2 = X[2, :], ds = ds)
+plt = data(df) * mapping(:x1, :x2, :ds, color = :ds)
+draw(plt; axis = axis)
+```
+
+```{julia}
+g = proximity_graph(
+    X
+    , epsilon_ball_or_knn(0.2, min_ball_points = 5, max_ball_points = 10, knn_points = 5)
+    )
+```
+
+```{julia}
+_, births_and_deaths = tomato(X, g, ds, Inf)
+plot_births_and_deaths(births_and_deaths)
+```
+
+```{julia}
+τ = 0.005
+clusters, _ = tomato(X, g, ds, τ, max_cluster_height = τ);
+```
+
+```{julia}
+axis = (type = Axis, width = 800, height = 450)
+df = (x1 = X[1, :], x2 = X[2, :], cluster = clusters .|> string)
+plt = data(df) * mapping(:x1, :x2, color = :cluster)
+draw(plt; axis = axis)
+```
