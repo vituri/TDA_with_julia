@@ -1,17 +1,209 @@
 # Clustering
 
-Clusterings are very useful in data analysis to group data into subsets such that points within each cluster are more "alike" (in some sense) than points in different clusters. Let's formalise it.
+> "There are more things in heaven and earth, Horatio, \
+> Than are dreamt of in your philosophy." \
+> --- William Shakespeare, in "Hamlet"
 
-:::{#def-}
-A *clustering* of a set $X$ is a collection $C_1, \ldots, C_n \subset X$ such that $\cup C_i = X$ and $C_i \cap C_j = \emptyset$, for any $i, j$. In other words: it is a disjoint covering of $X$. Each $C_i$ is called a *cluster* of $X$.
+Clustering is one of the most fundamental tasks in data analysis: given a dataset, group the points into meaningful subsets. It sounds simple, but the devil is in the details. What does "meaningful" mean? How many clusters should there be? And what shape can they have?
 
-A clustering method is a function $f: X \to \mathbb{N}$ that associates each point $x \in X$ with its clusters $f(x)$.
+In this chapter we cover classical clustering methods, their strengths and limitations. Understanding these limitations will motivate the topological approach (ToMATo) in a later chapter.
+
+## What is a clustering?
+
+::: {#def-}
+A *clustering* of a set $X$ is a collection $C_1, \ldots, C_n \subset X$ such that $\bigcup C_i = X$ and $C_i \cap C_j = \emptyset$ for any $i \neq j$. In other words: it is a partition of $X$ into disjoint subsets. Each $C_i$ is called a *cluster*.
+
+A *clustering method* is a function $f: X \to \{1, \ldots, n\}$ that assigns each point $x \in X$ to a cluster label $f(x)$.
 :::
 
-There are several famous clustering methods such as [citar]. We will focus on the ToMATo algorithm, which uses tools from topology.
+Let's load some packages and datasets to work with:
 
+```{julia}
+using DelimitedFiles
+using CairoMakie
+using Clustering
+using Distances
+using Random
+```
 
-## Datasets
+We will use several datasets from the FCPS suite [@data5010013]:
 
-The datasets are taken from [@data5010013]
+```{julia}
+function load_fcps(name)
+    data = readdlm("clustering datasets/$name.csv", ',')
+    points = data[:, 1:end-1]'  # column-major
+    labels = Int.(data[:, end])
+    return points, labels
+end
+
+# Load a few interesting ones
+hepta_pts, hepta_labels = load_fcps("Hepta")
+target_pts, target_labels = load_fcps("Target")
+chainlink_pts, chainlink_labels = load_fcps("Chainlink")
+lsun_pts, lsun_labels = load_fcps("Lsun")
+```
+
+Let's visualize them:
+
+```{julia}
+fig = Figure(size = (800, 800))
+
+ax1 = Axis3(fig[1, 1], title = "Hepta")
+scatter!(ax1, hepta_pts[1,:], hepta_pts[2,:], hepta_pts[3,:], 
+    color = hepta_labels, markersize = 5)
+
+ax2 = Axis(fig[1, 2], title = "Target", aspect = DataAspect())
+scatter!(ax2, target_pts[1,:], target_pts[2,:], 
+    color = target_labels, markersize = 4)
+
+ax3 = Axis3(fig[2, 1], title = "Chainlink")
+scatter!(ax3, chainlink_pts[1,:], chainlink_pts[2,:], chainlink_pts[3,:], 
+    color = chainlink_labels, markersize = 3)
+
+ax4 = Axis(fig[2, 2], title = "Lsun", aspect = DataAspect())
+scatter!(ax4, lsun_pts[1,:], lsun_pts[2,:], 
+    color = lsun_labels, markersize = 4)
+
+fig
+```
+
+Each dataset has different challenges: Hepta has well-separated spherical clusters, Target has concentric rings, Chainlink has interlocking loops, and Lsun has clusters of different shapes and sizes.
+
+## K-means
+
+The most popular clustering algorithm is *k-means*. The idea is simple:
+
+1. Choose $k$ initial cluster centers (centroids)
+2. Assign each point to the nearest centroid
+3. Recompute centroids as the mean of assigned points
+4. Repeat steps 2-3 until convergence
+
+```{julia}
+# K-means on Hepta (k=7, since we know there are 7 clusters)
+result_hepta = kmeans(hepta_pts, 7)
+km_labels_hepta = assignments(result_hepta)
+
+fig = Figure(size = (800, 400))
+ax1 = Axis3(fig[1, 1], title = "Hepta: true labels")
+scatter!(ax1, hepta_pts[1,:], hepta_pts[2,:], hepta_pts[3,:], 
+    color = hepta_labels, markersize = 5)
+ax2 = Axis3(fig[1, 2], title = "Hepta: k-means (k=7)")
+scatter!(ax2, hepta_pts[1,:], hepta_pts[2,:], hepta_pts[3,:], 
+    color = km_labels_hepta, markersize = 5)
+fig
+```
+
+K-means works well on Hepta because the clusters are spherical and well-separated, which is exactly what k-means assumes. But what happens with less friendly shapes?
+
+```{julia}
+# K-means on Target (k=2)
+result_target = kmeans(target_pts, 2)
+km_labels_target = assignments(result_target)
+
+fig = Figure(size = (800, 400))
+ax1 = Axis(fig[1, 1], title = "Target: true labels", aspect = DataAspect())
+scatter!(ax1, target_pts[1,:], target_pts[2,:], 
+    color = target_labels, markersize = 4)
+ax2 = Axis(fig[1, 2], title = "Target: k-means (k=2)", aspect = DataAspect())
+scatter!(ax2, target_pts[1,:], target_pts[2,:], 
+    color = km_labels_target, markersize = 4)
+fig
+```
+
+K-means struggles here: it can only create convex (roughly spherical) clusters, so it splits the ring rather than separating the ring from the core.
+
+**Limitations of k-means:**
+
+- Assumes clusters are convex (spherical)
+- Requires knowing $k$ in advance
+- Sensitive to initialization
+- Sensitive to outliers
+
+## DBSCAN
+
+DBSCAN (*Density-Based Spatial Clustering of Applications with Noise*) takes a completely different approach: clusters are regions of high density separated by regions of low density.
+
+The algorithm has two parameters:
+
+- $\epsilon$: the radius of a neighborhood
+- `minpts`: the minimum number of points in a neighborhood for a point to be a "core point"
+
+```{julia}
+# DBSCAN on Target
+D_target = pairwise(Euclidean(), target_pts, dims = 2)
+result_db = dbscan(D_target, 0.5, 10)  # ε=0.5, minpts=10
+
+# dbscan returns a DbscanResult; extract cluster assignments
+db_labels = zeros(Int, size(target_pts, 2))
+for (i, cluster) in enumerate(result_db.clusters)
+    db_labels[cluster.core_indices] .= i
+    db_labels[cluster.boundary_indices] .= i
+end
+
+fig = Figure(size = (800, 400))
+ax1 = Axis(fig[1, 1], title = "Target: true labels", aspect = DataAspect())
+scatter!(ax1, target_pts[1,:], target_pts[2,:], 
+    color = target_labels, markersize = 4)
+ax2 = Axis(fig[1, 2], title = "Target: DBSCAN", aspect = DataAspect())
+scatter!(ax2, target_pts[1,:], target_pts[2,:], 
+    color = db_labels, markersize = 4)
+fig
+```
+
+DBSCAN can find non-convex clusters and automatically determines the number of clusters. It also identifies noise points (points not belonging to any cluster).
+
+**Limitations of DBSCAN:**
+
+- Struggles with clusters of varying density
+- Sensitive to $\epsilon$ and `minpts` parameters
+- No straightforward way to choose parameters
+
+## Hierarchical clustering
+
+Hierarchical clustering builds a tree (called a *dendrogram*) that shows how points are progressively merged into clusters:
+
+1. Start with each point as its own cluster
+2. Merge the two closest clusters
+3. Repeat until everything is in one cluster
+
+The "distance between clusters" can be defined in several ways (single linkage, complete linkage, average linkage, Ward's method, etc.).
+
+```{julia}
+# Hierarchical clustering on Lsun
+D_lsun = pairwise(Euclidean(), lsun_pts, dims = 2)
+hc = hclust(D_lsun, linkage = :ward)
+
+# Cut at 3 clusters
+hc_labels = cutree(hc, k = 3)
+
+fig = Figure(size = (800, 400))
+ax1 = Axis(fig[1, 1], title = "Lsun: true labels", aspect = DataAspect())
+scatter!(ax1, lsun_pts[1,:], lsun_pts[2,:], 
+    color = lsun_labels, markersize = 4)
+ax2 = Axis(fig[1, 2], title = "Lsun: hierarchical (Ward, k=3)", aspect = DataAspect())
+scatter!(ax2, lsun_pts[1,:], lsun_pts[2,:], 
+    color = hc_labels, markersize = 4)
+fig
+```
+
+The dendrogram itself is an interesting object: it encodes a nested sequence of clusterings at different scales. We will see later that dendrograms can be interpreted as *0-dimensional persistence diagrams* — our first connection between clustering and topology!
+
+## Why do we need topology?
+
+Each of the methods above has assumptions that can fail:
+
+| Method | Assumes |
+|---|---|
+| K-means | Convex, equally-sized clusters; known $k$ |
+| DBSCAN | Uniform density across clusters |
+| Hierarchical | Choice of linkage affects results dramatically |
+
+Real-world data often violates all of these assumptions simultaneously. The ToMATo algorithm (which we will study in a later chapter) combines density estimation with persistence-based merging to handle:
+
+- Clusters of different densities
+- Clusters of arbitrary shape
+- Automatic selection of the number of clusters (via the persistence diagram)
+
+But first, we need to understand *persistent homology* — the mathematical machinery that makes this possible.
+
 

@@ -4,77 +4,119 @@
     "href": "index.html",
     "title": "Topological Data Analysis with Julia",
     "section": "",
-    "text": "Preface\n\n“[O]f all the several ways of beginning a book which are now in practice throughout the known world, I am confident my own way of doing it is the best—I’m sure it is the most religious—for I begin with writing the first sentence—and trusting to Almighty God for the second.”\n— Laurence Sterne, in “The Life and Opinions of Tristram Shandy, Gentleman”\n\nWelcome!\nThis is the first draft of “Topological data analysis with Julia”.\nThe secret knowledge of Topological Data Analysis (TDA, for short) is spread in hundreds of papers and a few books. None, however, gives a consistent treatment of topology, data analysis and examples with code. Code is essential to transform theory into real data analysis.\nThis book tries to fill this gap. In it, we will outline the main methods used to analyse data with topology, and try to give some non-trivial examples. Besides, it is a healthy way I found to practice Julia and study TDA again.\nThe readers who are afraid of Mathematics are urged to at least understand the intuitive notions of the definitions and results presented here. This is why I will give many informal descriptions of the ideas and objects before formalising them. Keep in mind, however, that Mathematics is the language that best describes abstractions and the use of logic, and you only can learn a language by using it. For those who love math, I hope the “intuitive notions” won’t seem too boring.\nThis book will teach the basics of topology and data analysis needed to understand TDA; unfortunately, we will not teach you Julia directly. For that, there are many excellent resources. See, for example:\n\nThink Julia\nJulia for Optimization and Learning\nData Science in Julia for Hackers\n\nYou can, however, learn something from the code examples and modify them to your needs."
+    "text": "Preface\n\n“[O]f all the several ways of beginning a book which are now in practice throughout the known world, I am confident my own way of doing it is the best—I’m sure it is the most religious—for I begin with writing the first sentence—and trusting to Almighty God for the second.”\n— Laurence Sterne, in “The Life and Opinions of Tristram Shandy, Gentleman”\n\nWelcome!\nThis is the first draft of “Topological data analysis with Julia”.\nThe secret knowledge of Topological Data Analysis (TDA, for short) is spread in hundreds of papers and a few books. None, however, gives a consistent treatment of topology, data analysis and examples with code. Code is essential to transform theory into real data analysis.\nThis book tries to fill this gap. In it, we will outline the main methods used to analyse data with topology, and try to give some non-trivial examples. Besides, it is a healthy way I found to practice Julia and study TDA again.\nThe readers who are afraid of Mathematics are urged to at least understand the intuitive notions of the definitions and results presented here. This is why I will give many informal descriptions of the ideas and objects before formalising them. Keep in mind, however, that Mathematics is the language that best describes abstractions and the use of logic, and you only can learn a language by using it. For those who love math, I hope the “intuitive notions” won’t seem too boring.\nThis book will teach the basics of topology and data analysis needed to understand TDA; unfortunately, we will not teach you Julia directly. For that, there are many excellent resources. See, for example:\n\nThink Julia\nJulia for Optimization and Learning\nData Science in Julia for Hackers\n\nYou can, however, learn something from the code examples and modify them to your needs.",
+    "crumbs": [
+      "Preface"
+    ]
   },
   {
     "objectID": "intro.html",
     "href": "intro.html",
     "title": "1  Introduction",
     "section": "",
-    "text": "“The unexpected elation with which I had talked about mathematics had suddenly evaporated, and I sat beside him, feeling the weight of my own body, its unnecessary size. Outside of mathematics we had nothing to say to each other, and we both knew it. Then it occurred to me that the emotion with which I had spoken of the blessed role of mathematics on the voyage was a deception. I had been deceiving myself with the modesty, the serious heroism of the pilot who occupies himself, in the gaps of the nebulae, with theoretical studies of infinity. Hypocrisy. For what had it been, really? If a castaway, adrift for months at sea, has a thousand times counted the number of wood fibers that make up his raft, in order to keep sane, should he boast about it when he reaches land? That he had the tenacity to survive? And what of it? Who cared? Why should it matter to anyone how I had filled my poor brain those ten years, and why was that more important than how I had filled my stomach?”\n— Stanisław Lem, in “Return from the stars”\n\nTopological data analysis is an exotic animal.\nHow can one mix a field from abstract math (topology) with real world data? In topology, finite topological spaces are trivial and often ignored, but every real-world data is finite. To connect these two areas of study, we need to have tools that transform finite metric spaces into objects that topology can handle and say something interest about."
+    "text": "1.1 Why Topological Data Analysis?\nTopological data analysis is an exotic animal.\nHow can one mix a field from abstract math (topology) with real world data? In topology, finite topological spaces are trivial and often ignored, but every real-world data is finite. To connect these two areas of study, we need to have tools that transform finite metric spaces into objects that topology can handle and say something interesting about.\nAnd this is precisely what TDA does. The core insight is deceptively simple: data has shape, and the shape matters. Classical statistics summarizes data with means, variances, and correlations — numbers that can miss the geometry lurking beneath. Consider a dataset shaped like a circle: its mean is at the center (where no data exists!), and its variance tells you nothing about the hole.\nTDA provides tools to detect and quantify these geometric and topological features: clusters, loops, cavities, and higher-dimensional “holes” that persist across multiple scales. These features are often invisible to traditional methods but can be crucial for understanding the data.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
+    ]
   },
   {
     "objectID": "topology.html#what-is-topology",
     "href": "topology.html#what-is-topology",
     "title": "2  Topology",
-    "section": "2.1 What is topology?",
-    "text": "2.1 What is topology?\nTopology is the study of topological spaces and its properties. Unfortunately, this is not enough to close this chapter.\nA topological space can be thought of as a set with little “scales” called open sets. Each of these open sets represent the notion of local continuity or connectivity that we sense when we look at an object: the feeling that it is just “one single piece of a thing”, like the scales in a fish. We can stretch these scales, but can’t rip them apart. In a sense, topological spaces are elastic. Because of that, there is an old joke that a topologist can’t distinguish between a cup and a donut.\n\n\n\nFigure 2.1: A continuous transformation of a cup to a donut. A true topologist will try to bite all these cups. Source: Wikipedia.1\n\n\nMore formally,\n\nDefinition 2.1 A topological space is a pair \\((X, \\tau)\\) where\n\n\\(X\\) is a set;\n\\(\\tau\\) is a set of subsets of \\(X\\), that is: each \\(U \\in \\tau\\) is a set \\(U \\subseteq X\\).\n\nThe set \\(\\tau\\) has the following properties:\n\nthe intersection of a finite number of open sets is also an open set;\nthe union of an arbitrary (even infinity) number of open sets is also an open set;\nthe \\(\\emptyset\\) and \\(X\\) are open sets.\n\nThe set \\(\\tau\\) is called a topology on \\(X\\).\n\nWe often omit \\(\\tau\\) and simply write “a topological space \\(X\\)”. Sometimes we omit the “topological” too. We love omiting!\n\nDefinition 2.2 The set of all subsets (or “parts”) of \\(X\\) is denoted by \\(P(X)\\), that is,\n\\[\nP(X) = \\{ U \\; | \\; U \\subseteq X \\}.\n\\]\n\nGiven a set \\(X\\), there is a easy way to generate a topology on it:\n\nDefinition 2.3 Let \\(X\\) be a set and \\(S \\subseteq P(X)\\). Define \\(\\tau\\) \\(\\{\\emptyset, X\\}\\) united with finite intersections and arbitrary unions of elements of \\(S\\). The pair \\((X, \\tau)\\) is a topological space, and \\(\\tau\\) is said to be “generated by \\(S\\)”. We also say that \\(S\\) is a generator set for \\(\\tau\\).\n\nDon’t let the abstractions hurt you! Whenever you see a new definition or theorem, think of an example of objects that fit in it. One very useful example is the following:\n\nExample 2.1 The standard topology on the set \\(\\mathbb{R}\\) of real numbers is generated by the open intervals \\((a, b) \\subseteq \\mathbb{R}\\).\n\nIn the above case, an open set is a set in which one can always “walk a little more without reaching the end of the set”. More precisely, given \\(x \\in (a, b)\\) there is always a small enough \\(\\epsilon &gt; 0\\) such the interval \\((x - \\epsilon, x + \\epsilon)\\) is contained in \\((a, b)\\).\n!![fora de lugar] When an open set \\(U\\) cannot be written as the disjoint union of two open sets, we say that \\(U\\) is connected. These connected open sets give a notion of “being a single piece”."
+    "section": "",
+    "text": "Figure 2.1: A continuous transformation of a cup to a donut. A true topologist will try to bite all these cups. Source: Wikipedia.1\n\n\n\n\n\nDefinition 2.1 A topological space is a pair \\((X, \\tau)\\) where\n\n\\(X\\) is a set;\n\\(\\tau\\) is a set of subsets of \\(X\\), that is: each \\(U \\in \\tau\\) is a set \\(U \\subseteq X\\).\n\nThe set \\(\\tau\\) has the following properties:\n\nthe intersection of a finite number of open sets is also an open set;\nthe union of an arbitrary (even infinity) number of open sets is also an open set;\nthe \\(\\emptyset\\) and \\(X\\) are open sets.\n\nThe set \\(\\tau\\) is called a topology on \\(X\\).\n\n\n\nDefinition 2.2 The set of all subsets (or “parts”) of \\(X\\) is denoted by \\(P(X)\\), that is,\n\\[\nP(X) = \\{ U \\; | \\; U \\subseteq X \\}.\n\\]\n\n\n\nDefinition 2.3 Let \\(X\\) be a set and \\(S \\subseteq P(X)\\). Define \\(\\tau\\) \\(\\{\\emptyset, X\\}\\) united with finite intersections and arbitrary unions of elements of \\(S\\). The pair \\((X, \\tau)\\) is a topological space, and \\(\\tau\\) is said to be “generated by \\(S\\)”. We also say that \\(S\\) is a generator set for \\(\\tau\\).\n\n\n\nExample 2.1 The standard topology on the set \\(\\mathbb{R}\\) of real numbers is generated by the open intervals \\((a, b) \\subseteq \\mathbb{R}\\).",
+    "crumbs": [
+      "Topology",
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Topology</span>"
+    ]
   },
   {
     "objectID": "topology.html#continuity",
     "href": "topology.html#continuity",
     "title": "2  Topology",
     "section": "2.2 Continuity",
-    "text": "2.2 Continuity\nWe learn in Calculus that a function \\(f: \\mathbb{R} \\to \\mathbb{R}\\) is continuous when we can draw its graph “without lifting the pencil from the paper”. Formalizing this notion of continuity took centuries and made many mathematicians go crazy.2 Let’s try to formalize what is “to lift the pencil from the paper” with the following example:\n\n\n\nAn example of a discontinuous function. Source: byjus.com3\n\n\nWe notice that no matter how close to 3 we choose some \\(x \\in \\mathbb{R}\\), its image \\(f(x)\\) will end up being far away from \\(f(3)\\). A bit more precisely, there is a small interval around \\(f(3)\\), say \\[\n(f(3) - \\epsilon, f(3) + \\epsilon),\n\\]\nsuch that no matter how small we chose an interval around \\(3\\), say\n\\[\n(3 - \\delta, 3 + \\delta),\n\\]\nwe will have that\n\\[\nf(x) \\notin (f(3) - \\epsilon, f(3) + \\epsilon), \\; \\text{for some } x \\in (3 - \\delta, 3 + \\delta).\n\\]\nThis is equivalent to the fact that the inverse image of \\((f(3) - \\epsilon, f(3) + \\epsilon)\\) is not an open set containing 3: if it were an open set, we could always “walk a little” on this interval and still be sent by \\(f\\) to \\((f(3) - \\epsilon, f(3) + \\epsilon)\\).\nNow that we understood what is a discontinuous function, we define the following in the much more general context of topological spaces:\n\nDefinition 2.4 Given two topological spaces \\((X, \\tau)\\) and \\((Y, \\sigma)\\), a function \\(f: X \\to Y\\) is said to be continuous if the inverse image of any open set of \\(Y\\) is also an open set of \\(X\\). In symbols:\n\\[\n\\forall \\; V \\in \\sigma, \\; f^{-1}(V) \\in \\tau.\n\\]\n\n\nRemark. Negating what we obtained in our example above leads us to the definition of continuity of real functions, and to the most terrifying single line of math of first-year students: a function \\(f: \\mathbb{R} \\to \\mathbb{R}\\) is continuous if for every point \\(a \\in \\mathbb{R}\\) we have\n\\[\n\\forall \\epsilon &gt; 0, \\exists \\delta &gt; 0 \\text{ such that } x \\in (a - \\delta, a + \\delta) \\text{ implies } f(x) \\in (f(a) - \\epsilon, f(a) + \\epsilon),\n\\]\nwhich is equivalent to \\(\\lim_{x \\to a} f(x) = a\\)."
+    "text": "2.2 Continuity\nWe learn in Calculus that a function \\(f: \\mathbb{R} \\to \\mathbb{R}\\) is continuous when we can draw its graph “without lifting the pencil from the paper”. Formalizing this notion of continuity took centuries and made many mathematicians go crazy.2 Let’s try to formalize what is “to lift the pencil from the paper” with the following example:\n\n\n\nAn example of a discontinuous function. Source: byjus.com3\n\n\nWe notice that no matter how close to 3 we choose some \\(x \\in \\mathbb{R}\\), its image \\(f(x)\\) will end up being far away from \\(f(3)\\). A bit more precisely, there is a small interval around \\(f(3)\\), say \\[\n(f(3) - \\epsilon, f(3) + \\epsilon),\n\\]\nsuch that no matter how small we chose an interval around \\(3\\), say\n\\[\n(3 - \\delta, 3 + \\delta),\n\\]\nwe will have that\n\\[\nf(x) \\notin (f(3) - \\epsilon, f(3) + \\epsilon), \\; \\text{for some } x \\in (3 - \\delta, 3 + \\delta).\n\\]\nThis is equivalent to the fact that the inverse image of \\((f(3) - \\epsilon, f(3) + \\epsilon)\\) is not an open set containing 3: if it were an open set, we could always “walk a little” on this interval and still be sent by \\(f\\) to \\((f(3) - \\epsilon, f(3) + \\epsilon)\\).\nNow that we understood what is a discontinuous function, we define the following in the much more general context of topological spaces:\n\nDefinition 2.4 Given two topological spaces \\((X, \\tau)\\) and \\((Y, \\sigma)\\), a function \\(f: X \\to Y\\) is said to be continuous if the inverse image of any open set of \\(Y\\) is also an open set of \\(X\\). In symbols:\n\\[\n\\forall \\; V \\in \\sigma, \\; f^{-1}(V) \\in \\tau.\n\\]\n\n\nRemark. Negating what we obtained in our example above leads us to the definition of continuity of real functions, and to the most terrifying single line of math of first-year students: a function \\(f: \\mathbb{R} \\to \\mathbb{R}\\) is continuous if for every point \\(a \\in \\mathbb{R}\\) we have\n\\[\n\\forall \\epsilon &gt; 0, \\exists \\delta &gt; 0 \\text{ such that } x \\in (a - \\delta, a + \\delta) \\text{ implies } f(x) \\in (f(a) - \\epsilon, f(a) + \\epsilon),\n\\]\nwhich is equivalent to \\(\\lim_{x \\to a} f(x) = f(a)\\).",
+    "crumbs": [
+      "Topology",
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Topology</span>"
+    ]
   },
   {
     "objectID": "topology.html#the-notion-of-sameness-in-topology",
     "href": "topology.html#the-notion-of-sameness-in-topology",
     "title": "2  Topology",
     "section": "2.3 The notion of “sameness” in topology",
-    "text": "2.3 The notion of “sameness” in topology\nLet’s digress a little.\nA topological space is completely define by a set \\(X\\) and its open sets \\(\\tau\\). If we just “rename” the elements of \\(X\\), then it is intuitive that this new topological space is as similar to \\(X\\) as possible; in fact, they are indistinguishable from each other: every topological property (ie: properties related to open sets) that the first has, the second also has.\nRenaming points is just a informally way to say “bijection of sets”. So, two topological spaces \\(X\\) and \\(Y\\) are “the same thing, topologically speaking” if there is a bijection \\(f: X \\to Y\\) such that \\(U \\subseteq X\\) is open if and only if \\(f(X) \\subseteq Y\\) is open. More precisely,\n\nDefinition 2.5 We say that two topological spaces \\(X\\) and \\(Y\\) are homeomorphic, and denote it by \\(X \\approx Y\\), if there exists a continuous bijection \\(f: X \\to Y\\) such that \\(f^{-1}\\) is also continuous. In this case, \\(f\\) is called an homeomorphism.\n\nTwo spaces are homeomorphic, then, if it is possible to deform one into another; this deformation include stretching and twisting, but never “gluing” points together (because of the bijection) and neither tearing them apart (because of the continuity). Note that the relation \\(\\approx\\) is\n\nsimmetric: \\(X \\approx X\\);\nreflexive: \\(X \\approx Y\\) implies \\(Y \\approx X\\);\ntransitive: \\(X \\approx Y\\) and \\(Y \\approx Z\\) implies \\(X \\approx Z\\).\n\n\nExample 2.2 The real line \\(\\mathbb{R}\\) is homeomorphic to a single interval \\((a, b)\\).\nProof: First, note that \\((a, b)\\) is homeomorphic to \\(I = (- \\pi / 2, \\pi / 2)\\). Consider then the map \\(\\tan: I \\to \\mathbb{R}\\), the tangent. Then \\(\\tan\\) is continuous, bijective and its inverse \\(\\tan^{-1}\\) is also continuous. Therefore, \\[\n(a, b) \\approx I \\approx \\mathbb{R}.\n\\]"
+    "text": "2.3 The notion of “sameness” in topology\nLet’s digress a little.\nA topological space is completely define by a set \\(X\\) and its open sets \\(\\tau\\). If we just “rename” the elements of \\(X\\), then it is intuitive that this new topological space is as similar to \\(X\\) as possible; in fact, they are indistinguishable from each other: every topological property (ie: properties related to open sets) that the first has, the second also has.\nRenaming points is just a informally way to say “bijection of sets”. So, two topological spaces \\(X\\) and \\(Y\\) are “the same thing, topologically speaking” if there is a bijection \\(f: X \\to Y\\) such that \\(U \\subseteq X\\) is open if and only if \\(f(X) \\subseteq Y\\) is open. More precisely,\n\nDefinition 2.5 We say that two topological spaces \\(X\\) and \\(Y\\) are homeomorphic, and denote it by \\(X \\approx Y\\), if there exists a continuous bijection \\(f: X \\to Y\\) such that \\(f^{-1}\\) is also continuous. In this case, \\(f\\) is called an homeomorphism.\n\nTwo spaces are homeomorphic, then, if it is possible to deform one into another; this deformation include stretching and twisting, but never “gluing” points together (because of the bijection) and neither tearing them apart (because of the continuity). Note that the relation \\(\\approx\\) is\n\nreflexive: \\(X \\approx X\\);\nsymmetric: \\(X \\approx Y\\) implies \\(Y \\approx X\\);\ntransitive: \\(X \\approx Y\\) and \\(Y \\approx Z\\) implies \\(X \\approx Z\\).\n\n\nExample 2.2 The real line \\(\\mathbb{R}\\) is homeomorphic to a single interval \\((a, b)\\).\nProof: First, note that \\((a, b)\\) is homeomorphic to \\(I = (- \\pi / 2, \\pi / 2)\\). Consider then the map \\(\\tan: I \\to \\mathbb{R}\\), the tangent. Then \\(\\tan\\) is continuous, bijective and its inverse \\(\\tan^{-1}\\) is also continuous. Therefore, \\[\n(a, b) \\approx I \\approx \\mathbb{R}.\n\\]",
+    "crumbs": [
+      "Topology",
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Topology</span>"
+    ]
   },
   {
     "objectID": "topology.html#the-opposite-of-sameness",
     "href": "topology.html#the-opposite-of-sameness",
     "title": "2  Topology",
     "section": "2.4 The opposite of sameness",
-    "text": "2.4 The opposite of sameness\nAll the topological spaces of figure Figure 2.1 are homeomorphic to each other. To show that, it is enough to exhibit a homeomorphism between them. But how can we prove that two spaces are not homeomorphic? How can we show that it is impossible to stretch and twist and rotate one object into another? There are can be infinite maps from one space to another!\nProving that spaces are homeomorphic (or not) is one of the central problems in topology, and many complex tools where created to solve it. Let’s see below one general idea to solve it.\nLet \\(X\\) and \\(Y\\) be two spaces. We suspect that they are not homeomorphic; to confirm our suspicion, suppose they are homeomorphic and let’s arrive at an absurd. So let \\(f: X \\to Y\\) be an homeomorphism. If we have some kind of “simplification map” \\(H\\) that transform \\(X\\) into a much simpler object \\(H(X)\\) (and equivalently \\(Y\\) into \\(H(Y)\\)), and, moreover, transform the map\n\\[\nf: X \\to Y\n\\]\ninto a map between these new objects\n\\[\nH(f): H(X) \\to H(Y)\n\\]\nthen we can start looking for some paradox in these new and much simpler objects.\nLet’s be even more optimistic: suppose that \\(H\\) is so well-behaved that \\(f\\) is transformed into an isomorphism4. It is enough, then, to prove that \\(H(X)\\) is not isomorphic to \\(H(Y)\\). We could simplify even more and demand that \\(H(X)\\) is just a number, and \\(H(f)\\) is an equality; then\n\\[\nH(X) \\text{\\; different from\\; } H(Y) \\Rightarrow \\text{$X$ and $Y$ are not homeomorphic}.\n\\]\nThis transformation of “topological spaces + maps” to “things + maps between things” is called a functor. We are starting to dip our toes into the mathematical field called category theory, which is a kind of meta-mathematics. We will see more about functors in the chapter about homology."
+    "text": "2.4 The opposite of sameness\nAll the topological spaces of figure Figure 2.1 are homeomorphic to each other. To show that, it is enough to exhibit a homeomorphism between them. But how can we prove that two spaces are not homeomorphic? How can we show that it is impossible to stretch and twist and rotate one object into another? There are can be infinite maps from one space to another!\nProving that spaces are homeomorphic (or not) is one of the central problems in topology, and many complex tools where created to solve it. Let’s see below one general idea to solve it.\nLet \\(X\\) and \\(Y\\) be two spaces. We suspect that they are not homeomorphic; to confirm our suspicion, suppose they are homeomorphic and let’s arrive at an absurd. So let \\(f: X \\to Y\\) be an homeomorphism. If we have some kind of “simplification map” \\(H\\) that transform \\(X\\) into a much simpler object \\(H(X)\\) (and equivalently \\(Y\\) into \\(H(Y)\\)), and, moreover, transform the map\n\\[\nf: X \\to Y\n\\]\ninto a map between these new objects\n\\[\nH(f): H(X) \\to H(Y)\n\\]\nthen we can start looking for some paradox in these new and much simpler objects.\nLet’s be even more optimistic: suppose that \\(H\\) is so well-behaved that \\(f\\) is transformed into an isomorphism4. It is enough, then, to prove that \\(H(X)\\) is not isomorphic to \\(H(Y)\\). We could simplify even more and demand that \\(H(X)\\) is just a number, and \\(H(f)\\) is an equality; then\n\\[\nH(X) \\text{\\; different from\\; } H(Y) \\Rightarrow \\text{$X$ and $Y$ are not homeomorphic}.\n\\]\nThis transformation of “topological spaces + maps” to “things + maps between things” is called a functor. We are starting to dip our toes into the mathematical field called category theory, which is a kind of meta-mathematics. We will see more about functors in the chapter about homology.",
+    "crumbs": [
+      "Topology",
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Topology</span>"
+    ]
   },
   {
     "objectID": "topology.html#footnotes",
     "href": "topology.html#footnotes",
     "title": "2  Topology",
     "section": "",
-    "text": "https://commons.wikimedia.org/wiki/File:Topology_joke.jpg↩︎\nI just invented this. Maybe some of them really got crazy, who knows?↩︎\nhttps://byjus.com/maths/discontinuity/↩︎\nie. \\(H(f)\\) will have the same notion of “sameness” in this context as homeomorphisms have in the context of topological spaces. So if \\(H(X)\\) is a vector space and \\(H(f)\\) is a linear transformation, then it is also an isomorphism of vector spaces; if \\(H(X)\\) is a group and \\(H(f)\\) is a homomorphism, then it is also an isomorphism of groups, and so on↩︎"
+    "text": "https://commons.wikimedia.org/wiki/File:Topology_joke.jpg↩︎\nI just invented this. Maybe some of them really got crazy, who knows?↩︎\nhttps://byjus.com/maths/discontinuity/↩︎\nie. \\(H(f)\\) will have the same notion of “sameness” in this context as homeomorphisms have in the context of topological spaces. So if \\(H(X)\\) is a vector space and \\(H(f)\\) is a linear transformation, then it is also an isomorphism of vector spaces; if \\(H(X)\\) is a group and \\(H(f)\\) is a homomorphism, then it is also an isomorphism of groups, and so on↩︎",
+    "crumbs": [
+      "Topology",
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Topology</span>"
+    ]
   },
   {
     "objectID": "simplicial.html#the-infinite-through-a-window",
     "href": "simplicial.html#the-infinite-through-a-window",
     "title": "3  Simplicial complexes",
-    "section": "3.1 The infinite through a window",
-    "text": "3.1 The infinite through a window\nTopological spaces are nice, but all the interesting ones have an infinite amount of points: torus, circle, the real line, mobius band, projective plane, and so on. Topology usually is not interested in finite sets because their standard topology is trivial: just take every point as an open set.\nWe, as humans, can’t really grasp the infinite. Our universe is finite, and so ir our mind. To think about the infinite, we need to use finite “tricks”. Take, for example, the way we prove something is valid for all the infinite natural numbers, a principle called finite induction:\n\nfirst prove that a certain property \\(P\\) is true for 1;\nthen, prove that if it is valid for \\(n\\), then it is also valid for \\(n+1\\).\n\nPeano needed an axiom to guarantee that these 2 conditions are enough to prove that \\(P\\) is valid for all \\(\\mathbb{N}\\).\n\n\n\nThe finite induction principle can be tought of as a domino falling and pushing the next piece. But with infinite domino pieces and infinite patience. Source: Wikipedia1\n\n\nAs another example, when studying linear algebra we see the concept of basis of a vector space \\(V\\). With basis, we can describe exactly any point \\(v \\in V\\) using a finite combination of its base elements, say \\(v = \\lambda_1 e_1 + \\ldots \\lambda_n e_n\\). The infinite amount of points in \\(V\\) can then be written as sums of finite objects that we can map mentally.\nFinding a finite representation of a mathematical object is often desired, and with topological spaces it was not different."
+    "section": "",
+    "text": "first prove that a certain property \\(P\\) is true for 1;\nthen, prove that if it is valid for \\(n\\), then it is also valid for \\(n+1\\).\n\n\n\n\n\nThe finite induction principle can be tought of as a domino falling and pushing the next piece. But with infinite domino pieces and infinite patience. Source: Wikipedia1",
+    "crumbs": [
+      "Topology",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Simplicial complexes</span>"
+    ]
   },
   {
     "objectID": "simplicial.html#graphs",
     "href": "simplicial.html#graphs",
     "title": "3  Simplicial complexes",
     "section": "3.2 Graphs",
-    "text": "3.2 Graphs\nGraphs were created by Euler in 1736 because he wanted to visit Königsberg but was too lazy2 to walk around like a normal person, and then tried to cross all its bridges just one time.\n\n\n\nCan you walk through the city crossing each of those bridges once and only once? Spoiler: no, you can’t. Stop trying! Source: Wikipedia3\n\n\nWe can abstract away this map with its bridges and just think about the bridges and the portions of land:\n\n\n\nThe map of Königsberg if the city was a green carpet. Source: Wikipedia4\n\n\nEuler did even better! He needed just two things to represent this object:\n\npoints: the portions of the cities;\nedges: bridges that connect two points.\n\nThe result is the following:\n\n\n\nA graph representing the original problem. Source: Wikipedia5\n\n\nOops, Euler just invented graphs!\nFormally,\n\nDefinition 3.1 A directed graph is a pair \\(G = (V, E)\\) where \\(V\\) is a set called vertices and \\(E \\subseteq V \\times V\\) is a set of edges between the vertices. An element \\((v, w) \\in E\\) can also be represented as \\(v \\to w\\).\n!!! falar sobre grafo indireto; usar {v, w} em vez de pares\n\nHe noticed that when you travel to a green point \\(v\\), you need to take another bridge to get out of \\(v\\). Thus, the number of edges need to be even for all the points we visit during the middle of our journey (excluding the beginning and the end). But all points in the above graph have an odd number of edges! Therefore, it is impossible to travel cross each bridge just once and still visit all the green points.\nGraphs can be used whenever we need to represent a set of objects and a pairwise relation between these objects.\n\n3.2.1 The essence of a circle\nWhat is a circle, really? The boring answer is “the set of points that dist \\(r\\) of a point \\(p\\)”. But in a topological view, a circle is just a 1-dimensional closed real interval with its extremities glued together, forming a hole inside.\nThe following graph, when seen as a subset of \\(\\mathbb{R}^2\\) is homeomorphic to a circle:\n\n\n\nFigure 3.1: A poorly drawn graph representing a circle.\n\n\nWith this horrendous graph6 we can represent a circle in a finite way: three points \\(a, b, c\\) and all possible edges: \\(a \\to b\\), \\(b \\to c\\), \\(c \\to a\\)."
+    "text": "3.2 Graphs\nGraphs were created by Euler in 1736 because he wanted to visit Königsberg but was too lazy2 to walk around like a normal person, and then tried to cross all its bridges just one time.\n\n\n\nCan you walk through the city crossing each of those bridges once and only once? Spoiler: no, you can’t. Stop trying! Source: Wikipedia3\n\n\nWe can abstract away this map with its bridges and just think about the bridges and the portions of land:\n\n\n\nThe map of Königsberg if the city was a green carpet. Source: Wikipedia4\n\n\nEuler did even better! He needed just two things to represent this object:\n\npoints: the portions of the cities;\nedges: bridges that connect two points.\n\nThe result is the following:\n\n\n\nA graph representing the original problem. Source: Wikipedia5\n\n\nOops, Euler just invented graphs!\nFormally,\n\nDefinition 3.1 A directed graph is a pair \\(G = (V, E)\\) where \\(V\\) is a set called vertices and \\(E \\subseteq V \\times V\\) is a set of edges between the vertices. An element \\((v, w) \\in E\\) can also be represented as \\(v \\to w\\).\nAn undirected graph is defined similarly, but edges are unordered pairs \\(\\{v, w\\}\\) instead of ordered pairs \\((v, w)\\). In an undirected graph, there is no distinction between “from \\(v\\) to \\(w\\)” and “from \\(w\\) to \\(v\\)” — the edge simply connects the two vertices. Unless stated otherwise, graphs in this book are undirected.\n\nHe noticed that when you travel to a green point \\(v\\), you need to take another bridge to get out of \\(v\\). Thus, the number of edges need to be even for all the points we visit during the middle of our journey (excluding the beginning and the end). But all points in the above graph have an odd number of edges! Therefore, it is impossible to travel cross each bridge just once and still visit all the green points.\nGraphs can be used whenever we need to represent a set of objects and a pairwise relation between these objects.\n\n3.2.1 The essence of a circle\nWhat is a circle, really? The boring answer is “the set of points that dist \\(r\\) of a point \\(p\\)”. But in a topological view, a circle is just a 1-dimensional closed real interval with its extremities glued together, forming a hole inside.\nThe following graph, when seen as a subset of \\(\\mathbb{R}^2\\) is homeomorphic to a circle:\n\n\n\n\n\n\nFigure 3.1: A poorly drawn graph representing a circle.\n\n\n\nWith this horrendous graph6 we can represent a circle in a finite way: three points \\(a, b, c\\) and all possible edges: \\(a \\to b\\), \\(b \\to c\\), \\(c \\to a\\).",
+    "crumbs": [
+      "Topology",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Simplicial complexes</span>"
+    ]
   },
   {
     "objectID": "simplicial.html#simplicial-complexes",
     "href": "simplicial.html#simplicial-complexes",
     "title": "3  Simplicial complexes",
     "section": "3.3 Simplicial complexes",
-    "text": "3.3 Simplicial complexes\nWhy stop with vertices and edges? Edges are just pairs of edges. Why not take triples and quadruples and so on?\nWell, now you’ve reinvented simplicial complexes! Congratulations!\n\nDefinition 3.2 A simplicial complex \\(\\Sigma\\) is a set of subsets of \\(X\\) with the following property:\n\nfor any \\(\\sigma \\in \\Sigma\\), every subset of \\(\\sigma\\) (also called a face of \\(\\sigma\\)) is also in \\(\\Sigma\\);\ngiven non-empty \\(\\sigma_1, \\sigma_2 \\in \\Sigma\\), the intersection \\(\\sigma_1 \\cap \\sigma_2\\) is also in \\(\\Sigma\\).\n\n\n!!!abstract simplicial complexes as approximation of other objects\n!!!standard embedding"
+    "text": "3.3 Simplicial complexes\nWhy stop with vertices and edges? Edges are just pairs of edges. Why not take triples and quadruples and so on?\nWell, now you’ve reinvented simplicial complexes! Congratulations!\n\nDefinition 3.2 A simplicial complex \\(\\Sigma\\) is a set of subsets of \\(X\\) with the following property:\n\nfor any \\(\\sigma \\in \\Sigma\\), every subset of \\(\\sigma\\) (also called a face of \\(\\sigma\\)) is also in \\(\\Sigma\\);\ngiven non-empty \\(\\sigma_1, \\sigma_2 \\in \\Sigma\\), the intersection \\(\\sigma_1 \\cap \\sigma_2\\) is also in \\(\\Sigma\\).",
+    "crumbs": [
+      "Topology",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Simplicial complexes</span>"
+    ]
   },
   {
     "objectID": "simplicial.html#footnotes",
     "href": "simplicial.html#footnotes",
     "title": "3  Simplicial complexes",
     "section": "",
-    "text": "https://commons.wikimedia.org/wiki/File:Dominoeffect.png↩︎\nThe original text is in Latin, so I just invented this.↩︎\nhttps://en.wikipedia.org/wiki/File:Konigsberg_bridges.png↩︎\nhttps://en.wikipedia.org/wiki/File:7_bridges.svg↩︎\nhttps://en.wikipedia.org/wiki/File:K%C3%B6nigsberg_graph.svg↩︎\nSee https://en.wikipedia.org/wiki/Monster_group for more terror tales in mathematics.↩︎"
+    "text": "https://commons.wikimedia.org/wiki/File:Dominoeffect.png↩︎\nThe original text is in Latin, so I just invented this.↩︎\nhttps://en.wikipedia.org/wiki/File:Konigsberg_bridges.png↩︎\nhttps://en.wikipedia.org/wiki/File:7_bridges.svg↩︎\nhttps://en.wikipedia.org/wiki/File:K%C3%B6nigsberg_graph.svg↩︎\nSee https://en.wikipedia.org/wiki/Monster_group for more terror tales in mathematics.↩︎",
+    "crumbs": [
+      "Topology",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Simplicial complexes</span>"
+    ]
   },
   {
     "objectID": "homology.html#what-is-a-hole",
@@ -93,51 +135,79 @@
   {
     "objectID": "tomato.html#inspiration",
     "href": "tomato.html#inspiration",
-    "title": "6  ToMATo",
-    "section": "6.1 Inspiration",
-    "text": "6.1 Inspiration\nLet’s load some packages first\n\nusing ToMATo\nimport GeometricDatasets as gd\nusing AlgebraOfGraphics, GLMakie;\nusing Random;\n\nSuppose \\(X\\) is the following dataset:\n\nseed = MersenneTwister(0) # setting some seed \nX = hcat(\n    randn(seed, 2, 800)\n    , randn(seed, 2, 800) .* 0.8 .+ (4, -4)\n    , randn(seed, 2, 100) .* 0.3 .- (2, -2)\n    )\ndf = (x1 = X[1, :], x2 = X[2, :])\nplt = data(df) * mapping(:x1, :x2)\ndraw(plt)\n\n\n\n\nWe can see two big clusters and possibly a small one.\nLet’s make a note-so-absurd supposition that our data is generated by some normal distribuitions (in our case, it really is; in general this can be false). Then, intuitively, the mean (or the center) of each distribution is the point with the highest density, ie, with more points close to it, because it is in the mean of the distribution.\n\n6.1.1 Density\nWe can estimate the density of a dataset as follows\n\nds = gd.density_estimation(X, h = 0.5)\n\ndf = (x1 = X[1, :], x2 = X[2, :], ds = ds)\nplt = data(df) * mapping(:x1, :x2, color = :ds)\ndraw(plt)\n\n\n\n\nThe precise definition of the density of a point \\(x \\in X\\) is\n\\[\n\\text{dens}(x) = \\dfrac{1}{|X|} \\cdot \\sum_{y \\in X} \\text{exp} \\left(-\\dfrac{d(x, y)^2}{h^2} \\right)\n\\]\nwhere \\(\\text{exp}(x) = e^x\\). Informally, we want that points close (ie. small distance) to many other points have a high density; this is why we calculate the distance from \\(x\\) to \\(y\\) and put it inside an exponential with a minus sign. We then calculate the mean of all these values.\nNow we put this density estimation on another axis and plot it\n\naxis = (type = Axis3, width = 800, height = 450)\ndf = (x1 = X[1, :], x2 = X[2, :], ds = ds)\nplt = data(df) * mapping(:x1, :x2, :ds, color = :ds)\ndraw(plt; axis = axis)\n\n\n\n\nNow we have mountains. Next, we will describe a sort of “mountain climbing” algorithm that will assign each point to its direct peak, like the path a point would take to climb the mountain in the fastest way."
+    "title": "9  ToMATo",
+    "section": "",
+    "text": "9.1.1 Density\nWe can estimate the density of a dataset as follows\n\nds = gd.density_estimation(X, h = 0.5)\n\ndf = (x1 = X[1, :], x2 = X[2, :], ds = ds)\nplt = data(df) * mapping(:x1, :x2, color = :ds)\ndraw(plt)\n\nThe precise definition of the density of a point \\(x \\in X\\) is\n\\[\n\\text{dens}(x) = \\dfrac{1}{|X|} \\cdot \\sum_{y \\in X} \\text{exp} \\left(-\\dfrac{d(x, y)^2}{h^2} \\right)\n\\]\nwhere \\(\\text{exp}(x) = e^x\\). Informally, we want that points close (ie. small distance) to many other points have a high density; this is why we calculate the distance from \\(x\\) to \\(y\\) and put it inside an exponential with a minus sign. We then calculate the mean of all these values.\nNow we put this density estimation on another axis and plot it\n\naxis = (type = Axis3, width = 800, height = 450)\ndf = (x1 = X[1, :], x2 = X[2, :], ds = ds)\nplt = data(df) * mapping(:x1, :x2, :ds, color = :ds)\ndraw(plt; axis = axis)\n\nNow we have mountains. Next, we will describe a sort of “mountain climbing” algorithm that will assign each point to its direct peak, like the path a point would take to climb the mountain in the fastest way.",
+    "crumbs": [
+      "TDA Methods",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>ToMATo</span>"
+    ]
   },
   {
     "objectID": "tomato.html#climbing-mount-topology",
     "href": "tomato.html#climbing-mount-topology",
-    "title": "6  ToMATo",
-    "section": "6.2 Climbing mount topology",
-    "text": "6.2 Climbing mount topology\nThe idea now is that given a point \\(x\\):\n\nif \\(x\\) is the highest point in its corresponding mountain, then it is a new cluster;\notherwise, we will we seek for the highest neighbor of \\(x\\), say \\(x'\\) and say that the cluster of \\(x\\) is the same of \\(x'\\).\n\nTo do that, we need to define a notion of “neighborhood” in this dataset. The easiest way is to define a graph whose vertex set is \\(X\\) and edges connect neighbor points. Fortunately, the ToMATo package has a function that does exactly that. You are welcome!\n\ng = proximity_graph(\n    X\n    , epsilon_ball_or_knn(0.5, min_ball_points = 4, max_ball_points = 6, knn_points = 3)\n    )\n\n{1700, 9139} undirected simple Int64 graph\n\n\nThe graph \\(g\\) above is constructed as follows: given \\(x \\in X\\), we create a ball with radius \\(0.2\\) around \\(X\\) and do the following:\n\nAre there less than 4 points in the ball? If yes, then we connect \\(x\\) to its 2 closest points; if no, we connect \\(x\\) to its 6 (at maximum) closest points in the ball. In short: if the ball has not the amount of points we stipulated, then we use knn search.\n\nThese numbers obviously are arbitrary and can be changed at will.\nLet’s see the result of our algorithm:\n\nX2 = vcat(X, ds')\nclusters, _ = tomato(X, g, ds, 0)\nfig, ax, plt = graph_plot(X2, g, clusters .|&gt; string)\nfig\n\n┌ Warning: Axis got passed, but also axis attributes. Ignoring axis attributes (type = Axis3, width = 600, height = 600).\n└ @ AlgebraOfGraphics ~/.julia/packages/AlgebraOfGraphics/yhdjr/src/draw.jl:19\n\n\n\n\n\nLook how many clusters! Something is rotten in the state of Denmark…"
+    "title": "9  ToMATo",
+    "section": "9.2 Climbing mount topology",
+    "text": "9.2 Climbing mount topology\nThe idea now is that given a point \\(x\\):\n\nif \\(x\\) is the highest point in its corresponding mountain, then it is a new cluster;\notherwise, we will we seek for the highest neighbor of \\(x\\), say \\(x'\\) and say that the cluster of \\(x\\) is the same of \\(x'\\).\n\nTo do that, we need to define a notion of “neighborhood” in this dataset. The easiest way is to define a graph whose vertex set is \\(X\\) and edges connect neighbor points. Fortunately, the ToMATo package has a function that does exactly that. You are welcome!\n\ng = proximity_graph(\n    X\n    , epsilon_ball_or_knn(0.5, min_ball_points = 4, max_ball_points = 6, knn_points = 3)\n    )\n\nThe graph \\(g\\) above is constructed as follows: given \\(x \\in X\\), we create a ball with radius \\(0.2\\) around \\(X\\) and do the following:\n\nAre there less than 4 points in the ball? If yes, then we connect \\(x\\) to its 2 closest points; if no, we connect \\(x\\) to its 6 (at maximum) closest points in the ball. In short: if the ball has not the amount of points we stipulated, then we use knn search.\n\nThese numbers obviously are arbitrary and can be changed at will.\nLet’s see the result of our algorithm:\n\nX2 = vcat(X, ds')\nclusters, _ = tomato(X, g, ds, 0)\nfig, ax, plt = graph_plot(X2, g, clusters .|&gt; string)\nfig\n\nLook how many clusters! Something is rotten in the state of Denmark…",
+    "crumbs": [
+      "TDA Methods",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>ToMATo</span>"
+    ]
   },
   {
     "objectID": "tomato.html#the-comedy-of-errors",
     "href": "tomato.html#the-comedy-of-errors",
-    "title": "6  ToMATo",
-    "section": "6.3 The Comedy of Errors",
-    "text": "6.3 The Comedy of Errors\nThis tragedy happened because we did not take into account the “false peaks”: peaks that are just a little bump and not a real peak. To merge these small-peaks into the big ones, we need to add the following step:\nLet \\(\\tau\\) be a number that denotes how small (in height) a bump must be to be merged (we will show how to calculate \\(\\tau\\) below). Given \\(x \\in X\\), let \\(N\\) be the set of its neighbors higher than \\(x\\). Denote by \\(x_{max}\\) the highest point in \\(N\\), and \\(c_{max}\\) its cluster. Now, for each \\(y \\in N\\), ask the following:\n\nIs the difference of heights of \\(x\\) and \\(y\\) less than \\(\\tau\\)? If yes, we merge the cluster of \\(y\\) with the cluster of \\(x_{max}\\) (that is: \\(c_{max}\\)). Otherwise, do nothing.\n\n\nτ = 0.02\nclusters, _ = tomato(X, g, ds, τ, max_cluster_height = τ)\n\nX2 = vcat(X, ds')\nfig, ax, plt = graph_plot(X2, g, clusters .|&gt; string)\nfig\n\n┌ Warning: Axis got passed, but also axis attributes. Ignoring axis attributes (type = Axis3, width = 600, height = 600).\n└ @ AlgebraOfGraphics ~/.julia/packages/AlgebraOfGraphics/yhdjr/src/draw.jl:19\n\n\n\n\n\nNow we got something!\nBut how did we calculate this magic \\(\\tau\\)? Should we just go on guessing real numbers? I hope not!\nWe usually run the ToMATo algorithm twice. The first time, we put \\(\\tau = \\inf\\) and see how the montains of \\(X\\) merged: we plot the amount of time that each one of these mountains survived.\n\n_, births_and_deaths = tomato(X, g, ds, Inf)\nplot_births_and_deaths(births_and_deaths)\n\n\n\n\nChoosing a bigger \\(\\tau\\) (say 0.04) will also merge the small clusters on the left\n\nτ = 0.04\nclusters, _ = tomato(X, g, ds, τ, max_cluster_height = τ)\n\nX2 = vcat(X, ds')\nfig, ax, plt = graph_plot(X2, g, clusters .|&gt; string)\nfig\n\n┌ Warning: Axis got passed, but also axis attributes. Ignoring axis attributes (type = Axis3, width = 600, height = 600).\n└ @ AlgebraOfGraphics ~/.julia/packages/AlgebraOfGraphics/yhdjr/src/draw.jl:19\n\n\n\n\n\nAt the end of the day you will still need to define how high a bump can be before merging it."
+    "title": "9  ToMATo",
+    "section": "9.3 The Comedy of Errors",
+    "text": "9.3 The Comedy of Errors\nThis tragedy happened because we did not take into account the “false peaks”: peaks that are just a little bump and not a real peak. To merge these small-peaks into the big ones, we need to add the following step:\nLet \\(\\tau\\) be a number that denotes how small (in height) a bump must be to be merged (we will show how to calculate \\(\\tau\\) below). Given \\(x \\in X\\), let \\(N\\) be the set of its neighbors higher than \\(x\\). Denote by \\(x_{max}\\) the highest point in \\(N\\), and \\(c_{max}\\) its cluster. Now, for each \\(y \\in N\\), ask the following:\n\nIs the difference of heights of \\(x\\) and \\(y\\) less than \\(\\tau\\)? If yes, we merge the cluster of \\(y\\) with the cluster of \\(x_{max}\\) (that is: \\(c_{max}\\)). Otherwise, do nothing.\n\n\nτ = 0.02\nclusters, _ = tomato(X, g, ds, τ, max_cluster_height = τ)\n\nX2 = vcat(X, ds')\nfig, ax, plt = graph_plot(X2, g, clusters .|&gt; string)\nfig\n\nNow we got something!\nBut how did we calculate this magic \\(\\tau\\)? Should we just go on guessing real numbers? I hope not!\nWe usually run the ToMATo algorithm twice. The first time, we put \\(\\tau = \\inf\\) and see how the montains of \\(X\\) merged: we plot the amount of time that each one of these mountains survived.\n\n_, births_and_deaths = tomato(X, g, ds, Inf)\nplot_births_and_deaths(births_and_deaths)\n\nChoosing a bigger \\(\\tau\\) (say 0.04) will also merge the small clusters on the left\n\nτ = 0.04\nclusters, _ = tomato(X, g, ds, τ, max_cluster_height = τ)\n\nX2 = vcat(X, ds')\nfig, ax, plt = graph_plot(X2, g, clusters .|&gt; string)\nfig\n\nAt the end of the day you will still need to define how high a bump can be before merging it.",
+    "crumbs": [
+      "TDA Methods",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>ToMATo</span>"
+    ]
   },
   {
     "objectID": "tomato.html#summing-up",
     "href": "tomato.html#summing-up",
-    "title": "6  ToMATo",
-    "section": "6.5 Summing up",
-    "text": "6.5 Summing up\nThe ToMATo algorithm needs the following ingredients:\n\nA metric space \\(X\\);\nA density function \\(f\\);\nA graph \\(g\\) whose vertex set is \\(X\\) and whose edges mean “these two points are neighbors”;\nA parameter \\(\\tau\\) (which can be calculated as above) that define how high a peak can be and be taken as a “false peak” which we can just merge in the biggest peak close to it.\n\nThere are many natural choices for \\(f\\). The Gaussian density we used has a parameter \\(h\\) that must be defined. Other nice choice is the distance to measure (as seen in (Chazal et al. 2011)): it calculates the distance between \\(x\\) and its \\(n\\) nearest neighbors, where \\(n\\) need to be defined.\nChoosing \\(g\\) is tricky; which notion of “neighborhood of a point” in \\(X\\) can you allow? In the example above I chose an method that tries to take points in an \\(\\epsilon\\)-ball and, in case there are too few, take then some of the nearest points.\n\n\n\n\nChazal, Frédéric, Leonidas Guibas, Steve Oudot, and Primoz Skraba. 2011. “Persistence-Based Clustering in Riemannian Manifolds.” Journal of the ACM 60 (June). https://doi.org/10.1145/1998196.1998212."
+    "title": "9  ToMATo",
+    "section": "9.5 Summing up",
+    "text": "9.5 Summing up\nThe ToMATo algorithm needs the following ingredients:\n\nA metric space \\(X\\);\nA density function \\(f\\);\nA graph \\(g\\) whose vertex set is \\(X\\) and whose edges mean “these two points are neighbors”;\nA parameter \\(\\tau\\) (which can be calculated as above) that define how high a peak can be and be taken as a “false peak” which we can just merge in the biggest peak close to it.\n\nThere are many natural choices for \\(f\\). The Gaussian density we used has a parameter \\(h\\) that must be defined. Other nice choice is the distance to measure (as seen in (Chazal et al. 2011)): it calculates the distance between \\(x\\) and its \\(n\\) nearest neighbors, where \\(n\\) need to be defined.\nChoosing \\(g\\) is tricky; which notion of “neighborhood of a point” in \\(X\\) can you allow? In the example above I chose an method that tries to take points in an \\(\\epsilon\\)-ball and, in case there are too few, take then some of the nearest points.\n\n\n\n\nChazal, Frédéric, Leonidas Guibas, Steve Oudot, and Primoz Skraba. 2011. “Persistence-Based Clustering in Riemannian Manifolds.” Journal of the ACM 60 (June). https://doi.org/10.1145/1998196.1998212.",
+    "crumbs": [
+      "TDA Methods",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>ToMATo</span>"
+    ]
   },
   {
     "objectID": "mapper.html#reeb-graph",
     "href": "mapper.html#reeb-graph",
-    "title": "7  (Classical) mapper",
-    "section": "7.1 Reeb graph",
-    "text": "7.1 Reeb graph\nIn topology, there are many ways by which we try to see what can’t be seen, in particular high-dimensional sets. The Reeb graph is one of those ways: given a topological space \\(X\\) and a map \\(f: X \\to \\mathbb{R}\\), we can collapse the connected components of its pre-images to get a graph that reflects the level-sets of \\(f\\).\nMore formally, we define a relation \\(\\sim\\) on \\(X\\) such that \\(p \\sim q\\) if-and-only-if \\(p\\) and \\(q\\) belong to the same connected component of \\(f^{-1}(c)\\) for some \\(c \\in \\mathbb{R}\\).\n\n\n\nThe Reeb graph of a torus using the projection on the z-axis. Source: Wikipedia1\n\n\n\n7.1.1 The (classical) mapper\nThe (classical) mapper is an algorithm to create graphs from metric spaces, and can be seen as an “statistical” version of the Reeb graph.\nTo be able to mimick the Reeb graph, we need to change some objects from the continuous setting to the discrete setting:\n\n\\(X = (X, d)\\) is now a finite metric space, also called a point cloud;\n\\(f: X \\to \\mathbb{R}\\) can be any function (since \\(X\\) is discrete, \\(f\\) is always continuous);\ninstead of inverse images of points of \\(\\mathbb{R}\\), we calculate inverse images of subsets of \\(\\mathbb{R}\\) (usually intervals);\ninstead of connected components (which are trivial in the discrete setting), we use some clustering algorithm (DBSCAN, single linkage, etc.) and consider these clusterings as “connected pieces of \\(X\\)”.\n\n\nThe mapper graph can shed light to the geometry of \\(X\\):\n\nnodes are clusters of points of \\(X\\);\nthe color of the nodes can summarise some information about the points of \\(X\\) that represent this node;\nedges denote some proximity (in the metric of \\(d\\) of \\(X\\)) between the nodes.\n\nTo be more precise, to calculate the mapper of a metric space \\(X\\), we need the following ingredients:\n\na function \\(f: X \\to \\mathbb{R}\\) that measures something interesting in \\(X\\), as, for example, the excentricity, the first coordinate of PCA, and so on;\na covering \\(C\\) of the image \\(f(X) \\subset \\mathbb{R}\\);\na method \\(l\\) to cluster each \\(f^{-1}(c)\\) for \\(c \\in C\\).\n\nWhen all of this is chosen, we have a covering of \\(X\\) by clustering each pre-image of the elements of \\(C\\), that is:\n\\[\nV = \\{ l(p); \\; p = f^{-1}(c) \\; \\text{for} \\; c \\in C\\}\n\\]\nWe then calculate the 1-dimensional nerve of \\(V\\): we define the set of edges \\(E \\subset V \\times V\\) by\n\\[\n(v_1, v_2) \\in E \\leftrightarrow v_1 \\cap v_2 \\neq \\emptyset\n\\]\nIn words, we have an edge between \\(v_1\\) and \\(v_2\\) if there is some point in both \\(v_1\\) and \\(v_2\\) at the same time."
+    "title": "10  (Classical) mapper",
+    "section": "",
+    "text": "The Reeb graph of a torus using the projection on the z-axis. Source: Wikipedia1\n\n\n\n10.1.1 The (classical) mapper\nThe (classical) mapper is an algorithm to create graphs from metric spaces, and can be seen as an “statistical” version of the Reeb graph.\nTo be able to mimick the Reeb graph, we need to change some objects from the continuous setting to the discrete setting:\n\n\\(X = (X, d)\\) is now a finite metric space, also called a point cloud;\n\\(f: X \\to \\mathbb{R}\\) can be any function (since \\(X\\) is discrete, \\(f\\) is always continuous);\ninstead of inverse images of points of \\(\\mathbb{R}\\), we calculate inverse images of subsets of \\(\\mathbb{R}\\) (usually intervals);\ninstead of connected components (which are trivial in the discrete setting), we use some clustering algorithm (DBSCAN, single linkage, etc.) and consider these clusterings as “connected pieces of \\(X\\)”.\n\n\nThe mapper graph can shed light to the geometry of \\(X\\):\n\nnodes are clusters of points of \\(X\\);\nthe color of the nodes can summarise some information about the points of \\(X\\) that represent this node;\nedges denote some proximity (in the metric of \\(d\\) of \\(X\\)) between the nodes.\n\nTo be more precise, to calculate the mapper of a metric space \\(X\\), we need the following ingredients:\n\na function \\(f: X \\to \\mathbb{R}\\) that measures something interesting in \\(X\\), as, for example, the excentricity, the first coordinate of PCA, and so on;\na covering \\(C\\) of the image \\(f(X) \\subset \\mathbb{R}\\);\na method \\(l\\) to cluster each \\(f^{-1}(c)\\) for \\(c \\in C\\).\n\nWhen all of this is chosen, we have a covering of \\(X\\) by clustering each pre-image of the elements of \\(C\\), that is:\n\\[\nV = \\{ l(p); \\; p = f^{-1}(c) \\; \\text{for} \\; c \\in C\\}\n\\]\nWe then calculate the 1-dimensional nerve of \\(V\\): we define the set of edges \\(E \\subset V \\times V\\) by\n\\[\n(v_1, v_2) \\in E \\leftrightarrow v_1 \\cap v_2 \\neq \\emptyset\n\\]\nIn words, we have an edge between \\(v_1\\) and \\(v_2\\) if there is some point in both \\(v_1\\) and \\(v_2\\) at the same time.",
+    "crumbs": [
+      "TDA Methods",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>(Classical) mapper</span>"
+    ]
   },
   {
     "objectID": "mapper.html#an-example-in-julia",
     "href": "mapper.html#an-example-in-julia",
-    "title": "7  (Classical) mapper",
-    "section": "7.2 An example in Julia",
-    "text": "7.2 An example in Julia\nLet’s import some packages:\n\nusing TDAmapper;\nimport GeometricDatasets as gd;\n\nand define \\(X\\) as a torus with the usual Euclidean distance\n\nX = gd.torus(2000)\n\n3×2000 Matrix{Float64}:\n 3.31687   3.01965   2.86135   -1.18996   …  2.52688    3.98365     0.271879\n 1.99244   2.03354  -1.65949   -2.14445      0.570201  -0.360719    2.33906\n 0.494297  0.76792   0.951466   0.836795     0.912271   0.00970037  0.764024\n\n\nImportant: when using TDAmapper, your point cloud must be in column-major order. That is: each point of \\(X\\) must be a column of X, not a row (as is usual with dataframes). This is so because Distances.jl, NearestNeighbors.jl, Clustering.jl and many other packages for calculations with metric spaces use the column-major order for performance reasons.\nWe define the function \\(f: X \\to \\mathbb{R}\\) as the projection on the \\(x\\)-axis because our torus is laying down compared to the one in the Reeb graph example.\nLet fv be a vector such that fv[i] is the \\(x\\)-axis projection of the point \\(x_i\\) of \\(X\\):\n\nfv = X[1, :];\n\nYou can plot \\(X\\) colored by \\(f\\) as follows:\n\nusing CairoMakie;\nscatter(X[1, :], X[2, :], X[3, :], color = fv)\n\n\n\n\nImportant: the plots will be interactive when running in Julia if you change CairoMakie to GLMakie. Give it a try!\nDefine the covering intervals cv as follows:\n\nC = uniform(fv, overlap = 150);\n\nYou can check the first five intervals of this covering:\n\nC[1:5]\n\n5-element Vector{Interval}:\n Interval(-4.7024693f0, -3.7038724f0)\n Interval(-4.1318426f0, -3.1332457f0)\n Interval(-3.5612159f0, -2.562619f0)\n Interval(-2.9905891f0, -1.9919922f0)\n Interval(-2.4199622f0, -1.4213654f0)\n\n\nFor the clustering algorithm we choose the DBSCAN with radius 1:\n\nclustering = cluster_dbscan(radius = 1);\n\nThen the mapper graph of \\(X\\) can be calculated by\n\n# the mapper function needs:\n# X\n# fv, the values of f(X)\n# the covering C\n# the clustering function\nmp = mapper(X, fv, C; clustering = clustering)\n\nAnd plotted with\n\n# define the value of each node as the maximum of\n# values of fv \nnode_values = node_colors(mp, fv)\n\nmapper_plot(mp, node_values = node_values)\n\n\n\n\nCompare it with the Reeb graph from the start. If this isn’t nice, what is?"
+    "title": "10  (Classical) mapper",
+    "section": "10.2 An example in Julia",
+    "text": "10.2 An example in Julia\nLet’s import some packages:\n\nusing TDAmapper;\nimport GeometricDatasets as gd;\n\nand define \\(X\\) as a torus with the usual Euclidean distance\n\nX = gd.torus(2000)\n\nImportant: when using TDAmapper, your point cloud must be in column-major order. That is: each point of \\(X\\) must be a column of X, not a row (as is usual with dataframes). This is so because Distances.jl, NearestNeighbors.jl, Clustering.jl and many other packages for calculations with metric spaces use the column-major order for performance reasons.\nWe define the function \\(f: X \\to \\mathbb{R}\\) as the projection on the \\(x\\)-axis because our torus is laying down compared to the one in the Reeb graph example.\nLet fv be a vector such that fv[i] is the \\(x\\)-axis projection of the point \\(x_i\\) of \\(X\\):\n\nfv = X[1, :];\n\nYou can plot \\(X\\) colored by \\(f\\) as follows:\n\nusing CairoMakie;\nscatter(X[1, :], X[2, :], X[3, :], color = fv)\n\nImportant: the plots will be interactive when running in Julia if you change CairoMakie to GLMakie. Give it a try!\nDefine the covering intervals cv as follows:\n\nC = uniform(fv, overlap = 150);\n\nYou can check the first five intervals of this covering:\n\nC[1:5]\n\nFor the clustering algorithm we choose the DBSCAN with radius 1:\n\nclustering = cluster_dbscan(radius = 1);\n\nThen the mapper graph of \\(X\\) can be calculated by\n\n# the mapper function needs:\n# X\n# fv, the values of f(X)\n# the covering C\n# the clustering function\nmp = mapper(X, fv, C; clustering = clustering)\n\nAnd plotted with\n\n# define the value of each node as the maximum of\n# values of fv \nnode_values = node_colors(mp, fv)\n\nmapper_plot(mp, node_values = node_values)\n\nCompare it with the Reeb graph from the start. If this isn’t nice, what is?",
+    "crumbs": [
+      "TDA Methods",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>(Classical) mapper</span>"
+    ]
   },
   {
     "objectID": "mapper.html#footnotes",
     "href": "mapper.html#footnotes",
-    "title": "7  (Classical) mapper",
+    "title": "10  (Classical) mapper",
     "section": "",
-    "text": "https://commons.wikimedia.org/wiki/File:3D-Leveltorus-Reebgraph.png↩︎"
+    "text": "https://commons.wikimedia.org/wiki/File:3D-Leveltorus-Reebgraph.png↩︎",
+    "crumbs": [
+      "TDA Methods",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>(Classical) mapper</span>"
+    ]
   },
   {
     "objectID": "ballmapper.html#the-vietoris-rips-complex",
@@ -156,16 +226,24 @@
   {
     "objectID": "mapper-general.html#what-is-a-mapper-algorithm",
     "href": "mapper-general.html#what-is-a-mapper-algorithm",
-    "title": "9  Mapper: the general case",
-    "section": "9.1 What is a mapper algorithm?",
-    "text": "9.1 What is a mapper algorithm?\nWe can boil down the two mapper algorithms we saw earlier as follows:\n\n(covering step) Given a metric space \\((X, d)\\), create a covering \\(C\\) of \\(X\\);\n(nerve step) Using \\(C\\) as vertex set, create a graph.\n\nIn the classical mapper context, \\(C\\) is generated using the clustering of pre-images of a function \\(f: X \\to \\mathbb{R}\\). In the ball mapper scenario, we cover \\(X\\) using \\(\\epsilon\\)-balls with centers as a subset of \\(X\\).\n\n9.1.1 Covering step\nLet \\(X\\), \\(L\\) and \\(\\epsilon\\) be given as in the ball mapper case. For any \\(l \\in L\\), define \\(x_l\\) = X[:, l]. Examples of how to generalize the covering step:\n\nFix \\(n &gt; 0\\) integer. Create a ball \\(B\\) of radius \\(\\epsilon\\) around \\(x_l\\). If \\(B\\) contains less than \\(n\\) elements, then we redefine \\(B\\) as the set of \\(n\\) nearest neighbors of \\(x_l\\).\nFix \\(\\lambda &gt; 0\\). Let \\(d_l\\) be the distance between \\(x_l\\) and its closest point. Create a ball \\(B\\) of radius \\(\\lambda * d_1\\). Proceed like this to create a covering of \\(X\\).\n\n\n\n9.1.2 Nerve step\nThere are many alternatives to the nerve construction. Let \\(a\\) and \\(b\\) be two elements of a covering \\(C\\). Let \\(G = (V, E)\\) be a graph with vertex-set \\(V = C\\). Examples of how to generalize the nerve step:\n\nFix \\(k &gt; 0\\). Define \\((a, b) \\in E\\) iff \\(|a \\cap b| \\geq k\\), that is: we will only allow intersections with at least \\(k\\) elements. Setting \\(k = 1\\) will give us the usual nerve graph."
+    "title": "12  Mapper: the general case",
+    "section": "",
+    "text": "(Covering step) Given a metric space \\((X, d)\\), create a covering \\(C\\) of \\(X\\);\n(Nerve step) Using \\(C\\) as vertex set, create a graph (called the nerve).\n\n\n\n\n12.1.1 Covering step\nLet \\(X\\), \\(L\\) and \\(\\epsilon\\) be given as in the ball mapper case. For any \\(l \\in L\\), define \\(x_l\\) = X[:, l]. Examples of how to generalize the covering step:\n\nAdaptive radius: Fix \\(n &gt; 0\\) integer. Create a ball \\(B\\) of radius \\(\\epsilon\\) around \\(x_l\\). If \\(B\\) contains less than \\(n\\) elements, then we redefine \\(B\\) as the set of \\(n\\) nearest neighbors of \\(x_l\\). This adapts to varying local density.\nDistance-scaled radius: Fix \\(\\lambda &gt; 0\\). Let \\(d_l\\) be the distance between \\(x_l\\) and its closest point. Create a ball \\(B\\) of radius \\(\\lambda \\cdot d_l\\). This automatically adapts the ball size to the local spacing of the data.\nFilter function preimages: Choose a function \\(f: X \\to \\mathbb{R}\\) (e.g., a coordinate projection, density, eccentricity), divide \\(f(X)\\) into overlapping intervals, and take preimages. Then cluster each preimage to form the covering elements.\n\n\n\n12.1.2 Nerve step\nThere are many alternatives to the nerve construction. Let \\(a\\) and \\(b\\) be two elements of a covering \\(C\\). Let \\(G = (V, E)\\) be a graph with vertex-set \\(V = C\\). Examples of how to generalize the nerve step:\n\nMinimum intersection size: Fix \\(k &gt; 0\\). Define \\((a, b) \\in E\\) iff \\(|a \\cap b| \\geq k\\), that is: we will only allow intersections with at least \\(k\\) elements. Setting \\(k = 1\\) will give us the usual nerve graph.\nWeighted edges: Instead of a binary “connected or not”, assign a weight to each edge proportional to the intersection size: \\(w(a, b) = |a \\cap b|\\). This gives a weighted graph that carries more information.\nHigher-dimensional nerve: Instead of just a graph (1-skeleton), build a full simplicial complex: add a \\(k\\)-simplex whenever \\(k+1\\) covering elements have a non-empty common intersection. This is the classical nerve construction from algebraic topology.",
+    "crumbs": [
+      "TDA Methods",
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Mapper: the general case</span>"
+    ]
   },
   {
     "objectID": "mapper-general.html#creating-my-own-mapper",
     "href": "mapper-general.html#creating-my-own-mapper",
-    "title": "9  Mapper: the general case",
-    "section": "9.2 Creating my own mapper",
-    "text": "9.2 Creating my own mapper\nYou can change the 2 steps above within the context of the ball mapper, as can be seen in the docs.\n\n\n\n\n\n\n\n\nball_mapper_generic(\n    X::PointCloud, L::Vector{&lt;:Integer}, \n    covering_function::Function,\n    graph_function::Function\n    )\nCreates the ball mapper of a metric space X subsampled by L.\n\n9.2.1 Arguments\n\nX::PointCloud: a point cloud.\nL::Vector{&lt;:Integer}: a subset of index of X, that is: L is a subset of [1:size(X)[2]].\ncovering_function::Function: a function that creates a cover for X. Its arguments are X and L.\ngraph_function::Function: a function that creates a graph. It accepts a CoveredPointCloud object.\n\n\n\n9.2.2 Details\nSee the “Generalization” page of the online documentation."
+    "title": "12  Mapper: the general case",
+    "section": "12.3 Creating my own mapper",
+    "text": "12.3 Creating my own mapper\nYou can change the 2 steps above within the context of the ball mapper, as can be seen in the docs.",
+    "crumbs": [
+      "TDA Methods",
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Mapper: the general case</span>"
+    ]
   },
   {
     "objectID": "persistence.html#clustering-revisited",
@@ -228,14 +306,22 @@
     "href": "references.html",
     "title": "References",
     "section": "",
-    "text": "Ultsch, Alfred, and Jörn Lötsch. 2020. “The Fundamental Clustering\nand Projection Suite (FCPS): A Dataset Collection to Test the\nPerformance of Clustering and Data Projection Algorithms.”\nData 5 (1). https://doi.org/10.3390/data5010013."
+    "text": "Chazal, Frédéric, Leonidas Guibas, Steve Oudot, and Primoz Skraba. 2011.\n“Persistence-Based Clustering in Riemannian Manifolds.”\nJournal of the ACM 60 (June). https://doi.org/10.1145/1998196.1998212.\n\n\nUltsch, Alfred, and Jörn Lötsch. 2020. “The Fundamental Clustering\nand Projection Suite (FCPS): A Dataset Collection to Test the\nPerformance of Clustering and Data Projection Algorithms.”\nData 5 (1). https://doi.org/10.3390/data5010013.",
+    "crumbs": [
+      "Closing",
+      "References"
+    ]
   },
   {
     "objectID": "tomato.html#the-original-algorithm",
     "href": "tomato.html#the-original-algorithm",
-    "title": "6  ToMATo",
-    "section": "6.4 The original algorithm",
-    "text": "6.4 The original algorithm\nAfter all this talk, maybe the original algorithm can be better understood!\nHere is what we can read in (Chazal et al. 2011):\n\n\n\nThe original ToMATo algorithm. Here, \\(G\\) is the proximity graph, \\(\\tilde{f}\\) is the density vector, \\(\\tau\\) is like above, \\(\\mathbfcal{N}\\) is the neighborhood of \\(x\\) with points higher than \\(x\\) (ie higher density), \\(r\\) stores the cluster of each point"
+    "title": "9  ToMATo",
+    "section": "9.4 The original algorithm",
+    "text": "9.4 The original algorithm\nAfter all this talk, maybe the original algorithm can be better understood!\nHere is what we can read in (Chazal et al. 2011):\n\n\n\nThe original ToMATo algorithm. Here, \\(G\\) is the proximity graph, \\(\\tilde{f}\\) is the density vector, \\(\\tau\\) is like above, \\(\\mathbfcal{N}\\) is the neighborhood of \\(x\\) with points higher than \\(x\\) (ie higher density), \\(r\\) stores the cluster of each point",
+    "crumbs": [
+      "TDA Methods",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>ToMATo</span>"
+    ]
   },
   {
     "objectID": "clustering_tomato.html#spiral-dataset",
@@ -250,5 +336,672 @@
     "title": "12  Clustering with ToMATo",
     "section": "12.2 Toy example",
     "text": "12.2 Toy example\nThe next example can be found in this link\n\nX = readdlm(\"datasets/toy_example.txt\");\nX = X' |&gt; Matrix;\n\nX\n\n2×10000 Matrix{Float64}:\n 0.392345  5.40588  0.215228  2.55846  …  8.62843  2.99077  1.11412  5.19651\n 1.24778   2.40142  1.26093   7.2899      9.36162  7.13162  8.71054  7.12939\n\n\n\nscatter(X)\n\n\n\n\n\nds = gd.density_estimation(X, h = 0.5)\n\ndf = (x1 = X[1, :], x2 = X[2, :], ds = ds)\nplt = data(df) * mapping(:x1, :x2, color = :ds)\ndraw(plt)\n\n\n\n\n\naxis = (type = Axis3, width = 800, height = 450)\ndf = (x1 = X[1, :], x2 = X[2, :], ds = ds)\nplt = data(df) * mapping(:x1, :x2, :ds, color = :ds)\ndraw(plt; axis = axis)\n\n\n\n\n\ng = proximity_graph(\n    X\n    , epsilon_ball_or_knn(0.2, min_ball_points = 5, max_ball_points = 10, knn_points = 5)\n    )\n\n{10000, 68200} undirected simple Int64 graph\n\n\n\n_, births_and_deaths = tomato(X, g, ds, Inf)\nplot_births_and_deaths(births_and_deaths)\n\n\n\n\n\nτ = 0.005\nclusters, _ = tomato(X, g, ds, τ, max_cluster_height = τ);\n\n\naxis = (type = Axis, width = 800, height = 450)\ndf = (x1 = X[1, :], x2 = X[2, :], cluster = clusters .|&gt; string)\nplt = data(df) * mapping(:x1, :x2, color = :cluster)\ndraw(plt; axis = axis)"
+  },
+  {
+    "objectID": "pointclouds.html",
+    "href": "pointclouds.html",
+    "title": "5  Point clouds and distances",
+    "section": "",
+    "text": "5.1 What is a point cloud?\nBefore we can apply topological methods to data, we need to understand what “data” looks like from a geometric perspective. In TDA, data typically comes as a point cloud — a finite set of points in some metric space. This chapter covers the essential tools for working with point clouds: loading and generating them, measuring distances, estimating density, and visualizing structure.\nPoint clouds are everywhere:\nIn Julia, we store point clouds as matrices. Following the convention in this book, each column is a data point and each row is a dimension.",
+    "crumbs": [
+      "Working with Data",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Point clouds and distances</span>"
+    ]
+  },
+  {
+    "objectID": "pointclouds.html#what-is-a-point-cloud",
+    "href": "pointclouds.html#what-is-a-point-cloud",
+    "title": "5  Point clouds and distances",
+    "section": "",
+    "text": "Definition 5.1 A point cloud is a finite set \\(X = \\{x_1, \\ldots, x_n\\}\\) where each \\(x_i \\in \\mathbb{R}^d\\) for some dimension \\(d\\). When equipped with a distance function \\(d: X \\times X \\to \\mathbb{R}\\), the pair \\((X, d)\\) is called a finite metric space.\n\n\n\nA collection of GPS coordinates (points in \\(\\mathbb{R}^2\\))\nPixel intensities of images (points in \\(\\mathbb{R}^{784}\\) for \\(28 \\times 28\\) images)\nMeasurements from sensors (points in \\(\\mathbb{R}^d\\) where \\(d\\) is the number of sensors)\nWord embeddings (points in \\(\\mathbb{R}^{300}\\) or similar)",
+    "crumbs": [
+      "Working with Data",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Point clouds and distances</span>"
+    ]
+  },
+  {
+    "objectID": "pointclouds.html#generating-point-clouds",
+    "href": "pointclouds.html#generating-point-clouds",
+    "title": "5  Point clouds and distances",
+    "section": "5.2 Generating point clouds",
+    "text": "5.2 Generating point clouds\nThe GeometricDatasets package provides convenient functions for generating synthetic point clouds with known shapes:\n\nimport GeometricDatasets as gd\nusing CairoMakie\n\n\n5.2.1 Circles and spheres\n\n# A circle (1-sphere) with 200 points in R^2\ncircle = gd.sphere(200, dim = 2)\n\nfig = Figure(size = (800, 400))\nax1 = Axis(fig[1, 1], title = \"Circle (200 points)\", aspect = DataAspect())\nscatter!(ax1, circle[1, :], circle[2, :], markersize = 5)\n\n# A sphere (2-sphere) with 500 points in R^3\nsphere = gd.sphere(500, dim = 3)\nax2 = Axis3(fig[1, 2], title = \"Sphere (500 points)\")\nscatter!(ax2, sphere[1, :], sphere[2, :], sphere[3, :], markersize = 3)\nfig\n\n\n\n5.2.2 Torus\n\ntorus = gd.torus(1000)\n\nfig = Figure()\nax = Axis3(fig[1, 1], title = \"Torus (1000 points)\")\nscatter!(ax, torus[1, :], torus[2, :], torus[3, :], markersize = 3)\nfig\n\n\n\n5.2.3 Loading real datasets\nMany real-world datasets come as CSV or text files. The clustering datasets/ folder in this project contains the FCPS (Fundamental Clustering and Projection Suite) (Ultsch and Lötsch 2020), a collection of datasets designed to challenge clustering algorithms.\n\nusing DelimitedFiles\n\nhepta = readdlm(\"clustering datasets/Hepta.csv\", ',')\n\n# The last column is the class label\npoints = hepta[:, 1:end-1]'  # transpose to get column-major format\nlabels = hepta[:, end]\n\nfig = Figure()\nax = Axis3(fig[1, 1], title = \"Hepta dataset\")\nscatter!(ax, points[1, :], points[2, :], points[3, :], \n    color = labels, markersize = 8)\nfig\n\n\ntarget = readdlm(\"clustering datasets/Target.csv\", ',')\npoints_target = target[:, 1:end-1]'\nlabels_target = target[:, end]\n\nfig = Figure()\nax = Axis(fig[1, 1], title = \"Target dataset\", aspect = DataAspect())\nscatter!(ax, points_target[1, :], points_target[2, :], \n    color = labels_target, markersize = 5)\nfig",
+    "crumbs": [
+      "Working with Data",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Point clouds and distances</span>"
+    ]
+  },
+  {
+    "objectID": "pointclouds.html#distance-metrics",
+    "href": "pointclouds.html#distance-metrics",
+    "title": "5  Point clouds and distances",
+    "section": "5.3 Distance metrics",
+    "text": "5.3 Distance metrics\nThe choice of distance function profoundly affects any analysis. The most common choice is the Euclidean distance, but there are many others.\n\nDefinition 5.2 A metric (or distance function) on a set \\(X\\) is a function \\(d: X \\times X \\to \\mathbb{R}\\) satisfying:\n\n\\(d(x, y) \\geq 0\\) and \\(d(x, y) = 0 \\iff x = y\\) (positive definiteness)\n\\(d(x, y) = d(y, x)\\) (symmetry)\n\\(d(x, z) \\leq d(x, y) + d(y, z)\\) (triangle inequality)\n\n\nThe Distances.jl package provides many distance functions:\n\nusing Distances\n\n# Two points in R^3\nx = [1.0, 2.0, 3.0]\ny = [4.0, 5.0, 6.0]\n\nprintln(\"Euclidean:  \", euclidean(x, y))\nprintln(\"Cityblock:  \", cityblock(x, y))    # Manhattan / L1\nprintln(\"Chebyshev:  \", chebyshev(x, y))     # L∞\nprintln(\"Cosine:     \", cosine_dist(x, y))   # 1 - cos(angle)\n\nFor point clouds, we often compute pairwise distance matrices:\n\n# Generate a small point cloud\nX = gd.sphere(6, dim = 2)\n\n# Pairwise distance matrix\nD = pairwise(Euclidean(), X, dims = 2)\n\nThe resulting matrix \\(D\\) has entry \\(D_{ij} = d(x_i, x_j)\\). This matrix is symmetric, with zeros on the diagonal, and it contains all the geometric information about the point cloud (up to isometry).",
+    "crumbs": [
+      "Working with Data",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Point clouds and distances</span>"
+    ]
+  },
+  {
+    "objectID": "pointclouds.html#density-estimation",
+    "href": "pointclouds.html#density-estimation",
+    "title": "5  Point clouds and distances",
+    "section": "5.4 Density estimation",
+    "text": "5.4 Density estimation\nGiven a point cloud, a natural question is: where are the points concentrated? Density estimation assigns a density value to each point, giving us a “height function” on the data.\nThe GeometricDatasets package provides a Gaussian kernel density estimator:\n\nusing Random\n\nseed = MersenneTwister(42)\n# Two clusters with different densities\nX = hcat(\n    randn(seed, 2, 300),\n    randn(seed, 2, 100) .* 0.4 .+ [3.0, 0.0]\n)\n\nds = gd.density_estimation(X, h = 0.5)\n\nfig = Figure(size = (800, 400))\nax1 = Axis(fig[1, 1], title = \"Point cloud\", aspect = DataAspect())\nscatter!(ax1, X[1, :], X[2, :], markersize = 4)\n\nax2 = Axis(fig[1, 2], title = \"Colored by density\", aspect = DataAspect())\nscatter!(ax2, X[1, :], X[2, :], color = ds, markersize = 4, colormap = :viridis)\nfig\n\nThe density of a point \\(x\\) is computed as:\n\\[\n\\text{dens}(x) = \\frac{1}{|X|} \\sum_{y \\in X} \\exp\\left(-\\frac{d(x, y)^2}{h^2}\\right)\n\\]\nThe parameter \\(h\\) controls the bandwidth: larger \\(h\\) produces smoother density estimates, while smaller \\(h\\) captures finer local structure. Density estimation is a key ingredient in the ToMATo clustering algorithm, which we will see later.",
+    "crumbs": [
+      "Working with Data",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Point clouds and distances</span>"
+    ]
+  },
+  {
+    "objectID": "pointclouds.html#nearest-neighbors-and-proximity-graphs",
+    "href": "pointclouds.html#nearest-neighbors-and-proximity-graphs",
+    "title": "5  Point clouds and distances",
+    "section": "5.5 Nearest neighbors and proximity graphs",
+    "text": "5.5 Nearest neighbors and proximity graphs\nAnother fundamental operation is finding the nearest neighbors of each point. This induces a graph structure on the point cloud.\n\nDefinition 5.3 Given a point cloud \\(X\\) and a parameter \\(\\epsilon &gt; 0\\), the \\(\\epsilon\\)-neighborhood graph has vertex set \\(X\\) and an edge between \\(x_i\\) and \\(x_j\\) whenever \\(d(x_i, x_j) \\leq \\epsilon\\).\nAlternatively, the \\(k\\)-nearest neighbor graph (\\(k\\)-NN graph) connects each point to its \\(k\\) closest neighbors.\n\nThese graphs are the starting point for many TDA constructions: the Vietoris-Rips complex is built from the \\(\\epsilon\\)-neighborhood graph, and density-based clustering uses nearest-neighbor relationships.",
+    "crumbs": [
+      "Working with Data",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Point clouds and distances</span>"
+    ]
+  },
+  {
+    "objectID": "pointclouds.html#summary",
+    "href": "pointclouds.html#summary",
+    "title": "5  Point clouds and distances",
+    "section": "5.6 Summary",
+    "text": "5.6 Summary\nIn this chapter we learned to:\n\nRepresent data as point clouds (finite metric spaces)\nGenerate synthetic point clouds with GeometricDatasets\nLoad real datasets from CSV files\nCompute distances using Distances.jl\nEstimate density with Gaussian kernels\nBuild neighborhood graphs from proximity\n\nThese are the building blocks we will use throughout the rest of the book. Next, we will see how to cluster point clouds using classical methods — and understand their limitations.\n\n\n\n\nUltsch, Alfred, and Jörn Lötsch. 2020. “The Fundamental Clustering and Projection Suite (FCPS): A Dataset Collection to Test the Performance of Clustering and Data Projection Algorithms.” Data 5 (1). https://doi.org/10.3390/data5010013.",
+    "crumbs": [
+      "Working with Data",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Point clouds and distances</span>"
+    ]
+  },
+  {
+    "objectID": "clustering.html",
+    "href": "clustering.html",
+    "title": "6  Clustering",
+    "section": "",
+    "text": "6.1 What is a clustering?\nClustering is one of the most fundamental tasks in data analysis: given a dataset, group the points into meaningful subsets. It sounds simple, but the devil is in the details. What does “meaningful” mean? How many clusters should there be? And what shape can they have?\nIn this chapter we cover classical clustering methods, their strengths and limitations. Understanding these limitations will motivate the topological approach (ToMATo) in a later chapter.\nLet’s load some packages and datasets to work with:\nusing DelimitedFiles\nusing CairoMakie\nusing Clustering\nusing Distances\nusing Random\nWe will use several datasets from the FCPS suite (Ultsch and Lötsch 2020):\nfunction load_fcps(name)\n    data = readdlm(\"clustering datasets/$name.csv\", ',')\n    points = data[:, 1:end-1]'  # column-major\n    labels = Int.(data[:, end])\n    return points, labels\nend\n\n# Load a few interesting ones\nhepta_pts, hepta_labels = load_fcps(\"Hepta\")\ntarget_pts, target_labels = load_fcps(\"Target\")\nchainlink_pts, chainlink_labels = load_fcps(\"Chainlink\")\nlsun_pts, lsun_labels = load_fcps(\"Lsun\")\nLet’s visualize them:\nfig = Figure(size = (800, 800))\n\nax1 = Axis3(fig[1, 1], title = \"Hepta\")\nscatter!(ax1, hepta_pts[1,:], hepta_pts[2,:], hepta_pts[3,:], \n    color = hepta_labels, markersize = 5)\n\nax2 = Axis(fig[1, 2], title = \"Target\", aspect = DataAspect())\nscatter!(ax2, target_pts[1,:], target_pts[2,:], \n    color = target_labels, markersize = 4)\n\nax3 = Axis3(fig[2, 1], title = \"Chainlink\")\nscatter!(ax3, chainlink_pts[1,:], chainlink_pts[2,:], chainlink_pts[3,:], \n    color = chainlink_labels, markersize = 3)\n\nax4 = Axis(fig[2, 2], title = \"Lsun\", aspect = DataAspect())\nscatter!(ax4, lsun_pts[1,:], lsun_pts[2,:], \n    color = lsun_labels, markersize = 4)\n\nfig\nEach dataset has different challenges: Hepta has well-separated spherical clusters, Target has concentric rings, Chainlink has interlocking loops, and Lsun has clusters of different shapes and sizes.",
+    "crumbs": [
+      "Working with Data",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Clustering</span>"
+    ]
+  },
+  {
+    "objectID": "clustering.html#what-is-a-clustering",
+    "href": "clustering.html#what-is-a-clustering",
+    "title": "6  Clustering",
+    "section": "",
+    "text": "Definition 6.1 A clustering of a set \\(X\\) is a collection \\(C_1, \\ldots, C_n \\subset X\\) such that \\(\\bigcup C_i = X\\) and \\(C_i \\cap C_j = \\emptyset\\) for any \\(i \\neq j\\). In other words: it is a partition of \\(X\\) into disjoint subsets. Each \\(C_i\\) is called a cluster.\nA clustering method is a function \\(f: X \\to \\{1, \\ldots, n\\}\\) that assigns each point \\(x \\in X\\) to a cluster label \\(f(x)\\).",
+    "crumbs": [
+      "Working with Data",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Clustering</span>"
+    ]
+  },
+  {
+    "objectID": "clustering.html#k-means",
+    "href": "clustering.html#k-means",
+    "title": "6  Clustering",
+    "section": "6.2 K-means",
+    "text": "6.2 K-means\nThe most popular clustering algorithm is k-means. The idea is simple:\n\nChoose \\(k\\) initial cluster centers (centroids)\nAssign each point to the nearest centroid\nRecompute centroids as the mean of assigned points\nRepeat steps 2-3 until convergence\n\n\n# K-means on Hepta (k=7, since we know there are 7 clusters)\nresult_hepta = kmeans(hepta_pts, 7)\nkm_labels_hepta = assignments(result_hepta)\n\nfig = Figure(size = (800, 400))\nax1 = Axis3(fig[1, 1], title = \"Hepta: true labels\")\nscatter!(ax1, hepta_pts[1,:], hepta_pts[2,:], hepta_pts[3,:], \n    color = hepta_labels, markersize = 5)\nax2 = Axis3(fig[1, 2], title = \"Hepta: k-means (k=7)\")\nscatter!(ax2, hepta_pts[1,:], hepta_pts[2,:], hepta_pts[3,:], \n    color = km_labels_hepta, markersize = 5)\nfig\n\nK-means works well on Hepta because the clusters are spherical and well-separated, which is exactly what k-means assumes. But what happens with less friendly shapes?\n\n# K-means on Target (k=2)\nresult_target = kmeans(target_pts, 2)\nkm_labels_target = assignments(result_target)\n\nfig = Figure(size = (800, 400))\nax1 = Axis(fig[1, 1], title = \"Target: true labels\", aspect = DataAspect())\nscatter!(ax1, target_pts[1,:], target_pts[2,:], \n    color = target_labels, markersize = 4)\nax2 = Axis(fig[1, 2], title = \"Target: k-means (k=2)\", aspect = DataAspect())\nscatter!(ax2, target_pts[1,:], target_pts[2,:], \n    color = km_labels_target, markersize = 4)\nfig\n\nK-means struggles here: it can only create convex (roughly spherical) clusters, so it splits the ring rather than separating the ring from the core.\nLimitations of k-means:\n\nAssumes clusters are convex (spherical)\nRequires knowing \\(k\\) in advance\nSensitive to initialization\nSensitive to outliers",
+    "crumbs": [
+      "Working with Data",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Clustering</span>"
+    ]
+  },
+  {
+    "objectID": "clustering.html#dbscan",
+    "href": "clustering.html#dbscan",
+    "title": "6  Clustering",
+    "section": "6.3 DBSCAN",
+    "text": "6.3 DBSCAN\nDBSCAN (Density-Based Spatial Clustering of Applications with Noise) takes a completely different approach: clusters are regions of high density separated by regions of low density.\nThe algorithm has two parameters:\n\n\\(\\epsilon\\): the radius of a neighborhood\nminpts: the minimum number of points in a neighborhood for a point to be a “core point”\n\n\n# DBSCAN on Target\nD_target = pairwise(Euclidean(), target_pts, dims = 2)\nresult_db = dbscan(D_target, 0.5, 10)  # ε=0.5, minpts=10\n\n# dbscan returns a DbscanResult; extract cluster assignments\ndb_labels = zeros(Int, size(target_pts, 2))\nfor (i, cluster) in enumerate(result_db.clusters)\n    db_labels[cluster.core_indices] .= i\n    db_labels[cluster.boundary_indices] .= i\nend\n\nfig = Figure(size = (800, 400))\nax1 = Axis(fig[1, 1], title = \"Target: true labels\", aspect = DataAspect())\nscatter!(ax1, target_pts[1,:], target_pts[2,:], \n    color = target_labels, markersize = 4)\nax2 = Axis(fig[1, 2], title = \"Target: DBSCAN\", aspect = DataAspect())\nscatter!(ax2, target_pts[1,:], target_pts[2,:], \n    color = db_labels, markersize = 4)\nfig\n\nDBSCAN can find non-convex clusters and automatically determines the number of clusters. It also identifies noise points (points not belonging to any cluster).\nLimitations of DBSCAN:\n\nStruggles with clusters of varying density\nSensitive to \\(\\epsilon\\) and minpts parameters\nNo straightforward way to choose parameters",
+    "crumbs": [
+      "Working with Data",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Clustering</span>"
+    ]
+  },
+  {
+    "objectID": "clustering.html#hierarchical-clustering",
+    "href": "clustering.html#hierarchical-clustering",
+    "title": "6  Clustering",
+    "section": "6.4 Hierarchical clustering",
+    "text": "6.4 Hierarchical clustering\nHierarchical clustering builds a tree (called a dendrogram) that shows how points are progressively merged into clusters:\n\nStart with each point as its own cluster\nMerge the two closest clusters\nRepeat until everything is in one cluster\n\nThe “distance between clusters” can be defined in several ways (single linkage, complete linkage, average linkage, Ward’s method, etc.).\n\n# Hierarchical clustering on Lsun\nD_lsun = pairwise(Euclidean(), lsun_pts, dims = 2)\nhc = hclust(D_lsun, linkage = :ward)\n\n# Cut at 3 clusters\nhc_labels = cutree(hc, k = 3)\n\nfig = Figure(size = (800, 400))\nax1 = Axis(fig[1, 1], title = \"Lsun: true labels\", aspect = DataAspect())\nscatter!(ax1, lsun_pts[1,:], lsun_pts[2,:], \n    color = lsun_labels, markersize = 4)\nax2 = Axis(fig[1, 2], title = \"Lsun: hierarchical (Ward, k=3)\", aspect = DataAspect())\nscatter!(ax2, lsun_pts[1,:], lsun_pts[2,:], \n    color = hc_labels, markersize = 4)\nfig\n\nThe dendrogram itself is an interesting object: it encodes a nested sequence of clusterings at different scales. We will see later that dendrograms can be interpreted as 0-dimensional persistence diagrams — our first connection between clustering and topology!",
+    "crumbs": [
+      "Working with Data",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Clustering</span>"
+    ]
+  },
+  {
+    "objectID": "clustering.html#why-do-we-need-topology",
+    "href": "clustering.html#why-do-we-need-topology",
+    "title": "6  Clustering",
+    "section": "6.5 Why do we need topology?",
+    "text": "6.5 Why do we need topology?\nEach of the methods above has assumptions that can fail:\n\n\n\nMethod\nAssumes\n\n\n\n\nK-means\nConvex, equally-sized clusters; known \\(k\\)\n\n\nDBSCAN\nUniform density across clusters\n\n\nHierarchical\nChoice of linkage affects results dramatically\n\n\n\nReal-world data often violates all of these assumptions simultaneously. The ToMATo algorithm (which we will study in a later chapter) combines density estimation with persistence-based merging to handle:\n\nClusters of different densities\nClusters of arbitrary shape\nAutomatic selection of the number of clusters (via the persistence diagram)\n\nBut first, we need to understand persistent homology — the mathematical machinery that makes this possible.\n\n\n\n\nUltsch, Alfred, and Jörn Lötsch. 2020. “The Fundamental Clustering and Projection Suite (FCPS): A Dataset Collection to Test the Performance of Clustering and Data Projection Algorithms.” Data 5 (1). https://doi.org/10.3390/data5010013.",
+    "crumbs": [
+      "Working with Data",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Clustering</span>"
+    ]
+  },
+  {
+    "objectID": "persistence.html",
+    "href": "persistence.html",
+    "title": "7  Persistent homology",
+    "section": "",
+    "text": "7.1 Filtrations\nIn the chapter on simplicial complexes, we saw that we can build a Vietoris-Rips complex from a point cloud by connecting points within distance \\(\\epsilon\\). But we faced a fundamental problem: how to choose \\(\\epsilon\\)?\nToo small, and we see only isolated points. Too large, and everything collapses into a single blob. The brilliant insight of persistent homology is: don’t choose — look at all scales simultaneously and track which topological features persist.",
+    "crumbs": [
+      "Persistent Homology",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Persistent homology</span>"
+    ]
+  },
+  {
+    "objectID": "persistence.html#filtrations",
+    "href": "persistence.html#filtrations",
+    "title": "7  Persistent homology",
+    "section": "",
+    "text": "Definition 7.1 A filtration is a nested sequence of simplicial complexes:\n\\[\n\\emptyset = K_0 \\subseteq K_1 \\subseteq K_2 \\subseteq \\cdots \\subseteq K_m = K.\n\\]\nEach \\(K_i\\) is called a level of the filtration, and the parameter controlling the nesting is called the filtration value.\n\n\n7.1.1 The Vietoris-Rips filtration\nThe most common filtration in TDA is the Vietoris-Rips filtration. Given a point cloud \\(X\\):\n\nStart with \\(\\epsilon = 0\\): the complex \\(\\text{VR}(X, 0)\\) has only vertices (isolated points).\nIncrease \\(\\epsilon\\): edges appear between nearby points, then triangles, tetrahedra, etc.\nEventually, for large enough \\(\\epsilon\\), everything is connected into one giant simplex.\n\nAs \\(\\epsilon\\) grows, topological features are born and die:\n\nBirth: A new connected component appears (at \\(\\epsilon = 0\\), every point is its own component), or a new loop or cavity forms.\nDeath: A component merges with another (two clusters become one), or a loop gets filled in by a triangle.\n\nThe persistence of a feature is its lifetime: \\(\\text{death} - \\text{birth}\\).\n\n\n7.1.2 Sublevel set filtrations\nAnother important type of filtration comes from a function \\(f: X \\to \\mathbb{R}\\). The sublevel set at threshold \\(t\\) is:\n\\[\nX_t = \\{x \\in X \\mid f(x) \\leq t\\}.\n\\]\nAs \\(t\\) increases, more of \\(X\\) is revealed, and topological features appear and disappear. This is used, for example, in the digits classification chapter (where \\(f\\) is the grayscale intensity of an image) and in the ToMATo algorithm (where \\(f\\) is a density function).",
+    "crumbs": [
+      "Persistent Homology",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Persistent homology</span>"
+    ]
+  },
+  {
+    "objectID": "persistence.html#persistence-diagrams",
+    "href": "persistence.html#persistence-diagrams",
+    "title": "7  Persistent homology",
+    "section": "7.2 Persistence diagrams",
+    "text": "7.2 Persistence diagrams\nWe can summarize the birth and death of every topological feature in a single picture:\n\nDefinition 7.2 A persistence diagram is a multiset of points \\((b_i, d_i) \\in \\mathbb{R}^2\\), where \\(b_i\\) is the birth time and \\(d_i\\) is the death time of the \\(i\\)-th feature. Since \\(b_i \\leq d_i\\), all points lie on or above the diagonal \\(y = x\\).\n\nPoints far from the diagonal represent features with long persistence — these are the “real” topological features. Points near the diagonal are short-lived and likely correspond to noise.\nA persistence diagram for dimension \\(k\\) captures:\n\n\\(k = 0\\): Connected components. A point \\((b, d)\\) means a component was born at scale \\(b\\) and merged with another at scale \\(d\\). The component that never dies (the last one standing) has \\(d = \\infty\\).\n\\(k = 1\\): Loops. A loop appeared at scale \\(b\\) and was filled in at scale \\(d\\).\n\\(k = 2\\): Cavities. And so on for higher dimensions.",
+    "crumbs": [
+      "Persistent Homology",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Persistent homology</span>"
+    ]
+  },
+  {
+    "objectID": "persistence.html#barcodes",
+    "href": "persistence.html#barcodes",
+    "title": "7  Persistent homology",
+    "section": "7.3 Barcodes",
+    "text": "7.3 Barcodes\nAn equivalent representation is the barcode: each feature becomes a horizontal bar from \\(b_i\\) to \\(d_i\\).\nThe barcode makes it easy to see:\n\nHow many features exist at any given scale (count the bars crossing a vertical line)\nWhich features are long-lived (long bars) vs. noise (short bars)\nNatural thresholds for choosing a scale parameter",
+    "crumbs": [
+      "Persistent Homology",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Persistent homology</span>"
+    ]
+  },
+  {
+    "objectID": "persistence.html#clustering-revisited-dendrograms-as-0-dimensional-persistence",
+    "href": "persistence.html#clustering-revisited-dendrograms-as-0-dimensional-persistence",
+    "title": "7  Persistent homology",
+    "section": "7.4 Clustering revisited: dendrograms as 0-dimensional persistence",
+    "text": "7.4 Clustering revisited: dendrograms as 0-dimensional persistence\nHere’s a beautiful connection between classical clustering and persistent homology.\nConsider agglomerative (hierarchical) clustering: we start with \\(n\\) clusters (one per point) and progressively merge the closest pair. The dendrogram records this merging process.\nNow consider the 0-dimensional Vietoris-Rips persistence: as we increase \\(\\epsilon\\), connected components merge. The birth of a component is at \\(\\epsilon = 0\\) (each point starts as its own component), and the death is the scale at which it merges with another.\nThese are the same thing! The 0-dimensional persistence barcode is precisely the dendrogram rewritten in the language of topology. The “gap” in the dendrogram that tells you how many clusters to choose corresponds to the gap between long and short bars in the barcode.\nThis is the first example of how persistence provides a principled, multi-scale view of structure that classical methods handle in an ad hoc way.",
+    "crumbs": [
+      "Persistent Homology",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Persistent homology</span>"
+    ]
+  },
+  {
+    "objectID": "persistence.html#the-stability-theorem",
+    "href": "persistence.html#the-stability-theorem",
+    "title": "7  Persistent homology",
+    "section": "7.5 The stability theorem",
+    "text": "7.5 The stability theorem\nOne of the most important theoretical results in TDA is the stability theorem (Chazal, Cohen-Steiner, Glisse, Guibas, Oudot):\n\nIf two datasets \\(X\\) and \\(Y\\) are “close” (in a precise sense), then their persistence diagrams are also close.\n\nMore formally, the bottleneck distance between persistence diagrams is bounded by the Hausdorff distance or the \\(L^\\infty\\) distance between the corresponding functions:\n\\[\nd_B(\\text{Dgm}(f), \\text{Dgm}(g)) \\leq \\|f - g\\|_\\infty.\n\\]\nThis is crucial for applications: it means that small perturbations (noise) in the data produce small changes in the persistence diagram, not wild jumps. Persistent homology is robust.",
+    "crumbs": [
+      "Persistent Homology",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Persistent homology</span>"
+    ]
+  },
+  {
+    "objectID": "persistence.html#summary",
+    "href": "persistence.html#summary",
+    "title": "7  Persistent homology",
+    "section": "7.6 Summary",
+    "text": "7.6 Summary\nPersistent homology gives us:\n\nA multi-scale view of topological features (no need to choose a single \\(\\epsilon\\))\nA way to distinguish signal from noise (long-lived features vs. short-lived ones)\nA stable summary of data shape (robust to perturbations)\nA unifying framework that connects clustering, homology, and data analysis\n\nIn the next chapter, we will compute persistent homology in Julia using Ripserer.jl and work with persistence diagrams using PersistenceDiagrams.jl.",
+    "crumbs": [
+      "Persistent Homology",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Persistent homology</span>"
+    ]
+  },
+  {
+    "objectID": "computing_ph.html",
+    "href": "computing_ph.html",
+    "title": "8  Computing persistent homology in Julia",
+    "section": "",
+    "text": "8.1 Setup\nIn the previous chapter we learned what persistent homology is and why it matters. Now it’s time to actually compute it. Julia has excellent packages for this: Ripserer.jl for computing persistent homology and PersistenceDiagrams.jl for working with the resulting diagrams.\nusing Ripserer\nusing PersistenceDiagrams\nimport GeometricDatasets as gd\nusing CairoMakie\nusing Random",
+    "crumbs": [
+      "Persistent Homology",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Computing persistent homology in Julia</span>"
+    ]
+  },
+  {
+    "objectID": "computing_ph.html#computing-rips-persistence",
+    "href": "computing_ph.html#computing-rips-persistence",
+    "title": "8  Computing persistent homology in Julia",
+    "section": "8.2 Computing Rips persistence",
+    "text": "8.2 Computing Rips persistence\nLet’s start with a simple example: a noisy circle.\n\nseed = MersenneTwister(42)\ncircle = gd.sphere(100, dim = 2) .+ 0.05 .* randn(seed, 2, 100)\n\nfig = Figure()\nax = Axis(fig[1, 1], title = \"Noisy circle (100 points)\", aspect = DataAspect())\nscatter!(ax, circle[1, :], circle[2, :], markersize = 6)\nfig\n\nWe expect this point cloud to have:\n\n\\(\\beta_0 = 1\\) (one connected component)\n\\(\\beta_1 = 1\\) (one loop — the circle)\n\\(\\beta_k = 0\\) for \\(k \\geq 2\\)\n\nLet’s compute persistent homology using the Vietoris-Rips filtration:\n\n# Ripserer expects each point as a row (or a vector of tuples)\n# Convert from our column-major format\npoints = [Tuple(circle[:, i]) for i in 1:size(circle, 2)]\n\n# Compute PH up to dimension 1\nresult = ripserer(Rips(points), dim_max = 1)\n\nThe result contains persistence diagrams for each dimension:\n\n# Dimension 0: connected components\nprintln(\"H₀ (connected components):\")\nprintln(result[1])\n\nprintln(\"\\nH₁ (loops):\")\nprintln(result[2])",
+    "crumbs": [
+      "Persistent Homology",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Computing persistent homology in Julia</span>"
+    ]
+  },
+  {
+    "objectID": "computing_ph.html#visualizing-persistence-diagrams",
+    "href": "computing_ph.html#visualizing-persistence-diagrams",
+    "title": "8  Computing persistent homology in Julia",
+    "section": "8.3 Visualizing persistence diagrams",
+    "text": "8.3 Visualizing persistence diagrams\n\nfig = Figure(size = (800, 400))\n\nax1 = Axis(fig[1, 1], title = \"Persistence diagram (H₀)\", \n    xlabel = \"Birth\", ylabel = \"Death\")\nfor interval in result[1]\n    b, d = birth(interval), death(interval)\n    if isfinite(d)\n        scatter!(ax1, [b], [d], color = :blue, markersize = 8)\n    end\nend\n# Add diagonal\nlims1 = (0, maximum(death(i) for i in result[1] if isfinite(death(i))) * 1.1)\nlines!(ax1, [lims1[1], lims1[2]], [lims1[1], lims1[2]], color = :gray, linestyle = :dash)\n\nax2 = Axis(fig[1, 2], title = \"Persistence diagram (H₁)\",\n    xlabel = \"Birth\", ylabel = \"Death\")\nfor interval in result[2]\n    b, d = birth(interval), death(interval)\n    if isfinite(d)\n        scatter!(ax2, [b], [d], color = :red, markersize = 8)\n    end\nend\nlims2 = if !isempty(result[2])\n    (0, maximum(death(i) for i in result[2] if isfinite(death(i))) * 1.1)\nelse\n    (0, 1)\nend\nlines!(ax2, [lims2[1], lims2[2]], [lims2[1], lims2[2]], color = :gray, linestyle = :dash)\n\nfig\n\nIn the \\(H_1\\) diagram, you should see one point far from the diagonal (the “real” loop of the circle) and possibly a few points near the diagonal (noise). The persistence (distance from the diagonal) tells you how significant each feature is.",
+    "crumbs": [
+      "Persistent Homology",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Computing persistent homology in Julia</span>"
+    ]
+  },
+  {
+    "objectID": "computing_ph.html#barcodes",
+    "href": "computing_ph.html#barcodes",
+    "title": "8  Computing persistent homology in Julia",
+    "section": "8.4 Barcodes",
+    "text": "8.4 Barcodes\n\nbarcode(result)\n\nThe barcode gives a complementary view: each horizontal bar represents a topological feature, from birth to death. Long bars are significant features; short bars are noise.",
+    "crumbs": [
+      "Persistent Homology",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Computing persistent homology in Julia</span>"
+    ]
+  },
+  {
+    "objectID": "computing_ph.html#cubical-complexes",
+    "href": "computing_ph.html#cubical-complexes",
+    "title": "8  Computing persistent homology in Julia",
+    "section": "8.5 Cubical complexes",
+    "text": "8.5 Cubical complexes\nFor gridded data (like images), Ripserer provides cubical complexes, which are much more efficient than Rips complexes:\n\n# Create a simple 2D function with two peaks\nn = 50\nx = range(-2, 2, length = n)\ny = range(-2, 2, length = n)\nf = [exp(-(xi^2 + yi^2)) + 0.7 * exp(-((xi-1)^2 + (yi-1)^2)) for xi in x, yi in y]\n\nresult_cub = ripserer(Cubical(f))\n\n\nfig = Figure(size = (800, 400))\nax1 = Axis(fig[1, 1], title = \"2D function\", aspect = DataAspect())\nheatmap!(ax1, x, y, f)\n\nax2 = Axis(fig[1, 2], title = \"Sublevel persistence (H₀)\",\n    xlabel = \"Birth\", ylabel = \"Death\")\nfor interval in result_cub[1]\n    b, d = birth(interval), death(interval)\n    if isfinite(d)\n        scatter!(ax2, [b], [d], color = :blue, markersize = 8)\n    end\nend\nfig",
+    "crumbs": [
+      "Persistent Homology",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Computing persistent homology in Julia</span>"
+    ]
+  },
+  {
+    "objectID": "computing_ph.html#persistence-images",
+    "href": "computing_ph.html#persistence-images",
+    "title": "8  Computing persistent homology in Julia",
+    "section": "8.6 Persistence images",
+    "text": "8.6 Persistence images\nPersistence diagrams are multisets of points, which makes them hard to use directly in machine learning pipelines (most algorithms expect fixed-length vectors). Persistence images solve this by converting a diagram into a fixed-size matrix.\nThe idea: place a Gaussian kernel at each point of the persistence diagram, weight it by a function of the persistence, and evaluate on a grid.\n\n# Compute persistence image from the H₁ diagram of the circle\nif length(result[2]) &gt; 0\n    pi_img = PersistenceImage(result[2])\n    println(\"Persistence image size: \", size(pi_img))\nend\n\nPersistence images are used extensively in the digits classification chapter, where they convert persistence diagrams of handwritten digits into feature vectors for a neural network.",
+    "crumbs": [
+      "Persistent Homology",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Computing persistent homology in Julia</span>"
+    ]
+  },
+  {
+    "objectID": "computing_ph.html#wasserstein-and-bottleneck-distances",
+    "href": "computing_ph.html#wasserstein-and-bottleneck-distances",
+    "title": "8  Computing persistent homology in Julia",
+    "section": "8.7 Wasserstein and bottleneck distances",
+    "text": "8.7 Wasserstein and bottleneck distances\nTo compare two persistence diagrams, we need a notion of distance. The two standard choices are:\n\nDefinition 8.1 The bottleneck distance between two persistence diagrams \\(D_1\\) and \\(D_2\\) is:\n\\[\nd_B(D_1, D_2) = \\inf_\\gamma \\sup_{x \\in D_1} \\|x - \\gamma(x)\\|_\\infty\n\\]\nwhere \\(\\gamma\\) ranges over all bijections between \\(D_1\\) and \\(D_2\\) (including matching points to the diagonal).\n\n\nDefinition 8.2 The \\(p\\)-Wasserstein distance is:\n\\[\nW_p(D_1, D_2) = \\left(\\inf_\\gamma \\sum_{x \\in D_1} \\|x - \\gamma(x)\\|_\\infty^p\\right)^{1/p}.\n\\]\n\nThe bottleneck distance is dominated by the single worst-matched feature; the Wasserstein distance accounts for all features. Both are available in PersistenceDiagrams.jl:\n\n# Compare two point clouds\nseed1 = MersenneTwister(1)\nseed2 = MersenneTwister(2)\ncircle1 = gd.sphere(80, dim = 2) .+ 0.05 .* randn(seed1, 2, 80)\ncircle2 = gd.sphere(80, dim = 2) .+ 0.1 .* randn(seed2, 2, 80)\n\npts1 = [Tuple(circle1[:, i]) for i in 1:size(circle1, 2)]\npts2 = [Tuple(circle2[:, i]) for i in 1:size(circle2, 2)]\n\nres1 = ripserer(Rips(pts1), dim_max = 1)\nres2 = ripserer(Rips(pts2), dim_max = 1)\n\n# Compare H₁ diagrams\nif length(res1[2]) &gt; 0 && length(res2[2]) &gt; 0\n    d_bottle = Bottleneck()(res1[2], res2[2])\n    d_wass = Wasserstein()(res1[2], res2[2])\n    println(\"Bottleneck distance: \", round(d_bottle, digits = 4))\n    println(\"Wasserstein distance: \", round(d_wass, digits = 4))\nend",
+    "crumbs": [
+      "Persistent Homology",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Computing persistent homology in Julia</span>"
+    ]
+  },
+  {
+    "objectID": "computing_ph.html#the-full-pipeline",
+    "href": "computing_ph.html#the-full-pipeline",
+    "title": "8  Computing persistent homology in Julia",
+    "section": "8.8 The full pipeline",
+    "text": "8.8 The full pipeline\nLet’s put it all together on a more interesting example — a noisy torus:\n\nseed = MersenneTwister(0)\ntorus = gd.torus(200) .+ 0.05 .* randn(seed, 3, 200)\n\n# Convert to tuple format\npts_torus = [Tuple(torus[:, i]) for i in 1:size(torus, 2)]\n\n# Compute PH up to dimension 2\nresult_torus = ripserer(Rips(pts_torus), dim_max = 2, threshold = 2.0)\n\nbarcode(result_torus)\n\nA torus has \\(\\beta_0 = 1\\), \\(\\beta_1 = 2\\), \\(\\beta_2 = 1\\). Check: do you see one long bar in \\(H_0\\), two long bars in \\(H_1\\), and one long bar in \\(H_2\\)?",
+    "crumbs": [
+      "Persistent Homology",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Computing persistent homology in Julia</span>"
+    ]
+  },
+  {
+    "objectID": "computing_ph.html#summary",
+    "href": "computing_ph.html#summary",
+    "title": "8  Computing persistent homology in Julia",
+    "section": "8.9 Summary",
+    "text": "8.9 Summary\nIn this chapter we learned to:\n\nCompute Vietoris-Rips persistent homology with Ripserer.jl\nCompute cubical persistence for gridded data\nVisualize persistence diagrams and barcodes\nConvert diagrams to persistence images for ML pipelines\nCompare diagrams using Wasserstein and bottleneck distances\n\nThese tools form the computational backbone of TDA. In the next chapters, we will apply them to clustering (ToMATo), visualization (Mapper), and real-world datasets.",
+    "crumbs": [
+      "Persistent Homology",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Computing persistent homology in Julia</span>"
+    ]
+  },
+  {
+    "objectID": "tomato.html",
+    "href": "tomato.html",
+    "title": "9  ToMATo",
+    "section": "",
+    "text": "9.1 Inspiration\nGiven a pointcloud \\(X\\), how topology can help us in creating clusters?\nLet’s understand the ToMATo algorithm (see the original paper (Chazal et al. 2011)) with an example and pretend we are actually inventing it. How fun!\nLet’s load some packages first\nusing ToMATo\nimport GeometricDatasets as gd\nusing AlgebraOfGraphics, GLMakie;\nusing Random;\nSuppose \\(X\\) is the following dataset:\nseed = MersenneTwister(0) # setting some seed \nX = hcat(\n    randn(seed, 2, 800)\n    , randn(seed, 2, 800) .* 0.8 .+ (4, -4)\n    , randn(seed, 2, 100) .* 0.3 .- (2, -2)\n    )\ndf = (x1 = X[1, :], x2 = X[2, :])\nplt = data(df) * mapping(:x1, :x2)\ndraw(plt)\nWe can see two big clusters and possibly a small one.\nLet’s make a note-so-absurd supposition that our data is generated by some normal distribuitions (in our case, it really is; in general this can be false). Then, intuitively, the mean (or the center) of each distribution is the point with the highest density, ie, with more points close to it, because it is in the mean of the distribution.",
+    "crumbs": [
+      "TDA Methods",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>ToMATo</span>"
+    ]
+  },
+  {
+    "objectID": "mapper.html",
+    "href": "mapper.html",
+    "title": "10  (Classical) mapper",
+    "section": "",
+    "text": "10.1 Reeb graph\nIn topology, there are many ways by which we try to see what can’t be seen, in particular high-dimensional sets. The Reeb graph is one of those ways: given a topological space \\(X\\) and a map \\(f: X \\to \\mathbb{R}\\), we can collapse the connected components of its pre-images to get a graph that reflects the level-sets of \\(f\\).\nMore formally, we define a relation \\(\\sim\\) on \\(X\\) such that \\(p \\sim q\\) if-and-only-if \\(p\\) and \\(q\\) belong to the same connected component of \\(f^{-1}(c)\\) for some \\(c \\in \\mathbb{R}\\).",
+    "crumbs": [
+      "TDA Methods",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>(Classical) mapper</span>"
+    ]
+  },
+  {
+    "objectID": "mapper-general.html",
+    "href": "mapper-general.html",
+    "title": "12  Mapper: the general case",
+    "section": "",
+    "text": "12.1 What is a mapper algorithm?\nWe have seen two specific instances of the Mapper construction: the classical Mapper (using a filter function and its preimages) and the Ball Mapper (using \\(\\epsilon\\)-balls). In this chapter, we step back and see the general pattern, then explore how to customize it.\nWe can boil down the two mapper algorithms we saw earlier as follows:\nIn the classical mapper context, \\(C\\) is generated using the clustering of preimages of a function \\(f: X \\to \\mathbb{R}\\). In the ball mapper scenario, we cover \\(X\\) using \\(\\epsilon\\)-balls with centers as a subset of \\(X\\).\nThe beauty of this decomposition is that each step can be independently modified, leading to a family of Mapper-like algorithms suited to different problems.",
+    "crumbs": [
+      "TDA Methods",
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Mapper: the general case</span>"
+    ]
+  },
+  {
+    "objectID": "mapper-general.html#interpreting-mapper-graphs",
+    "href": "mapper-general.html#interpreting-mapper-graphs",
+    "title": "12  Mapper: the general case",
+    "section": "12.2 Interpreting Mapper graphs",
+    "text": "12.2 Interpreting Mapper graphs\nThe output of any Mapper algorithm is a graph (or simplicial complex). How do we read it?\n\nNodes represent clusters of data points. The node size typically represents the number of points in that cluster.\nEdges connect clusters that share points. Thicker edges (in a weighted version) mean more shared points.\nConnected components in the Mapper graph suggest distinct groups in the data.\nLoops (cycles) suggest the data has a circular or toroidal structure.\nFlares (branches) suggest the data has a branching structure (like a Y-shape).\n\nYou can also color the nodes by any function of the data: mean value of a variable, density, class labels, etc. This turns the Mapper graph into a powerful exploratory tool.",
+    "crumbs": [
+      "TDA Methods",
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Mapper: the general case</span>"
+    ]
+  },
+  {
+    "objectID": "mapper-general.html#example-mapper-on-a-noisy-figure-eight",
+    "href": "mapper-general.html#example-mapper-on-a-noisy-figure-eight",
+    "title": "12  Mapper: the general case",
+    "section": "12.4 Example: Mapper on a noisy figure-eight",
+    "text": "12.4 Example: Mapper on a noisy figure-eight\nLet’s apply the general approach to a dataset with a more complex shape:\n\nusing TDAmapper\nimport GeometricDatasets as gd\nusing CairoMakie\nusing Random\n\nseed = MersenneTwister(42)\n\n# Create a figure-eight (two circles joined)\nθ1 = 2π .* rand(seed, 200)\nθ2 = 2π .* rand(seed, 200)\ncircle1 = [cos.(θ1)'; sin.(θ1)']\ncircle2 = [cos.(θ2)' .+ 2; sin.(θ2)']\nX = hcat(circle1, circle2) .+ 0.08 .* randn(seed, 2, 400)\n\nfig = Figure()\nax = Axis(fig[1, 1], title = \"Noisy figure-eight\", aspect = DataAspect())\nscatter!(ax, X[1, :], X[2, :], markersize = 4)\nfig\n\n\n# Ball mapper with different radii\nbm1 = ball_mapper(X, 0.3)\nfig1, _, _ = mapper_plot(X, bm1)\nfig1\n\n\nbm2 = ball_mapper(X, 0.5)\nfig2, _, _ = mapper_plot(X, bm2)\nfig2\n\nNotice how the radius affects the graph structure. With a small radius, we see many nodes and the two loops are visible. With a larger radius, the graph becomes simpler — possibly too simple, collapsing the interesting structure.",
+    "crumbs": [
+      "TDA Methods",
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Mapper: the general case</span>"
+    ]
+  },
+  {
+    "objectID": "mapper-general.html#choosing-parameters",
+    "href": "mapper-general.html#choosing-parameters",
+    "title": "12  Mapper: the general case",
+    "section": "12.5 Choosing parameters",
+    "text": "12.5 Choosing parameters\nThere is no universal recipe for choosing Mapper parameters. However, some guidelines help:\n\nCoverage: every data point should belong to at least one covering element. If points are “orphaned,” the covering is too sparse.\nOverlap: some overlap between covering elements is necessary to create edges. More overlap means a denser graph (more edges), less overlap means a sparser graph.\nResolution: finer coverings give more detailed graphs but also more noise. Coarser coverings give simpler graphs but may hide structure.\n\nA common workflow is:\n\nStart with a reasonable \\(\\epsilon\\) (e.g., based on average nearest-neighbor distance)\nVisualize the resulting graph\nAdjust parameters and compare\n\nThe topological features (loops, branches) that persist across a range of parameters are the meaningful ones — this is the same persistence philosophy we saw in persistent homology!",
+    "crumbs": [
+      "TDA Methods",
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Mapper: the general case</span>"
+    ]
+  },
+  {
+    "objectID": "timeseries.html",
+    "href": "timeseries.html",
+    "title": "15  Time series analysis",
+    "section": "",
+    "text": "15.1 From time series to point clouds\nTime series are sequences of measurements indexed by time: stock prices, temperature readings, heartbeat signals, sensor data. At first glance, they seem far from point clouds and topology. But there is a beautiful trick — delay embeddings — that converts a time series into a point cloud, opening the door to all the TDA tools we have developed.",
+    "crumbs": [
+      "Applications",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Time series analysis</span>"
+    ]
+  },
+  {
+    "objectID": "timeseries.html#from-time-series-to-point-clouds",
+    "href": "timeseries.html#from-time-series-to-point-clouds",
+    "title": "15  Time series analysis",
+    "section": "",
+    "text": "15.1.1 Takens’ embedding theorem\nGiven a time series \\(x_1, x_2, \\ldots, x_N\\), we can create a point cloud by looking at windows of consecutive values. Fix two parameters:\n\n\\(d\\): the embedding dimension (how many consecutive values per window)\n\\(\\tau\\): the delay (spacing between consecutive values in a window)\n\nThe delay embedding maps the time series to a set of points \\(\\{y_i\\}\\) in \\(\\mathbb{R}^d\\):\n\\[\ny_i = (x_i, x_{i+\\tau}, x_{i+2\\tau}, \\ldots, x_{i+(d-1)\\tau}).\n\\]\nEach \\(y_i\\) is a snapshot of the time series behavior around time \\(i\\).\n\n\n\n\n\n\nNote\n\n\n\nTakens’ theorem (1981) states that if the time series comes from a dynamical system with an attractor of dimension \\(m\\), then for \\(d &gt; 2m\\) the delay embedding faithfully reconstructs the topology of the attractor. This is a remarkable result: from a single scalar measurement over time, we can recover the shape of the underlying dynamics!\n\n\n\n\n15.1.2 Example: detecting periodicity\nA purely periodic signal traces out a closed loop in delay-embedding space. This loop creates a 1-dimensional topological feature (\\(\\beta_1 = 1\\)) that we can detect with persistent homology.\nLet’s try it:\n\nusing Ripserer\nusing PersistenceDiagrams\nusing CairoMakie\nusing Random\n\n\n# A periodic signal: sin with some noise\nN = 500\nt = range(0, 4π, length = N)\nsignal = sin.(t) .+ 0.1 .* randn(MersenneTwister(42), N)\n\nfig = Figure(size = (800, 300))\nax = Axis(fig[1, 1], title = \"Noisy periodic signal\", xlabel = \"t\", ylabel = \"x(t)\")\nlines!(ax, t, signal)\nfig\n\nNow let’s apply delay embedding:\n\nfunction delay_embedding(x, d, τ)\n    N = length(x)\n    M = N - (d - 1) * τ\n    embedding = zeros(d, M)\n    for i in 1:M\n        for j in 1:d\n            embedding[j, i] = x[i + (j - 1) * τ]\n        end\n    end\n    return embedding\nend\n\n# Embed in 2D with delay τ=25\ncloud = delay_embedding(signal, 2, 25)\n\nfig = Figure()\nax = Axis(fig[1, 1], title = \"Delay embedding (d=2, τ=25)\", \n    xlabel = \"x(t)\", ylabel = \"x(t+τ)\", aspect = DataAspect())\nscatter!(ax, cloud[1, :], cloud[2, :], markersize = 3)\nfig\n\nThe point cloud should look like a noisy circle — the topological signature of periodicity!\n\n# Subsample for computational efficiency\nidx = 1:3:size(cloud, 2)\npts = [Tuple(cloud[:, i]) for i in idx]\n\nresult = ripserer(Rips(pts), dim_max = 1, threshold = 2.5)\nbarcode(result)\n\nIf the signal is truly periodic, we should see one prominent bar in \\(H_1\\) — a loop that persists over a wide range of scales.",
+    "crumbs": [
+      "Applications",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Time series analysis</span>"
+    ]
+  },
+  {
+    "objectID": "timeseries.html#detecting-the-lack-of-periodicity",
+    "href": "timeseries.html#detecting-the-lack-of-periodicity",
+    "title": "15  Time series analysis",
+    "section": "15.2 Detecting the lack of periodicity",
+    "text": "15.2 Detecting the lack of periodicity\nWhat happens when the signal is not periodic? Let’s try with pure noise:\n\nnoise = randn(MersenneTwister(123), N)\n\ncloud_noise = delay_embedding(noise, 2, 25)\n\nfig = Figure(size = (800, 400))\nax1 = Axis(fig[1, 1], title = \"White noise embedded (d=2)\")\nscatter!(ax1, cloud_noise[1, :], cloud_noise[2, :], markersize = 3)\n\n# Compute PH on subsample\nidx_noise = 1:3:size(cloud_noise, 2)\npts_noise = [Tuple(cloud_noise[:, i]) for i in idx_noise]\nresult_noise = ripserer(Rips(pts_noise), dim_max = 1, threshold = 3.0)\n\nax2 = Axis(fig[1, 2], title = \"Barcode (white noise)\")\nfig\n\n\nbarcode(result_noise)\n\nWith white noise, the delay embedding fills a roughly uniform blob — no persistent loops. All \\(H_1\\) bars should be short, indicating no significant topological features.",
+    "crumbs": [
+      "Applications",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Time series analysis</span>"
+    ]
+  },
+  {
+    "objectID": "timeseries.html#multiple-periodicities",
+    "href": "timeseries.html#multiple-periodicities",
+    "title": "15  Time series analysis",
+    "section": "15.3 Multiple periodicities",
+    "text": "15.3 Multiple periodicities\nWhat if the signal has two independent periodicities? The delay embedding traces out a torus-like shape in higher dimensions:\n\n# Signal with two frequencies\nsignal2 = sin.(t) .+ 0.7 .* sin.(2.7 .* t) .+ 0.1 .* randn(MersenneTwister(7), N)\n\nfig = Figure(size = (800, 300))\nax = Axis(fig[1, 1], title = \"Signal with two frequencies\", xlabel = \"t\", ylabel = \"x(t)\")\nlines!(ax, t, signal2)\nfig\n\n\n# Embed in 3D\ncloud2 = delay_embedding(signal2, 3, 20)\n\nfig = Figure()\nax = Axis3(fig[1, 1], title = \"Delay embedding (d=3, τ=20)\")\nscatter!(ax, cloud2[1, :], cloud2[2, :], cloud2[3, :], markersize = 2)\nfig\n\n\n# PH of the embedding\nidx2 = 1:4:size(cloud2, 2)\npts2 = [Tuple(cloud2[:, i]) for i in idx2]\nresult2 = ripserer(Rips(pts2), dim_max = 2, threshold = 2.5)\nbarcode(result2)\n\nA signal with two independent frequencies should produce \\(\\beta_1 = 2\\) (two loops) and potentially \\(\\beta_2 = 1\\) (one cavity), resembling a torus. This is a powerful way to detect the number of independent oscillatory components in a signal.",
+    "crumbs": [
+      "Applications",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Time series analysis</span>"
+    ]
+  },
+  {
+    "objectID": "timeseries.html#choosing-embedding-parameters",
+    "href": "timeseries.html#choosing-embedding-parameters",
+    "title": "15  Time series analysis",
+    "section": "15.4 Choosing embedding parameters",
+    "text": "15.4 Choosing embedding parameters\nThe choice of \\(d\\) and \\(\\tau\\) matters:\n\nToo small \\(d\\): the embedding doesn’t capture the full dynamics (Takens says we need \\(d &gt; 2m\\) where \\(m\\) is the attractor dimension)\nToo large \\(d\\): computational cost increases, and noise accumulates\nToo small \\(\\tau\\): consecutive points are nearly identical (the cloud concentrates near the diagonal)\nToo large \\(\\tau\\): consecutive points become almost independent (destroys temporal structure)\n\nPractical heuristics:\n\nUse the first minimum of the autocorrelation or mutual information to choose \\(\\tau\\)\nUse false nearest neighbors to choose \\(d\\)\nStart with \\(d = 2\\) or \\(3\\) for visualization, then increase",
+    "crumbs": [
+      "Applications",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Time series analysis</span>"
+    ]
+  },
+  {
+    "objectID": "timeseries.html#summary",
+    "href": "timeseries.html#summary",
+    "title": "15  Time series analysis",
+    "section": "15.5 Summary",
+    "text": "15.5 Summary\nIn this chapter we learned:\n\nDelay embeddings convert time series to point clouds, enabling TDA\nPeriodicity shows up as a loop (\\(\\beta_1 = 1\\)) in the embedded point cloud\nMultiple periodicities create higher-dimensional topological features\nThe absence of topology (all short bars) indicates noise or aperiodic behavior\nTakens’ theorem guarantees that the embedding recovers the attractor topology\n\nThis provides a fundamentally different approach to time series analysis: instead of spectral methods (Fourier transforms) that assume linearity, TDA can detect nonlinear periodicities and complex dynamical structures.",
+    "crumbs": [
+      "Applications",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Time series analysis</span>"
+    ]
+  },
+  {
+    "objectID": "shapes.html",
+    "href": "shapes.html",
+    "title": "16  Shape analysis and comparison",
+    "section": "",
+    "text": "16.1 Setup\nHow can we tell if two shapes are “similar”? Traditional approaches rely on specific geometric measurements — lengths, angles, volumes — which depend on the coordinate system and are sensitive to noise. Persistent homology offers a coordinate-free, noise-robust alternative: compare shapes by comparing their persistence diagrams.\nIn this chapter, we use the Wasserstein and bottleneck distances between persistence diagrams to build a “shape space” — a metric space where each point is a shape, and the distance reflects topological similarity.\nusing Ripserer\nusing PersistenceDiagrams\nimport GeometricDatasets as gd\nusing Distances\nusing CairoMakie\nusing Random",
+    "crumbs": [
+      "Applications",
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Shape analysis and comparison</span>"
+    ]
+  },
+  {
+    "objectID": "shapes.html#generating-a-shape-library",
+    "href": "shapes.html#generating-a-shape-library",
+    "title": "16  Shape analysis and comparison",
+    "section": "16.2 Generating a shape library",
+    "text": "16.2 Generating a shape library\nLet’s create a collection of point clouds from shapes with known topology:\n\nfunction sample_shape(shape, n, seed)\n    rng = MersenneTwister(seed)\n    noise_level = 0.05\n    \n    if shape == :circle\n        X = gd.sphere(n, dim = 2) .+ noise_level .* randn(rng, 2, n)\n    elseif shape == :sphere\n        X = gd.sphere(n, dim = 3) .+ noise_level .* randn(rng, 3, n)\n    elseif shape == :torus\n        X = gd.torus(n) .+ noise_level .* randn(rng, 3, n)\n    elseif shape == :two_circles\n        c1 = gd.sphere(n ÷ 2, dim = 2)\n        c2 = gd.sphere(n ÷ 2, dim = 2) .+ [3.0; 0.0]\n        X = hcat(c1, c2) .+ noise_level .* randn(rng, 2, n)\n    elseif shape == :blob\n        X = randn(rng, 3, n) .* 0.5\n    else\n        error(\"Unknown shape: $shape\")\n    end\n    return X\nend\n\n\n# Sample multiple instances of each shape\nshapes = [:circle, :circle, :circle,\n          :sphere, :sphere, :sphere,\n          :torus, :torus, :torus,\n          :two_circles, :two_circles, :two_circles,\n          :blob, :blob, :blob]\n\nn_points = 100\nclouds = [sample_shape(s, n_points, i) for (i, s) in enumerate(shapes)]\nshape_names = string.(shapes)",
+    "crumbs": [
+      "Applications",
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Shape analysis and comparison</span>"
+    ]
+  },
+  {
+    "objectID": "shapes.html#computing-persistence-diagrams-for-each-shape",
+    "href": "shapes.html#computing-persistence-diagrams-for-each-shape",
+    "title": "16  Shape analysis and comparison",
+    "section": "16.3 Computing persistence diagrams for each shape",
+    "text": "16.3 Computing persistence diagrams for each shape\n\nfunction compute_ph(X; dim_max = 1, threshold = 3.0)\n    pts = [Tuple(X[:, i]) for i in 1:size(X, 2)]\n    return ripserer(Rips(pts), dim_max = dim_max, threshold = threshold)\nend\n\ndiagrams = [compute_ph(X) for X in clouds]",
+    "crumbs": [
+      "Applications",
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Shape analysis and comparison</span>"
+    ]
+  },
+  {
+    "objectID": "shapes.html#building-a-distance-matrix",
+    "href": "shapes.html#building-a-distance-matrix",
+    "title": "16  Shape analysis and comparison",
+    "section": "16.4 Building a distance matrix",
+    "text": "16.4 Building a distance matrix\nNow we compare every pair of shapes using the Wasserstein distance on their \\(H_1\\) persistence diagrams:\n\nn_shapes = length(diagrams)\ndist_matrix = zeros(n_shapes, n_shapes)\n\nfor i in 1:n_shapes\n    for j in (i+1):n_shapes\n        d1 = diagrams[i][2]  # H₁ diagram\n        d2 = diagrams[j][2]  # H₁ diagram\n        \n        if length(d1) &gt; 0 && length(d2) &gt; 0\n            dist_matrix[i, j] = Wasserstein()(d1, d2)\n        elseif length(d1) == 0 && length(d2) == 0\n            dist_matrix[i, j] = 0.0\n        else\n            # One has features, the other doesn't — use a penalty\n            dist_matrix[i, j] = 1.0\n        end\n        dist_matrix[j, i] = dist_matrix[i, j]\n    end\nend\n\n\nfig = Figure(size = (600, 500))\nax = Axis(fig[1, 1], title = \"Pairwise Wasserstein distances (H₁)\",\n    xticks = (1:n_shapes, shape_names), \n    yticks = (1:n_shapes, shape_names),\n    xticklabelrotation = π/4)\nheatmap!(ax, dist_matrix)\nColorbar(fig[1, 2], limits = extrema(dist_matrix), label = \"Distance\")\nfig\n\nIf everything works well, you should see blocks of small distances along the diagonal — shapes of the same type have similar persistence diagrams. Shapes with different topology (different number of loops) will have large distances.",
+    "crumbs": [
+      "Applications",
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Shape analysis and comparison</span>"
+    ]
+  },
+  {
+    "objectID": "shapes.html#what-the-distances-capture",
+    "href": "shapes.html#what-the-distances-capture",
+    "title": "16  Shape analysis and comparison",
+    "section": "16.5 What the distances capture",
+    "text": "16.5 What the distances capture\nLet’s think about what each shape’s persistence looks like:\n\n\n\nShape\n\\(\\beta_0\\)\n\\(\\beta_1\\)\nExpected signature\n\n\n\n\nCircle\n1\n1\nOne persistent loop\n\n\nSphere\n1\n0\nNo persistent loops (but \\(\\beta_2 = 1\\))\n\n\nTorus\n1\n2\nTwo persistent loops\n\n\nTwo circles\n2 → 1\n2\nTwo persistent loops (one per circle)\n\n\nBlob\n1\n0\nNo persistent features\n\n\n\nThe Wasserstein distance on \\(H_1\\) should cluster:\n\nCircle, sphere, and blob together (0 or 1 loop)\nTorus and two_circles together (2 loops)\n\nTo distinguish sphere from blob (which both have \\(\\beta_1 = 0\\)), we would need to look at \\(H_2\\) (where the sphere has a cavity but the blob doesn’t).",
+    "crumbs": [
+      "Applications",
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Shape analysis and comparison</span>"
+    ]
+  },
+  {
+    "objectID": "shapes.html#using-persistence-as-features",
+    "href": "shapes.html#using-persistence-as-features",
+    "title": "16  Shape analysis and comparison",
+    "section": "16.6 Using persistence as features",
+    "text": "16.6 Using persistence as features\nA natural workflow for classification tasks:\n\nCompute persistence diagrams for each sample\nConvert diagrams to a fixed-size vector representation (persistence images, persistence landscapes, or Betti curves)\nFeed these vectors into a standard classifier\n\n\n# Compute persistence images for each shape\n# Using H₁ diagrams\nfunction safe_persistence_image(diagram; kwargs...)\n    if length(diagram) &gt; 0\n        return PersistenceImage(diagram; kwargs...)\n    else\n        # Return a zero image if no features\n        return zeros(5, 5)\n    end\nend\n\nimages = [safe_persistence_image(d[2]) for d in diagrams]\n\nThese feature vectors can then be used with any machine learning algorithm — random forests, SVMs, neural networks — to classify shapes by their topology. We saw a full example of this pipeline in the digits classification chapter.",
+    "crumbs": [
+      "Applications",
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Shape analysis and comparison</span>"
+    ]
+  },
+  {
+    "objectID": "shapes.html#robustness-to-noise-and-sampling",
+    "href": "shapes.html#robustness-to-noise-and-sampling",
+    "title": "16  Shape analysis and comparison",
+    "section": "16.7 Robustness to noise and sampling",
+    "text": "16.7 Robustness to noise and sampling\nOne of the great strengths of persistent homology for shape comparison is its stability: small changes in the point cloud lead to small changes in the persistence diagram (and therefore small changes in the distances).\nLet’s verify this:\n\n# Same circle with different noise levels\nnoise_levels = [0.01, 0.05, 0.1, 0.2, 0.3]\ncircle_variants = [gd.sphere(100, dim = 2) .+ nl .* randn(MersenneTwister(42), 2, 100) \n                   for nl in noise_levels]\n\ndiagrams_circle = [compute_ph(X) for X in circle_variants]\n\n# Compare each to the first (least noisy)\nbase_diagram = diagrams_circle[1][2]\nfor (i, (d, nl)) in enumerate(zip(diagrams_circle, noise_levels))\n    if length(base_diagram) &gt; 0 && length(d[2]) &gt; 0\n        dist = Wasserstein()(base_diagram, d[2])\n        println(\"Noise level $nl → Wasserstein distance: $(round(dist, digits=4))\")\n    end\nend\n\nThe distances should increase gradually with noise — no sudden jumps. This is the stability theorem in action.",
+    "crumbs": [
+      "Applications",
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Shape analysis and comparison</span>"
+    ]
+  },
+  {
+    "objectID": "shapes.html#summary",
+    "href": "shapes.html#summary",
+    "title": "16  Shape analysis and comparison",
+    "section": "16.8 Summary",
+    "text": "16.8 Summary\nIn this chapter we learned:\n\nPersistence diagrams provide a coordinate-free summary of shape\nThe Wasserstein distance between diagrams serves as a shape metric\nShapes with different topology (different Betti numbers) are well-separated\nPersistence images convert diagrams to vectors for machine learning\nThe approach is stable — robust to noise and sampling variation\n\nThis framework applies to any data that can be represented as a point cloud: 3D scans, molecular structures, image features, sensor networks, and more.",
+    "crumbs": [
+      "Applications",
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Shape analysis and comparison</span>"
+    ]
+  },
+  {
+    "objectID": "summary.html",
+    "href": "summary.html",
+    "title": "17  Summary and further reading",
+    "section": "",
+    "text": "17.1 What we covered\nIn this book, we followed a path from pure mathematics to applied data analysis:\nPart I — Topology. We defined topological spaces and continuity, introduced simplicial complexes as finite combinatorial models of topological spaces, and developed simplicial homology as a way to count “holes” of each dimension.\nPart II — Working with Data. We learned to handle point clouds, compute distances, estimate density, and cluster data using classical methods (k-means, DBSCAN, hierarchical clustering). We saw the limitations of each method.\nPart III — Persistent Homology. We built the central tool of TDA: persistent homology. By examining all scales simultaneously through filtrations, we track the birth and death of topological features and represent them as persistence diagrams. We computed persistent homology in Julia using Ripserer.jl and learned to work with persistence images, Wasserstein distances, and barcodes.\nPart IV — TDA Methods. We applied topological ideas to data analysis: ToMATo for density-based clustering with automatic cluster selection, Mapper for visual exploration and dimensionality reduction, and Ball Mapper as a flexible alternative.\nPart V — Applications. We saw TDA in action: clustering with ToMATo, classifying handwritten digits using persistence images and neural networks, detecting periodicity in time series via delay embeddings, and comparing shapes through persistence diagram distances.",
+    "crumbs": [
+      "Closing",
+      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Summary and further reading</span>"
+    ]
+  },
+  {
+    "objectID": "summary.html#key-takeaways",
+    "href": "summary.html#key-takeaways",
+    "title": "17  Summary and further reading",
+    "section": "17.2 Key takeaways",
+    "text": "17.2 Key takeaways\n\nData has shape, and shape matters. Classical statistics can miss geometric and topological structure that is essential for understanding data.\nPersistence is the key idea. Instead of choosing a single scale, examine all scales and focus on features that persist. Long-lived features are signal; short-lived features are noise.\nStability makes it practical. The stability theorem guarantees that small perturbations in data lead to small changes in persistence diagrams. TDA is robust.\nThe tools are ready. Julia’s ecosystem — Ripserer.jl, PersistenceDiagrams.jl, ToMATo.jl, TDAmapper.jl, GeometricDatasets.jl — provides everything needed to apply TDA to real data.",
+    "crumbs": [
+      "Closing",
+      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Summary and further reading</span>"
+    ]
+  },
+  {
+    "objectID": "summary.html#further-reading",
+    "href": "summary.html#further-reading",
+    "title": "17  Summary and further reading",
+    "section": "17.3 Further reading",
+    "text": "17.3 Further reading\n\n17.3.1 Books\n\nComputational Topology by Edelsbrunner & Harer — the classic textbook on computational topology and persistent homology\nTopology and Data by Gunnar Carlsson (2009, Bulletin of the AMS) — an influential survey paper that helped launch TDA as a field\nElementary Applied Topology by Robert Ghrist — a beautifully illustrated introduction to applied algebraic topology\nTopological Data Analysis with Applications by Zomorodian — covers algorithms and applications\n\n\n\n17.3.2 Papers\n\nPersistence-Based Clustering in Riemannian Manifolds (Chazal et al., 2011) — the ToMATo paper\nTopological Methods for the Analysis of High Dimensional Data Sets and 3D Object Recognition (Singh, Mémoli, Carlsson, 2007) — the original Mapper paper\nStability of Persistence Diagrams (Cohen-Steiner, Edelsbrunner, Harer, 2007) — the stability theorem\nBarcodes: The Persistent Topology of Data (Ghrist, 2008) — an accessible introduction to barcodes\n\n\n\n17.3.3 Julia packages\n\nRipserer.jl — fast persistent homology computation\nPersistenceDiagrams.jl — persistence images, landscapes, distances\nToMATo.jl — the ToMATo clustering algorithm\nTDAmapper.jl — Mapper and Ball Mapper\nGeometricDatasets.jl — synthetic geometric data generation\n\n\n\n17.3.4 Advanced topics not covered\n\nMulti-parameter persistence: extending persistent homology to filtrations indexed by more than one parameter\nSheaves and cosheaves: a more general framework for local-to-global data structures\nPersistent homology transform: encoding shapes using persistence diagrams from many directions\nTopological optimization: using topological loss functions in neural network training (differentiable TDA)\nZigzag persistence: handling time-varying data with insertions and deletions",
+    "crumbs": [
+      "Closing",
+      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Summary and further reading</span>"
+    ]
+  },
+  {
+    "objectID": "summary.html#final-words",
+    "href": "summary.html#final-words",
+    "title": "17  Summary and further reading",
+    "section": "17.4 Final words",
+    "text": "17.4 Final words\nTDA is a young and rapidly growing field. New applications, algorithms, and theoretical results appear every year. The tools in this book give you a solid foundation — both mathematical and computational — to explore this landscape.\nGo forth and find some holes in your data!",
+    "crumbs": [
+      "Closing",
+      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Summary and further reading</span>"
+    ]
+  },
+  {
+    "objectID": "intro.html#why-topological-data-analysis",
+    "href": "intro.html#why-topological-data-analysis",
+    "title": "1  Introduction",
+    "section": "",
+    "text": "1.1.1 What makes TDA special?\nHere are some properties that set TDA apart from other approaches:\n\nCoordinate-free: TDA works with distances between points, not their coordinates. Rotate, translate, or reflect your data — the topological features remain the same.\nMulti-scale: Instead of choosing a single scale (like a bandwidth parameter), TDA examines all scales simultaneously and identifies features that persist across many of them. Features that persist are “real”; features that vanish quickly are noise.\nStability: Small perturbations in the data lead to small changes in the topological summary. This is not just a nice intuition — it is a theorem.\nDimensionality-agnostic: Whether your data lives in \\(\\mathbb{R}^2\\) or \\(\\mathbb{R}^{1000}\\), the same tools apply.\n\n\n\n1.1.2 Where has TDA been used?\nTDA has found applications across many fields:\n\nBiology: detecting loops in gene expression data, analyzing protein structures, understanding neural activity patterns\nMaterials science: characterizing porous materials, studying granular packings\nImage analysis: classifying textures, detecting features in medical imaging\nFinance: identifying market regimes, early warning signals for crashes\nSignal processing: detecting periodicity in time series, analyzing sensor data\nMachine learning: creating topological features that boost classifier performance",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "intro.html#what-you-will-learn",
+    "href": "intro.html#what-you-will-learn",
+    "title": "1  Introduction",
+    "section": "1.2 What you will learn",
+    "text": "1.2 What you will learn\nThis book is divided into five parts:\n\nTopology: We introduce the mathematical foundations — topological spaces, simplicial complexes, and homology. Don’t worry: we keep it light and intuitive, with formal definitions serving as anchors rather than obstacles.\nWorking with Data: Before adding topology, we need to handle data. We cover point clouds, distance metrics, density estimation, and classical clustering. This sets the stage for understanding why TDA is needed.\nPersistent Homology: The heart of TDA. We build filtrations from data, track how topological features are born and die, and learn to read persistence diagrams. Then we compute everything in Julia.\nTDA Methods: We apply persistent homology ideas to concrete algorithms: ToMATo (density-based clustering), Mapper (a tool for visualization and exploration), and Ball Mapper.\nApplications: Full worked examples on real and synthetic datasets — clustering, digit classification, time series analysis, and shape comparison.\n\nBy the end, you will have both the mathematical intuition and the Julia code to apply TDA to your own data.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "intro.html#setting-up-julia",
+    "href": "intro.html#setting-up-julia",
+    "title": "1  Introduction",
+    "section": "1.3 Setting up Julia",
+    "text": "1.3 Setting up Julia\nTo run the code in this book, you will need Julia (version 1.9 or later recommended). The easiest way to install packages is via Julia’s built-in package manager. Open a Julia REPL and type:\nusing Pkg\nPkg.add([\n    \"Ripserer\",\n    \"PersistenceDiagrams\",\n    \"GeometricDatasets\",\n    \"ToMATo\",\n    \"TDAmapper\",\n    \"CairoMakie\",\n    \"AlgebraOfGraphics\",\n    \"Distances\",\n    \"Clustering\",\n    \"DelimitedFiles\",\n    \"DataFrames\",\n])\nNot all packages are needed for every chapter — each chapter indicates which packages it uses. If you’d rather install them one at a time as you go, that works too.\nIf you are new to Julia, here are some excellent resources to get started:\n\nThink Julia\nJulia for Optimization and Learning\nData Science in Julia for Hackers",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "intro.html#a-note-on-conventions",
+    "href": "intro.html#a-note-on-conventions",
+    "title": "1  Introduction",
+    "section": "1.4 A note on conventions",
+    "text": "1.4 A note on conventions\nThroughout this book, we store data in column-major format: each column of a matrix represents a data point, and each row represents a dimension. So a dataset with \\(n\\) points in \\(\\mathbb{R}^d\\) is stored as a \\(d \\times n\\) matrix. This is the natural convention in Julia (which stores matrices column-by-column in memory) and is used by GeometricDatasets, ToMATo, and TDAmapper.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introduction</span>"
+    ]
+  },
+  {
+    "objectID": "topology.html",
+    "href": "topology.html",
+    "title": "2  Topology",
+    "section": "",
+    "text": "2.1 What is topology?\nIn this chapter we will define topological spaces and some of its properties, the notion of homeomorphism and so on.\nTopology is the study of topological spaces and its properties. Unfortunately, this is not enough to close this chapter.\nA topological space can be thought of as a set with little “scales” called open sets. Each of these open sets represent the notion of local continuity or connectivity that we sense when we look at an object: the feeling that it is just “one single piece of a thing”, like the scales in a fish. We can stretch these scales, but can’t rip them apart. In a sense, topological spaces are elastic. Because of that, there is an old joke that a topologist can’t distinguish between a cup and a donut.\nMore formally,\nWe often omit \\(\\tau\\) and simply write “a topological space \\(X\\)”. Sometimes we omit the “topological” too. We love omiting!\nGiven a set \\(X\\), there is a easy way to generate a topology on it:\nDon’t let the abstractions hurt you! Whenever you see a new definition or theorem, think of an example of objects that fit in it. One very useful example is the following:\nIn the above case, an open set is a set in which one can always “walk a little more without reaching the end of the set”. More precisely, given \\(x \\in (a, b)\\) there is always a small enough \\(\\epsilon &gt; 0\\) such the interval \\((x - \\epsilon, x + \\epsilon)\\) is contained in \\((a, b)\\).\nWhen an open set \\(U\\) cannot be written as the disjoint union of two non-empty open sets, we say that \\(U\\) is connected. These connected open sets give a notion of “being a single piece”.",
+    "crumbs": [
+      "Topology",
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Topology</span>"
+    ]
+  },
+  {
+    "objectID": "simplicial.html",
+    "href": "simplicial.html",
+    "title": "3  Simplicial complexes",
+    "section": "",
+    "text": "3.1 The infinite through a window\nTopological spaces are nice, but all the interesting ones have an infinite amount of points: torus, circle, the real line, mobius band, projective plane, and so on. Topology usually is not interested in finite sets because their standard topology is trivial: just take every point as an open set.\nWe, as humans, can’t really grasp the infinite. Our universe is finite, and so is our mind. To think about the infinite, we need to use finite “tricks”. Take, for example, the way we prove something is valid for all the infinite natural numbers, a principle called finite induction:\nPeano needed an axiom to guarantee that these 2 conditions are enough to prove that \\(P\\) is valid for all \\(\\mathbb{N}\\).\nAs another example, when studying linear algebra we see the concept of basis of a vector space \\(V\\). With basis, we can describe exactly any point \\(v \\in V\\) using a finite combination of its base elements, say \\(v = \\lambda_1 e_1 + \\ldots \\lambda_n e_n\\). The infinite amount of points in \\(V\\) can then be written as sums of finite objects that we can map mentally.\nFinding a finite representation of a mathematical object is often desired, and with topological spaces it was not different.",
+    "crumbs": [
+      "Topology",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Simplicial complexes</span>"
+    ]
+  },
+  {
+    "objectID": "simplicial.html#sec-data-to-sc",
+    "href": "simplicial.html#sec-data-to-sc",
+    "title": "3  Simplicial complexes",
+    "section": "3.4 From data to simplicial complexes",
+    "text": "3.4 From data to simplicial complexes\nSo far, simplicial complexes are abstract mathematical objects. But why should we care? Because they give us a way to build topology from data!\nSuppose we have a finite set of points \\(X = \\{x_1, \\ldots, x_n\\}\\) in some metric space (for example, \\(\\mathbb{R}^d\\) with the Euclidean distance). We can build a simplicial complex from \\(X\\) by declaring that points that are “close enough” form simplices. There are several ways to do this:\n\n3.4.1 Vietoris-Rips complex\nFix a parameter \\(\\epsilon &gt; 0\\). The Vietoris-Rips complex \\(\\text{VR}(X, \\epsilon)\\) is the simplicial complex where a subset \\(\\sigma = \\{x_{i_0}, \\ldots, x_{i_k}\\} \\subseteq X\\) is a simplex if and only if\n\\[\nd(x_{i_j}, x_{i_l}) \\leq \\epsilon \\quad \\text{for all } j, l.\n\\]\nIn words: a set of points forms a simplex if every pair of points in the set is within distance \\(\\epsilon\\).\n\n\n3.4.2 Čech complex\nFix \\(\\epsilon &gt; 0\\). The Čech complex \\(\\check{C}(X, \\epsilon)\\) is the simplicial complex where \\(\\sigma = \\{x_{i_0}, \\ldots, x_{i_k}\\}\\) is a simplex if and only if the balls \\(B(x_{i_j}, \\epsilon/2)\\) have a common intersection:\n\\[\n\\bigcap_{j=0}^{k} B(x_{i_j}, \\epsilon/2) \\neq \\emptyset.\n\\]\nThe Čech complex has a beautiful theoretical property: by the Nerve Theorem, it is homotopy equivalent to the union of balls \\(\\bigcup_i B(x_i, \\epsilon/2)\\). However, it is more expensive to compute than the Vietoris-Rips complex, so in practice Rips complexes are used more often.\n\n\n3.4.3 The role of \\(\\epsilon\\)\nThe choice of \\(\\epsilon\\) is crucial. Too small, and the complex is just a collection of isolated points (no edges, no triangles). Too large, and everything is connected into a single giant simplex that hides all interesting structure.\nThis is a fundamental problem: there is no single “correct” \\(\\epsilon\\). The solution? Don’t choose one — examine all of them! This idea leads to persistent homology, which we will explore in a later chapter.",
+    "crumbs": [
+      "Topology",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Simplicial complexes</span>"
+    ]
+  },
+  {
+    "objectID": "simplicial.html#abstract-vs-geometric-simplicial-complexes",
+    "href": "simplicial.html#abstract-vs-geometric-simplicial-complexes",
+    "title": "3  Simplicial complexes",
+    "section": "3.5 Abstract vs geometric simplicial complexes",
+    "text": "3.5 Abstract vs geometric simplicial complexes\nIn our definition above, a simplicial complex is defined purely in terms of sets and subsets — there is no mention of geometry or coordinates. This is called an abstract simplicial complex.\nHowever, every abstract simplicial complex can be “realized” as a geometric object: a \\(k\\)-simplex can be embedded in \\(\\mathbb{R}^{k}\\) as the convex hull of \\(k+1\\) points in general position. More precisely,\n\nDefinition 3.3 The standard \\(k\\)-simplex is the convex hull of the \\(k+1\\) standard basis vectors \\(e_0, e_1, \\ldots, e_k\\) in \\(\\mathbb{R}^{k+1}\\):\n\\[\n\\Delta^k = \\left\\{ \\sum_{i=0}^{k} t_i e_i \\;\\middle|\\; t_i \\geq 0, \\sum_{i=0}^{k} t_i = 1 \\right\\}.\n\\]\n\nFor example, \\(\\Delta^0\\) is a point, \\(\\Delta^1\\) is a line segment, \\(\\Delta^2\\) is a triangle (with its interior), and \\(\\Delta^3\\) is a tetrahedron.\nAny abstract simplicial complex with \\(n\\) vertices can be geometrically realized in \\(\\mathbb{R}^{2n+1}\\) (this is a theorem!). The practical consequence is that we can think of simplicial complexes both as combinatorial objects (lists of subsets) and as geometric shapes — whichever is more convenient for the task at hand.\nWe will use the combinatorial view when computing homology and the geometric view when building intuition.",
+    "crumbs": [
+      "Topology",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Simplicial complexes</span>"
+    ]
   }
 ]

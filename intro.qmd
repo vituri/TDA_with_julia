@@ -5,6 +5,84 @@ title: Introduction
 > "The unexpected elation with which I had talked about mathematics had suddenly evaporated, and I sat beside him, feeling the weight of my own body, its unnecessary size. Outside of mathematics we had nothing to say to each other, and we both knew it. Then it occurred to me that the emotion with which I had spoken of the blessed role of mathematics on the voyage was a deception. I had been deceiving myself with the modesty, the serious heroism of the pilot who occupies himself, in the gaps of the nebulae, with theoretical studies of infinity. Hypocrisy. For what had it been, really? If a castaway, adrift for months at sea, has a thousand times counted the number of wood fibers that make up his raft, in order to keep sane, should he boast about it when he reaches land? That he had the tenacity to survive? And what of it? Who cared? Why should it matter to anyone how I had filled my poor brain those ten years, and why was that more important than how I had filled my stomach?" \
 > --- Stanisław Lem, in "Return from the stars"
 
+## Why Topological Data Analysis?
+
 Topological data analysis is an exotic animal. 
 
-How can one mix a field from abstract math (topology) with real world data? In topology, finite topological spaces are trivial and often ignored, but every real-world data is finite. To connect these two areas of study, we need to have tools that transform finite metric spaces into objects that topology can handle and say something interest about.
+How can one mix a field from abstract math (topology) with real world data? In topology, finite topological spaces are trivial and often ignored, but every real-world data is finite. To connect these two areas of study, we need to have tools that transform finite metric spaces into objects that topology can handle and say something interesting about.
+
+And this is precisely what TDA does. The core insight is deceptively simple: **data has shape, and the shape matters**. Classical statistics summarizes data with means, variances, and correlations — numbers that can miss the geometry lurking beneath. Consider a dataset shaped like a circle: its mean is at the center (where no data exists!), and its variance tells you nothing about the hole.
+
+TDA provides tools to detect and quantify these geometric and topological features: clusters, loops, cavities, and higher-dimensional "holes" that persist across multiple scales. These features are often invisible to traditional methods but can be crucial for understanding the data.
+
+### What makes TDA special?
+
+Here are some properties that set TDA apart from other approaches:
+
+- **Coordinate-free**: TDA works with distances between points, not their coordinates. Rotate, translate, or reflect your data — the topological features remain the same.
+
+- **Multi-scale**: Instead of choosing a single scale (like a bandwidth parameter), TDA examines all scales simultaneously and identifies features that *persist* across many of them. Features that persist are "real"; features that vanish quickly are noise.
+
+- **Stability**: Small perturbations in the data lead to small changes in the topological summary. This is not just a nice intuition — it is a theorem.
+
+- **Dimensionality-agnostic**: Whether your data lives in $\mathbb{R}^2$ or $\mathbb{R}^{1000}$, the same tools apply.
+
+### Where has TDA been used?
+
+TDA has found applications across many fields:
+
+- **Biology**: detecting loops in gene expression data, analyzing protein structures, understanding neural activity patterns
+- **Materials science**: characterizing porous materials, studying granular packings
+- **Image analysis**: classifying textures, detecting features in medical imaging
+- **Finance**: identifying market regimes, early warning signals for crashes
+- **Signal processing**: detecting periodicity in time series, analyzing sensor data
+- **Machine learning**: creating topological features that boost classifier performance
+
+## What you will learn
+
+This book is divided into five parts:
+
+1. **Topology**: We introduce the mathematical foundations — topological spaces, simplicial complexes, and homology. Don't worry: we keep it light and intuitive, with formal definitions serving as anchors rather than obstacles.
+
+2. **Working with Data**: Before adding topology, we need to handle data. We cover point clouds, distance metrics, density estimation, and classical clustering. This sets the stage for understanding *why* TDA is needed.
+
+3. **Persistent Homology**: The heart of TDA. We build filtrations from data, track how topological features are born and die, and learn to read persistence diagrams. Then we compute everything in Julia.
+
+4. **TDA Methods**: We apply persistent homology ideas to concrete algorithms: ToMATo (density-based clustering), Mapper (a tool for visualization and exploration), and Ball Mapper.
+
+5. **Applications**: Full worked examples on real and synthetic datasets — clustering, digit classification, time series analysis, and shape comparison.
+
+By the end, you will have both the mathematical intuition and the Julia code to apply TDA to your own data.
+
+## Setting up Julia
+
+To run the code in this book, you will need [Julia](https://julialang.org/) (version 1.9 or later recommended). The easiest way to install packages is via Julia's built-in package manager. Open a Julia REPL and type:
+
+```julia
+using Pkg
+Pkg.add([
+    "Ripserer",
+    "PersistenceDiagrams",
+    "GeometricDatasets",
+    "ToMATo",
+    "TDAmapper",
+    "CairoMakie",
+    "AlgebraOfGraphics",
+    "Distances",
+    "Clustering",
+    "DelimitedFiles",
+    "DataFrames",
+])
+```
+
+Not all packages are needed for every chapter — each chapter indicates which packages it uses. If you'd rather install them one at a time as you go, that works too.
+
+If you are new to Julia, here are some excellent resources to get started:
+
+- [Think Julia](https://benlauwens.github.io/ThinkJulia.jl/latest/book.html)
+- [Julia for Optimization and Learning](https://juliateachingctu.github.io/Julia-for-Optimization-and-Learning/dev/)
+- [Data Science in Julia for Hackers](https://datasciencejuliahackers.com/)
+
+## A note on conventions
+
+Throughout this book, we store data in **column-major** format: each column of a matrix represents a data point, and each row represents a dimension. So a dataset with $n$ points in $\mathbb{R}^d$ is stored as a $d \times n$ matrix. This is the natural convention in Julia (which stores matrices column-by-column in memory) and is used by `GeometricDatasets`, `ToMATo`, and `TDAmapper`.

@@ -2,19 +2,19 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://vituri.github.io/TDA_with_julia/index.html</loc>
-    <lastmod>2023-10-29T05:23:09.820Z</lastmod>
+    <lastmod>2026-02-17T18:57:41.022Z</lastmod>
   </url>
   <url>
     <loc>https://vituri.github.io/TDA_with_julia/intro.html</loc>
-    <lastmod>2023-10-29T03:49:09.295Z</lastmod>
+    <lastmod>2026-02-17T17:32:02.071Z</lastmod>
   </url>
   <url>
     <loc>https://vituri.github.io/TDA_with_julia/topology.html</loc>
-    <lastmod>2023-10-29T03:49:09.303Z</lastmod>
+    <lastmod>2026-02-17T19:02:55.828Z</lastmod>
   </url>
   <url>
     <loc>https://vituri.github.io/TDA_with_julia/simplicial.html</loc>
-    <lastmod>2023-10-29T03:49:09.311Z</lastmod>
+    <lastmod>2026-02-17T19:07:15.581Z</lastmod>
   </url>
   <url>
     <loc>https://vituri.github.io/TDA_with_julia/homology.html</loc>
@@ -22,15 +22,15 @@
   </url>
   <url>
     <loc>https://vituri.github.io/TDA_with_julia/clustering.html</loc>
-    <lastmod>2023-10-29T03:49:09.319Z</lastmod>
+    <lastmod>2026-02-17T17:35:58.153Z</lastmod>
   </url>
   <url>
     <loc>https://vituri.github.io/TDA_with_julia/tomato.html</loc>
-    <lastmod>2023-10-29T05:23:15.548Z</lastmod>
+    <lastmod>2026-02-17T17:19:01.988Z</lastmod>
   </url>
   <url>
     <loc>https://vituri.github.io/TDA_with_julia/mapper.html</loc>
-    <lastmod>2023-10-29T05:23:21.952Z</lastmod>
+    <lastmod>2026-02-17T17:19:01.988Z</lastmod>
   </url>
   <url>
     <loc>https://vituri.github.io/TDA_with_julia/ballmapper.html</loc>
@@ -38,11 +38,11 @@
   </url>
   <url>
     <loc>https://vituri.github.io/TDA_with_julia/mapper-general.html</loc>
-    <lastmod>2023-10-29T03:49:09.351Z</lastmod>
+    <lastmod>2026-02-17T17:39:00.011Z</lastmod>
   </url>
   <url>
     <loc>https://vituri.github.io/TDA_with_julia/persistence.html</loc>
-    <lastmod>2023-10-29T03:54:04.171Z</lastmod>
+    <lastmod>2026-02-17T17:36:49.385Z</lastmod>
   </url>
   <url>
     <loc>https://vituri.github.io/TDA_with_julia/digits.html</loc>
@@ -50,10 +50,30 @@
   </url>
   <url>
     <loc>https://vituri.github.io/TDA_with_julia/references.html</loc>
-    <lastmod>2023-10-29T03:49:09.391Z</lastmod>
+    <lastmod>2026-02-17T17:19:01.988Z</lastmod>
   </url>
   <url>
     <loc>https://vituri.github.io/TDA_with_julia/clustering_tomato.html</loc>
     <lastmod>2023-10-29T05:23:25.360Z</lastmod>
+  </url>
+  <url>
+    <loc>https://vituri.github.io/TDA_with_julia/pointclouds.html</loc>
+    <lastmod>2026-02-17T17:35:06.541Z</lastmod>
+  </url>
+  <url>
+    <loc>https://vituri.github.io/TDA_with_julia/computing_ph.html</loc>
+    <lastmod>2026-02-17T17:38:05.836Z</lastmod>
+  </url>
+  <url>
+    <loc>https://vituri.github.io/TDA_with_julia/timeseries.html</loc>
+    <lastmod>2026-02-17T17:39:49.772Z</lastmod>
+  </url>
+  <url>
+    <loc>https://vituri.github.io/TDA_with_julia/shapes.html</loc>
+    <lastmod>2026-02-17T17:40:35.427Z</lastmod>
+  </url>
+  <url>
+    <loc>https://vituri.github.io/TDA_with_julia/summary.html</loc>
+    <lastmod>2026-02-17T17:41:10.095Z</lastmod>
   </url>
 </urlset>

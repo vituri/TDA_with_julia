@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>12&nbsp; Mapper: the general case – Topological Data Analysis with Julia</title>
+<title>15&nbsp; Time series analysis – Topological Data Analysis with Julia</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -65,8 +65,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./clustering_tomato.html" rel="next">
-<link href="./ballmapper.html" rel="prev">
+<link href="./shapes.html" rel="next">
+<link href="./digits.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -147,7 +147,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./tomato.html">TDA Methods</a></li><li class="breadcrumb-item"><a href="./mapper-general.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./clustering_tomato.html">Applications</a></li><li class="breadcrumb-item"><a href="./timeseries.html"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Time series analysis</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -313,7 +313,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./mapper-general.html" class="sidebar-item-text sidebar-link active">
+  <a href="./mapper-general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></span></a>
   </div>
 </li>
@@ -342,7 +342,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./timeseries.html" class="sidebar-item-text sidebar-link">
+  <a href="./timeseries.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Time series analysis</span></span></a>
   </div>
 </li>
@@ -387,24 +387,24 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#what-is-a-mapper-algorithm" id="toc-what-is-a-mapper-algorithm" class="nav-link active" data-scroll-target="#what-is-a-mapper-algorithm"><span class="header-section-number">12.1</span> What is a mapper algorithm?</a>
+  <li><a href="#from-time-series-to-point-clouds" id="toc-from-time-series-to-point-clouds" class="nav-link active" data-scroll-target="#from-time-series-to-point-clouds"><span class="header-section-number">15.1</span> From time series to point clouds</a>
   <ul class="collapse">
-  <li><a href="#covering-step" id="toc-covering-step" class="nav-link" data-scroll-target="#covering-step"><span class="header-section-number">12.1.1</span> Covering step</a></li>
-  <li><a href="#nerve-step" id="toc-nerve-step" class="nav-link" data-scroll-target="#nerve-step"><span class="header-section-number">12.1.2</span> Nerve step</a></li>
+  <li><a href="#takens-embedding-theorem" id="toc-takens-embedding-theorem" class="nav-link" data-scroll-target="#takens-embedding-theorem"><span class="header-section-number">15.1.1</span> Takens’ embedding theorem</a></li>
+  <li><a href="#example-detecting-periodicity" id="toc-example-detecting-periodicity" class="nav-link" data-scroll-target="#example-detecting-periodicity"><span class="header-section-number">15.1.2</span> Example: detecting periodicity</a></li>
   </ul></li>
-  <li><a href="#interpreting-mapper-graphs" id="toc-interpreting-mapper-graphs" class="nav-link" data-scroll-target="#interpreting-mapper-graphs"><span class="header-section-number">12.2</span> Interpreting Mapper graphs</a></li>
-  <li><a href="#creating-my-own-mapper" id="toc-creating-my-own-mapper" class="nav-link" data-scroll-target="#creating-my-own-mapper"><span class="header-section-number">12.3</span> Creating my own mapper</a></li>
-  <li><a href="#example-mapper-on-a-noisy-figure-eight" id="toc-example-mapper-on-a-noisy-figure-eight" class="nav-link" data-scroll-target="#example-mapper-on-a-noisy-figure-eight"><span class="header-section-number">12.4</span> Example: Mapper on a noisy figure-eight</a></li>
-  <li><a href="#choosing-parameters" id="toc-choosing-parameters" class="nav-link" data-scroll-target="#choosing-parameters"><span class="header-section-number">12.5</span> Choosing parameters</a></li>
+  <li><a href="#detecting-the-lack-of-periodicity" id="toc-detecting-the-lack-of-periodicity" class="nav-link" data-scroll-target="#detecting-the-lack-of-periodicity"><span class="header-section-number">15.2</span> Detecting the lack of periodicity</a></li>
+  <li><a href="#multiple-periodicities" id="toc-multiple-periodicities" class="nav-link" data-scroll-target="#multiple-periodicities"><span class="header-section-number">15.3</span> Multiple periodicities</a></li>
+  <li><a href="#choosing-embedding-parameters" id="toc-choosing-embedding-parameters" class="nav-link" data-scroll-target="#choosing-embedding-parameters"><span class="header-section-number">15.4</span> Choosing embedding parameters</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">15.5</span> Summary</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content column-body" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./tomato.html">TDA Methods</a></li><li class="breadcrumb-item"><a href="./mapper-general.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./clustering_tomato.html">Applications</a></li><li class="breadcrumb-item"><a href="./timeseries.html"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Time series analysis</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></h1>
+<h1 class="title"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Time series analysis</span></h1>
 </div>
 
 
@@ -422,105 +422,176 @@ window.Quarto = {
 
 
 <blockquote class="blockquote">
-<p>“The real voyage of discovery consists not in seeking new landscapes, but in having new eyes.”<br>
-— Marcel Proust, in “In Search of Lost Time”</p>
+<p>“Time is not a line but a dimension, like the dimensions of space. If you can bend space you can bend time also, and if you knew enough and could move faster than light you could travel backwards in time and exist in two places at once.”<br>
+— Margaret Atwood, in “Cat’s Eye”</p>
 </blockquote>
-<p>We have seen two specific instances of the Mapper construction: the classical Mapper (using a filter function and its preimages) and the Ball Mapper (using <span class="math inline">\(\epsilon\)</span>-balls). In this chapter, we step back and see the general pattern, then explore how to customize it.</p>
-<section id="what-is-a-mapper-algorithm" class="level2" data-number="12.1">
-<h2 data-number="12.1" class="anchored" data-anchor-id="what-is-a-mapper-algorithm"><span class="header-section-number">12.1</span> What is a mapper algorithm?</h2>
-<p>We can boil down the two mapper algorithms we saw earlier as follows:</p>
-<ol type="1">
-<li><strong>(Covering step)</strong> Given a metric space <span class="math inline">\((X, d)\)</span>, create a covering <span class="math inline">\(C\)</span> of <span class="math inline">\(X\)</span>;</li>
-<li><strong>(Nerve step)</strong> Using <span class="math inline">\(C\)</span> as vertex set, create a graph (called the <em>nerve</em>).</li>
-</ol>
-<p>In the classical mapper context, <span class="math inline">\(C\)</span> is generated using the clustering of preimages of a function <span class="math inline">\(f: X \to \mathbb{R}\)</span>. In the ball mapper scenario, we cover <span class="math inline">\(X\)</span> using <span class="math inline">\(\epsilon\)</span>-balls with centers as a subset of <span class="math inline">\(X\)</span>.</p>
-<p>The beauty of this decomposition is that <strong>each step can be independently modified</strong>, leading to a family of Mapper-like algorithms suited to different problems.</p>
-<section id="covering-step" class="level3" data-number="12.1.1">
-<h3 data-number="12.1.1" class="anchored" data-anchor-id="covering-step"><span class="header-section-number">12.1.1</span> Covering step</h3>
-<p>Let <span class="math inline">\(X\)</span>, <span class="math inline">\(L\)</span> and <span class="math inline">\(\epsilon\)</span> be given as in the ball mapper case. For any <span class="math inline">\(l \in L\)</span>, define <span class="math inline">\(x_l\)</span> = <code>X[:, l]</code>. Examples of how to generalize the covering step:</p>
+<p>Time series are sequences of measurements indexed by time: stock prices, temperature readings, heartbeat signals, sensor data. At first glance, they seem far from point clouds and topology. But there is a beautiful trick — <em>delay embeddings</em> — that converts a time series into a point cloud, opening the door to all the TDA tools we have developed.</p>
+<section id="from-time-series-to-point-clouds" class="level2" data-number="15.1">
+<h2 data-number="15.1" class="anchored" data-anchor-id="from-time-series-to-point-clouds"><span class="header-section-number">15.1</span> From time series to point clouds</h2>
+<section id="takens-embedding-theorem" class="level3" data-number="15.1.1">
+<h3 data-number="15.1.1" class="anchored" data-anchor-id="takens-embedding-theorem"><span class="header-section-number">15.1.1</span> Takens’ embedding theorem</h3>
+<p>Given a time series <span class="math inline">\(x_1, x_2, \ldots, x_N\)</span>, we can create a point cloud by looking at <em>windows</em> of consecutive values. Fix two parameters:</p>
 <ul>
-<li><p><strong>Adaptive radius</strong>: Fix <span class="math inline">\(n &gt; 0\)</span> integer. Create a ball <span class="math inline">\(B\)</span> of radius <span class="math inline">\(\epsilon\)</span> around <span class="math inline">\(x_l\)</span>. If <span class="math inline">\(B\)</span> contains less than <span class="math inline">\(n\)</span> elements, then we redefine <span class="math inline">\(B\)</span> as the set of <span class="math inline">\(n\)</span> nearest neighbors of <span class="math inline">\(x_l\)</span>. This adapts to varying local density.</p></li>
-<li><p><strong>Distance-scaled radius</strong>: Fix <span class="math inline">\(\lambda &gt; 0\)</span>. Let <span class="math inline">\(d_l\)</span> be the distance between <span class="math inline">\(x_l\)</span> and its closest point. Create a ball <span class="math inline">\(B\)</span> of radius <span class="math inline">\(\lambda \cdot d_l\)</span>. This automatically adapts the ball size to the local spacing of the data.</p></li>
-<li><p><strong>Filter function preimages</strong>: Choose a function <span class="math inline">\(f: X \to \mathbb{R}\)</span> (e.g., a coordinate projection, density, eccentricity), divide <span class="math inline">\(f(X)\)</span> into overlapping intervals, and take preimages. Then cluster each preimage to form the covering elements.</p></li>
+<li><span class="math inline">\(d\)</span>: the <em>embedding dimension</em> (how many consecutive values per window)</li>
+<li><span class="math inline">\(\tau\)</span>: the <em>delay</em> (spacing between consecutive values in a window)</li>
 </ul>
+<p>The <em>delay embedding</em> maps the time series to a set of points <span class="math inline">\(\{y_i\}\)</span> in <span class="math inline">\(\mathbb{R}^d\)</span>:</p>
+<p><span class="math display">\[
+y_i = (x_i, x_{i+\tau}, x_{i+2\tau}, \ldots, x_{i+(d-1)\tau}).
+\]</span></p>
+<p>Each <span class="math inline">\(y_i\)</span> is a snapshot of the time series behavior around time <span class="math inline">\(i\)</span>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Takens’ theorem</strong> (1981) states that if the time series comes from a dynamical system with an attractor of dimension <span class="math inline">\(m\)</span>, then for <span class="math inline">\(d &gt; 2m\)</span> the delay embedding faithfully reconstructs the topology of the attractor. This is a remarkable result: from a single scalar measurement over time, we can recover the shape of the underlying dynamics!</p>
+</div>
+</div>
 </section>
-<section id="nerve-step" class="level3" data-number="12.1.2">
-<h3 data-number="12.1.2" class="anchored" data-anchor-id="nerve-step"><span class="header-section-number">12.1.2</span> Nerve step</h3>
-<p>There are many alternatives to the nerve construction. Let <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> be two elements of a covering <span class="math inline">\(C\)</span>. Let <span class="math inline">\(G = (V, E)\)</span> be a graph with vertex-set <span class="math inline">\(V = C\)</span>. Examples of how to generalize the nerve step:</p>
-<ul>
-<li><p><strong>Minimum intersection size</strong>: Fix <span class="math inline">\(k &gt; 0\)</span>. Define <span class="math inline">\((a, b) \in E\)</span> iff <span class="math inline">\(|a \cap b| \geq k\)</span>, that is: we will only allow intersections with at least <span class="math inline">\(k\)</span> elements. Setting <span class="math inline">\(k = 1\)</span> will give us the usual nerve graph.</p></li>
-<li><p><strong>Weighted edges</strong>: Instead of a binary “connected or not”, assign a weight to each edge proportional to the intersection size: <span class="math inline">\(w(a, b) = |a \cap b|\)</span>. This gives a weighted graph that carries more information.</p></li>
-<li><p><strong>Higher-dimensional nerve</strong>: Instead of just a graph (1-skeleton), build a full simplicial complex: add a <span class="math inline">\(k\)</span>-simplex whenever <span class="math inline">\(k+1\)</span> covering elements have a non-empty common intersection. This is the classical nerve construction from algebraic topology.</p></li>
-</ul>
-</section>
-</section>
-<section id="interpreting-mapper-graphs" class="level2" data-number="12.2">
-<h2 data-number="12.2" class="anchored" data-anchor-id="interpreting-mapper-graphs"><span class="header-section-number">12.2</span> Interpreting Mapper graphs</h2>
-<p>The output of any Mapper algorithm is a graph (or simplicial complex). How do we read it?</p>
-<ul>
-<li><strong>Nodes</strong> represent clusters of data points. The node size typically represents the number of points in that cluster.</li>
-<li><strong>Edges</strong> connect clusters that share points. Thicker edges (in a weighted version) mean more shared points.</li>
-<li><strong>Connected components</strong> in the Mapper graph suggest distinct groups in the data.</li>
-<li><strong>Loops</strong> (cycles) suggest the data has a circular or toroidal structure.</li>
-<li><strong>Flares</strong> (branches) suggest the data has a branching structure (like a Y-shape).</li>
-</ul>
-<p>You can also <strong>color</strong> the nodes by any function of the data: mean value of a variable, density, class labels, etc. This turns the Mapper graph into a powerful exploratory tool.</p>
-</section>
-<section id="creating-my-own-mapper" class="level2" data-number="12.3">
-<h2 data-number="12.3" class="anchored" data-anchor-id="creating-my-own-mapper"><span class="header-section-number">12.3</span> Creating my own mapper</h2>
-<p>You can change the 2 steps above within the context of the ball mapper, as can be seen in the docs.</p>
-</section>
-<section id="example-mapper-on-a-noisy-figure-eight" class="level2" data-number="12.4">
-<h2 data-number="12.4" class="anchored" data-anchor-id="example-mapper-on-a-noisy-figure-eight"><span class="header-section-number">12.4</span> Example: Mapper on a noisy figure-eight</h2>
-<p>Let’s apply the general approach to a dataset with a more complex shape:</p>
-<div id="1aac45c5" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">TDAmapper</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> <span class="bu">GeometricDatasets</span> as gd</span>
+<section id="example-detecting-periodicity" class="level3" data-number="15.1.2">
+<h3 data-number="15.1.2" class="anchored" data-anchor-id="example-detecting-periodicity"><span class="header-section-number">15.1.2</span> Example: detecting periodicity</h3>
+<p>A purely periodic signal traces out a closed loop in delay-embedding space. This loop creates a 1-dimensional topological feature (<span class="math inline">\(\beta_1 = 1\)</span>) that we can detect with persistent homology.</p>
+<p>Let’s try it:</p>
+<div id="4d4c1d87" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Ripserer</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">PersistenceDiagrams</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">CairoMakie</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Random</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>seed <span class="op">=</span> <span class="fu">MersenneTwister</span>(<span class="fl">42</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a figure-eight (two circles joined)</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>θ<span class="fl">1</span> <span class="op">=</span> <span class="fl">2</span>π <span class="op">.*</span> <span class="fu">rand</span>(seed, <span class="fl">200</span>)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>θ<span class="fl">2</span> <span class="op">=</span> <span class="fl">2</span>π <span class="op">.*</span> <span class="fu">rand</span>(seed, <span class="fl">200</span>)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>circle1 <span class="op">=</span> [<span class="fu">cos</span>.(θ<span class="fl">1</span>)<span class="ch">'; sin.(θ1)'</span>]</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>circle2 <span class="op">=</span> [<span class="fu">cos</span>.(θ<span class="fl">2</span>)<span class="ch">' .+ 2; sin.(θ2)'</span>]</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> <span class="fu">hcat</span>(circle1, circle2) <span class="op">.+</span> <span class="fl">0.08</span> <span class="op">.*</span> <span class="fu">randn</span>(seed, <span class="fl">2</span>, <span class="fl">400</span>)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>()</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">"Noisy figure-eight"</span>, aspect <span class="op">=</span> <span class="fu">DataAspect</span>())</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax, X[<span class="fl">1</span>, <span class="op">:</span>], X[<span class="fl">2</span>, <span class="op">:</span>], markersize <span class="op">=</span> <span class="fl">4</span>)</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Random</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="e9ebd8d7" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ball mapper with different radii</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>bm1 <span class="op">=</span> <span class="fu">ball_mapper</span>(X, <span class="fl">0.3</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>fig1, _, _ <span class="op">=</span> <span class="fu">mapper_plot</span>(X, bm1)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>fig1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="b3a4fe53" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A periodic signal: sin with some noise</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="fl">500</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> <span class="fu">range</span>(<span class="fl">0</span>, <span class="fl">4</span>π, length <span class="op">=</span> N)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>signal <span class="op">=</span> <span class="fu">sin</span>.(t) <span class="op">.+</span> <span class="fl">0.1</span> <span class="op">.*</span> <span class="fu">randn</span>(<span class="fu">MersenneTwister</span>(<span class="fl">42</span>), N)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(size <span class="op">=</span> (<span class="fl">800</span>, <span class="fl">300</span>))</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">"Noisy periodic signal"</span>, xlabel <span class="op">=</span> <span class="st">"t"</span>, ylabel <span class="op">=</span> <span class="st">"x(t)"</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(ax, t, signal)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="07eaee01" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>bm2 <span class="op">=</span> <span class="fu">ball_mapper</span>(X, <span class="fl">0.5</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>fig2, _, _ <span class="op">=</span> <span class="fu">mapper_plot</span>(X, bm2)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>fig2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Now let’s apply delay embedding:</p>
+<div id="4229fc13" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">delay_embedding</span>(x, d, τ)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    N <span class="op">=</span> <span class="fu">length</span>(x)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    M <span class="op">=</span> N <span class="op">-</span> (d <span class="op">-</span> <span class="fl">1</span>) <span class="op">*</span> τ</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    embedding <span class="op">=</span> <span class="fu">zeros</span>(d, M)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span>M</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> j <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span>d</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>            embedding[j, i] <span class="op">=</span> x[i <span class="op">+</span> (j <span class="op">-</span> <span class="fl">1</span>) <span class="op">*</span> τ]</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">end</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> embedding</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Embed in 2D with delay τ=25</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>cloud <span class="op">=</span> <span class="fu">delay_embedding</span>(signal, <span class="fl">2</span>, <span class="fl">25</span>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>()</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">"Delay embedding (d=2, τ=25)"</span>, </span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    xlabel <span class="op">=</span> <span class="st">"x(t)"</span>, ylabel <span class="op">=</span> <span class="st">"x(t+τ)"</span>, aspect <span class="op">=</span> <span class="fu">DataAspect</span>())</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax, cloud[<span class="fl">1</span>, <span class="op">:</span>], cloud[<span class="fl">2</span>, <span class="op">:</span>], markersize <span class="op">=</span> <span class="fl">3</span>)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Notice how the radius affects the graph structure. With a small radius, we see many nodes and the two loops are visible. With a larger radius, the graph becomes simpler — possibly too simple, collapsing the interesting structure.</p>
+<p>The point cloud should look like a noisy circle — the topological signature of periodicity!</p>
+<div id="64f57359" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Subsample for computational efficiency</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>idx <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">:</span><span class="fu">size</span>(cloud, <span class="fl">2</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>pts <span class="op">=</span> [<span class="fu">Tuple</span>(cloud[<span class="op">:</span>, i]) for i <span class="kw">in</span> idx]</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> <span class="fu">ripserer</span>(<span class="fu">Rips</span>(pts), dim_max <span class="op">=</span> <span class="fl">1</span>, threshold <span class="op">=</span> <span class="fl">2.5</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">barcode</span>(result)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>If the signal is truly periodic, we should see one prominent bar in <span class="math inline">\(H_1\)</span> — a loop that persists over a wide range of scales.</p>
 </section>
-<section id="choosing-parameters" class="level2" data-number="12.5">
-<h2 data-number="12.5" class="anchored" data-anchor-id="choosing-parameters"><span class="header-section-number">12.5</span> Choosing parameters</h2>
-<p>There is no universal recipe for choosing Mapper parameters. However, some guidelines help:</p>
+</section>
+<section id="detecting-the-lack-of-periodicity" class="level2" data-number="15.2">
+<h2 data-number="15.2" class="anchored" data-anchor-id="detecting-the-lack-of-periodicity"><span class="header-section-number">15.2</span> Detecting the lack of periodicity</h2>
+<p>What happens when the signal is <em>not</em> periodic? Let’s try with pure noise:</p>
+<div id="4bed2364" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>noise <span class="op">=</span> <span class="fu">randn</span>(<span class="fu">MersenneTwister</span>(<span class="fl">123</span>), N)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>cloud_noise <span class="op">=</span> <span class="fu">delay_embedding</span>(noise, <span class="fl">2</span>, <span class="fl">25</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(size <span class="op">=</span> (<span class="fl">800</span>, <span class="fl">400</span>))</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>ax1 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">"White noise embedded (d=2)"</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax1, cloud_noise[<span class="fl">1</span>, <span class="op">:</span>], cloud_noise[<span class="fl">2</span>, <span class="op">:</span>], markersize <span class="op">=</span> <span class="fl">3</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute PH on subsample</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>idx_noise <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">:</span><span class="fu">size</span>(cloud_noise, <span class="fl">2</span>)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>pts_noise <span class="op">=</span> [<span class="fu">Tuple</span>(cloud_noise[<span class="op">:</span>, i]) for i <span class="kw">in</span> idx_noise]</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>result_noise <span class="op">=</span> <span class="fu">ripserer</span>(<span class="fu">Rips</span>(pts_noise), dim_max <span class="op">=</span> <span class="fl">1</span>, threshold <span class="op">=</span> <span class="fl">3.0</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">2</span>], title <span class="op">=</span> <span class="st">"Barcode (white noise)"</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="b110d546" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barcode</span>(result_noise)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>With white noise, the delay embedding fills a roughly uniform blob — no persistent loops. All <span class="math inline">\(H_1\)</span> bars should be short, indicating no significant topological features.</p>
+</section>
+<section id="multiple-periodicities" class="level2" data-number="15.3">
+<h2 data-number="15.3" class="anchored" data-anchor-id="multiple-periodicities"><span class="header-section-number">15.3</span> Multiple periodicities</h2>
+<p>What if the signal has <em>two</em> independent periodicities? The delay embedding traces out a torus-like shape in higher dimensions:</p>
+<div id="a0a5aaa5" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Signal with two frequencies</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>signal2 <span class="op">=</span> <span class="fu">sin</span>.(t) <span class="op">.+</span> <span class="fl">0.7</span> <span class="op">.*</span> <span class="fu">sin</span>.(<span class="fl">2.7</span> <span class="op">.*</span> t) <span class="op">.+</span> <span class="fl">0.1</span> <span class="op">.*</span> <span class="fu">randn</span>(<span class="fu">MersenneTwister</span>(<span class="fl">7</span>), N)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(size <span class="op">=</span> (<span class="fl">800</span>, <span class="fl">300</span>))</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">"Signal with two frequencies"</span>, xlabel <span class="op">=</span> <span class="st">"t"</span>, ylabel <span class="op">=</span> <span class="st">"x(t)"</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(ax, t, signal2)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="564debdc" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Embed in 3D</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>cloud2 <span class="op">=</span> <span class="fu">delay_embedding</span>(signal2, <span class="fl">3</span>, <span class="fl">20</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>()</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> <span class="fu">Axis3</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">"Delay embedding (d=3, τ=20)"</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax, cloud2[<span class="fl">1</span>, <span class="op">:</span>], cloud2[<span class="fl">2</span>, <span class="op">:</span>], cloud2[<span class="fl">3</span>, <span class="op">:</span>], markersize <span class="op">=</span> <span class="fl">2</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="566016bc" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># PH of the embedding</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>idx2 <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">:</span><span class="fu">size</span>(cloud2, <span class="fl">2</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>pts2 <span class="op">=</span> [<span class="fu">Tuple</span>(cloud2[<span class="op">:</span>, i]) for i <span class="kw">in</span> idx2]</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>result2 <span class="op">=</span> <span class="fu">ripserer</span>(<span class="fu">Rips</span>(pts2), dim_max <span class="op">=</span> <span class="fl">2</span>, threshold <span class="op">=</span> <span class="fl">2.5</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">barcode</span>(result2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>A signal with two independent frequencies should produce <span class="math inline">\(\beta_1 = 2\)</span> (two loops) and potentially <span class="math inline">\(\beta_2 = 1\)</span> (one cavity), resembling a torus. This is a powerful way to detect the number of independent oscillatory components in a signal.</p>
+</section>
+<section id="choosing-embedding-parameters" class="level2" data-number="15.4">
+<h2 data-number="15.4" class="anchored" data-anchor-id="choosing-embedding-parameters"><span class="header-section-number">15.4</span> Choosing embedding parameters</h2>
+<p>The choice of <span class="math inline">\(d\)</span> and <span class="math inline">\(\tau\)</span> matters:</p>
 <ul>
-<li><strong>Coverage</strong>: every data point should belong to at least one covering element. If points are “orphaned,” the covering is too sparse.</li>
-<li><strong>Overlap</strong>: some overlap between covering elements is necessary to create edges. More overlap means a denser graph (more edges), less overlap means a sparser graph.</li>
-<li><strong>Resolution</strong>: finer coverings give more detailed graphs but also more noise. Coarser coverings give simpler graphs but may hide structure.</li>
+<li><strong>Too small <span class="math inline">\(d\)</span></strong>: the embedding doesn’t capture the full dynamics (Takens says we need <span class="math inline">\(d &gt; 2m\)</span> where <span class="math inline">\(m\)</span> is the attractor dimension)</li>
+<li><strong>Too large <span class="math inline">\(d\)</span></strong>: computational cost increases, and noise accumulates</li>
+<li><strong>Too small <span class="math inline">\(\tau\)</span></strong>: consecutive points are nearly identical (the cloud concentrates near the diagonal)</li>
+<li><strong>Too large <span class="math inline">\(\tau\)</span></strong>: consecutive points become almost independent (destroys temporal structure)</li>
 </ul>
-<p>A common workflow is:</p>
-<ol type="1">
-<li>Start with a reasonable <span class="math inline">\(\epsilon\)</span> (e.g., based on average nearest-neighbor distance)</li>
-<li>Visualize the resulting graph</li>
-<li>Adjust parameters and compare</li>
-</ol>
-<p>The topological features (loops, branches) that persist across a range of parameters are the meaningful ones — this is the same persistence philosophy we saw in persistent homology!</p>
+<p>Practical heuristics:</p>
+<ul>
+<li>Use the <em>first minimum of the autocorrelation</em> or <em>mutual information</em> to choose <span class="math inline">\(\tau\)</span></li>
+<li>Use <em>false nearest neighbors</em> to choose <span class="math inline">\(d\)</span></li>
+<li>Start with <span class="math inline">\(d = 2\)</span> or <span class="math inline">\(3\)</span> for visualization, then increase</li>
+</ul>
+</section>
+<section id="summary" class="level2" data-number="15.5">
+<h2 data-number="15.5" class="anchored" data-anchor-id="summary"><span class="header-section-number">15.5</span> Summary</h2>
+<p>In this chapter we learned:</p>
+<ul>
+<li><strong>Delay embeddings</strong> convert time series to point clouds, enabling TDA</li>
+<li><strong>Periodicity</strong> shows up as a loop (<span class="math inline">\(\beta_1 = 1\)</span>) in the embedded point cloud</li>
+<li><strong>Multiple periodicities</strong> create higher-dimensional topological features</li>
+<li>The <strong>absence of topology</strong> (all short bars) indicates noise or aperiodic behavior</li>
+<li><strong>Takens’ theorem</strong> guarantees that the embedding recovers the attractor topology</li>
+</ul>
+<p>This provides a fundamentally different approach to time series analysis: instead of spectral methods (Fourier transforms) that assume linearity, TDA can detect nonlinear periodicities and complex dynamical structures.</p>
 
 
 </section>
@@ -927,13 +998,13 @@ window.Quarto = {
   </script>
 <nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="./ballmapper.html" class="pagination-link" aria-label="Ball mapper">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ball mapper</span></span>
+      <a href="./digits.html" class="pagination-link" aria-label="Classifying hand-written digits">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Classifying hand-written digits</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./clustering_tomato.html" class="pagination-link" aria-label="Clustering with ToMATo">
-        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Clustering with ToMATo</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./shapes.html" class="pagination-link" aria-label="Shape analysis and comparison">
+        <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Shape analysis and comparison</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

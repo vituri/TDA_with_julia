@@ -1,0 +1,179 @@
+# Time series analysis
+
+> "Time is not a line but a dimension, like the dimensions of space. If you can bend space you can bend time also, and if you knew enough and could move faster than light you could travel backwards in time and exist in two places at once." \
+> --- Margaret Atwood, in "Cat's Eye"
+
+Time series are sequences of measurements indexed by time: stock prices, temperature readings, heartbeat signals, sensor data. At first glance, they seem far from point clouds and topology. But there is a beautiful trick — *delay embeddings* — that converts a time series into a point cloud, opening the door to all the TDA tools we have developed.
+
+## From time series to point clouds
+
+### Takens' embedding theorem
+
+Given a time series $x_1, x_2, \ldots, x_N$, we can create a point cloud by looking at *windows* of consecutive values. Fix two parameters:
+
+- $d$: the *embedding dimension* (how many consecutive values per window)
+- $\tau$: the *delay* (spacing between consecutive values in a window)
+
+The *delay embedding* maps the time series to a set of points $\{y_i\}$ in $\mathbb{R}^d$:
+
+$$
+y_i = (x_i, x_{i+\tau}, x_{i+2\tau}, \ldots, x_{i+(d-1)\tau}).
+$$
+
+Each $y_i$ is a snapshot of the time series behavior around time $i$.
+
+::: {.callout-note}
+**Takens' theorem** (1981) states that if the time series comes from a dynamical system with an attractor of dimension $m$, then for $d > 2m$ the delay embedding faithfully reconstructs the topology of the attractor. This is a remarkable result: from a single scalar measurement over time, we can recover the shape of the underlying dynamics!
+:::
+
+### Example: detecting periodicity
+
+A purely periodic signal traces out a closed loop in delay-embedding space. This loop creates a 1-dimensional topological feature ($\beta_1 = 1$) that we can detect with persistent homology.
+
+Let's try it:
+
+```{julia}
+using Ripserer
+using PersistenceDiagrams
+using CairoMakie
+using Random
+```
+
+```{julia}
+# A periodic signal: sin with some noise
+N = 500
+t = range(0, 4π, length = N)
+signal = sin.(t) .+ 0.1 .* randn(MersenneTwister(42), N)
+
+fig = Figure(size = (800, 300))
+ax = Axis(fig[1, 1], title = "Noisy periodic signal", xlabel = "t", ylabel = "x(t)")
+lines!(ax, t, signal)
+fig
+```
+
+Now let's apply delay embedding:
+
+```{julia}
+function delay_embedding(x, d, τ)
+    N = length(x)
+    M = N - (d - 1) * τ
+    embedding = zeros(d, M)
+    for i in 1:M
+        for j in 1:d
+            embedding[j, i] = x[i + (j - 1) * τ]
+        end
+    end
+    return embedding
+end
+
+# Embed in 2D with delay τ=25
+cloud = delay_embedding(signal, 2, 25)
+
+fig = Figure()
+ax = Axis(fig[1, 1], title = "Delay embedding (d=2, τ=25)", 
+    xlabel = "x(t)", ylabel = "x(t+τ)", aspect = DataAspect())
+scatter!(ax, cloud[1, :], cloud[2, :], markersize = 3)
+fig
+```
+
+The point cloud should look like a noisy circle — the topological signature of periodicity!
+
+```{julia}
+# Subsample for computational efficiency
+idx = 1:3:size(cloud, 2)
+pts = [Tuple(cloud[:, i]) for i in idx]
+
+result = ripserer(Rips(pts), dim_max = 1, threshold = 2.5)
+barcode(result)
+```
+
+If the signal is truly periodic, we should see one prominent bar in $H_1$ — a loop that persists over a wide range of scales.
+
+## Detecting the lack of periodicity
+
+What happens when the signal is *not* periodic? Let's try with pure noise:
+
+```{julia}
+noise = randn(MersenneTwister(123), N)
+
+cloud_noise = delay_embedding(noise, 2, 25)
+
+fig = Figure(size = (800, 400))
+ax1 = Axis(fig[1, 1], title = "White noise embedded (d=2)")
+scatter!(ax1, cloud_noise[1, :], cloud_noise[2, :], markersize = 3)
+
+# Compute PH on subsample
+idx_noise = 1:3:size(cloud_noise, 2)
+pts_noise = [Tuple(cloud_noise[:, i]) for i in idx_noise]
+result_noise = ripserer(Rips(pts_noise), dim_max = 1, threshold = 3.0)
+
+ax2 = Axis(fig[1, 2], title = "Barcode (white noise)")
+fig
+```
+
+```{julia}
+barcode(result_noise)
+```
+
+With white noise, the delay embedding fills a roughly uniform blob — no persistent loops. All $H_1$ bars should be short, indicating no significant topological features.
+
+## Multiple periodicities
+
+What if the signal has *two* independent periodicities? The delay embedding traces out a torus-like shape in higher dimensions:
+
+```{julia}
+# Signal with two frequencies
+signal2 = sin.(t) .+ 0.7 .* sin.(2.7 .* t) .+ 0.1 .* randn(MersenneTwister(7), N)
+
+fig = Figure(size = (800, 300))
+ax = Axis(fig[1, 1], title = "Signal with two frequencies", xlabel = "t", ylabel = "x(t)")
+lines!(ax, t, signal2)
+fig
+```
+
+```{julia}
+# Embed in 3D
+cloud2 = delay_embedding(signal2, 3, 20)
+
+fig = Figure()
+ax = Axis3(fig[1, 1], title = "Delay embedding (d=3, τ=20)")
+scatter!(ax, cloud2[1, :], cloud2[2, :], cloud2[3, :], markersize = 2)
+fig
+```
+
+```{julia}
+# PH of the embedding
+idx2 = 1:4:size(cloud2, 2)
+pts2 = [Tuple(cloud2[:, i]) for i in idx2]
+result2 = ripserer(Rips(pts2), dim_max = 2, threshold = 2.5)
+barcode(result2)
+```
+
+A signal with two independent frequencies should produce $\beta_1 = 2$ (two loops) and potentially $\beta_2 = 1$ (one cavity), resembling a torus. This is a powerful way to detect the number of independent oscillatory components in a signal.
+
+## Choosing embedding parameters
+
+The choice of $d$ and $\tau$ matters:
+
+- **Too small $d$**: the embedding doesn't capture the full dynamics (Takens says we need $d > 2m$ where $m$ is the attractor dimension)
+- **Too large $d$**: computational cost increases, and noise accumulates
+- **Too small $\tau$**: consecutive points are nearly identical (the cloud concentrates near the diagonal)
+- **Too large $\tau$**: consecutive points become almost independent (destroys temporal structure)
+
+Practical heuristics:
+
+- Use the *first minimum of the autocorrelation* or *mutual information* to choose $\tau$
+- Use *false nearest neighbors* to choose $d$
+- Start with $d = 2$ or $3$ for visualization, then increase
+
+## Summary
+
+In this chapter we learned:
+
+- **Delay embeddings** convert time series to point clouds, enabling TDA
+- **Periodicity** shows up as a loop ($\beta_1 = 1$) in the embedded point cloud
+- **Multiple periodicities** create higher-dimensional topological features
+- The **absence of topology** (all short bars) indicates noise or aperiodic behavior
+- **Takens' theorem** guarantees that the embedding recovers the attractor topology
+
+This provides a fundamentally different approach to time series analysis: instead of spectral methods (Fourier transforms) that assume linearity, TDA can detect nonlinear periodicities and complex dynamical structures.

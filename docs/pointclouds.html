@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>12&nbsp; Mapper: the general case – Topological Data Analysis with Julia</title>
+<title>5&nbsp; Point clouds and distances – Topological Data Analysis with Julia</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -55,7 +55,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -65,8 +85,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./clustering_tomato.html" rel="next">
-<link href="./ballmapper.html" rel="prev">
+<link href="./clustering.html" rel="next">
+<link href="./homology.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -147,7 +167,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./tomato.html">TDA Methods</a></li><li class="breadcrumb-item"><a href="./mapper-general.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./pointclouds.html">Working with Data</a></li><li class="breadcrumb-item"><a href="./pointclouds.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Point clouds and distances</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -249,7 +269,7 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./pointclouds.html" class="sidebar-item-text sidebar-link">
+  <a href="./pointclouds.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Point clouds and distances</span></span></a>
   </div>
 </li>
@@ -313,7 +333,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./mapper-general.html" class="sidebar-item-text sidebar-link active">
+  <a href="./mapper-general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></span></a>
   </div>
 </li>
@@ -387,24 +407,26 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#what-is-a-mapper-algorithm" id="toc-what-is-a-mapper-algorithm" class="nav-link active" data-scroll-target="#what-is-a-mapper-algorithm"><span class="header-section-number">12.1</span> What is a mapper algorithm?</a>
+  <li><a href="#what-is-a-point-cloud" id="toc-what-is-a-point-cloud" class="nav-link active" data-scroll-target="#what-is-a-point-cloud"><span class="header-section-number">5.1</span> What is a point cloud?</a></li>
+  <li><a href="#generating-point-clouds" id="toc-generating-point-clouds" class="nav-link" data-scroll-target="#generating-point-clouds"><span class="header-section-number">5.2</span> Generating point clouds</a>
   <ul class="collapse">
-  <li><a href="#covering-step" id="toc-covering-step" class="nav-link" data-scroll-target="#covering-step"><span class="header-section-number">12.1.1</span> Covering step</a></li>
-  <li><a href="#nerve-step" id="toc-nerve-step" class="nav-link" data-scroll-target="#nerve-step"><span class="header-section-number">12.1.2</span> Nerve step</a></li>
+  <li><a href="#circles-and-spheres" id="toc-circles-and-spheres" class="nav-link" data-scroll-target="#circles-and-spheres"><span class="header-section-number">5.2.1</span> Circles and spheres</a></li>
+  <li><a href="#torus" id="toc-torus" class="nav-link" data-scroll-target="#torus"><span class="header-section-number">5.2.2</span> Torus</a></li>
+  <li><a href="#loading-real-datasets" id="toc-loading-real-datasets" class="nav-link" data-scroll-target="#loading-real-datasets"><span class="header-section-number">5.2.3</span> Loading real datasets</a></li>
   </ul></li>
-  <li><a href="#interpreting-mapper-graphs" id="toc-interpreting-mapper-graphs" class="nav-link" data-scroll-target="#interpreting-mapper-graphs"><span class="header-section-number">12.2</span> Interpreting Mapper graphs</a></li>
-  <li><a href="#creating-my-own-mapper" id="toc-creating-my-own-mapper" class="nav-link" data-scroll-target="#creating-my-own-mapper"><span class="header-section-number">12.3</span> Creating my own mapper</a></li>
-  <li><a href="#example-mapper-on-a-noisy-figure-eight" id="toc-example-mapper-on-a-noisy-figure-eight" class="nav-link" data-scroll-target="#example-mapper-on-a-noisy-figure-eight"><span class="header-section-number">12.4</span> Example: Mapper on a noisy figure-eight</a></li>
-  <li><a href="#choosing-parameters" id="toc-choosing-parameters" class="nav-link" data-scroll-target="#choosing-parameters"><span class="header-section-number">12.5</span> Choosing parameters</a></li>
+  <li><a href="#distance-metrics" id="toc-distance-metrics" class="nav-link" data-scroll-target="#distance-metrics"><span class="header-section-number">5.3</span> Distance metrics</a></li>
+  <li><a href="#density-estimation" id="toc-density-estimation" class="nav-link" data-scroll-target="#density-estimation"><span class="header-section-number">5.4</span> Density estimation</a></li>
+  <li><a href="#nearest-neighbors-and-proximity-graphs" id="toc-nearest-neighbors-and-proximity-graphs" class="nav-link" data-scroll-target="#nearest-neighbors-and-proximity-graphs"><span class="header-section-number">5.5</span> Nearest neighbors and proximity graphs</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">5.6</span> Summary</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content column-body" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./tomato.html">TDA Methods</a></li><li class="breadcrumb-item"><a href="./mapper-general.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./pointclouds.html">Working with Data</a></li><li class="breadcrumb-item"><a href="./pointclouds.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Point clouds and distances</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></h1>
+<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Point clouds and distances</span></h1>
 </div>
 
 
@@ -422,107 +444,185 @@ window.Quarto = {
 
 
 <blockquote class="blockquote">
-<p>“The real voyage of discovery consists not in seeking new landscapes, but in having new eyes.”<br>
-— Marcel Proust, in “In Search of Lost Time”</p>
+<p>“To see a World in a Grain of Sand<br>
+And a Heaven in a Wild Flower,<br>
+Hold Infinity in the palm of your hand<br>
+And Eternity in an hour.”<br>
+— William Blake, in “Auguries of Innocence”</p>
 </blockquote>
-<p>We have seen two specific instances of the Mapper construction: the classical Mapper (using a filter function and its preimages) and the Ball Mapper (using <span class="math inline">\(\epsilon\)</span>-balls). In this chapter, we step back and see the general pattern, then explore how to customize it.</p>
-<section id="what-is-a-mapper-algorithm" class="level2" data-number="12.1">
-<h2 data-number="12.1" class="anchored" data-anchor-id="what-is-a-mapper-algorithm"><span class="header-section-number">12.1</span> What is a mapper algorithm?</h2>
-<p>We can boil down the two mapper algorithms we saw earlier as follows:</p>
+<p>Before we can apply topological methods to data, we need to understand what “data” looks like from a geometric perspective. In TDA, data typically comes as a <em>point cloud</em> — a finite set of points in some metric space. This chapter covers the essential tools for working with point clouds: loading and generating them, measuring distances, estimating density, and visualizing structure.</p>
+<section id="what-is-a-point-cloud" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="what-is-a-point-cloud"><span class="header-section-number">5.1</span> What is a point cloud?</h2>
+<div id="def-" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 5.1</strong></span> A <em>point cloud</em> is a finite set <span class="math inline">\(X = \{x_1, \ldots, x_n\}\)</span> where each <span class="math inline">\(x_i \in \mathbb{R}^d\)</span> for some dimension <span class="math inline">\(d\)</span>. When equipped with a distance function <span class="math inline">\(d: X \times X \to \mathbb{R}\)</span>, the pair <span class="math inline">\((X, d)\)</span> is called a <em>finite metric space</em>.</p>
+</div>
+<p>Point clouds are everywhere:</p>
+<ul>
+<li>A collection of GPS coordinates (points in <span class="math inline">\(\mathbb{R}^2\)</span>)</li>
+<li>Pixel intensities of images (points in <span class="math inline">\(\mathbb{R}^{784}\)</span> for <span class="math inline">\(28 \times 28\)</span> images)</li>
+<li>Measurements from sensors (points in <span class="math inline">\(\mathbb{R}^d\)</span> where <span class="math inline">\(d\)</span> is the number of sensors)</li>
+<li>Word embeddings (points in <span class="math inline">\(\mathbb{R}^{300}\)</span> or similar)</li>
+</ul>
+<p>In Julia, we store point clouds as matrices. Following the convention in this book, each <strong>column</strong> is a data point and each <strong>row</strong> is a dimension.</p>
+</section>
+<section id="generating-point-clouds" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="generating-point-clouds"><span class="header-section-number">5.2</span> Generating point clouds</h2>
+<p>The <code>GeometricDatasets</code> package provides convenient functions for generating synthetic point clouds with known shapes:</p>
+<div id="4b7c613d" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> <span class="bu">GeometricDatasets</span> as gd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">CairoMakie</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="circles-and-spheres" class="level3" data-number="5.2.1">
+<h3 data-number="5.2.1" class="anchored" data-anchor-id="circles-and-spheres"><span class="header-section-number">5.2.1</span> Circles and spheres</h3>
+<div id="02a52888" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A circle (1-sphere) with 200 points in R^2</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>circle <span class="op">=</span> gd.<span class="fu">sphere</span>(<span class="fl">200</span>, dim <span class="op">=</span> <span class="fl">2</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(size <span class="op">=</span> (<span class="fl">800</span>, <span class="fl">400</span>))</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>ax1 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">"Circle (200 points)"</span>, aspect <span class="op">=</span> <span class="fu">DataAspect</span>())</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax1, circle[<span class="fl">1</span>, <span class="op">:</span>], circle[<span class="fl">2</span>, <span class="op">:</span>], markersize <span class="op">=</span> <span class="fl">5</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># A sphere (2-sphere) with 500 points in R^3</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>sphere <span class="op">=</span> gd.<span class="fu">sphere</span>(<span class="fl">500</span>, dim <span class="op">=</span> <span class="fl">3</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>ax2 <span class="op">=</span> <span class="fu">Axis3</span>(fig[<span class="fl">1</span>, <span class="fl">2</span>], title <span class="op">=</span> <span class="st">"Sphere (500 points)"</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax2, sphere[<span class="fl">1</span>, <span class="op">:</span>], sphere[<span class="fl">2</span>, <span class="op">:</span>], sphere[<span class="fl">3</span>, <span class="op">:</span>], markersize <span class="op">=</span> <span class="fl">3</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="torus" class="level3" data-number="5.2.2">
+<h3 data-number="5.2.2" class="anchored" data-anchor-id="torus"><span class="header-section-number">5.2.2</span> Torus</h3>
+<div id="0e57d7c8" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>torus <span class="op">=</span> gd.<span class="fu">torus</span>(<span class="fl">1000</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>()</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> <span class="fu">Axis3</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">"Torus (1000 points)"</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax, torus[<span class="fl">1</span>, <span class="op">:</span>], torus[<span class="fl">2</span>, <span class="op">:</span>], torus[<span class="fl">3</span>, <span class="op">:</span>], markersize <span class="op">=</span> <span class="fl">3</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="loading-real-datasets" class="level3" data-number="5.2.3">
+<h3 data-number="5.2.3" class="anchored" data-anchor-id="loading-real-datasets"><span class="header-section-number">5.2.3</span> Loading real datasets</h3>
+<p>Many real-world datasets come as CSV or text files. The <code>clustering datasets/</code> folder in this project contains the FCPS (Fundamental Clustering and Projection Suite) <span class="citation" data-cites="data5010013">(<a href="references.html#ref-data5010013" role="doc-biblioref">Ultsch and Lötsch 2020</a>)</span>, a collection of datasets designed to challenge clustering algorithms.</p>
+<div id="ab09cb4f" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">DelimitedFiles</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>hepta <span class="op">=</span> <span class="fu">readdlm</span>(<span class="st">"clustering datasets/Hepta.csv"</span>, <span class="ch">','</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># The last column is the class label</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>points <span class="op">=</span> hepta[<span class="op">:</span>, <span class="fl">1</span><span class="op">:</span><span class="kw">end</span><span class="op">-</span><span class="fl">1</span>]<span class="ch">'  # transpose to get column-major format</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> hepta[<span class="op">:</span>, <span class="kw">end</span>]</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>()</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> <span class="fu">Axis3</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">"Hepta dataset"</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax, points[<span class="fl">1</span>, <span class="op">:</span>], points[<span class="fl">2</span>, <span class="op">:</span>], points[<span class="fl">3</span>, <span class="op">:</span>], </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    color <span class="op">=</span> labels, markersize <span class="op">=</span> <span class="fl">8</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="226c33f9" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>target <span class="op">=</span> <span class="fu">readdlm</span>(<span class="st">"clustering datasets/Target.csv"</span>, <span class="ch">','</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>points_target <span class="op">=</span> target[<span class="op">:</span>, <span class="fl">1</span><span class="op">:</span><span class="kw">end</span><span class="op">-</span><span class="fl">1</span>]<span class="ch">'</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>labels_target <span class="op">=</span> target[<span class="op">:</span>, <span class="kw">end</span>]</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>()</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">"Target dataset"</span>, aspect <span class="op">=</span> <span class="fu">DataAspect</span>())</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax, points_target[<span class="fl">1</span>, <span class="op">:</span>], points_target[<span class="fl">2</span>, <span class="op">:</span>], </span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    color <span class="op">=</span> labels_target, markersize <span class="op">=</span> <span class="fl">5</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="distance-metrics" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="distance-metrics"><span class="header-section-number">5.3</span> Distance metrics</h2>
+<p>The choice of distance function profoundly affects any analysis. The most common choice is the Euclidean distance, but there are many others.</p>
+<div id="def-" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 5.2</strong></span> A <em>metric</em> (or <em>distance function</em>) on a set <span class="math inline">\(X\)</span> is a function <span class="math inline">\(d: X \times X \to \mathbb{R}\)</span> satisfying:</p>
 <ol type="1">
-<li><strong>(Covering step)</strong> Given a metric space <span class="math inline">\((X, d)\)</span>, create a covering <span class="math inline">\(C\)</span> of <span class="math inline">\(X\)</span>;</li>
-<li><strong>(Nerve step)</strong> Using <span class="math inline">\(C\)</span> as vertex set, create a graph (called the <em>nerve</em>).</li>
+<li><span class="math inline">\(d(x, y) \geq 0\)</span> and <span class="math inline">\(d(x, y) = 0 \iff x = y\)</span> (positive definiteness)</li>
+<li><span class="math inline">\(d(x, y) = d(y, x)\)</span> (symmetry)</li>
+<li><span class="math inline">\(d(x, z) \leq d(x, y) + d(y, z)\)</span> (triangle inequality)</li>
 </ol>
-<p>In the classical mapper context, <span class="math inline">\(C\)</span> is generated using the clustering of preimages of a function <span class="math inline">\(f: X \to \mathbb{R}\)</span>. In the ball mapper scenario, we cover <span class="math inline">\(X\)</span> using <span class="math inline">\(\epsilon\)</span>-balls with centers as a subset of <span class="math inline">\(X\)</span>.</p>
-<p>The beauty of this decomposition is that <strong>each step can be independently modified</strong>, leading to a family of Mapper-like algorithms suited to different problems.</p>
-<section id="covering-step" class="level3" data-number="12.1.1">
-<h3 data-number="12.1.1" class="anchored" data-anchor-id="covering-step"><span class="header-section-number">12.1.1</span> Covering step</h3>
-<p>Let <span class="math inline">\(X\)</span>, <span class="math inline">\(L\)</span> and <span class="math inline">\(\epsilon\)</span> be given as in the ball mapper case. For any <span class="math inline">\(l \in L\)</span>, define <span class="math inline">\(x_l\)</span> = <code>X[:, l]</code>. Examples of how to generalize the covering step:</p>
-<ul>
-<li><p><strong>Adaptive radius</strong>: Fix <span class="math inline">\(n &gt; 0\)</span> integer. Create a ball <span class="math inline">\(B\)</span> of radius <span class="math inline">\(\epsilon\)</span> around <span class="math inline">\(x_l\)</span>. If <span class="math inline">\(B\)</span> contains less than <span class="math inline">\(n\)</span> elements, then we redefine <span class="math inline">\(B\)</span> as the set of <span class="math inline">\(n\)</span> nearest neighbors of <span class="math inline">\(x_l\)</span>. This adapts to varying local density.</p></li>
-<li><p><strong>Distance-scaled radius</strong>: Fix <span class="math inline">\(\lambda &gt; 0\)</span>. Let <span class="math inline">\(d_l\)</span> be the distance between <span class="math inline">\(x_l\)</span> and its closest point. Create a ball <span class="math inline">\(B\)</span> of radius <span class="math inline">\(\lambda \cdot d_l\)</span>. This automatically adapts the ball size to the local spacing of the data.</p></li>
-<li><p><strong>Filter function preimages</strong>: Choose a function <span class="math inline">\(f: X \to \mathbb{R}\)</span> (e.g., a coordinate projection, density, eccentricity), divide <span class="math inline">\(f(X)\)</span> into overlapping intervals, and take preimages. Then cluster each preimage to form the covering elements.</p></li>
-</ul>
-</section>
-<section id="nerve-step" class="level3" data-number="12.1.2">
-<h3 data-number="12.1.2" class="anchored" data-anchor-id="nerve-step"><span class="header-section-number">12.1.2</span> Nerve step</h3>
-<p>There are many alternatives to the nerve construction. Let <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> be two elements of a covering <span class="math inline">\(C\)</span>. Let <span class="math inline">\(G = (V, E)\)</span> be a graph with vertex-set <span class="math inline">\(V = C\)</span>. Examples of how to generalize the nerve step:</p>
-<ul>
-<li><p><strong>Minimum intersection size</strong>: Fix <span class="math inline">\(k &gt; 0\)</span>. Define <span class="math inline">\((a, b) \in E\)</span> iff <span class="math inline">\(|a \cap b| \geq k\)</span>, that is: we will only allow intersections with at least <span class="math inline">\(k\)</span> elements. Setting <span class="math inline">\(k = 1\)</span> will give us the usual nerve graph.</p></li>
-<li><p><strong>Weighted edges</strong>: Instead of a binary “connected or not”, assign a weight to each edge proportional to the intersection size: <span class="math inline">\(w(a, b) = |a \cap b|\)</span>. This gives a weighted graph that carries more information.</p></li>
-<li><p><strong>Higher-dimensional nerve</strong>: Instead of just a graph (1-skeleton), build a full simplicial complex: add a <span class="math inline">\(k\)</span>-simplex whenever <span class="math inline">\(k+1\)</span> covering elements have a non-empty common intersection. This is the classical nerve construction from algebraic topology.</p></li>
-</ul>
-</section>
-</section>
-<section id="interpreting-mapper-graphs" class="level2" data-number="12.2">
-<h2 data-number="12.2" class="anchored" data-anchor-id="interpreting-mapper-graphs"><span class="header-section-number">12.2</span> Interpreting Mapper graphs</h2>
-<p>The output of any Mapper algorithm is a graph (or simplicial complex). How do we read it?</p>
-<ul>
-<li><strong>Nodes</strong> represent clusters of data points. The node size typically represents the number of points in that cluster.</li>
-<li><strong>Edges</strong> connect clusters that share points. Thicker edges (in a weighted version) mean more shared points.</li>
-<li><strong>Connected components</strong> in the Mapper graph suggest distinct groups in the data.</li>
-<li><strong>Loops</strong> (cycles) suggest the data has a circular or toroidal structure.</li>
-<li><strong>Flares</strong> (branches) suggest the data has a branching structure (like a Y-shape).</li>
-</ul>
-<p>You can also <strong>color</strong> the nodes by any function of the data: mean value of a variable, density, class labels, etc. This turns the Mapper graph into a powerful exploratory tool.</p>
-</section>
-<section id="creating-my-own-mapper" class="level2" data-number="12.3">
-<h2 data-number="12.3" class="anchored" data-anchor-id="creating-my-own-mapper"><span class="header-section-number">12.3</span> Creating my own mapper</h2>
-<p>You can change the 2 steps above within the context of the ball mapper, as can be seen in the docs.</p>
-</section>
-<section id="example-mapper-on-a-noisy-figure-eight" class="level2" data-number="12.4">
-<h2 data-number="12.4" class="anchored" data-anchor-id="example-mapper-on-a-noisy-figure-eight"><span class="header-section-number">12.4</span> Example: Mapper on a noisy figure-eight</h2>
-<p>Let’s apply the general approach to a dataset with a more complex shape:</p>
-<div id="1aac45c5" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">TDAmapper</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> <span class="bu">GeometricDatasets</span> as gd</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">CairoMakie</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Random</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>seed <span class="op">=</span> <span class="fu">MersenneTwister</span>(<span class="fl">42</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a figure-eight (two circles joined)</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>θ<span class="fl">1</span> <span class="op">=</span> <span class="fl">2</span>π <span class="op">.*</span> <span class="fu">rand</span>(seed, <span class="fl">200</span>)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>θ<span class="fl">2</span> <span class="op">=</span> <span class="fl">2</span>π <span class="op">.*</span> <span class="fu">rand</span>(seed, <span class="fl">200</span>)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>circle1 <span class="op">=</span> [<span class="fu">cos</span>.(θ<span class="fl">1</span>)<span class="ch">'; sin.(θ1)'</span>]</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>circle2 <span class="op">=</span> [<span class="fu">cos</span>.(θ<span class="fl">2</span>)<span class="ch">' .+ 2; sin.(θ2)'</span>]</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> <span class="fu">hcat</span>(circle1, circle2) <span class="op">.+</span> <span class="fl">0.08</span> <span class="op">.*</span> <span class="fu">randn</span>(seed, <span class="fl">2</span>, <span class="fl">400</span>)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>()</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">"Noisy figure-eight"</span>, aspect <span class="op">=</span> <span class="fu">DataAspect</span>())</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax, X[<span class="fl">1</span>, <span class="op">:</span>], X[<span class="fl">2</span>, <span class="op">:</span>], markersize <span class="op">=</span> <span class="fl">4</span>)</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="e9ebd8d7" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ball mapper with different radii</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>bm1 <span class="op">=</span> <span class="fu">ball_mapper</span>(X, <span class="fl">0.3</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>fig1, _, _ <span class="op">=</span> <span class="fu">mapper_plot</span>(X, bm1)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>fig1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The <code>Distances.jl</code> package provides many distance functions:</p>
+<div id="f683a8a5" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Distances</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Two points in R^3</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> [<span class="fl">1.0</span>, <span class="fl">2.0</span>, <span class="fl">3.0</span>]</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> [<span class="fl">4.0</span>, <span class="fl">5.0</span>, <span class="fl">6.0</span>]</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"Euclidean:  "</span>, <span class="fu">euclidean</span>(x, y))</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"Cityblock:  "</span>, <span class="fu">cityblock</span>(x, y))    <span class="co"># Manhattan / L1</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"Chebyshev:  "</span>, <span class="fu">chebyshev</span>(x, y))     <span class="co"># L∞</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"Cosine:     "</span>, <span class="fu">cosine_dist</span>(x, y))   <span class="co"># 1 - cos(angle)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="07eaee01" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>bm2 <span class="op">=</span> <span class="fu">ball_mapper</span>(X, <span class="fl">0.5</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>fig2, _, _ <span class="op">=</span> <span class="fu">mapper_plot</span>(X, bm2)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>fig2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>For point clouds, we often compute pairwise distance matrices:</p>
+<div id="7b9a5966" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate a small point cloud</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> gd.<span class="fu">sphere</span>(<span class="fl">6</span>, dim <span class="op">=</span> <span class="fl">2</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Pairwise distance matrix</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> <span class="fu">pairwise</span>(<span class="fu">Euclidean</span>(), X, dims <span class="op">=</span> <span class="fl">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Notice how the radius affects the graph structure. With a small radius, we see many nodes and the two loops are visible. With a larger radius, the graph becomes simpler — possibly too simple, collapsing the interesting structure.</p>
+<p>The resulting matrix <span class="math inline">\(D\)</span> has entry <span class="math inline">\(D_{ij} = d(x_i, x_j)\)</span>. This matrix is symmetric, with zeros on the diagonal, and it contains all the geometric information about the point cloud (up to isometry).</p>
 </section>
-<section id="choosing-parameters" class="level2" data-number="12.5">
-<h2 data-number="12.5" class="anchored" data-anchor-id="choosing-parameters"><span class="header-section-number">12.5</span> Choosing parameters</h2>
-<p>There is no universal recipe for choosing Mapper parameters. However, some guidelines help:</p>
+<section id="density-estimation" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="density-estimation"><span class="header-section-number">5.4</span> Density estimation</h2>
+<p>Given a point cloud, a natural question is: <em>where are the points concentrated?</em> Density estimation assigns a density value to each point, giving us a “height function” on the data.</p>
+<p>The <code>GeometricDatasets</code> package provides a Gaussian kernel density estimator:</p>
+<div id="3b82f0e7" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Random</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>seed <span class="op">=</span> <span class="fu">MersenneTwister</span>(<span class="fl">42</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Two clusters with different densities</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> <span class="fu">hcat</span>(</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">randn</span>(seed, <span class="fl">2</span>, <span class="fl">300</span>),</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">randn</span>(seed, <span class="fl">2</span>, <span class="fl">100</span>) <span class="op">.*</span> <span class="fl">0.4</span> <span class="op">.+</span> [<span class="fl">3.0</span>, <span class="fl">0.0</span>]</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> gd.<span class="fu">density_estimation</span>(X, h <span class="op">=</span> <span class="fl">0.5</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(size <span class="op">=</span> (<span class="fl">800</span>, <span class="fl">400</span>))</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>ax1 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">"Point cloud"</span>, aspect <span class="op">=</span> <span class="fu">DataAspect</span>())</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax1, X[<span class="fl">1</span>, <span class="op">:</span>], X[<span class="fl">2</span>, <span class="op">:</span>], markersize <span class="op">=</span> <span class="fl">4</span>)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">2</span>], title <span class="op">=</span> <span class="st">"Colored by density"</span>, aspect <span class="op">=</span> <span class="fu">DataAspect</span>())</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax2, X[<span class="fl">1</span>, <span class="op">:</span>], X[<span class="fl">2</span>, <span class="op">:</span>], color <span class="op">=</span> ds, markersize <span class="op">=</span> <span class="fl">4</span>, colormap <span class="op">=</span> <span class="op">:</span>viridis)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The density of a point <span class="math inline">\(x\)</span> is computed as:</p>
+<p><span class="math display">\[
+\text{dens}(x) = \frac{1}{|X|} \sum_{y \in X} \exp\left(-\frac{d(x, y)^2}{h^2}\right)
+\]</span></p>
+<p>The parameter <span class="math inline">\(h\)</span> controls the bandwidth: larger <span class="math inline">\(h\)</span> produces smoother density estimates, while smaller <span class="math inline">\(h\)</span> captures finer local structure. Density estimation is a key ingredient in the ToMATo clustering algorithm, which we will see later.</p>
+</section>
+<section id="nearest-neighbors-and-proximity-graphs" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="nearest-neighbors-and-proximity-graphs"><span class="header-section-number">5.5</span> Nearest neighbors and proximity graphs</h2>
+<p>Another fundamental operation is finding the nearest neighbors of each point. This induces a graph structure on the point cloud.</p>
+<div id="def-" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 5.3</strong></span> Given a point cloud <span class="math inline">\(X\)</span> and a parameter <span class="math inline">\(\epsilon &gt; 0\)</span>, the <em><span class="math inline">\(\epsilon\)</span>-neighborhood graph</em> has vertex set <span class="math inline">\(X\)</span> and an edge between <span class="math inline">\(x_i\)</span> and <span class="math inline">\(x_j\)</span> whenever <span class="math inline">\(d(x_i, x_j) \leq \epsilon\)</span>.</p>
+<p>Alternatively, the <em><span class="math inline">\(k\)</span>-nearest neighbor graph</em> (<span class="math inline">\(k\)</span>-NN graph) connects each point to its <span class="math inline">\(k\)</span> closest neighbors.</p>
+</div>
+<p>These graphs are the starting point for many TDA constructions: the Vietoris-Rips complex is built from the <span class="math inline">\(\epsilon\)</span>-neighborhood graph, and density-based clustering uses nearest-neighbor relationships.</p>
+</section>
+<section id="summary" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="summary"><span class="header-section-number">5.6</span> Summary</h2>
+<p>In this chapter we learned to:</p>
 <ul>
-<li><strong>Coverage</strong>: every data point should belong to at least one covering element. If points are “orphaned,” the covering is too sparse.</li>
-<li><strong>Overlap</strong>: some overlap between covering elements is necessary to create edges. More overlap means a denser graph (more edges), less overlap means a sparser graph.</li>
-<li><strong>Resolution</strong>: finer coverings give more detailed graphs but also more noise. Coarser coverings give simpler graphs but may hide structure.</li>
+<li>Represent data as point clouds (finite metric spaces)</li>
+<li>Generate synthetic point clouds with <code>GeometricDatasets</code></li>
+<li>Load real datasets from CSV files</li>
+<li>Compute distances using <code>Distances.jl</code></li>
+<li>Estimate density with Gaussian kernels</li>
+<li>Build neighborhood graphs from proximity</li>
 </ul>
-<p>A common workflow is:</p>
-<ol type="1">
-<li>Start with a reasonable <span class="math inline">\(\epsilon\)</span> (e.g., based on average nearest-neighbor distance)</li>
-<li>Visualize the resulting graph</li>
-<li>Adjust parameters and compare</li>
-</ol>
-<p>The topological features (loops, branches) that persist across a range of parameters are the meaningful ones — this is the same persistence philosophy we saw in persistent homology!</p>
+<p>These are the building blocks we will use throughout the rest of the book. Next, we will see how to <em>cluster</em> point clouds using classical methods — and understand their limitations.</p>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-data5010013" class="csl-entry" role="listitem">
+Ultsch, Alfred, and Jörn Lötsch. 2020. <span>“The Fundamental Clustering and Projection Suite (FCPS): A Dataset Collection to Test the Performance of Clustering and Data Projection Algorithms.”</span> <em>Data</em> 5 (1). <a href="https://doi.org/10.3390/data5010013">https://doi.org/10.3390/data5010013</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->
@@ -927,13 +1027,13 @@ window.Quarto = {
   </script>
 <nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="./ballmapper.html" class="pagination-link" aria-label="Ball mapper">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ball mapper</span></span>
+      <a href="./homology.html" class="pagination-link" aria-label="Simplicial homology">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Simplicial homology</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./clustering_tomato.html" class="pagination-link" aria-label="Clustering with ToMATo">
-        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Clustering with ToMATo</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./clustering.html" class="pagination-link" aria-label="Clustering">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Clustering</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

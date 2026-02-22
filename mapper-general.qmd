@@ -1,32 +1,56 @@
 # Mapper: the general case
 
+> "The real voyage of discovery consists not in seeking new landscapes, but in having new eyes." \
+> --- Marcel Proust, in "In Search of Lost Time"
+
+We have seen two specific instances of the Mapper construction: the classical Mapper (using a filter function and its preimages) and the Ball Mapper (using $\epsilon$-balls). In this chapter, we step back and see the general pattern, then explore how to customize it.
+
 ## What is a mapper algorithm?
 
 We can boil down the two mapper algorithms we saw earlier as follows:
 
-1) (covering step) Given a metric space $(X, d)$, create a covering $C$ of $X$;
-1) (nerve step) Using $C$ as vertex set, create a graph.
+1) **(Covering step)** Given a metric space $(X, d)$, create a covering $C$ of $X$;
+2) **(Nerve step)** Using $C$ as vertex set, create a graph (called the *nerve*).
 
-In the classical mapper context, $C$ is generated using the clustering of pre-images of a function $f: X \to \mathbb{R}$. In the ball mapper scenario, we cover $X$ using $\epsilon$-balls with centers as a subset of $X$.
+In the classical mapper context, $C$ is generated using the clustering of preimages of a function $f: X \to \mathbb{R}$. In the ball mapper scenario, we cover $X$ using $\epsilon$-balls with centers as a subset of $X$.
+
+The beauty of this decomposition is that **each step can be independently modified**, leading to a family of Mapper-like algorithms suited to different problems.
 
 ### Covering step
 
 Let $X$, $L$ and $\epsilon$ be given as in the ball mapper case. For any $l \in L$, define $x_l$ = `X[:, l]`. Examples of how to generalize the covering step:
 
-- Fix $n > 0$ integer. Create a ball $B$ of radius $\epsilon$ around $x_l$. If $B$ contains less than $n$ elements, then we redefine $B$ as the set of $n$ nearest neighbors of $x_l$.
+- **Adaptive radius**: Fix $n > 0$ integer. Create a ball $B$ of radius $\epsilon$ around $x_l$. If $B$ contains less than $n$ elements, then we redefine $B$ as the set of $n$ nearest neighbors of $x_l$. This adapts to varying local density.
 
-- Fix $\lambda > 0$. Let $d_l$ be the distance between $x_l$ and its closest point. Create a ball $B$ of radius $\lambda * d_1$. Proceed like this to create a covering of $X$.
+- **Distance-scaled radius**: Fix $\lambda > 0$. Let $d_l$ be the distance between $x_l$ and its closest point. Create a ball $B$ of radius $\lambda \cdot d_l$. This automatically adapts the ball size to the local spacing of the data.
+
+- **Filter function preimages**: Choose a function $f: X \to \mathbb{R}$ (e.g., a coordinate projection, density, eccentricity), divide $f(X)$ into overlapping intervals, and take preimages. Then cluster each preimage to form the covering elements.
 
 ### Nerve step
 
 There are many alternatives to the nerve construction. Let $a$ and $b$ be two elements of a covering $C$. Let $G = (V, E)$ be a graph with vertex-set $V = C$. Examples of how to generalize the nerve step:
 
-- Fix $k > 0$. Define $(a, b) \in E$ iff $|a \cap b| \geq k$, that is: we will only allow intersections with at least $k$ elements. Setting $k = 1$ will give us the usual nerve graph.
+- **Minimum intersection size**: Fix $k > 0$. Define $(a, b) \in E$ iff $|a \cap b| \geq k$, that is: we will only allow intersections with at least $k$ elements. Setting $k = 1$ will give us the usual nerve graph.
+
+- **Weighted edges**: Instead of a binary "connected or not", assign a weight to each edge proportional to the intersection size: $w(a, b) = |a \cap b|$. This gives a weighted graph that carries more information.
+
+- **Higher-dimensional nerve**: Instead of just a graph (1-skeleton), build a full simplicial complex: add a $k$-simplex whenever $k+1$ covering elements have a non-empty common intersection. This is the classical nerve construction from algebraic topology.
+
+## Interpreting Mapper graphs
+
+The output of any Mapper algorithm is a graph (or simplicial complex). How do we read it?
+
+- **Nodes** represent clusters of data points. The node size typically represents the number of points in that cluster.
+- **Edges** connect clusters that share points. Thicker edges (in a weighted version) mean more shared points.
+- **Connected components** in the Mapper graph suggest distinct groups in the data.
+- **Loops** (cycles) suggest the data has a circular or toroidal structure.
+- **Flares** (branches) suggest the data has a branching structure (like a Y-shape).
+
+You can also **color** the nodes by any function of the data: mean value of a variable, density, class labels, etc. This turns the Mapper graph into a powerful exploratory tool.
 
 ## Creating my own mapper
 
 You can change the 2 steps above within the context of the ball mapper, as can be seen in the docs.
-
 
 ```{julia}
 #| echo: false
@@ -34,3 +58,59 @@ using TDAmapper
 using Quartomenter
 @qdoc ball_mapper_generic
 ```
+
+## Example: Mapper on a noisy figure-eight
+
+Let's apply the general approach to a dataset with a more complex shape:
+
+```{julia}
+using TDAmapper
+import GeometricDatasets as gd
+using CairoMakie
+using Random
+
+seed = MersenneTwister(42)
+
+# Create a figure-eight (two circles joined)
+θ1 = 2π .* rand(seed, 200)
+θ2 = 2π .* rand(seed, 200)
+circle1 = [cos.(θ1)'; sin.(θ1)']
+circle2 = [cos.(θ2)' .+ 2; sin.(θ2)']
+X = hcat(circle1, circle2) .+ 0.08 .* randn(seed, 2, 400)
+
+fig = Figure()
+ax = Axis(fig[1, 1], title = "Noisy figure-eight", aspect = DataAspect())
+scatter!(ax, X[1, :], X[2, :], markersize = 4)
+fig
+```
+
+```{julia}
+# Ball mapper with different radii
+bm1 = ball_mapper(X, 0.3)
+fig1, _, _ = mapper_plot(X, bm1)
+fig1
+```
+
+```{julia}
+bm2 = ball_mapper(X, 0.5)
+fig2, _, _ = mapper_plot(X, bm2)
+fig2
+```
+
+Notice how the radius affects the graph structure. With a small radius, we see many nodes and the two loops are visible. With a larger radius, the graph becomes simpler — possibly too simple, collapsing the interesting structure.
+
+## Choosing parameters
+
+There is no universal recipe for choosing Mapper parameters. However, some guidelines help:
+
+- **Coverage**: every data point should belong to at least one covering element. If points are "orphaned," the covering is too sparse.
+- **Overlap**: some overlap between covering elements is necessary to create edges. More overlap means a denser graph (more edges), less overlap means a sparser graph.
+- **Resolution**: finer coverings give more detailed graphs but also more noise. Coarser coverings give simpler graphs but may hide structure.
+
+A common workflow is:
+
+1. Start with a reasonable $\epsilon$ (e.g., based on average nearest-neighbor distance)
+2. Visualize the resulting graph
+3. Adjust parameters and compare
+
+The topological features (loops, branches) that persist across a range of parameters are the meaningful ones — this is the same persistence philosophy we saw in persistent homology!

@@ -3,8 +3,106 @@
 > "The essence of this architecture is movement synchronized towards a precise objective. We observe a fraction of the process, like hearing the vibration of a single string in an orchestra of supergiants. We know, but cannot grasp, that above and below, beyond the limits of perception or imagination, thousands and millions of simultaneous transformations are at work, interlinked like a musical score by mathematical counterpoint. It has been described as a symphony in geometry, but we lack the ears to hear it." \
 > --- Stanisław Lem, in "Solaris"
 
-## Clustering revisited
+In the chapter on simplicial complexes, we saw that we can build a Vietoris-Rips complex from a point cloud by connecting points within distance $\epsilon$. But we faced a fundamental problem: **how to choose $\epsilon$?**
 
-dendrograms as a 0-dimensional persistence
+Too small, and we see only isolated points. Too large, and everything collapses into a single blob. The brilliant insight of persistent homology is: *don't choose* — look at **all** scales simultaneously and track which topological features persist.
 
-Vietoris-Rips e primos
+## Filtrations
+
+::: {#def-}
+A *filtration* is a nested sequence of simplicial complexes:
+
+$$
+\emptyset = K_0 \subseteq K_1 \subseteq K_2 \subseteq \cdots \subseteq K_m = K.
+$$
+
+Each $K_i$ is called a *level* of the filtration, and the parameter controlling the nesting is called the *filtration value*.
+:::
+
+### The Vietoris-Rips filtration
+
+The most common filtration in TDA is the Vietoris-Rips filtration. Given a point cloud $X$:
+
+1. Start with $\epsilon = 0$: the complex $\text{VR}(X, 0)$ has only vertices (isolated points).
+2. Increase $\epsilon$: edges appear between nearby points, then triangles, tetrahedra, etc.
+3. Eventually, for large enough $\epsilon$, everything is connected into one giant simplex.
+
+As $\epsilon$ grows, topological features are **born** and **die**:
+
+- **Birth**: A new connected component appears (at $\epsilon = 0$, every point is its own component), or a new loop or cavity forms.
+- **Death**: A component merges with another (two clusters become one), or a loop gets filled in by a triangle.
+
+The *persistence* of a feature is its lifetime: $\text{death} - \text{birth}$.
+
+### Sublevel set filtrations
+
+Another important type of filtration comes from a function $f: X \to \mathbb{R}$. The *sublevel set* at threshold $t$ is:
+
+$$
+X_t = \{x \in X \mid f(x) \leq t\}.
+$$
+
+As $t$ increases, more of $X$ is revealed, and topological features appear and disappear. This is used, for example, in the digits classification chapter (where $f$ is the grayscale intensity of an image) and in the ToMATo algorithm (where $f$ is a density function).
+
+## Persistence diagrams
+
+We can summarize the birth and death of every topological feature in a single picture:
+
+::: {#def-}
+A *persistence diagram* is a multiset of points $(b_i, d_i) \in \mathbb{R}^2$, where $b_i$ is the birth time and $d_i$ is the death time of the $i$-th feature. Since $b_i \leq d_i$, all points lie on or above the diagonal $y = x$.
+:::
+
+Points far from the diagonal represent features with long persistence — these are the "real" topological features. Points near the diagonal are short-lived and likely correspond to noise.
+
+A persistence diagram for dimension $k$ captures:
+
+- **$k = 0$**: Connected components. A point $(b, d)$ means a component was born at scale $b$ and merged with another at scale $d$. The component that never dies (the last one standing) has $d = \infty$.
+- **$k = 1$**: Loops. A loop appeared at scale $b$ and was filled in at scale $d$.
+- **$k = 2$**: Cavities. And so on for higher dimensions.
+
+## Barcodes
+
+An equivalent representation is the *barcode*: each feature becomes a horizontal bar from $b_i$ to $d_i$.
+
+The barcode makes it easy to see:
+
+- How many features exist at any given scale (count the bars crossing a vertical line)
+- Which features are long-lived (long bars) vs. noise (short bars)
+- Natural thresholds for choosing a scale parameter
+
+## Clustering revisited: dendrograms as 0-dimensional persistence
+
+Here's a beautiful connection between classical clustering and persistent homology.
+
+Consider agglomerative (hierarchical) clustering: we start with $n$ clusters (one per point) and progressively merge the closest pair. The dendrogram records this merging process.
+
+Now consider the 0-dimensional Vietoris-Rips persistence: as we increase $\epsilon$, connected components merge. The birth of a component is at $\epsilon = 0$ (each point starts as its own component), and the death is the scale at which it merges with another.
+
+**These are the same thing!** The 0-dimensional persistence barcode is precisely the dendrogram rewritten in the language of topology. The "gap" in the dendrogram that tells you how many clusters to choose corresponds to the gap between long and short bars in the barcode.
+
+This is the first example of how persistence provides a principled, multi-scale view of structure that classical methods handle in an ad hoc way.
+
+## The stability theorem
+
+One of the most important theoretical results in TDA is the *stability theorem* (Chazal, Cohen-Steiner, Glisse, Guibas, Oudot):
+
+> If two datasets $X$ and $Y$ are "close" (in a precise sense), then their persistence diagrams are also close.
+
+More formally, the bottleneck distance between persistence diagrams is bounded by the Hausdorff distance or the $L^\infty$ distance between the corresponding functions:
+
+$$
+d_B(\text{Dgm}(f), \text{Dgm}(g)) \leq \|f - g\|_\infty.
+$$
+
+This is crucial for applications: it means that small perturbations (noise) in the data produce small changes in the persistence diagram, not wild jumps. Persistent homology is *robust*.
+
+## Summary
+
+Persistent homology gives us:
+
+1. A **multi-scale** view of topological features (no need to choose a single $\epsilon$)
+2. A way to **distinguish signal from noise** (long-lived features vs. short-lived ones)
+3. A **stable** summary of data shape (robust to perturbations)
+4. A **unifying framework** that connects clustering, homology, and data analysis
+
+In the next chapter, we will compute persistent homology in Julia using `Ripserer.jl` and work with persistence diagrams using `PersistenceDiagrams.jl`.

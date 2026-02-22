@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>12&nbsp; Mapper: the general case – Topological Data Analysis with Julia</title>
+<title>16&nbsp; Shape analysis and comparison – Topological Data Analysis with Julia</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -65,8 +65,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./clustering_tomato.html" rel="next">
-<link href="./ballmapper.html" rel="prev">
+<link href="./summary.html" rel="next">
+<link href="./timeseries.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -147,7 +147,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./tomato.html">TDA Methods</a></li><li class="breadcrumb-item"><a href="./mapper-general.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./clustering_tomato.html">Applications</a></li><li class="breadcrumb-item"><a href="./shapes.html"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Shape analysis and comparison</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -313,7 +313,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./mapper-general.html" class="sidebar-item-text sidebar-link active">
+  <a href="./mapper-general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></span></a>
   </div>
 </li>
@@ -348,7 +348,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./shapes.html" class="sidebar-item-text sidebar-link">
+  <a href="./shapes.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Shape analysis and comparison</span></span></a>
   </div>
 </li>
@@ -387,24 +387,23 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#what-is-a-mapper-algorithm" id="toc-what-is-a-mapper-algorithm" class="nav-link active" data-scroll-target="#what-is-a-mapper-algorithm"><span class="header-section-number">12.1</span> What is a mapper algorithm?</a>
-  <ul class="collapse">
-  <li><a href="#covering-step" id="toc-covering-step" class="nav-link" data-scroll-target="#covering-step"><span class="header-section-number">12.1.1</span> Covering step</a></li>
-  <li><a href="#nerve-step" id="toc-nerve-step" class="nav-link" data-scroll-target="#nerve-step"><span class="header-section-number">12.1.2</span> Nerve step</a></li>
-  </ul></li>
-  <li><a href="#interpreting-mapper-graphs" id="toc-interpreting-mapper-graphs" class="nav-link" data-scroll-target="#interpreting-mapper-graphs"><span class="header-section-number">12.2</span> Interpreting Mapper graphs</a></li>
-  <li><a href="#creating-my-own-mapper" id="toc-creating-my-own-mapper" class="nav-link" data-scroll-target="#creating-my-own-mapper"><span class="header-section-number">12.3</span> Creating my own mapper</a></li>
-  <li><a href="#example-mapper-on-a-noisy-figure-eight" id="toc-example-mapper-on-a-noisy-figure-eight" class="nav-link" data-scroll-target="#example-mapper-on-a-noisy-figure-eight"><span class="header-section-number">12.4</span> Example: Mapper on a noisy figure-eight</a></li>
-  <li><a href="#choosing-parameters" id="toc-choosing-parameters" class="nav-link" data-scroll-target="#choosing-parameters"><span class="header-section-number">12.5</span> Choosing parameters</a></li>
+  <li><a href="#setup" id="toc-setup" class="nav-link active" data-scroll-target="#setup"><span class="header-section-number">16.1</span> Setup</a></li>
+  <li><a href="#generating-a-shape-library" id="toc-generating-a-shape-library" class="nav-link" data-scroll-target="#generating-a-shape-library"><span class="header-section-number">16.2</span> Generating a shape library</a></li>
+  <li><a href="#computing-persistence-diagrams-for-each-shape" id="toc-computing-persistence-diagrams-for-each-shape" class="nav-link" data-scroll-target="#computing-persistence-diagrams-for-each-shape"><span class="header-section-number">16.3</span> Computing persistence diagrams for each shape</a></li>
+  <li><a href="#building-a-distance-matrix" id="toc-building-a-distance-matrix" class="nav-link" data-scroll-target="#building-a-distance-matrix"><span class="header-section-number">16.4</span> Building a distance matrix</a></li>
+  <li><a href="#what-the-distances-capture" id="toc-what-the-distances-capture" class="nav-link" data-scroll-target="#what-the-distances-capture"><span class="header-section-number">16.5</span> What the distances capture</a></li>
+  <li><a href="#using-persistence-as-features" id="toc-using-persistence-as-features" class="nav-link" data-scroll-target="#using-persistence-as-features"><span class="header-section-number">16.6</span> Using persistence as features</a></li>
+  <li><a href="#robustness-to-noise-and-sampling" id="toc-robustness-to-noise-and-sampling" class="nav-link" data-scroll-target="#robustness-to-noise-and-sampling"><span class="header-section-number">16.7</span> Robustness to noise and sampling</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">16.8</span> Summary</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content column-body" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./tomato.html">TDA Methods</a></li><li class="breadcrumb-item"><a href="./mapper-general.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./clustering_tomato.html">Applications</a></li><li class="breadcrumb-item"><a href="./shapes.html"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Shape analysis and comparison</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></h1>
+<h1 class="title"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Shape analysis and comparison</span></h1>
 </div>
 
 
@@ -422,105 +421,218 @@ window.Quarto = {
 
 
 <blockquote class="blockquote">
-<p>“The real voyage of discovery consists not in seeking new landscapes, but in having new eyes.”<br>
-— Marcel Proust, in “In Search of Lost Time”</p>
+<p>“The book of nature is written in the language of mathematics.”<br>
+— Galileo Galilei</p>
 </blockquote>
-<p>We have seen two specific instances of the Mapper construction: the classical Mapper (using a filter function and its preimages) and the Ball Mapper (using <span class="math inline">\(\epsilon\)</span>-balls). In this chapter, we step back and see the general pattern, then explore how to customize it.</p>
-<section id="what-is-a-mapper-algorithm" class="level2" data-number="12.1">
-<h2 data-number="12.1" class="anchored" data-anchor-id="what-is-a-mapper-algorithm"><span class="header-section-number">12.1</span> What is a mapper algorithm?</h2>
-<p>We can boil down the two mapper algorithms we saw earlier as follows:</p>
+<p>How can we tell if two shapes are “similar”? Traditional approaches rely on specific geometric measurements — lengths, angles, volumes — which depend on the coordinate system and are sensitive to noise. Persistent homology offers a coordinate-free, noise-robust alternative: compare shapes by comparing their persistence diagrams.</p>
+<p>In this chapter, we use the Wasserstein and bottleneck distances between persistence diagrams to build a “shape space” — a metric space where each point is a shape, and the distance reflects topological similarity.</p>
+<section id="setup" class="level2" data-number="16.1">
+<h2 data-number="16.1" class="anchored" data-anchor-id="setup"><span class="header-section-number">16.1</span> Setup</h2>
+<div id="a38d2c9d" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Ripserer</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">PersistenceDiagrams</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> <span class="bu">GeometricDatasets</span> as gd</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Distances</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">CairoMakie</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Random</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="generating-a-shape-library" class="level2" data-number="16.2">
+<h2 data-number="16.2" class="anchored" data-anchor-id="generating-a-shape-library"><span class="header-section-number">16.2</span> Generating a shape library</h2>
+<p>Let’s create a collection of point clouds from shapes with known topology:</p>
+<div id="0bdca740" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">sample_shape</span>(shape, n, seed)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    rng <span class="op">=</span> <span class="fu">MersenneTwister</span>(seed)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    noise_level <span class="op">=</span> <span class="fl">0.05</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> shape <span class="op">==</span> <span class="op">:</span>circle</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        X <span class="op">=</span> gd.<span class="fu">sphere</span>(n, dim <span class="op">=</span> <span class="fl">2</span>) <span class="op">.+</span> noise_level <span class="op">.*</span> <span class="fu">randn</span>(rng, <span class="fl">2</span>, n)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elseif</span> shape <span class="op">==</span> <span class="op">:</span>sphere</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        X <span class="op">=</span> gd.<span class="fu">sphere</span>(n, dim <span class="op">=</span> <span class="fl">3</span>) <span class="op">.+</span> noise_level <span class="op">.*</span> <span class="fu">randn</span>(rng, <span class="fl">3</span>, n)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elseif</span> shape <span class="op">==</span> <span class="op">:</span>torus</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        X <span class="op">=</span> gd.<span class="fu">torus</span>(n) <span class="op">.+</span> noise_level <span class="op">.*</span> <span class="fu">randn</span>(rng, <span class="fl">3</span>, n)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elseif</span> shape <span class="op">==</span> <span class="op">:</span>two_circles</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        c1 <span class="op">=</span> gd.<span class="fu">sphere</span>(n <span class="op">÷</span> <span class="fl">2</span>, dim <span class="op">=</span> <span class="fl">2</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        c2 <span class="op">=</span> gd.<span class="fu">sphere</span>(n <span class="op">÷</span> <span class="fl">2</span>, dim <span class="op">=</span> <span class="fl">2</span>) <span class="op">.+</span> [<span class="fl">3.0</span>; <span class="fl">0.0</span>]</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        X <span class="op">=</span> <span class="fu">hcat</span>(c1, c2) <span class="op">.+</span> noise_level <span class="op">.*</span> <span class="fu">randn</span>(rng, <span class="fl">2</span>, n)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elseif</span> shape <span class="op">==</span> <span class="op">:</span>blob</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        X <span class="op">=</span> <span class="fu">randn</span>(rng, <span class="fl">3</span>, n) <span class="op">.*</span> <span class="fl">0.5</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        <span class="fu">error</span>(<span class="st">"Unknown shape: </span><span class="sc">$</span>shape<span class="st">"</span>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> X</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="07c6af5d" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sample multiple instances of each shape</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>shapes <span class="op">=</span> [<span class="op">:</span>circle, <span class="op">:</span>circle, <span class="op">:</span>circle,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>          <span class="op">:</span>sphere, <span class="op">:</span>sphere, <span class="op">:</span>sphere,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>          <span class="op">:</span>torus, <span class="op">:</span>torus, <span class="op">:</span>torus,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>          <span class="op">:</span>two_circles, <span class="op">:</span>two_circles, <span class="op">:</span>two_circles,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>          <span class="op">:</span>blob, <span class="op">:</span>blob, <span class="op">:</span>blob]</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>n_points <span class="op">=</span> <span class="fl">100</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>clouds <span class="op">=</span> [<span class="fu">sample_shape</span>(s, n_points, i) for (i, s) <span class="kw">in</span> <span class="fu">enumerate</span>(shapes)]</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>shape_names <span class="op">=</span> <span class="fu">string</span>.(shapes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="computing-persistence-diagrams-for-each-shape" class="level2" data-number="16.3">
+<h2 data-number="16.3" class="anchored" data-anchor-id="computing-persistence-diagrams-for-each-shape"><span class="header-section-number">16.3</span> Computing persistence diagrams for each shape</h2>
+<div id="1d43287d" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">compute_ph</span>(X; dim_max <span class="op">=</span> <span class="fl">1</span>, threshold <span class="op">=</span> <span class="fl">3.0</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    pts <span class="op">=</span> [<span class="fu">Tuple</span>(X[<span class="op">:</span>, i]) for i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu">size</span>(X, <span class="fl">2</span>)]</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fu">ripserer</span>(<span class="fu">Rips</span>(pts), dim_max <span class="op">=</span> dim_max, threshold <span class="op">=</span> threshold)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>diagrams <span class="op">=</span> [<span class="fu">compute_ph</span>(X) for X <span class="kw">in</span> clouds]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="building-a-distance-matrix" class="level2" data-number="16.4">
+<h2 data-number="16.4" class="anchored" data-anchor-id="building-a-distance-matrix"><span class="header-section-number">16.4</span> Building a distance matrix</h2>
+<p>Now we compare every pair of shapes using the Wasserstein distance on their <span class="math inline">\(H_1\)</span> persistence diagrams:</p>
+<div id="c78e8b2d" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>n_shapes <span class="op">=</span> <span class="fu">length</span>(diagrams)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>dist_matrix <span class="op">=</span> <span class="fu">zeros</span>(n_shapes, n_shapes)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span>n_shapes</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> (i<span class="op">+</span><span class="fl">1</span>)<span class="op">:</span>n_shapes</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        d1 <span class="op">=</span> diagrams[i][<span class="fl">2</span>]  <span class="co"># H₁ diagram</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        d2 <span class="op">=</span> diagrams[j][<span class="fl">2</span>]  <span class="co"># H₁ diagram</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="fu">length</span>(d1) <span class="op">&gt;</span> <span class="fl">0</span> <span class="op">&amp;&amp;</span> <span class="fu">length</span>(d2) <span class="op">&gt;</span> <span class="fl">0</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>            dist_matrix[i, j] <span class="op">=</span> <span class="fu">Wasserstein</span>()(d1, d2)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elseif</span> <span class="fu">length</span>(d1) <span class="op">==</span> <span class="fl">0</span> <span class="op">&amp;&amp;</span> <span class="fu">length</span>(d2) <span class="op">==</span> <span class="fl">0</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>            dist_matrix[i, j] <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>            <span class="co"># One has features, the other doesn't — use a penalty</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>            dist_matrix[i, j] <span class="op">=</span> <span class="fl">1.0</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">end</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        dist_matrix[j, i] <span class="op">=</span> dist_matrix[i, j]</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="c5d15bec" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(size <span class="op">=</span> (<span class="fl">600</span>, <span class="fl">500</span>))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">"Pairwise Wasserstein distances (H₁)"</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    xticks <span class="op">=</span> (<span class="fl">1</span><span class="op">:</span>n_shapes, shape_names), </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    yticks <span class="op">=</span> (<span class="fl">1</span><span class="op">:</span>n_shapes, shape_names),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    xticklabelrotation <span class="op">=</span> <span class="cn">π</span><span class="op">/</span><span class="fl">4</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">heatmap!</span>(ax, dist_matrix)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">Colorbar</span>(fig[<span class="fl">1</span>, <span class="fl">2</span>], limits <span class="op">=</span> <span class="fu">extrema</span>(dist_matrix), label <span class="op">=</span> <span class="st">"Distance"</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>If everything works well, you should see blocks of small distances along the diagonal — shapes of the same type have similar persistence diagrams. Shapes with different topology (different number of loops) will have large distances.</p>
+</section>
+<section id="what-the-distances-capture" class="level2" data-number="16.5">
+<h2 data-number="16.5" class="anchored" data-anchor-id="what-the-distances-capture"><span class="header-section-number">16.5</span> What the distances capture</h2>
+<p>Let’s think about what each shape’s persistence looks like:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Shape</th>
+<th><span class="math inline">\(\beta_0\)</span></th>
+<th><span class="math inline">\(\beta_1\)</span></th>
+<th>Expected signature</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Circle</td>
+<td>1</td>
+<td>1</td>
+<td>One persistent loop</td>
+</tr>
+<tr class="even">
+<td>Sphere</td>
+<td>1</td>
+<td>0</td>
+<td>No persistent loops (but <span class="math inline">\(\beta_2 = 1\)</span>)</td>
+</tr>
+<tr class="odd">
+<td>Torus</td>
+<td>1</td>
+<td>2</td>
+<td>Two persistent loops</td>
+</tr>
+<tr class="even">
+<td>Two circles</td>
+<td>2 → 1</td>
+<td>2</td>
+<td>Two persistent loops (one per circle)</td>
+</tr>
+<tr class="odd">
+<td>Blob</td>
+<td>1</td>
+<td>0</td>
+<td>No persistent features</td>
+</tr>
+</tbody>
+</table>
+<p>The Wasserstein distance on <span class="math inline">\(H_1\)</span> should cluster:</p>
+<ul>
+<li>Circle, sphere, and blob together (0 or 1 loop)</li>
+<li>Torus and two_circles together (2 loops)</li>
+</ul>
+<p>To distinguish sphere from blob (which both have <span class="math inline">\(\beta_1 = 0\)</span>), we would need to look at <span class="math inline">\(H_2\)</span> (where the sphere has a cavity but the blob doesn’t).</p>
+</section>
+<section id="using-persistence-as-features" class="level2" data-number="16.6">
+<h2 data-number="16.6" class="anchored" data-anchor-id="using-persistence-as-features"><span class="header-section-number">16.6</span> Using persistence as features</h2>
+<p>A natural workflow for classification tasks:</p>
 <ol type="1">
-<li><strong>(Covering step)</strong> Given a metric space <span class="math inline">\((X, d)\)</span>, create a covering <span class="math inline">\(C\)</span> of <span class="math inline">\(X\)</span>;</li>
-<li><strong>(Nerve step)</strong> Using <span class="math inline">\(C\)</span> as vertex set, create a graph (called the <em>nerve</em>).</li>
+<li>Compute persistence diagrams for each sample</li>
+<li>Convert diagrams to a fixed-size vector representation (persistence images, persistence landscapes, or Betti curves)</li>
+<li>Feed these vectors into a standard classifier</li>
 </ol>
-<p>In the classical mapper context, <span class="math inline">\(C\)</span> is generated using the clustering of preimages of a function <span class="math inline">\(f: X \to \mathbb{R}\)</span>. In the ball mapper scenario, we cover <span class="math inline">\(X\)</span> using <span class="math inline">\(\epsilon\)</span>-balls with centers as a subset of <span class="math inline">\(X\)</span>.</p>
-<p>The beauty of this decomposition is that <strong>each step can be independently modified</strong>, leading to a family of Mapper-like algorithms suited to different problems.</p>
-<section id="covering-step" class="level3" data-number="12.1.1">
-<h3 data-number="12.1.1" class="anchored" data-anchor-id="covering-step"><span class="header-section-number">12.1.1</span> Covering step</h3>
-<p>Let <span class="math inline">\(X\)</span>, <span class="math inline">\(L\)</span> and <span class="math inline">\(\epsilon\)</span> be given as in the ball mapper case. For any <span class="math inline">\(l \in L\)</span>, define <span class="math inline">\(x_l\)</span> = <code>X[:, l]</code>. Examples of how to generalize the covering step:</p>
-<ul>
-<li><p><strong>Adaptive radius</strong>: Fix <span class="math inline">\(n &gt; 0\)</span> integer. Create a ball <span class="math inline">\(B\)</span> of radius <span class="math inline">\(\epsilon\)</span> around <span class="math inline">\(x_l\)</span>. If <span class="math inline">\(B\)</span> contains less than <span class="math inline">\(n\)</span> elements, then we redefine <span class="math inline">\(B\)</span> as the set of <span class="math inline">\(n\)</span> nearest neighbors of <span class="math inline">\(x_l\)</span>. This adapts to varying local density.</p></li>
-<li><p><strong>Distance-scaled radius</strong>: Fix <span class="math inline">\(\lambda &gt; 0\)</span>. Let <span class="math inline">\(d_l\)</span> be the distance between <span class="math inline">\(x_l\)</span> and its closest point. Create a ball <span class="math inline">\(B\)</span> of radius <span class="math inline">\(\lambda \cdot d_l\)</span>. This automatically adapts the ball size to the local spacing of the data.</p></li>
-<li><p><strong>Filter function preimages</strong>: Choose a function <span class="math inline">\(f: X \to \mathbb{R}\)</span> (e.g., a coordinate projection, density, eccentricity), divide <span class="math inline">\(f(X)\)</span> into overlapping intervals, and take preimages. Then cluster each preimage to form the covering elements.</p></li>
-</ul>
-</section>
-<section id="nerve-step" class="level3" data-number="12.1.2">
-<h3 data-number="12.1.2" class="anchored" data-anchor-id="nerve-step"><span class="header-section-number">12.1.2</span> Nerve step</h3>
-<p>There are many alternatives to the nerve construction. Let <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> be two elements of a covering <span class="math inline">\(C\)</span>. Let <span class="math inline">\(G = (V, E)\)</span> be a graph with vertex-set <span class="math inline">\(V = C\)</span>. Examples of how to generalize the nerve step:</p>
-<ul>
-<li><p><strong>Minimum intersection size</strong>: Fix <span class="math inline">\(k &gt; 0\)</span>. Define <span class="math inline">\((a, b) \in E\)</span> iff <span class="math inline">\(|a \cap b| \geq k\)</span>, that is: we will only allow intersections with at least <span class="math inline">\(k\)</span> elements. Setting <span class="math inline">\(k = 1\)</span> will give us the usual nerve graph.</p></li>
-<li><p><strong>Weighted edges</strong>: Instead of a binary “connected or not”, assign a weight to each edge proportional to the intersection size: <span class="math inline">\(w(a, b) = |a \cap b|\)</span>. This gives a weighted graph that carries more information.</p></li>
-<li><p><strong>Higher-dimensional nerve</strong>: Instead of just a graph (1-skeleton), build a full simplicial complex: add a <span class="math inline">\(k\)</span>-simplex whenever <span class="math inline">\(k+1\)</span> covering elements have a non-empty common intersection. This is the classical nerve construction from algebraic topology.</p></li>
-</ul>
-</section>
-</section>
-<section id="interpreting-mapper-graphs" class="level2" data-number="12.2">
-<h2 data-number="12.2" class="anchored" data-anchor-id="interpreting-mapper-graphs"><span class="header-section-number">12.2</span> Interpreting Mapper graphs</h2>
-<p>The output of any Mapper algorithm is a graph (or simplicial complex). How do we read it?</p>
-<ul>
-<li><strong>Nodes</strong> represent clusters of data points. The node size typically represents the number of points in that cluster.</li>
-<li><strong>Edges</strong> connect clusters that share points. Thicker edges (in a weighted version) mean more shared points.</li>
-<li><strong>Connected components</strong> in the Mapper graph suggest distinct groups in the data.</li>
-<li><strong>Loops</strong> (cycles) suggest the data has a circular or toroidal structure.</li>
-<li><strong>Flares</strong> (branches) suggest the data has a branching structure (like a Y-shape).</li>
-</ul>
-<p>You can also <strong>color</strong> the nodes by any function of the data: mean value of a variable, density, class labels, etc. This turns the Mapper graph into a powerful exploratory tool.</p>
-</section>
-<section id="creating-my-own-mapper" class="level2" data-number="12.3">
-<h2 data-number="12.3" class="anchored" data-anchor-id="creating-my-own-mapper"><span class="header-section-number">12.3</span> Creating my own mapper</h2>
-<p>You can change the 2 steps above within the context of the ball mapper, as can be seen in the docs.</p>
-</section>
-<section id="example-mapper-on-a-noisy-figure-eight" class="level2" data-number="12.4">
-<h2 data-number="12.4" class="anchored" data-anchor-id="example-mapper-on-a-noisy-figure-eight"><span class="header-section-number">12.4</span> Example: Mapper on a noisy figure-eight</h2>
-<p>Let’s apply the general approach to a dataset with a more complex shape:</p>
-<div id="1aac45c5" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">TDAmapper</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> <span class="bu">GeometricDatasets</span> as gd</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">CairoMakie</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Random</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>seed <span class="op">=</span> <span class="fu">MersenneTwister</span>(<span class="fl">42</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a figure-eight (two circles joined)</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>θ<span class="fl">1</span> <span class="op">=</span> <span class="fl">2</span>π <span class="op">.*</span> <span class="fu">rand</span>(seed, <span class="fl">200</span>)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>θ<span class="fl">2</span> <span class="op">=</span> <span class="fl">2</span>π <span class="op">.*</span> <span class="fu">rand</span>(seed, <span class="fl">200</span>)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>circle1 <span class="op">=</span> [<span class="fu">cos</span>.(θ<span class="fl">1</span>)<span class="ch">'; sin.(θ1)'</span>]</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>circle2 <span class="op">=</span> [<span class="fu">cos</span>.(θ<span class="fl">2</span>)<span class="ch">' .+ 2; sin.(θ2)'</span>]</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> <span class="fu">hcat</span>(circle1, circle2) <span class="op">.+</span> <span class="fl">0.08</span> <span class="op">.*</span> <span class="fu">randn</span>(seed, <span class="fl">2</span>, <span class="fl">400</span>)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>()</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">"Noisy figure-eight"</span>, aspect <span class="op">=</span> <span class="fu">DataAspect</span>())</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax, X[<span class="fl">1</span>, <span class="op">:</span>], X[<span class="fl">2</span>, <span class="op">:</span>], markersize <span class="op">=</span> <span class="fl">4</span>)</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="da5e09b6" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute persistence images for each shape</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Using H₁ diagrams</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">safe_persistence_image</span>(diagram; kwargs<span class="op">...</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="fu">length</span>(diagram) <span class="op">&gt;</span> <span class="fl">0</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fu">PersistenceImage</span>(diagram; kwargs<span class="op">...</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Return a zero image if no features</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fu">zeros</span>(<span class="fl">5</span>, <span class="fl">5</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>images <span class="op">=</span> [<span class="fu">safe_persistence_image</span>(d[<span class="fl">2</span>]) for d <span class="kw">in</span> diagrams]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="e9ebd8d7" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ball mapper with different radii</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>bm1 <span class="op">=</span> <span class="fu">ball_mapper</span>(X, <span class="fl">0.3</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>fig1, _, _ <span class="op">=</span> <span class="fu">mapper_plot</span>(X, bm1)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>fig1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div id="07eaee01" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>bm2 <span class="op">=</span> <span class="fu">ball_mapper</span>(X, <span class="fl">0.5</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>fig2, _, _ <span class="op">=</span> <span class="fu">mapper_plot</span>(X, bm2)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>fig2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Notice how the radius affects the graph structure. With a small radius, we see many nodes and the two loops are visible. With a larger radius, the graph becomes simpler — possibly too simple, collapsing the interesting structure.</p>
+<p>These feature vectors can then be used with any machine learning algorithm — random forests, SVMs, neural networks — to classify shapes by their topology. We saw a full example of this pipeline in the digits classification chapter.</p>
 </section>
-<section id="choosing-parameters" class="level2" data-number="12.5">
-<h2 data-number="12.5" class="anchored" data-anchor-id="choosing-parameters"><span class="header-section-number">12.5</span> Choosing parameters</h2>
-<p>There is no universal recipe for choosing Mapper parameters. However, some guidelines help:</p>
+<section id="robustness-to-noise-and-sampling" class="level2" data-number="16.7">
+<h2 data-number="16.7" class="anchored" data-anchor-id="robustness-to-noise-and-sampling"><span class="header-section-number">16.7</span> Robustness to noise and sampling</h2>
+<p>One of the great strengths of persistent homology for shape comparison is its <strong>stability</strong>: small changes in the point cloud lead to small changes in the persistence diagram (and therefore small changes in the distances).</p>
+<p>Let’s verify this:</p>
+<div id="58b083fe" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Same circle with different noise levels</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>noise_levels <span class="op">=</span> [<span class="fl">0.01</span>, <span class="fl">0.05</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>]</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>circle_variants <span class="op">=</span> [gd.<span class="fu">sphere</span>(<span class="fl">100</span>, dim <span class="op">=</span> <span class="fl">2</span>) <span class="op">.+</span> nl <span class="op">.*</span> <span class="fu">randn</span>(<span class="fu">MersenneTwister</span>(<span class="fl">42</span>), <span class="fl">2</span>, <span class="fl">100</span>) </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                   for nl <span class="kw">in</span> noise_levels]</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>diagrams_circle <span class="op">=</span> [<span class="fu">compute_ph</span>(X) for X <span class="kw">in</span> circle_variants]</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare each to the first (least noisy)</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>base_diagram <span class="op">=</span> diagrams_circle[<span class="fl">1</span>][<span class="fl">2</span>]</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i, (d, nl)) <span class="kw">in</span> <span class="fu">enumerate</span>(<span class="fu">zip</span>(diagrams_circle, noise_levels))</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="fu">length</span>(base_diagram) <span class="op">&gt;</span> <span class="fl">0</span> <span class="op">&amp;&amp;</span> <span class="fu">length</span>(d[<span class="fl">2</span>]) <span class="op">&gt;</span> <span class="fl">0</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        dist <span class="op">=</span> <span class="fu">Wasserstein</span>()(base_diagram, d[<span class="fl">2</span>])</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">println</span>(<span class="st">"Noise level </span><span class="sc">$</span>nl<span class="st"> → Wasserstein distance: </span><span class="sc">$</span>(<span class="fu">round</span>(dist, digits<span class="op">=</span><span class="fl">4</span>))<span class="st">"</span>)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The distances should increase gradually with noise — no sudden jumps. This is the stability theorem in action.</p>
+</section>
+<section id="summary" class="level2" data-number="16.8">
+<h2 data-number="16.8" class="anchored" data-anchor-id="summary"><span class="header-section-number">16.8</span> Summary</h2>
+<p>In this chapter we learned:</p>
 <ul>
-<li><strong>Coverage</strong>: every data point should belong to at least one covering element. If points are “orphaned,” the covering is too sparse.</li>
-<li><strong>Overlap</strong>: some overlap between covering elements is necessary to create edges. More overlap means a denser graph (more edges), less overlap means a sparser graph.</li>
-<li><strong>Resolution</strong>: finer coverings give more detailed graphs but also more noise. Coarser coverings give simpler graphs but may hide structure.</li>
+<li>Persistence diagrams provide a <strong>coordinate-free summary</strong> of shape</li>
+<li>The <strong>Wasserstein distance</strong> between diagrams serves as a shape metric</li>
+<li>Shapes with different topology (different Betti numbers) are well-separated</li>
+<li><strong>Persistence images</strong> convert diagrams to vectors for machine learning</li>
+<li>The approach is <strong>stable</strong> — robust to noise and sampling variation</li>
 </ul>
-<p>A common workflow is:</p>
-<ol type="1">
-<li>Start with a reasonable <span class="math inline">\(\epsilon\)</span> (e.g., based on average nearest-neighbor distance)</li>
-<li>Visualize the resulting graph</li>
-<li>Adjust parameters and compare</li>
-</ol>
-<p>The topological features (loops, branches) that persist across a range of parameters are the meaningful ones — this is the same persistence philosophy we saw in persistent homology!</p>
+<p>This framework applies to any data that can be represented as a point cloud: 3D scans, molecular structures, image features, sensor networks, and more.</p>
 
 
 </section>
@@ -927,13 +1039,13 @@ window.Quarto = {
   </script>
 <nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="./ballmapper.html" class="pagination-link" aria-label="Ball mapper">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ball mapper</span></span>
+      <a href="./timeseries.html" class="pagination-link" aria-label="Time series analysis">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Time series analysis</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./clustering_tomato.html" class="pagination-link" aria-label="Clustering with ToMATo">
-        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Clustering with ToMATo</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./summary.html" class="pagination-link" aria-label="Summary and further reading">
+        <span class="nav-page-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Summary and further reading</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

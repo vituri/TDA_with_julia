@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>6&nbsp; Clustering – Topological Data Analysis with Julia</title>
+<title>8&nbsp; Computing persistent homology in Julia – Topological Data Analysis with Julia</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -55,27 +55,7 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-  margin-bottom: 0em;
-}
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -85,8 +65,8 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./persistence.html" rel="next">
-<link href="./pointclouds.html" rel="prev">
+<link href="./tomato.html" rel="next">
+<link href="./persistence.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -167,7 +147,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./pointclouds.html">Working with Data</a></li><li class="breadcrumb-item"><a href="./clustering.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Clustering</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./persistence.html">Persistent Homology</a></li><li class="breadcrumb-item"><a href="./computing_ph.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Computing persistent homology in Julia</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -275,7 +255,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./clustering.html" class="sidebar-item-text sidebar-link active">
+  <a href="./clustering.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Clustering</span></span></a>
   </div>
 </li>
@@ -298,7 +278,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./computing_ph.html" class="sidebar-item-text sidebar-link">
+  <a href="./computing_ph.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Computing persistent homology in Julia</span></span></a>
   </div>
 </li>
@@ -407,20 +387,24 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#what-is-a-clustering" id="toc-what-is-a-clustering" class="nav-link active" data-scroll-target="#what-is-a-clustering"><span class="header-section-number">6.1</span> What is a clustering?</a></li>
-  <li><a href="#k-means" id="toc-k-means" class="nav-link" data-scroll-target="#k-means"><span class="header-section-number">6.2</span> K-means</a></li>
-  <li><a href="#dbscan" id="toc-dbscan" class="nav-link" data-scroll-target="#dbscan"><span class="header-section-number">6.3</span> DBSCAN</a></li>
-  <li><a href="#hierarchical-clustering" id="toc-hierarchical-clustering" class="nav-link" data-scroll-target="#hierarchical-clustering"><span class="header-section-number">6.4</span> Hierarchical clustering</a></li>
-  <li><a href="#why-do-we-need-topology" id="toc-why-do-we-need-topology" class="nav-link" data-scroll-target="#why-do-we-need-topology"><span class="header-section-number">6.5</span> Why do we need topology?</a></li>
+  <li><a href="#setup" id="toc-setup" class="nav-link active" data-scroll-target="#setup"><span class="header-section-number">8.1</span> Setup</a></li>
+  <li><a href="#computing-rips-persistence" id="toc-computing-rips-persistence" class="nav-link" data-scroll-target="#computing-rips-persistence"><span class="header-section-number">8.2</span> Computing Rips persistence</a></li>
+  <li><a href="#visualizing-persistence-diagrams" id="toc-visualizing-persistence-diagrams" class="nav-link" data-scroll-target="#visualizing-persistence-diagrams"><span class="header-section-number">8.3</span> Visualizing persistence diagrams</a></li>
+  <li><a href="#barcodes" id="toc-barcodes" class="nav-link" data-scroll-target="#barcodes"><span class="header-section-number">8.4</span> Barcodes</a></li>
+  <li><a href="#cubical-complexes" id="toc-cubical-complexes" class="nav-link" data-scroll-target="#cubical-complexes"><span class="header-section-number">8.5</span> Cubical complexes</a></li>
+  <li><a href="#persistence-images" id="toc-persistence-images" class="nav-link" data-scroll-target="#persistence-images"><span class="header-section-number">8.6</span> Persistence images</a></li>
+  <li><a href="#wasserstein-and-bottleneck-distances" id="toc-wasserstein-and-bottleneck-distances" class="nav-link" data-scroll-target="#wasserstein-and-bottleneck-distances"><span class="header-section-number">8.7</span> Wasserstein and bottleneck distances</a></li>
+  <li><a href="#the-full-pipeline" id="toc-the-full-pipeline" class="nav-link" data-scroll-target="#the-full-pipeline"><span class="header-section-number">8.8</span> The full pipeline</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">8.9</span> Summary</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content column-body" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./pointclouds.html">Working with Data</a></li><li class="breadcrumb-item"><a href="./clustering.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Clustering</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./persistence.html">Persistent Homology</a></li><li class="breadcrumb-item"><a href="./computing_ph.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Computing persistent homology in Julia</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Clustering</span></h1>
+<h1 class="title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Computing persistent homology in Julia</span></h1>
 </div>
 
 
@@ -438,216 +422,210 @@ window.Quarto = {
 
 
 <blockquote class="blockquote">
-<p>“There are more things in heaven and earth, Horatio,<br>
-Than are dreamt of in your philosophy.”<br>
-— William Shakespeare, in “Hamlet”</p>
+<p>“The purpose of computing is insight, not numbers.”<br>
+— Richard Hamming</p>
 </blockquote>
-<p>Clustering is one of the most fundamental tasks in data analysis: given a dataset, group the points into meaningful subsets. It sounds simple, but the devil is in the details. What does “meaningful” mean? How many clusters should there be? And what shape can they have?</p>
-<p>In this chapter we cover classical clustering methods, their strengths and limitations. Understanding these limitations will motivate the topological approach (ToMATo) in a later chapter.</p>
-<section id="what-is-a-clustering" class="level2" data-number="6.1">
-<h2 data-number="6.1" class="anchored" data-anchor-id="what-is-a-clustering"><span class="header-section-number">6.1</span> What is a clustering?</h2>
-<div id="def-" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 6.1</strong></span> A <em>clustering</em> of a set <span class="math inline">\(X\)</span> is a collection <span class="math inline">\(C_1, \ldots, C_n \subset X\)</span> such that <span class="math inline">\(\bigcup C_i = X\)</span> and <span class="math inline">\(C_i \cap C_j = \emptyset\)</span> for any <span class="math inline">\(i \neq j\)</span>. In other words: it is a partition of <span class="math inline">\(X\)</span> into disjoint subsets. Each <span class="math inline">\(C_i\)</span> is called a <em>cluster</em>.</p>
-<p>A <em>clustering method</em> is a function <span class="math inline">\(f: X \to \{1, \ldots, n\}\)</span> that assigns each point <span class="math inline">\(x \in X\)</span> to a cluster label <span class="math inline">\(f(x)\)</span>.</p>
-</div>
-<p>Let’s load some packages and datasets to work with:</p>
-<div id="75338130" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">DelimitedFiles</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">CairoMakie</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Clustering</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Distances</span></span>
+<p>In the previous chapter we learned what persistent homology is and why it matters. Now it’s time to actually compute it. Julia has excellent packages for this: <code>Ripserer.jl</code> for computing persistent homology and <code>PersistenceDiagrams.jl</code> for working with the resulting diagrams.</p>
+<section id="setup" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="setup"><span class="header-section-number">8.1</span> Setup</h2>
+<div id="b0fba2ac" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Ripserer</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">PersistenceDiagrams</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> <span class="bu">GeometricDatasets</span> as gd</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">CairoMakie</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Random</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>We will use several datasets from the FCPS suite <span class="citation" data-cites="data5010013">(<a href="references.html#ref-data5010013" role="doc-biblioref">Ultsch and Lötsch 2020</a>)</span>:</p>
-<div id="c857eebe" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">load_fcps</span>(name)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    data <span class="op">=</span> <span class="fu">readdlm</span>(<span class="st">"clustering datasets/</span><span class="sc">$</span>name<span class="st">.csv"</span>, <span class="ch">','</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    points <span class="op">=</span> data[<span class="op">:</span>, <span class="fl">1</span><span class="op">:</span><span class="kw">end</span><span class="op">-</span><span class="fl">1</span>]<span class="ch">'  # column-major</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    labels <span class="op">=</span> <span class="fu">Int</span>.(data[<span class="op">:</span>, <span class="kw">end</span>])</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> points, labels</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Load a few interesting ones</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>hepta_pts, hepta_labels <span class="op">=</span> <span class="fu">load_fcps</span>(<span class="st">"Hepta"</span>)</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>target_pts, target_labels <span class="op">=</span> <span class="fu">load_fcps</span>(<span class="st">"Target"</span>)</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>chainlink_pts, chainlink_labels <span class="op">=</span> <span class="fu">load_fcps</span>(<span class="st">"Chainlink"</span>)</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>lsun_pts, lsun_labels <span class="op">=</span> <span class="fu">load_fcps</span>(<span class="st">"Lsun"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Let’s visualize them:</p>
-<div id="05153ce3" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(size <span class="op">=</span> (<span class="fl">800</span>, <span class="fl">800</span>))</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>ax1 <span class="op">=</span> <span class="fu">Axis3</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">"Hepta"</span>)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax1, hepta_pts[<span class="fl">1</span>,<span class="op">:</span>], hepta_pts[<span class="fl">2</span>,<span class="op">:</span>], hepta_pts[<span class="fl">3</span>,<span class="op">:</span>], </span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    color <span class="op">=</span> hepta_labels, markersize <span class="op">=</span> <span class="fl">5</span>)</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">2</span>], title <span class="op">=</span> <span class="st">"Target"</span>, aspect <span class="op">=</span> <span class="fu">DataAspect</span>())</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax2, target_pts[<span class="fl">1</span>,<span class="op">:</span>], target_pts[<span class="fl">2</span>,<span class="op">:</span>], </span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    color <span class="op">=</span> target_labels, markersize <span class="op">=</span> <span class="fl">4</span>)</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>ax3 <span class="op">=</span> <span class="fu">Axis3</span>(fig[<span class="fl">2</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">"Chainlink"</span>)</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax3, chainlink_pts[<span class="fl">1</span>,<span class="op">:</span>], chainlink_pts[<span class="fl">2</span>,<span class="op">:</span>], chainlink_pts[<span class="fl">3</span>,<span class="op">:</span>], </span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    color <span class="op">=</span> chainlink_labels, markersize <span class="op">=</span> <span class="fl">3</span>)</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>ax4 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">2</span>, <span class="fl">2</span>], title <span class="op">=</span> <span class="st">"Lsun"</span>, aspect <span class="op">=</span> <span class="fu">DataAspect</span>())</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax4, lsun_pts[<span class="fl">1</span>,<span class="op">:</span>], lsun_pts[<span class="fl">2</span>,<span class="op">:</span>], </span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    color <span class="op">=</span> lsun_labels, markersize <span class="op">=</span> <span class="fl">4</span>)</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Each dataset has different challenges: Hepta has well-separated spherical clusters, Target has concentric rings, Chainlink has interlocking loops, and Lsun has clusters of different shapes and sizes.</p>
 </section>
-<section id="k-means" class="level2" data-number="6.2">
-<h2 data-number="6.2" class="anchored" data-anchor-id="k-means"><span class="header-section-number">6.2</span> K-means</h2>
-<p>The most popular clustering algorithm is <em>k-means</em>. The idea is simple:</p>
-<ol type="1">
-<li>Choose <span class="math inline">\(k\)</span> initial cluster centers (centroids)</li>
-<li>Assign each point to the nearest centroid</li>
-<li>Recompute centroids as the mean of assigned points</li>
-<li>Repeat steps 2-3 until convergence</li>
-</ol>
-<div id="8345bae6" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># K-means on Hepta (k=7, since we know there are 7 clusters)</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>result_hepta <span class="op">=</span> <span class="fu">kmeans</span>(hepta_pts, <span class="fl">7</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>km_labels_hepta <span class="op">=</span> <span class="fu">assignments</span>(result_hepta)</span>
+<section id="computing-rips-persistence" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="computing-rips-persistence"><span class="header-section-number">8.2</span> Computing Rips persistence</h2>
+<p>Let’s start with a simple example: a noisy circle.</p>
+<div id="bdd9b80b" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>seed <span class="op">=</span> <span class="fu">MersenneTwister</span>(<span class="fl">42</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>circle <span class="op">=</span> gd.<span class="fu">sphere</span>(<span class="fl">100</span>, dim <span class="op">=</span> <span class="fl">2</span>) <span class="op">.+</span> <span class="fl">0.05</span> <span class="op">.*</span> <span class="fu">randn</span>(seed, <span class="fl">2</span>, <span class="fl">100</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>()</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">"Noisy circle (100 points)"</span>, aspect <span class="op">=</span> <span class="fu">DataAspect</span>())</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax, circle[<span class="fl">1</span>, <span class="op">:</span>], circle[<span class="fl">2</span>, <span class="op">:</span>], markersize <span class="op">=</span> <span class="fl">6</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We expect this point cloud to have:</p>
+<ul>
+<li><span class="math inline">\(\beta_0 = 1\)</span> (one connected component)</li>
+<li><span class="math inline">\(\beta_1 = 1\)</span> (one loop — the circle)</li>
+<li><span class="math inline">\(\beta_k = 0\)</span> for <span class="math inline">\(k \geq 2\)</span></li>
+</ul>
+<p>Let’s compute persistent homology using the Vietoris-Rips filtration:</p>
+<div id="bfe42670" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ripserer expects each point as a row (or a vector of tuples)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert from our column-major format</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>points <span class="op">=</span> [<span class="fu">Tuple</span>(circle[<span class="op">:</span>, i]) for i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu">size</span>(circle, <span class="fl">2</span>)]</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute PH up to dimension 1</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> <span class="fu">ripserer</span>(<span class="fu">Rips</span>(points), dim_max <span class="op">=</span> <span class="fl">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The result contains persistence diagrams for each dimension:</p>
+<div id="09d0a798" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dimension 0: connected components</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"H₀ (connected components):"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(result[<span class="fl">1</span>])</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(size <span class="op">=</span> (<span class="fl">800</span>, <span class="fl">400</span>))</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>ax1 <span class="op">=</span> <span class="fu">Axis3</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">"Hepta: true labels"</span>)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax1, hepta_pts[<span class="fl">1</span>,<span class="op">:</span>], hepta_pts[<span class="fl">2</span>,<span class="op">:</span>], hepta_pts[<span class="fl">3</span>,<span class="op">:</span>], </span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    color <span class="op">=</span> hepta_labels, markersize <span class="op">=</span> <span class="fl">5</span>)</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>ax2 <span class="op">=</span> <span class="fu">Axis3</span>(fig[<span class="fl">1</span>, <span class="fl">2</span>], title <span class="op">=</span> <span class="st">"Hepta: k-means (k=7)"</span>)</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax2, hepta_pts[<span class="fl">1</span>,<span class="op">:</span>], hepta_pts[<span class="fl">2</span>,<span class="op">:</span>], hepta_pts[<span class="fl">3</span>,<span class="op">:</span>], </span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    color <span class="op">=</span> km_labels_hepta, markersize <span class="op">=</span> <span class="fl">5</span>)</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">H₁ (loops):"</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(result[<span class="fl">2</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>K-means works well on Hepta because the clusters are spherical and well-separated, which is exactly what k-means assumes. But what happens with less friendly shapes?</p>
-<div id="7ca1f42d" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># K-means on Target (k=2)</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>result_target <span class="op">=</span> <span class="fu">kmeans</span>(target_pts, <span class="fl">2</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>km_labels_target <span class="op">=</span> <span class="fu">assignments</span>(result_target)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(size <span class="op">=</span> (<span class="fl">800</span>, <span class="fl">400</span>))</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>ax1 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">"Target: true labels"</span>, aspect <span class="op">=</span> <span class="fu">DataAspect</span>())</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax1, target_pts[<span class="fl">1</span>,<span class="op">:</span>], target_pts[<span class="fl">2</span>,<span class="op">:</span>], </span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    color <span class="op">=</span> target_labels, markersize <span class="op">=</span> <span class="fl">4</span>)</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">2</span>], title <span class="op">=</span> <span class="st">"Target: k-means (k=2)"</span>, aspect <span class="op">=</span> <span class="fu">DataAspect</span>())</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax2, target_pts[<span class="fl">1</span>,<span class="op">:</span>], target_pts[<span class="fl">2</span>,<span class="op">:</span>], </span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    color <span class="op">=</span> km_labels_target, markersize <span class="op">=</span> <span class="fl">4</span>)</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>K-means struggles here: it can only create convex (roughly spherical) clusters, so it splits the ring rather than separating the ring from the core.</p>
-<p><strong>Limitations of k-means:</strong></p>
-<ul>
-<li>Assumes clusters are convex (spherical)</li>
-<li>Requires knowing <span class="math inline">\(k\)</span> in advance</li>
-<li>Sensitive to initialization</li>
-<li>Sensitive to outliers</li>
-</ul>
 </section>
-<section id="dbscan" class="level2" data-number="6.3">
-<h2 data-number="6.3" class="anchored" data-anchor-id="dbscan"><span class="header-section-number">6.3</span> DBSCAN</h2>
-<p>DBSCAN (<em>Density-Based Spatial Clustering of Applications with Noise</em>) takes a completely different approach: clusters are regions of high density separated by regions of low density.</p>
-<p>The algorithm has two parameters:</p>
-<ul>
-<li><span class="math inline">\(\epsilon\)</span>: the radius of a neighborhood</li>
-<li><code>minpts</code>: the minimum number of points in a neighborhood for a point to be a “core point”</li>
-</ul>
-<div id="60849ba3" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># DBSCAN on Target</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>D_target <span class="op">=</span> <span class="fu">pairwise</span>(<span class="fu">Euclidean</span>(), target_pts, dims <span class="op">=</span> <span class="fl">2</span>)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>result_db <span class="op">=</span> <span class="fu">dbscan</span>(D_target, <span class="fl">0.5</span>, <span class="fl">10</span>)  <span class="co"># ε=0.5, minpts=10</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># dbscan returns a DbscanResult; extract cluster assignments</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>db_labels <span class="op">=</span> <span class="fu">zeros</span>(<span class="dt">Int</span>, <span class="fu">size</span>(target_pts, <span class="fl">2</span>))</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i, cluster) <span class="kw">in</span> <span class="fu">enumerate</span>(result_db.clusters)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    db_labels[cluster.core_indices] <span class="op">.=</span> i</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    db_labels[cluster.boundary_indices] <span class="op">.=</span> i</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(size <span class="op">=</span> (<span class="fl">800</span>, <span class="fl">400</span>))</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>ax1 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">"Target: true labels"</span>, aspect <span class="op">=</span> <span class="fu">DataAspect</span>())</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax1, target_pts[<span class="fl">1</span>,<span class="op">:</span>], target_pts[<span class="fl">2</span>,<span class="op">:</span>], </span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    color <span class="op">=</span> target_labels, markersize <span class="op">=</span> <span class="fl">4</span>)</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">2</span>], title <span class="op">=</span> <span class="st">"Target: DBSCAN"</span>, aspect <span class="op">=</span> <span class="fu">DataAspect</span>())</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax2, target_pts[<span class="fl">1</span>,<span class="op">:</span>], target_pts[<span class="fl">2</span>,<span class="op">:</span>], </span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    color <span class="op">=</span> db_labels, markersize <span class="op">=</span> <span class="fl">4</span>)</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="visualizing-persistence-diagrams" class="level2" data-number="8.3">
+<h2 data-number="8.3" class="anchored" data-anchor-id="visualizing-persistence-diagrams"><span class="header-section-number">8.3</span> Visualizing persistence diagrams</h2>
+<div id="75d382a7" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(size <span class="op">=</span> (<span class="fl">800</span>, <span class="fl">400</span>))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>ax1 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">"Persistence diagram (H₀)"</span>, </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    xlabel <span class="op">=</span> <span class="st">"Birth"</span>, ylabel <span class="op">=</span> <span class="st">"Death"</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> interval <span class="kw">in</span> result[<span class="fl">1</span>]</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    b, d <span class="op">=</span> <span class="fu">birth</span>(interval), <span class="fu">death</span>(interval)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="fu">isfinite</span>(d)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">scatter!</span>(ax1, [b], [d], color <span class="op">=</span> <span class="op">:</span>blue, markersize <span class="op">=</span> <span class="fl">8</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Add diagonal</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>lims1 <span class="op">=</span> (<span class="fl">0</span>, <span class="fu">maximum</span>(<span class="fu">death</span>(i) <span class="cf">for</span> i <span class="kw">in</span> result[<span class="fl">1</span>] <span class="cf">if</span> <span class="fu">isfinite</span>(<span class="fu">death</span>(i))) <span class="op">*</span> <span class="fl">1.1</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(ax1, [lims1[<span class="fl">1</span>], lims1[<span class="fl">2</span>]], [lims1[<span class="fl">1</span>], lims1[<span class="fl">2</span>]], color <span class="op">=</span> <span class="op">:</span>gray, linestyle <span class="op">=</span> <span class="op">:</span>dash)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">2</span>], title <span class="op">=</span> <span class="st">"Persistence diagram (H₁)"</span>,</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    xlabel <span class="op">=</span> <span class="st">"Birth"</span>, ylabel <span class="op">=</span> <span class="st">"Death"</span>)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> interval <span class="kw">in</span> result[<span class="fl">2</span>]</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    b, d <span class="op">=</span> <span class="fu">birth</span>(interval), <span class="fu">death</span>(interval)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="fu">isfinite</span>(d)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>        <span class="fu">scatter!</span>(ax2, [b], [d], color <span class="op">=</span> <span class="op">:</span>red, markersize <span class="op">=</span> <span class="fl">8</span>)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>lims2 <span class="op">=</span> <span class="cf">if</span> !<span class="fu">isempty</span>(result[<span class="fl">2</span>])</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    (<span class="fl">0</span>, <span class="fu">maximum</span>(<span class="fu">death</span>(i) <span class="cf">for</span> i <span class="kw">in</span> result[<span class="fl">2</span>] <span class="cf">if</span> <span class="fu">isfinite</span>(<span class="fu">death</span>(i))) <span class="op">*</span> <span class="fl">1.1</span>)</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    (<span class="fl">0</span>, <span class="fl">1</span>)</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(ax2, [lims2[<span class="fl">1</span>], lims2[<span class="fl">2</span>]], [lims2[<span class="fl">1</span>], lims2[<span class="fl">2</span>]], color <span class="op">=</span> <span class="op">:</span>gray, linestyle <span class="op">=</span> <span class="op">:</span>dash)</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>DBSCAN can find non-convex clusters and automatically determines the number of clusters. It also identifies noise points (points not belonging to any cluster).</p>
-<p><strong>Limitations of DBSCAN:</strong></p>
-<ul>
-<li>Struggles with clusters of varying density</li>
-<li>Sensitive to <span class="math inline">\(\epsilon\)</span> and <code>minpts</code> parameters</li>
-<li>No straightforward way to choose parameters</li>
-</ul>
+<p>In the <span class="math inline">\(H_1\)</span> diagram, you should see one point far from the diagonal (the “real” loop of the circle) and possibly a few points near the diagonal (noise). The persistence (distance from the diagonal) tells you how significant each feature is.</p>
 </section>
-<section id="hierarchical-clustering" class="level2" data-number="6.4">
-<h2 data-number="6.4" class="anchored" data-anchor-id="hierarchical-clustering"><span class="header-section-number">6.4</span> Hierarchical clustering</h2>
-<p>Hierarchical clustering builds a tree (called a <em>dendrogram</em>) that shows how points are progressively merged into clusters:</p>
-<ol type="1">
-<li>Start with each point as its own cluster</li>
-<li>Merge the two closest clusters</li>
-<li>Repeat until everything is in one cluster</li>
-</ol>
-<p>The “distance between clusters” can be defined in several ways (single linkage, complete linkage, average linkage, Ward’s method, etc.).</p>
-<div id="8179f59b" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Hierarchical clustering on Lsun</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>D_lsun <span class="op">=</span> <span class="fu">pairwise</span>(<span class="fu">Euclidean</span>(), lsun_pts, dims <span class="op">=</span> <span class="fl">2</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>hc <span class="op">=</span> <span class="fu">hclust</span>(D_lsun, linkage <span class="op">=</span> <span class="op">:</span>ward)</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Cut at 3 clusters</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>hc_labels <span class="op">=</span> <span class="fu">cutree</span>(hc, k <span class="op">=</span> <span class="fl">3</span>)</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(size <span class="op">=</span> (<span class="fl">800</span>, <span class="fl">400</span>))</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>ax1 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">"Lsun: true labels"</span>, aspect <span class="op">=</span> <span class="fu">DataAspect</span>())</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax1, lsun_pts[<span class="fl">1</span>,<span class="op">:</span>], lsun_pts[<span class="fl">2</span>,<span class="op">:</span>], </span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    color <span class="op">=</span> lsun_labels, markersize <span class="op">=</span> <span class="fl">4</span>)</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">2</span>], title <span class="op">=</span> <span class="st">"Lsun: hierarchical (Ward, k=3)"</span>, aspect <span class="op">=</span> <span class="fu">DataAspect</span>())</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax2, lsun_pts[<span class="fl">1</span>,<span class="op">:</span>], lsun_pts[<span class="fl">2</span>,<span class="op">:</span>], </span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    color <span class="op">=</span> hc_labels, markersize <span class="op">=</span> <span class="fl">4</span>)</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="barcodes" class="level2" data-number="8.4">
+<h2 data-number="8.4" class="anchored" data-anchor-id="barcodes"><span class="header-section-number">8.4</span> Barcodes</h2>
+<div id="2d5433c1" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barcode</span>(result)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The dendrogram itself is an interesting object: it encodes a nested sequence of clusterings at different scales. We will see later that dendrograms can be interpreted as <em>0-dimensional persistence diagrams</em> — our first connection between clustering and topology!</p>
+<p>The barcode gives a complementary view: each horizontal bar represents a topological feature, from birth to death. Long bars are significant features; short bars are noise.</p>
 </section>
-<section id="why-do-we-need-topology" class="level2" data-number="6.5">
-<h2 data-number="6.5" class="anchored" data-anchor-id="why-do-we-need-topology"><span class="header-section-number">6.5</span> Why do we need topology?</h2>
-<p>Each of the methods above has assumptions that can fail:</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Method</th>
-<th>Assumes</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>K-means</td>
-<td>Convex, equally-sized clusters; known <span class="math inline">\(k\)</span></td>
-</tr>
-<tr class="even">
-<td>DBSCAN</td>
-<td>Uniform density across clusters</td>
-</tr>
-<tr class="odd">
-<td>Hierarchical</td>
-<td>Choice of linkage affects results dramatically</td>
-</tr>
-</tbody>
-</table>
-<p>Real-world data often violates all of these assumptions simultaneously. The ToMATo algorithm (which we will study in a later chapter) combines density estimation with persistence-based merging to handle:</p>
+<section id="cubical-complexes" class="level2" data-number="8.5">
+<h2 data-number="8.5" class="anchored" data-anchor-id="cubical-complexes"><span class="header-section-number">8.5</span> Cubical complexes</h2>
+<p>For gridded data (like images), <code>Ripserer</code> provides cubical complexes, which are much more efficient than Rips complexes:</p>
+<div id="c2790ad8" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a simple 2D function with two peaks</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="fl">50</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="fu">range</span>(<span class="op">-</span><span class="fl">2</span>, <span class="fl">2</span>, length <span class="op">=</span> n)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> <span class="fu">range</span>(<span class="op">-</span><span class="fl">2</span>, <span class="fl">2</span>, length <span class="op">=</span> n)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> [<span class="fu">exp</span>(<span class="fu">-</span>(xi<span class="op">^</span><span class="fl">2</span> <span class="op">+</span> yi<span class="op">^</span><span class="fl">2</span>)) <span class="op">+</span> <span class="fl">0.7</span> <span class="op">*</span> <span class="fu">exp</span>(<span class="fu">-</span>((xi<span class="op">-</span><span class="fl">1</span>)<span class="op">^</span><span class="fl">2</span> <span class="op">+</span> (yi<span class="op">-</span><span class="fl">1</span>)<span class="op">^</span><span class="fl">2</span>)) for xi <span class="kw">in</span> x, yi <span class="kw">in</span> y]</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>result_cub <span class="op">=</span> <span class="fu">ripserer</span>(<span class="fu">Cubical</span>(f))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="e25db31c" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(size <span class="op">=</span> (<span class="fl">800</span>, <span class="fl">400</span>))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>ax1 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">"2D function"</span>, aspect <span class="op">=</span> <span class="fu">DataAspect</span>())</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">heatmap!</span>(ax1, x, y, f)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">2</span>], title <span class="op">=</span> <span class="st">"Sublevel persistence (H₀)"</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    xlabel <span class="op">=</span> <span class="st">"Birth"</span>, ylabel <span class="op">=</span> <span class="st">"Death"</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> interval <span class="kw">in</span> result_cub[<span class="fl">1</span>]</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    b, d <span class="op">=</span> <span class="fu">birth</span>(interval), <span class="fu">death</span>(interval)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="fu">isfinite</span>(d)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">scatter!</span>(ax2, [b], [d], color <span class="op">=</span> <span class="op">:</span>blue, markersize <span class="op">=</span> <span class="fl">8</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="persistence-images" class="level2" data-number="8.6">
+<h2 data-number="8.6" class="anchored" data-anchor-id="persistence-images"><span class="header-section-number">8.6</span> Persistence images</h2>
+<p>Persistence diagrams are multisets of points, which makes them hard to use directly in machine learning pipelines (most algorithms expect fixed-length vectors). <em>Persistence images</em> solve this by converting a diagram into a fixed-size matrix.</p>
+<p>The idea: place a Gaussian kernel at each point of the persistence diagram, weight it by a function of the persistence, and evaluate on a grid.</p>
+<div id="23500ae5" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute persistence image from the H₁ diagram of the circle</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="fu">length</span>(result[<span class="fl">2</span>]) <span class="op">&gt;</span> <span class="fl">0</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    pi_img <span class="op">=</span> <span class="fu">PersistenceImage</span>(result[<span class="fl">2</span>])</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">println</span>(<span class="st">"Persistence image size: "</span>, <span class="fu">size</span>(pi_img))</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Persistence images are used extensively in the digits classification chapter, where they convert persistence diagrams of handwritten digits into feature vectors for a neural network.</p>
+</section>
+<section id="wasserstein-and-bottleneck-distances" class="level2" data-number="8.7">
+<h2 data-number="8.7" class="anchored" data-anchor-id="wasserstein-and-bottleneck-distances"><span class="header-section-number">8.7</span> Wasserstein and bottleneck distances</h2>
+<p>To compare two persistence diagrams, we need a notion of distance. The two standard choices are:</p>
+<div id="def-" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 8.1</strong></span> The <em>bottleneck distance</em> between two persistence diagrams <span class="math inline">\(D_1\)</span> and <span class="math inline">\(D_2\)</span> is:</p>
+<p><span class="math display">\[
+d_B(D_1, D_2) = \inf_\gamma \sup_{x \in D_1} \|x - \gamma(x)\|_\infty
+\]</span></p>
+<p>where <span class="math inline">\(\gamma\)</span> ranges over all bijections between <span class="math inline">\(D_1\)</span> and <span class="math inline">\(D_2\)</span> (including matching points to the diagonal).</p>
+</div>
+<div id="def-" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 8.2</strong></span> The <em><span class="math inline">\(p\)</span>-Wasserstein distance</em> is:</p>
+<p><span class="math display">\[
+W_p(D_1, D_2) = \left(\inf_\gamma \sum_{x \in D_1} \|x - \gamma(x)\|_\infty^p\right)^{1/p}.
+\]</span></p>
+</div>
+<p>The bottleneck distance is dominated by the single worst-matched feature; the Wasserstein distance accounts for all features. Both are available in <code>PersistenceDiagrams.jl</code>:</p>
+<div id="c571594e" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare two point clouds</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>seed1 <span class="op">=</span> <span class="fu">MersenneTwister</span>(<span class="fl">1</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>seed2 <span class="op">=</span> <span class="fu">MersenneTwister</span>(<span class="fl">2</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>circle1 <span class="op">=</span> gd.<span class="fu">sphere</span>(<span class="fl">80</span>, dim <span class="op">=</span> <span class="fl">2</span>) <span class="op">.+</span> <span class="fl">0.05</span> <span class="op">.*</span> <span class="fu">randn</span>(seed1, <span class="fl">2</span>, <span class="fl">80</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>circle2 <span class="op">=</span> gd.<span class="fu">sphere</span>(<span class="fl">80</span>, dim <span class="op">=</span> <span class="fl">2</span>) <span class="op">.+</span> <span class="fl">0.1</span> <span class="op">.*</span> <span class="fu">randn</span>(seed2, <span class="fl">2</span>, <span class="fl">80</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>pts1 <span class="op">=</span> [<span class="fu">Tuple</span>(circle1[<span class="op">:</span>, i]) for i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu">size</span>(circle1, <span class="fl">2</span>)]</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>pts2 <span class="op">=</span> [<span class="fu">Tuple</span>(circle2[<span class="op">:</span>, i]) for i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu">size</span>(circle2, <span class="fl">2</span>)]</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>res1 <span class="op">=</span> <span class="fu">ripserer</span>(<span class="fu">Rips</span>(pts1), dim_max <span class="op">=</span> <span class="fl">1</span>)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>res2 <span class="op">=</span> <span class="fu">ripserer</span>(<span class="fu">Rips</span>(pts2), dim_max <span class="op">=</span> <span class="fl">1</span>)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare H₁ diagrams</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="fu">length</span>(res1[<span class="fl">2</span>]) <span class="op">&gt;</span> <span class="fl">0</span> <span class="op">&amp;&amp;</span> <span class="fu">length</span>(res2[<span class="fl">2</span>]) <span class="op">&gt;</span> <span class="fl">0</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    d_bottle <span class="op">=</span> <span class="fu">Bottleneck</span>()(res1[<span class="fl">2</span>], res2[<span class="fl">2</span>])</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    d_wass <span class="op">=</span> <span class="fu">Wasserstein</span>()(res1[<span class="fl">2</span>], res2[<span class="fl">2</span>])</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">println</span>(<span class="st">"Bottleneck distance: "</span>, <span class="fu">round</span>(d_bottle, digits <span class="op">=</span> <span class="fl">4</span>))</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">println</span>(<span class="st">"Wasserstein distance: "</span>, <span class="fu">round</span>(d_wass, digits <span class="op">=</span> <span class="fl">4</span>))</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="the-full-pipeline" class="level2" data-number="8.8">
+<h2 data-number="8.8" class="anchored" data-anchor-id="the-full-pipeline"><span class="header-section-number">8.8</span> The full pipeline</h2>
+<p>Let’s put it all together on a more interesting example — a noisy torus:</p>
+<div id="aaee6e0c" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>seed <span class="op">=</span> <span class="fu">MersenneTwister</span>(<span class="fl">0</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>torus <span class="op">=</span> gd.<span class="fu">torus</span>(<span class="fl">200</span>) <span class="op">.+</span> <span class="fl">0.05</span> <span class="op">.*</span> <span class="fu">randn</span>(seed, <span class="fl">3</span>, <span class="fl">200</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to tuple format</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>pts_torus <span class="op">=</span> [<span class="fu">Tuple</span>(torus[<span class="op">:</span>, i]) for i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu">size</span>(torus, <span class="fl">2</span>)]</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute PH up to dimension 2</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>result_torus <span class="op">=</span> <span class="fu">ripserer</span>(<span class="fu">Rips</span>(pts_torus), dim_max <span class="op">=</span> <span class="fl">2</span>, threshold <span class="op">=</span> <span class="fl">2.0</span>)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="fu">barcode</span>(result_torus)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>A torus has <span class="math inline">\(\beta_0 = 1\)</span>, <span class="math inline">\(\beta_1 = 2\)</span>, <span class="math inline">\(\beta_2 = 1\)</span>. Check: do you see one long bar in <span class="math inline">\(H_0\)</span>, two long bars in <span class="math inline">\(H_1\)</span>, and one long bar in <span class="math inline">\(H_2\)</span>?</p>
+</section>
+<section id="summary" class="level2" data-number="8.9">
+<h2 data-number="8.9" class="anchored" data-anchor-id="summary"><span class="header-section-number">8.9</span> Summary</h2>
+<p>In this chapter we learned to:</p>
 <ul>
-<li>Clusters of different densities</li>
-<li>Clusters of arbitrary shape</li>
-<li>Automatic selection of the number of clusters (via the persistence diagram)</li>
+<li>Compute Vietoris-Rips persistent homology with <code>Ripserer.jl</code></li>
+<li>Compute cubical persistence for gridded data</li>
+<li>Visualize persistence diagrams and barcodes</li>
+<li>Convert diagrams to persistence images for ML pipelines</li>
+<li>Compare diagrams using Wasserstein and bottleneck distances</li>
 </ul>
-<p>But first, we need to understand <em>persistent homology</em> — the mathematical machinery that makes this possible.</p>
+<p>These tools form the computational backbone of TDA. In the next chapters, we will apply them to clustering (ToMATo), visualization (Mapper), and real-world datasets.</p>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
-<div id="ref-data5010013" class="csl-entry" role="listitem">
-Ultsch, Alfred, and Jörn Lötsch. 2020. <span>“The Fundamental Clustering and Projection Suite (FCPS): A Dataset Collection to Test the Performance of Clustering and Data Projection Algorithms.”</span> <em>Data</em> 5 (1). <a href="https://doi.org/10.3390/data5010013">https://doi.org/10.3390/data5010013</a>.
-</div>
-</div>
 </section>
 
 </main> <!-- /main -->
@@ -1052,13 +1030,13 @@ Ultsch, Alfred, and Jörn Lötsch. 2020. <span>“The Fundamental Clustering and
   </script>
 <nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="./pointclouds.html" class="pagination-link" aria-label="Point clouds and distances">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Point clouds and distances</span></span>
+      <a href="./persistence.html" class="pagination-link" aria-label="Persistent homology">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Persistent homology</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./persistence.html" class="pagination-link" aria-label="Persistent homology">
-        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Persistent homology</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./tomato.html" class="pagination-link" aria-label="ToMATo">
+        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">ToMATo</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>12&nbsp; Mapper: the general case – Topological Data Analysis with Julia</title>
+<title>17&nbsp; Summary and further reading – Topological Data Analysis with Julia</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,41 +20,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -65,8 +30,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./clustering_tomato.html" rel="next">
-<link href="./ballmapper.html" rel="prev">
+<link href="./references.html" rel="next">
+<link href="./shapes.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -105,35 +70,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="style.css">
 </head>
@@ -147,7 +83,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./tomato.html">TDA Methods</a></li><li class="breadcrumb-item"><a href="./mapper-general.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./summary.html">Closing</a></li><li class="breadcrumb-item"><a href="./summary.html"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Summary and further reading</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -313,7 +249,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./mapper-general.html" class="sidebar-item-text sidebar-link active">
+  <a href="./mapper-general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></span></a>
   </div>
 </li>
@@ -365,7 +301,7 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./summary.html" class="sidebar-item-text sidebar-link">
+  <a href="./summary.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Summary and further reading</span></span></a>
   </div>
 </li>
@@ -387,24 +323,25 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#what-is-a-mapper-algorithm" id="toc-what-is-a-mapper-algorithm" class="nav-link active" data-scroll-target="#what-is-a-mapper-algorithm"><span class="header-section-number">12.1</span> What is a mapper algorithm?</a>
+  <li><a href="#what-we-covered" id="toc-what-we-covered" class="nav-link active" data-scroll-target="#what-we-covered"><span class="header-section-number">17.1</span> What we covered</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">17.2</span> Key takeaways</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">17.3</span> Further reading</a>
   <ul class="collapse">
-  <li><a href="#covering-step" id="toc-covering-step" class="nav-link" data-scroll-target="#covering-step"><span class="header-section-number">12.1.1</span> Covering step</a></li>
-  <li><a href="#nerve-step" id="toc-nerve-step" class="nav-link" data-scroll-target="#nerve-step"><span class="header-section-number">12.1.2</span> Nerve step</a></li>
+  <li><a href="#books" id="toc-books" class="nav-link" data-scroll-target="#books"><span class="header-section-number">17.3.1</span> Books</a></li>
+  <li><a href="#papers" id="toc-papers" class="nav-link" data-scroll-target="#papers"><span class="header-section-number">17.3.2</span> Papers</a></li>
+  <li><a href="#julia-packages" id="toc-julia-packages" class="nav-link" data-scroll-target="#julia-packages"><span class="header-section-number">17.3.3</span> Julia packages</a></li>
+  <li><a href="#advanced-topics-not-covered" id="toc-advanced-topics-not-covered" class="nav-link" data-scroll-target="#advanced-topics-not-covered"><span class="header-section-number">17.3.4</span> Advanced topics not covered</a></li>
   </ul></li>
-  <li><a href="#interpreting-mapper-graphs" id="toc-interpreting-mapper-graphs" class="nav-link" data-scroll-target="#interpreting-mapper-graphs"><span class="header-section-number">12.2</span> Interpreting Mapper graphs</a></li>
-  <li><a href="#creating-my-own-mapper" id="toc-creating-my-own-mapper" class="nav-link" data-scroll-target="#creating-my-own-mapper"><span class="header-section-number">12.3</span> Creating my own mapper</a></li>
-  <li><a href="#example-mapper-on-a-noisy-figure-eight" id="toc-example-mapper-on-a-noisy-figure-eight" class="nav-link" data-scroll-target="#example-mapper-on-a-noisy-figure-eight"><span class="header-section-number">12.4</span> Example: Mapper on a noisy figure-eight</a></li>
-  <li><a href="#choosing-parameters" id="toc-choosing-parameters" class="nav-link" data-scroll-target="#choosing-parameters"><span class="header-section-number">12.5</span> Choosing parameters</a></li>
+  <li><a href="#final-words" id="toc-final-words" class="nav-link" data-scroll-target="#final-words"><span class="header-section-number">17.4</span> Final words</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content column-body" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./tomato.html">TDA Methods</a></li><li class="breadcrumb-item"><a href="./mapper-general.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./summary.html">Closing</a></li><li class="breadcrumb-item"><a href="./summary.html"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Summary and further reading</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></h1>
+<h1 class="title"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Summary and further reading</span></h1>
 </div>
 
 
@@ -422,105 +359,72 @@ window.Quarto = {
 
 
 <blockquote class="blockquote">
-<p>“The real voyage of discovery consists not in seeking new landscapes, but in having new eyes.”<br>
-— Marcel Proust, in “In Search of Lost Time”</p>
+<p>“We shall not cease from exploration, and the end of all our exploring will be to arrive where we started and know the place for the first time.”<br>
+— T. S. Eliot, in “Little Gidding”</p>
 </blockquote>
-<p>We have seen two specific instances of the Mapper construction: the classical Mapper (using a filter function and its preimages) and the Ball Mapper (using <span class="math inline">\(\epsilon\)</span>-balls). In this chapter, we step back and see the general pattern, then explore how to customize it.</p>
-<section id="what-is-a-mapper-algorithm" class="level2" data-number="12.1">
-<h2 data-number="12.1" class="anchored" data-anchor-id="what-is-a-mapper-algorithm"><span class="header-section-number">12.1</span> What is a mapper algorithm?</h2>
-<p>We can boil down the two mapper algorithms we saw earlier as follows:</p>
+<section id="what-we-covered" class="level2" data-number="17.1">
+<h2 data-number="17.1" class="anchored" data-anchor-id="what-we-covered"><span class="header-section-number">17.1</span> What we covered</h2>
+<p>In this book, we followed a path from pure mathematics to applied data analysis:</p>
+<p><strong>Part I — Topology.</strong> We defined topological spaces and continuity, introduced simplicial complexes as finite combinatorial models of topological spaces, and developed simplicial homology as a way to count “holes” of each dimension.</p>
+<p><strong>Part II — Working with Data.</strong> We learned to handle point clouds, compute distances, estimate density, and cluster data using classical methods (k-means, DBSCAN, hierarchical clustering). We saw the limitations of each method.</p>
+<p><strong>Part III — Persistent Homology.</strong> We built the central tool of TDA: persistent homology. By examining all scales simultaneously through filtrations, we track the birth and death of topological features and represent them as persistence diagrams. We computed persistent homology in Julia using <code>Ripserer.jl</code> and learned to work with persistence images, Wasserstein distances, and barcodes.</p>
+<p><strong>Part IV — TDA Methods.</strong> We applied topological ideas to data analysis: ToMATo for density-based clustering with automatic cluster selection, Mapper for visual exploration and dimensionality reduction, and Ball Mapper as a flexible alternative.</p>
+<p><strong>Part V — Applications.</strong> We saw TDA in action: clustering with ToMATo, classifying handwritten digits using persistence images and neural networks, detecting periodicity in time series via delay embeddings, and comparing shapes through persistence diagram distances.</p>
+</section>
+<section id="key-takeaways" class="level2" data-number="17.2">
+<h2 data-number="17.2" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">17.2</span> Key takeaways</h2>
 <ol type="1">
-<li><strong>(Covering step)</strong> Given a metric space <span class="math inline">\((X, d)\)</span>, create a covering <span class="math inline">\(C\)</span> of <span class="math inline">\(X\)</span>;</li>
-<li><strong>(Nerve step)</strong> Using <span class="math inline">\(C\)</span> as vertex set, create a graph (called the <em>nerve</em>).</li>
+<li><p><strong>Data has shape, and shape matters.</strong> Classical statistics can miss geometric and topological structure that is essential for understanding data.</p></li>
+<li><p><strong>Persistence is the key idea.</strong> Instead of choosing a single scale, examine all scales and focus on features that persist. Long-lived features are signal; short-lived features are noise.</p></li>
+<li><p><strong>Stability makes it practical.</strong> The stability theorem guarantees that small perturbations in data lead to small changes in persistence diagrams. TDA is robust.</p></li>
+<li><p><strong>The tools are ready.</strong> Julia’s ecosystem — <code>Ripserer.jl</code>, <code>PersistenceDiagrams.jl</code>, <code>ToMATo.jl</code>, <code>TDAmapper.jl</code>, <code>GeometricDatasets.jl</code> — provides everything needed to apply TDA to real data.</p></li>
 </ol>
-<p>In the classical mapper context, <span class="math inline">\(C\)</span> is generated using the clustering of preimages of a function <span class="math inline">\(f: X \to \mathbb{R}\)</span>. In the ball mapper scenario, we cover <span class="math inline">\(X\)</span> using <span class="math inline">\(\epsilon\)</span>-balls with centers as a subset of <span class="math inline">\(X\)</span>.</p>
-<p>The beauty of this decomposition is that <strong>each step can be independently modified</strong>, leading to a family of Mapper-like algorithms suited to different problems.</p>
-<section id="covering-step" class="level3" data-number="12.1.1">
-<h3 data-number="12.1.1" class="anchored" data-anchor-id="covering-step"><span class="header-section-number">12.1.1</span> Covering step</h3>
-<p>Let <span class="math inline">\(X\)</span>, <span class="math inline">\(L\)</span> and <span class="math inline">\(\epsilon\)</span> be given as in the ball mapper case. For any <span class="math inline">\(l \in L\)</span>, define <span class="math inline">\(x_l\)</span> = <code>X[:, l]</code>. Examples of how to generalize the covering step:</p>
+</section>
+<section id="further-reading" class="level2" data-number="17.3">
+<h2 data-number="17.3" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">17.3</span> Further reading</h2>
+<section id="books" class="level3" data-number="17.3.1">
+<h3 data-number="17.3.1" class="anchored" data-anchor-id="books"><span class="header-section-number">17.3.1</span> Books</h3>
 <ul>
-<li><p><strong>Adaptive radius</strong>: Fix <span class="math inline">\(n &gt; 0\)</span> integer. Create a ball <span class="math inline">\(B\)</span> of radius <span class="math inline">\(\epsilon\)</span> around <span class="math inline">\(x_l\)</span>. If <span class="math inline">\(B\)</span> contains less than <span class="math inline">\(n\)</span> elements, then we redefine <span class="math inline">\(B\)</span> as the set of <span class="math inline">\(n\)</span> nearest neighbors of <span class="math inline">\(x_l\)</span>. This adapts to varying local density.</p></li>
-<li><p><strong>Distance-scaled radius</strong>: Fix <span class="math inline">\(\lambda &gt; 0\)</span>. Let <span class="math inline">\(d_l\)</span> be the distance between <span class="math inline">\(x_l\)</span> and its closest point. Create a ball <span class="math inline">\(B\)</span> of radius <span class="math inline">\(\lambda \cdot d_l\)</span>. This automatically adapts the ball size to the local spacing of the data.</p></li>
-<li><p><strong>Filter function preimages</strong>: Choose a function <span class="math inline">\(f: X \to \mathbb{R}\)</span> (e.g., a coordinate projection, density, eccentricity), divide <span class="math inline">\(f(X)\)</span> into overlapping intervals, and take preimages. Then cluster each preimage to form the covering elements.</p></li>
+<li><strong>Computational Topology</strong> by Edelsbrunner &amp; Harer — the classic textbook on computational topology and persistent homology</li>
+<li><strong>Topology and Data</strong> by Gunnar Carlsson (2009, Bulletin of the AMS) — an influential survey paper that helped launch TDA as a field</li>
+<li><strong>Elementary Applied Topology</strong> by Robert Ghrist — a beautifully illustrated introduction to applied algebraic topology</li>
+<li><strong>Topological Data Analysis with Applications</strong> by Zomorodian — covers algorithms and applications</li>
 </ul>
 </section>
-<section id="nerve-step" class="level3" data-number="12.1.2">
-<h3 data-number="12.1.2" class="anchored" data-anchor-id="nerve-step"><span class="header-section-number">12.1.2</span> Nerve step</h3>
-<p>There are many alternatives to the nerve construction. Let <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> be two elements of a covering <span class="math inline">\(C\)</span>. Let <span class="math inline">\(G = (V, E)\)</span> be a graph with vertex-set <span class="math inline">\(V = C\)</span>. Examples of how to generalize the nerve step:</p>
+<section id="papers" class="level3" data-number="17.3.2">
+<h3 data-number="17.3.2" class="anchored" data-anchor-id="papers"><span class="header-section-number">17.3.2</span> Papers</h3>
 <ul>
-<li><p><strong>Minimum intersection size</strong>: Fix <span class="math inline">\(k &gt; 0\)</span>. Define <span class="math inline">\((a, b) \in E\)</span> iff <span class="math inline">\(|a \cap b| \geq k\)</span>, that is: we will only allow intersections with at least <span class="math inline">\(k\)</span> elements. Setting <span class="math inline">\(k = 1\)</span> will give us the usual nerve graph.</p></li>
-<li><p><strong>Weighted edges</strong>: Instead of a binary “connected or not”, assign a weight to each edge proportional to the intersection size: <span class="math inline">\(w(a, b) = |a \cap b|\)</span>. This gives a weighted graph that carries more information.</p></li>
-<li><p><strong>Higher-dimensional nerve</strong>: Instead of just a graph (1-skeleton), build a full simplicial complex: add a <span class="math inline">\(k\)</span>-simplex whenever <span class="math inline">\(k+1\)</span> covering elements have a non-empty common intersection. This is the classical nerve construction from algebraic topology.</p></li>
+<li><strong>Persistence-Based Clustering in Riemannian Manifolds</strong> (Chazal et al., 2011) — the ToMATo paper</li>
+<li><strong>Topological Methods for the Analysis of High Dimensional Data Sets and 3D Object Recognition</strong> (Singh, Mémoli, Carlsson, 2007) — the original Mapper paper</li>
+<li><strong>Stability of Persistence Diagrams</strong> (Cohen-Steiner, Edelsbrunner, Harer, 2007) — the stability theorem</li>
+<li><strong>Barcodes: The Persistent Topology of Data</strong> (Ghrist, 2008) — an accessible introduction to barcodes</li>
+</ul>
+</section>
+<section id="julia-packages" class="level3" data-number="17.3.3">
+<h3 data-number="17.3.3" class="anchored" data-anchor-id="julia-packages"><span class="header-section-number">17.3.3</span> Julia packages</h3>
+<ul>
+<li><a href="https://github.com/mtsch/Ripserer.jl"><code>Ripserer.jl</code></a> — fast persistent homology computation</li>
+<li><a href="https://github.com/mtsch/PersistenceDiagrams.jl"><code>PersistenceDiagrams.jl</code></a> — persistence images, landscapes, distances</li>
+<li><a href="https://github.com/vituri/ToMATo.jl"><code>ToMATo.jl</code></a> — the ToMATo clustering algorithm</li>
+<li><a href="https://github.com/vituri/TDAmapper.jl"><code>TDAmapper.jl</code></a> — Mapper and Ball Mapper</li>
+<li><a href="https://github.com/vituri/GeometricDatasets.jl"><code>GeometricDatasets.jl</code></a> — synthetic geometric data generation</li>
+</ul>
+</section>
+<section id="advanced-topics-not-covered" class="level3" data-number="17.3.4">
+<h3 data-number="17.3.4" class="anchored" data-anchor-id="advanced-topics-not-covered"><span class="header-section-number">17.3.4</span> Advanced topics not covered</h3>
+<ul>
+<li><strong>Multi-parameter persistence</strong>: extending persistent homology to filtrations indexed by more than one parameter</li>
+<li><strong>Sheaves and cosheaves</strong>: a more general framework for local-to-global data structures</li>
+<li><strong>Persistent homology transform</strong>: encoding shapes using persistence diagrams from many directions</li>
+<li><strong>Topological optimization</strong>: using topological loss functions in neural network training (differentiable TDA)</li>
+<li><strong>Zigzag persistence</strong>: handling time-varying data with insertions and deletions</li>
 </ul>
 </section>
 </section>
-<section id="interpreting-mapper-graphs" class="level2" data-number="12.2">
-<h2 data-number="12.2" class="anchored" data-anchor-id="interpreting-mapper-graphs"><span class="header-section-number">12.2</span> Interpreting Mapper graphs</h2>
-<p>The output of any Mapper algorithm is a graph (or simplicial complex). How do we read it?</p>
-<ul>
-<li><strong>Nodes</strong> represent clusters of data points. The node size typically represents the number of points in that cluster.</li>
-<li><strong>Edges</strong> connect clusters that share points. Thicker edges (in a weighted version) mean more shared points.</li>
-<li><strong>Connected components</strong> in the Mapper graph suggest distinct groups in the data.</li>
-<li><strong>Loops</strong> (cycles) suggest the data has a circular or toroidal structure.</li>
-<li><strong>Flares</strong> (branches) suggest the data has a branching structure (like a Y-shape).</li>
-</ul>
-<p>You can also <strong>color</strong> the nodes by any function of the data: mean value of a variable, density, class labels, etc. This turns the Mapper graph into a powerful exploratory tool.</p>
-</section>
-<section id="creating-my-own-mapper" class="level2" data-number="12.3">
-<h2 data-number="12.3" class="anchored" data-anchor-id="creating-my-own-mapper"><span class="header-section-number">12.3</span> Creating my own mapper</h2>
-<p>You can change the 2 steps above within the context of the ball mapper, as can be seen in the docs.</p>
-</section>
-<section id="example-mapper-on-a-noisy-figure-eight" class="level2" data-number="12.4">
-<h2 data-number="12.4" class="anchored" data-anchor-id="example-mapper-on-a-noisy-figure-eight"><span class="header-section-number">12.4</span> Example: Mapper on a noisy figure-eight</h2>
-<p>Let’s apply the general approach to a dataset with a more complex shape:</p>
-<div id="1aac45c5" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">TDAmapper</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> <span class="bu">GeometricDatasets</span> as gd</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">CairoMakie</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Random</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>seed <span class="op">=</span> <span class="fu">MersenneTwister</span>(<span class="fl">42</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a figure-eight (two circles joined)</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>θ<span class="fl">1</span> <span class="op">=</span> <span class="fl">2</span>π <span class="op">.*</span> <span class="fu">rand</span>(seed, <span class="fl">200</span>)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>θ<span class="fl">2</span> <span class="op">=</span> <span class="fl">2</span>π <span class="op">.*</span> <span class="fu">rand</span>(seed, <span class="fl">200</span>)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>circle1 <span class="op">=</span> [<span class="fu">cos</span>.(θ<span class="fl">1</span>)<span class="ch">'; sin.(θ1)'</span>]</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>circle2 <span class="op">=</span> [<span class="fu">cos</span>.(θ<span class="fl">2</span>)<span class="ch">' .+ 2; sin.(θ2)'</span>]</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> <span class="fu">hcat</span>(circle1, circle2) <span class="op">.+</span> <span class="fl">0.08</span> <span class="op">.*</span> <span class="fu">randn</span>(seed, <span class="fl">2</span>, <span class="fl">400</span>)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>()</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">"Noisy figure-eight"</span>, aspect <span class="op">=</span> <span class="fu">DataAspect</span>())</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax, X[<span class="fl">1</span>, <span class="op">:</span>], X[<span class="fl">2</span>, <span class="op">:</span>], markersize <span class="op">=</span> <span class="fl">4</span>)</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>fig</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div id="e9ebd8d7" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ball mapper with different radii</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>bm1 <span class="op">=</span> <span class="fu">ball_mapper</span>(X, <span class="fl">0.3</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>fig1, _, _ <span class="op">=</span> <span class="fu">mapper_plot</span>(X, bm1)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>fig1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div id="07eaee01" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>bm2 <span class="op">=</span> <span class="fu">ball_mapper</span>(X, <span class="fl">0.5</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>fig2, _, _ <span class="op">=</span> <span class="fu">mapper_plot</span>(X, bm2)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>fig2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Notice how the radius affects the graph structure. With a small radius, we see many nodes and the two loops are visible. With a larger radius, the graph becomes simpler — possibly too simple, collapsing the interesting structure.</p>
-</section>
-<section id="choosing-parameters" class="level2" data-number="12.5">
-<h2 data-number="12.5" class="anchored" data-anchor-id="choosing-parameters"><span class="header-section-number">12.5</span> Choosing parameters</h2>
-<p>There is no universal recipe for choosing Mapper parameters. However, some guidelines help:</p>
-<ul>
-<li><strong>Coverage</strong>: every data point should belong to at least one covering element. If points are “orphaned,” the covering is too sparse.</li>
-<li><strong>Overlap</strong>: some overlap between covering elements is necessary to create edges. More overlap means a denser graph (more edges), less overlap means a sparser graph.</li>
-<li><strong>Resolution</strong>: finer coverings give more detailed graphs but also more noise. Coarser coverings give simpler graphs but may hide structure.</li>
-</ul>
-<p>A common workflow is:</p>
-<ol type="1">
-<li>Start with a reasonable <span class="math inline">\(\epsilon\)</span> (e.g., based on average nearest-neighbor distance)</li>
-<li>Visualize the resulting graph</li>
-<li>Adjust parameters and compare</li>
-</ol>
-<p>The topological features (loops, branches) that persist across a range of parameters are the meaningful ones — this is the same persistence philosophy we saw in persistent homology!</p>
+<section id="final-words" class="level2" data-number="17.4">
+<h2 data-number="17.4" class="anchored" data-anchor-id="final-words"><span class="header-section-number">17.4</span> Final words</h2>
+<p>TDA is a young and rapidly growing field. New applications, algorithms, and theoretical results appear every year. The tools in this book give you a solid foundation — both mathematical and computational — to explore this landscape.</p>
+<p>Go forth and find some holes in your data!</p>
 
 
 </section>
@@ -927,13 +831,13 @@ window.Quarto = {
   </script>
 <nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="./ballmapper.html" class="pagination-link" aria-label="Ball mapper">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ball mapper</span></span>
+      <a href="./shapes.html" class="pagination-link" aria-label="Shape analysis and comparison">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Shape analysis and comparison</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./clustering_tomato.html" class="pagination-link" aria-label="Clustering with ToMATo">
-        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Clustering with ToMATo</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./references.html" class="pagination-link" aria-label="References">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

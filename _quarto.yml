@@ -8,6 +8,7 @@ project:
 execute:
   freeze: auto  # re-render only when source changes
   cache: true
+  eval: false
 
 book:
   title: "Topological Data Analysis with Julia"
@@ -28,22 +29,29 @@ book:
       - topology.qmd
       - simplicial.qmd
       - homology.qmd
-    - part: "Data Analysis"
+    - part: "Working with Data"
       chapters: 
+      - pointclouds.qmd
       - clustering.qmd
-    - part: Topological Data Analysis
+    - part: "Persistent Homology"
+      chapters:
+      - persistence.qmd
+      - computing_ph.qmd
+    - part: "TDA Methods"
       chapters:
       - tomato.qmd
       - mapper.qmd
       - ballmapper.qmd
       - mapper-general.qmd
-      - persistence.qmd
     - part: "Applications"
       chapters: 
-      - digits.qmd
       - clustering_tomato.qmd
+      - digits.qmd
+      - timeseries.qmd
+      - shapes.qmd
     - part: "Closing"
       chapters:
+      - summary.qmd
       - references.qmd
 
 bibliography: references.bib

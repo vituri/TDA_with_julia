@@ -1,0 +1,192 @@
+# Point clouds and distances
+
+> "To see a World in a Grain of Sand \
+> And a Heaven in a Wild Flower, \
+> Hold Infinity in the palm of your hand \
+> And Eternity in an hour." \
+> --- William Blake, in "Auguries of Innocence"
+
+Before we can apply topological methods to data, we need to understand what "data" looks like from a geometric perspective. In TDA, data typically comes as a *point cloud* — a finite set of points in some metric space. This chapter covers the essential tools for working with point clouds: loading and generating them, measuring distances, estimating density, and visualizing structure.
+
+## What is a point cloud?
+
+::: {#def-}
+A *point cloud* is a finite set $X = \{x_1, \ldots, x_n\}$ where each $x_i \in \mathbb{R}^d$ for some dimension $d$. When equipped with a distance function $d: X \times X \to \mathbb{R}$, the pair $(X, d)$ is called a *finite metric space*.
+:::
+
+Point clouds are everywhere:
+
+- A collection of GPS coordinates (points in $\mathbb{R}^2$)
+- Pixel intensities of images (points in $\mathbb{R}^{784}$ for $28 \times 28$ images)
+- Measurements from sensors (points in $\mathbb{R}^d$ where $d$ is the number of sensors)
+- Word embeddings (points in $\mathbb{R}^{300}$ or similar)
+
+In Julia, we store point clouds as matrices. Following the convention in this book, each **column** is a data point and each **row** is a dimension.
+
+## Generating point clouds
+
+The `GeometricDatasets` package provides convenient functions for generating synthetic point clouds with known shapes:
+
+```{julia}
+import GeometricDatasets as gd
+using CairoMakie
+```
+
+### Circles and spheres
+
+```{julia}
+# A circle (1-sphere) with 200 points in R^2
+circle = gd.sphere(200, dim = 2)
+
+fig = Figure(size = (800, 400))
+ax1 = Axis(fig[1, 1], title = "Circle (200 points)", aspect = DataAspect())
+scatter!(ax1, circle[1, :], circle[2, :], markersize = 5)
+
+# A sphere (2-sphere) with 500 points in R^3
+sphere = gd.sphere(500, dim = 3)
+ax2 = Axis3(fig[1, 2], title = "Sphere (500 points)")
+scatter!(ax2, sphere[1, :], sphere[2, :], sphere[3, :], markersize = 3)
+fig
+```
+
+### Torus
+
+```{julia}
+torus = gd.torus(1000)
+
+fig = Figure()
+ax = Axis3(fig[1, 1], title = "Torus (1000 points)")
+scatter!(ax, torus[1, :], torus[2, :], torus[3, :], markersize = 3)
+fig
+```
+
+### Loading real datasets
+
+Many real-world datasets come as CSV or text files. The `clustering datasets/` folder in this project contains the FCPS (Fundamental Clustering and Projection Suite) [@data5010013], a collection of datasets designed to challenge clustering algorithms.
+
+```{julia}
+using DelimitedFiles
+
+hepta = readdlm("clustering datasets/Hepta.csv", ',')
+
+# The last column is the class label
+points = hepta[:, 1:end-1]'  # transpose to get column-major format
+labels = hepta[:, end]
+
+fig = Figure()
+ax = Axis3(fig[1, 1], title = "Hepta dataset")
+scatter!(ax, points[1, :], points[2, :], points[3, :], 
+    color = labels, markersize = 8)
+fig
+```
+
+```{julia}
+target = readdlm("clustering datasets/Target.csv", ',')
+points_target = target[:, 1:end-1]'
+labels_target = target[:, end]
+
+fig = Figure()
+ax = Axis(fig[1, 1], title = "Target dataset", aspect = DataAspect())
+scatter!(ax, points_target[1, :], points_target[2, :], 
+    color = labels_target, markersize = 5)
+fig
+```
+
+## Distance metrics
+
+The choice of distance function profoundly affects any analysis. The most common choice is the Euclidean distance, but there are many others.
+
+::: {#def-}
+A *metric* (or *distance function*) on a set $X$ is a function $d: X \times X \to \mathbb{R}$ satisfying:
+
+1. $d(x, y) \geq 0$ and $d(x, y) = 0 \iff x = y$ (positive definiteness)
+2. $d(x, y) = d(y, x)$ (symmetry)
+3. $d(x, z) \leq d(x, y) + d(y, z)$ (triangle inequality)
+:::
+
+The `Distances.jl` package provides many distance functions:
+
+```{julia}
+using Distances
+
+# Two points in R^3
+x = [1.0, 2.0, 3.0]
+y = [4.0, 5.0, 6.0]
+
+println("Euclidean:  ", euclidean(x, y))
+println("Cityblock:  ", cityblock(x, y))    # Manhattan / L1
+println("Chebyshev:  ", chebyshev(x, y))     # L∞
+println("Cosine:     ", cosine_dist(x, y))   # 1 - cos(angle)
+```
+
+For point clouds, we often compute pairwise distance matrices:
+
+```{julia}
+# Generate a small point cloud
+X = gd.sphere(6, dim = 2)
+
+# Pairwise distance matrix
+D = pairwise(Euclidean(), X, dims = 2)
+```
+
+The resulting matrix $D$ has entry $D_{ij} = d(x_i, x_j)$. This matrix is symmetric, with zeros on the diagonal, and it contains all the geometric information about the point cloud (up to isometry).
+
+## Density estimation
+
+Given a point cloud, a natural question is: *where are the points concentrated?* Density estimation assigns a density value to each point, giving us a "height function" on the data.
+
+The `GeometricDatasets` package provides a Gaussian kernel density estimator:
+
+```{julia}
+using Random
+
+seed = MersenneTwister(42)
+# Two clusters with different densities
+X = hcat(
+    randn(seed, 2, 300),
+    randn(seed, 2, 100) .* 0.4 .+ [3.0, 0.0]
+)
+
+ds = gd.density_estimation(X, h = 0.5)
+
+fig = Figure(size = (800, 400))
+ax1 = Axis(fig[1, 1], title = "Point cloud", aspect = DataAspect())
+scatter!(ax1, X[1, :], X[2, :], markersize = 4)
+
+ax2 = Axis(fig[1, 2], title = "Colored by density", aspect = DataAspect())
+scatter!(ax2, X[1, :], X[2, :], color = ds, markersize = 4, colormap = :viridis)
+fig
+```
+
+The density of a point $x$ is computed as:
+
+$$
+\text{dens}(x) = \frac{1}{|X|} \sum_{y \in X} \exp\left(-\frac{d(x, y)^2}{h^2}\right)
+$$
+
+The parameter $h$ controls the bandwidth: larger $h$ produces smoother density estimates, while smaller $h$ captures finer local structure. Density estimation is a key ingredient in the ToMATo clustering algorithm, which we will see later.
+
+## Nearest neighbors and proximity graphs
+
+Another fundamental operation is finding the nearest neighbors of each point. This induces a graph structure on the point cloud.
+
+::: {#def-}
+Given a point cloud $X$ and a parameter $\epsilon > 0$, the *$\epsilon$-neighborhood graph* has vertex set $X$ and an edge between $x_i$ and $x_j$ whenever $d(x_i, x_j) \leq \epsilon$.
+
+Alternatively, the *$k$-nearest neighbor graph* ($k$-NN graph) connects each point to its $k$ closest neighbors.
+:::
+
+These graphs are the starting point for many TDA constructions: the Vietoris-Rips complex is built from the $\epsilon$-neighborhood graph, and density-based clustering uses nearest-neighbor relationships.
+
+## Summary
+
+In this chapter we learned to:
+
+- Represent data as point clouds (finite metric spaces)
+- Generate synthetic point clouds with `GeometricDatasets`
+- Load real datasets from CSV files
+- Compute distances using `Distances.jl`
+- Estimate density with Gaussian kernels
+- Build neighborhood graphs from proximity
+
+These are the building blocks we will use throughout the rest of the book. Next, we will see how to *cluster* point clouds using classical methods — and understand their limitations.

@@ -1,0 +1,226 @@
+# Computing persistent homology in Julia
+
+> "The purpose of computing is insight, not numbers." \
+> --- Richard Hamming
+
+In the previous chapter we learned what persistent homology is and why it matters. Now it's time to actually compute it. Julia has excellent packages for this: `Ripserer.jl` for computing persistent homology and `PersistenceDiagrams.jl` for working with the resulting diagrams.
+
+## Setup
+
+```{julia}
+using Ripserer
+using PersistenceDiagrams
+import GeometricDatasets as gd
+using CairoMakie
+using Random
+```
+
+## Computing Rips persistence
+
+Let's start with a simple example: a noisy circle.
+
+```{julia}
+seed = MersenneTwister(42)
+circle = gd.sphere(100, dim = 2) .+ 0.05 .* randn(seed, 2, 100)
+
+fig = Figure()
+ax = Axis(fig[1, 1], title = "Noisy circle (100 points)", aspect = DataAspect())
+scatter!(ax, circle[1, :], circle[2, :], markersize = 6)
+fig
+```
+
+We expect this point cloud to have:
+
+- $\beta_0 = 1$ (one connected component)
+- $\beta_1 = 1$ (one loop — the circle)
+- $\beta_k = 0$ for $k \geq 2$
+
+Let's compute persistent homology using the Vietoris-Rips filtration:
+
+```{julia}
+# Ripserer expects each point as a row (or a vector of tuples)
+# Convert from our column-major format
+points = [Tuple(circle[:, i]) for i in 1:size(circle, 2)]
+
+# Compute PH up to dimension 1
+result = ripserer(Rips(points), dim_max = 1)
+```
+
+The result contains persistence diagrams for each dimension:
+
+```{julia}
+# Dimension 0: connected components
+println("H₀ (connected components):")
+println(result[1])
+
+println("\nH₁ (loops):")
+println(result[2])
+```
+
+## Visualizing persistence diagrams
+
+```{julia}
+fig = Figure(size = (800, 400))
+
+ax1 = Axis(fig[1, 1], title = "Persistence diagram (H₀)", 
+    xlabel = "Birth", ylabel = "Death")
+for interval in result[1]
+    b, d = birth(interval), death(interval)
+    if isfinite(d)
+        scatter!(ax1, [b], [d], color = :blue, markersize = 8)
+    end
+end
+# Add diagonal
+lims1 = (0, maximum(death(i) for i in result[1] if isfinite(death(i))) * 1.1)
+lines!(ax1, [lims1[1], lims1[2]], [lims1[1], lims1[2]], color = :gray, linestyle = :dash)
+
+ax2 = Axis(fig[1, 2], title = "Persistence diagram (H₁)",
+    xlabel = "Birth", ylabel = "Death")
+for interval in result[2]
+    b, d = birth(interval), death(interval)
+    if isfinite(d)
+        scatter!(ax2, [b], [d], color = :red, markersize = 8)
+    end
+end
+lims2 = if !isempty(result[2])
+    (0, maximum(death(i) for i in result[2] if isfinite(death(i))) * 1.1)
+else
+    (0, 1)
+end
+lines!(ax2, [lims2[1], lims2[2]], [lims2[1], lims2[2]], color = :gray, linestyle = :dash)
+
+fig
+```
+
+In the $H_1$ diagram, you should see one point far from the diagonal (the "real" loop of the circle) and possibly a few points near the diagonal (noise). The persistence (distance from the diagonal) tells you how significant each feature is.
+
+## Barcodes
+
+```{julia}
+barcode(result)
+```
+
+The barcode gives a complementary view: each horizontal bar represents a topological feature, from birth to death. Long bars are significant features; short bars are noise.
+
+## Cubical complexes
+
+For gridded data (like images), `Ripserer` provides cubical complexes, which are much more efficient than Rips complexes:
+
+```{julia}
+# Create a simple 2D function with two peaks
+n = 50
+x = range(-2, 2, length = n)
+y = range(-2, 2, length = n)
+f = [exp(-(xi^2 + yi^2)) + 0.7 * exp(-((xi-1)^2 + (yi-1)^2)) for xi in x, yi in y]
+
+result_cub = ripserer(Cubical(f))
+```
+
+```{julia}
+fig = Figure(size = (800, 400))
+ax1 = Axis(fig[1, 1], title = "2D function", aspect = DataAspect())
+heatmap!(ax1, x, y, f)
+
+ax2 = Axis(fig[1, 2], title = "Sublevel persistence (H₀)",
+    xlabel = "Birth", ylabel = "Death")
+for interval in result_cub[1]
+    b, d = birth(interval), death(interval)
+    if isfinite(d)
+        scatter!(ax2, [b], [d], color = :blue, markersize = 8)
+    end
+end
+fig
+```
+
+## Persistence images
+
+Persistence diagrams are multisets of points, which makes them hard to use directly in machine learning pipelines (most algorithms expect fixed-length vectors). *Persistence images* solve this by converting a diagram into a fixed-size matrix.
+
+The idea: place a Gaussian kernel at each point of the persistence diagram, weight it by a function of the persistence, and evaluate on a grid.
+
+```{julia}
+# Compute persistence image from the H₁ diagram of the circle
+if length(result[2]) > 0
+    pi_img = PersistenceImage(result[2])
+    println("Persistence image size: ", size(pi_img))
+end
+```
+
+Persistence images are used extensively in the digits classification chapter, where they convert persistence diagrams of handwritten digits into feature vectors for a neural network.
+
+## Wasserstein and bottleneck distances
+
+To compare two persistence diagrams, we need a notion of distance. The two standard choices are:
+
+::: {#def-}
+The *bottleneck distance* between two persistence diagrams $D_1$ and $D_2$ is:
+
+$$
+d_B(D_1, D_2) = \inf_\gamma \sup_{x \in D_1} \|x - \gamma(x)\|_\infty
+$$
+
+where $\gamma$ ranges over all bijections between $D_1$ and $D_2$ (including matching points to the diagonal).
+:::
+
+::: {#def-}
+The *$p$-Wasserstein distance* is:
+
+$$
+W_p(D_1, D_2) = \left(\inf_\gamma \sum_{x \in D_1} \|x - \gamma(x)\|_\infty^p\right)^{1/p}.
+$$
+:::
+
+The bottleneck distance is dominated by the single worst-matched feature; the Wasserstein distance accounts for all features. Both are available in `PersistenceDiagrams.jl`:
+
+```{julia}
+# Compare two point clouds
+seed1 = MersenneTwister(1)
+seed2 = MersenneTwister(2)
+circle1 = gd.sphere(80, dim = 2) .+ 0.05 .* randn(seed1, 2, 80)
+circle2 = gd.sphere(80, dim = 2) .+ 0.1 .* randn(seed2, 2, 80)
+
+pts1 = [Tuple(circle1[:, i]) for i in 1:size(circle1, 2)]
+pts2 = [Tuple(circle2[:, i]) for i in 1:size(circle2, 2)]
+
+res1 = ripserer(Rips(pts1), dim_max = 1)
+res2 = ripserer(Rips(pts2), dim_max = 1)
+
+# Compare H₁ diagrams
+if length(res1[2]) > 0 && length(res2[2]) > 0
+    d_bottle = Bottleneck()(res1[2], res2[2])
+    d_wass = Wasserstein()(res1[2], res2[2])
+    println("Bottleneck distance: ", round(d_bottle, digits = 4))
+    println("Wasserstein distance: ", round(d_wass, digits = 4))
+end
+```
+
+## The full pipeline
+
+Let's put it all together on a more interesting example — a noisy torus:
+
+```{julia}
+seed = MersenneTwister(0)
+torus = gd.torus(200) .+ 0.05 .* randn(seed, 3, 200)
+
+# Convert to tuple format
+pts_torus = [Tuple(torus[:, i]) for i in 1:size(torus, 2)]
+
+# Compute PH up to dimension 2
+result_torus = ripserer(Rips(pts_torus), dim_max = 2, threshold = 2.0)
+
+barcode(result_torus)
+```
+
+A torus has $\beta_0 = 1$, $\beta_1 = 2$, $\beta_2 = 1$. Check: do you see one long bar in $H_0$, two long bars in $H_1$, and one long bar in $H_2$?
+
+## Summary
+
+In this chapter we learned to:
+
+- Compute Vietoris-Rips persistent homology with `Ripserer.jl`
+- Compute cubical persistence for gridded data
+- Visualize persistence diagrams and barcodes
+- Convert diagrams to persistence images for ML pipelines
+- Compare diagrams using Wasserstein and bottleneck distances
+
+These tools form the computational backbone of TDA. In the next chapters, we will apply them to clustering (ToMATo), visualization (Mapper), and real-world datasets.
