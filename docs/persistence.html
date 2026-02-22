@@ -355,13 +355,15 @@ window.Quarto = {
   <li><a href="#filtrations" id="toc-filtrations" class="nav-link active" data-scroll-target="#filtrations"><span class="header-section-number">7.1</span> Filtrations</a>
   <ul class="collapse">
   <li><a href="#the-vietoris-rips-filtration" id="toc-the-vietoris-rips-filtration" class="nav-link" data-scroll-target="#the-vietoris-rips-filtration"><span class="header-section-number">7.1.1</span> The Vietoris-Rips filtration</a></li>
-  <li><a href="#sublevel-set-filtrations" id="toc-sublevel-set-filtrations" class="nav-link" data-scroll-target="#sublevel-set-filtrations"><span class="header-section-number">7.1.2</span> Sublevel set filtrations</a></li>
+  <li><a href="#from-filtrations-to-persistent-homology" id="toc-from-filtrations-to-persistent-homology" class="nav-link" data-scroll-target="#from-filtrations-to-persistent-homology"><span class="header-section-number">7.1.2</span> From filtrations to persistent homology</a></li>
+  <li><a href="#sublevel-set-filtrations-and-simplicial-filtrations" id="toc-sublevel-set-filtrations-and-simplicial-filtrations" class="nav-link" data-scroll-target="#sublevel-set-filtrations-and-simplicial-filtrations"><span class="header-section-number">7.1.3</span> Sublevel set filtrations and simplicial filtrations</a></li>
   </ul></li>
   <li><a href="#persistence-diagrams" id="toc-persistence-diagrams" class="nav-link" data-scroll-target="#persistence-diagrams"><span class="header-section-number">7.2</span> Persistence diagrams</a></li>
   <li><a href="#barcodes" id="toc-barcodes" class="nav-link" data-scroll-target="#barcodes"><span class="header-section-number">7.3</span> Barcodes</a></li>
-  <li><a href="#clustering-revisited-dendrograms-as-0-dimensional-persistence" id="toc-clustering-revisited-dendrograms-as-0-dimensional-persistence" class="nav-link" data-scroll-target="#clustering-revisited-dendrograms-as-0-dimensional-persistence"><span class="header-section-number">7.4</span> Clustering revisited: dendrograms as 0-dimensional persistence</a></li>
-  <li><a href="#the-stability-theorem" id="toc-the-stability-theorem" class="nav-link" data-scroll-target="#the-stability-theorem"><span class="header-section-number">7.5</span> The stability theorem</a></li>
-  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">7.6</span> Summary</a></li>
+  <li><a href="#bottleneck-distance" id="toc-bottleneck-distance" class="nav-link" data-scroll-target="#bottleneck-distance"><span class="header-section-number">7.4</span> Bottleneck distance</a></li>
+  <li><a href="#clustering-revisited-dendrograms-as-0-dimensional-persistence" id="toc-clustering-revisited-dendrograms-as-0-dimensional-persistence" class="nav-link" data-scroll-target="#clustering-revisited-dendrograms-as-0-dimensional-persistence"><span class="header-section-number">7.5</span> Clustering revisited: dendrograms as 0-dimensional persistence</a></li>
+  <li><a href="#the-stability-theorem" id="toc-the-stability-theorem" class="nav-link" data-scroll-target="#the-stability-theorem"><span class="header-section-number">7.6</span> The stability theorem</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">7.7</span> Summary</a></li>
   </ul>
 </nav>
     </div>
@@ -404,7 +406,29 @@ window.Quarto = {
 </div>
 <section id="the-vietoris-rips-filtration" class="level3" data-number="7.1.1">
 <h3 data-number="7.1.1" class="anchored" data-anchor-id="the-vietoris-rips-filtration"><span class="header-section-number">7.1.1</span> The Vietoris-Rips filtration</h3>
-<p>The most common filtration in TDA is the Vietoris-Rips filtration. Given a point cloud <span class="math inline">\(X\)</span>:</p>
+<p>The most common filtration in TDA is the Vietoris-Rips filtration.</p>
+<div id="def-" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 7.2</strong></span> Let <span class="math inline">\((X,d)\)</span> be a finite metric space and <span class="math inline">\(\epsilon \geq 0\)</span>. The <em>Vietoris-Rips complex at scale <span class="math inline">\(\epsilon\)</span></em> is</p>
+<p><span class="math display">\[
+\mathrm{VR}(X,\epsilon)=\left\{\sigma \subseteq X \;\middle|\; d(x,x') \leq \epsilon \text{ for all } x,x' \in \sigma \right\}.
+\]</span></p>
+<p>In words: a finite subset of points is a simplex if all pairwise distances are at most <span class="math inline">\(\epsilon\)</span>.</p>
+</div>
+<p>Why this gives a filtration:</p>
+<ul>
+<li>If <span class="math inline">\(\epsilon \leq \epsilon'\)</span>, then <span class="math inline">\(\mathrm{VR}(X,\epsilon) \subseteq \mathrm{VR}(X,\epsilon')\)</span>.</li>
+<li>So increasing <span class="math inline">\(\epsilon\)</span> can only add simplices, never remove them.</li>
+</ul>
+<p>For a finite point cloud, the complex changes only at finitely many scales (critical values from pairwise distances). So we can write:</p>
+<p><span class="math display">\[
+K_0=\mathrm{VR}(X,\epsilon_0)\subseteq K_1=\mathrm{VR}(X,\epsilon_1)\subseteq \cdots \subseteq K_m=\mathrm{VR}(X,\epsilon_m).
+\]</span></p>
+<p>Equivalent simplex-level view: each simplex <span class="math inline">\(\sigma\)</span> appears at</p>
+<p><span class="math display">\[
+\mathrm{filt}(\sigma)=\max_{x,x' \in \sigma} d(x,x').
+\]</span></p>
+<p>Then <span class="math inline">\(K_t=\{\sigma \mid \mathrm{filt}(\sigma)\leq t\}\)</span>. Faces always appear no later than the simplex itself, so this really is a filtration.</p>
+<p>This is the Vietoris-Rips filtration. Operationally:</p>
 <ol type="1">
 <li>Start with <span class="math inline">\(\epsilon = 0\)</span>: the complex <span class="math inline">\(\text{VR}(X, 0)\)</span> has only vertices (isolated points).</li>
 <li>Increase <span class="math inline">\(\epsilon\)</span>: edges appear between nearby points, then triangles, tetrahedra, etc.</li>
@@ -417,20 +441,61 @@ window.Quarto = {
 </ul>
 <p>The <em>persistence</em> of a feature is its lifetime: <span class="math inline">\(\text{death} - \text{birth}\)</span>.</p>
 </section>
-<section id="sublevel-set-filtrations" class="level3" data-number="7.1.2">
-<h3 data-number="7.1.2" class="anchored" data-anchor-id="sublevel-set-filtrations"><span class="header-section-number">7.1.2</span> Sublevel set filtrations</h3>
+<section id="from-filtrations-to-persistent-homology" class="level3" data-number="7.1.2">
+<h3 data-number="7.1.2" class="anchored" data-anchor-id="from-filtrations-to-persistent-homology"><span class="header-section-number">7.1.2</span> From filtrations to persistent homology</h3>
+<p>The filtration is geometric/combinatorial data. Persistent homology is what we get after applying homology to it.</p>
+<p>Fix a homology dimension <span class="math inline">\(k\)</span> and a field <span class="math inline">\(\mathbb{F}\)</span>. For each inclusion <span class="math inline">\(K_i \hookrightarrow K_j\)</span>, functoriality of homology gives a linear map:</p>
+<p><span class="math display">\[
+H_k(K_i;\mathbb{F}) \longrightarrow H_k(K_j;\mathbb{F}).
+\]</span></p>
+<p>So a filtration becomes a sequence of vector spaces and linear maps:</p>
+<p><span class="math display">\[
+H_k(K_0) \to H_k(K_1) \to \cdots \to H_k(K_m).
+\]</span></p>
+<p>This is the <span class="math inline">\(k\)</span>-th <em>persistence module</em> (or persistence vector space).</p>
+<p>Intuitively:</p>
+<ul>
+<li>A generator of <span class="math inline">\(H_k(K_i)\)</span> is a <span class="math inline">\(k\)</span>-dimensional cycle class (component for <span class="math inline">\(k=0\)</span>, loop for <span class="math inline">\(k=1\)</span>, cavity for <span class="math inline">\(k=2\)</span>, …).</li>
+<li>As <span class="math inline">\(i\)</span> increases, the image of that class can survive, merge with others, or become trivial.</li>
+<li>The persistent homology group between levels <span class="math inline">\(i \leq j\)</span> is</li>
+</ul>
+<p><span class="math display">\[
+H_k^{i,j} := \mathrm{im}\!\left(H_k(K_i) \to H_k(K_j)\right),
+\]</span></p>
+<p>which captures classes born by time <span class="math inline">\(i\)</span> that are still alive at time <span class="math inline">\(j\)</span>.</p>
+</section>
+<section id="sublevel-set-filtrations-and-simplicial-filtrations" class="level3" data-number="7.1.3">
+<h3 data-number="7.1.3" class="anchored" data-anchor-id="sublevel-set-filtrations-and-simplicial-filtrations"><span class="header-section-number">7.1.3</span> Sublevel set filtrations and simplicial filtrations</h3>
 <p>Another important type of filtration comes from a function <span class="math inline">\(f: X \to \mathbb{R}\)</span>. The <em>sublevel set</em> at threshold <span class="math inline">\(t\)</span> is:</p>
 <p><span class="math display">\[
 X_t = \{x \in X \mid f(x) \leq t\}.
 \]</span></p>
-<p>As <span class="math inline">\(t\)</span> increases, more of <span class="math inline">\(X\)</span> is revealed, and topological features appear and disappear. This is used, for example, in the digits classification chapter (where <span class="math inline">\(f\)</span> is the grayscale intensity of an image) and in the ToMATo algorithm (where <span class="math inline">\(f\)</span> is a density function).</p>
+<p>As <span class="math inline">\(t\)</span> increases, these sets are nested: <span class="math inline">\(X_s \subseteq X_t\)</span> for <span class="math inline">\(s \leq t\)</span>.</p>
+<p>But for computation we usually need simplicial complexes. A standard conversion is:</p>
+<ol type="1">
+<li>Start with a simplicial complex <span class="math inline">\(K\)</span> (for example, from a triangulation or from a Rips complex).</li>
+<li>Give each vertex <span class="math inline">\(v\)</span> a value <span class="math inline">\(f(v)\)</span>.</li>
+<li>Extend to each simplex by</li>
+</ol>
+<p><span class="math display">\[
+F(\sigma) := \max_{v \in \sigma} f(v).
+\]</span></p>
+<ol start="4" type="1">
+<li>Define</li>
+</ol>
+<p><span class="math display">\[
+K_t := \{\sigma \in K \mid F(\sigma) \leq t\}.
+\]</span></p>
+<p>Then <span class="math inline">\((K_t)_{t \in \mathbb{R}}\)</span> is a simplicial filtration (often called a lower-star filtration).</p>
+<p>Why is this valid? If <span class="math inline">\(\tau \subseteq \sigma\)</span>, then <span class="math inline">\(F(\tau) \leq F(\sigma)\)</span>, so every face of a simplex in <span class="math inline">\(K_t\)</span> is also in <span class="math inline">\(K_t\)</span>. Hence each <span class="math inline">\(K_t\)</span> is a simplicial complex, and <span class="math inline">\(K_s \subseteq K_t\)</span> for <span class="math inline">\(s \leq t\)</span>.</p>
+<p>This is how sublevel-set ideas become computable persistent homology.</p>
 </section>
 </section>
 <section id="persistence-diagrams" class="level2" data-number="7.2">
 <h2 data-number="7.2" class="anchored" data-anchor-id="persistence-diagrams"><span class="header-section-number">7.2</span> Persistence diagrams</h2>
-<p>We can summarize the birth and death of every topological feature in a single picture:</p>
+<p>We can summarize the birth and death of every topological feature in a single picture.</p>
 <div id="def-" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 7.2</strong></span> A <em>persistence diagram</em> is a multiset of points <span class="math inline">\((b_i, d_i) \in \mathbb{R}^2\)</span>, where <span class="math inline">\(b_i\)</span> is the birth time and <span class="math inline">\(d_i\)</span> is the death time of the <span class="math inline">\(i\)</span>-th feature. Since <span class="math inline">\(b_i \leq d_i\)</span>, all points lie on or above the diagonal <span class="math inline">\(y = x\)</span>.</p>
+<p><span class="theorem-title"><strong>Definition 7.3</strong></span> A <em>persistence diagram</em> is a multiset of points <span class="math inline">\((b_i, d_i) \in \mathbb{R}^2\)</span>, where <span class="math inline">\(b_i\)</span> is the birth time and <span class="math inline">\(d_i\)</span> is the death time of the <span class="math inline">\(i\)</span>-th feature. Since <span class="math inline">\(b_i \leq d_i\)</span>, all points lie on or above the diagonal <span class="math inline">\(y = x\)</span>.</p>
 </div>
 <p>Points far from the diagonal represent features with long persistence — these are the “real” topological features. Points near the diagonal are short-lived and likely correspond to noise.</p>
 <p>A persistence diagram for dimension <span class="math inline">\(k\)</span> captures:</p>
@@ -442,7 +507,19 @@ X_t = \{x \in X \mid f(x) \leq t\}.
 </section>
 <section id="barcodes" class="level2" data-number="7.3">
 <h2 data-number="7.3" class="anchored" data-anchor-id="barcodes"><span class="header-section-number">7.3</span> Barcodes</h2>
-<p>An equivalent representation is the <em>barcode</em>: each feature becomes a horizontal bar from <span class="math inline">\(b_i\)</span> to <span class="math inline">\(d_i\)</span>.</p>
+<p>An equivalent representation is the <em>barcode</em>: each feature becomes an interval (drawn as a horizontal bar) from <span class="math inline">\(b_i\)</span> to <span class="math inline">\(d_i\)</span>.</p>
+<p>Each bar corresponds to one generator/class in the persistence module. Birth means that class first appears; death means it becomes trivial or merges into an older class.</p>
+<p>The key algebraic theorem (Zomorodian-Carlsson structure theorem; extended in full generality by Crawley-Boevey for pointwise finite-dimensional modules) says:</p>
+<p><span class="math display">\[
+\mathcal{V} \cong \bigoplus_{\ell} I[b_\ell,d_\ell),
+\]</span></p>
+<p>where <span class="math inline">\(I[b_\ell,d_\ell)\)</span> is an interval module. So every persistence module decomposes into interval pieces, and those intervals are exactly the barcode.</p>
+<p>So:</p>
+<ul>
+<li>Barcode and persistence diagram carry the same information (up to the usual conventions for infinite intervals).</li>
+<li>Diagram: good for geometry and distances between summaries.</li>
+<li>Barcode: good for interval counting and reading lifetimes directly.</li>
+</ul>
 <p>The barcode makes it easy to see:</p>
 <ul>
 <li>How many features exist at any given scale (count the bars crossing a vertical line)</li>
@@ -450,16 +527,35 @@ X_t = \{x \in X \mid f(x) \leq t\}.
 <li>Natural thresholds for choosing a scale parameter</li>
 </ul>
 </section>
-<section id="clustering-revisited-dendrograms-as-0-dimensional-persistence" class="level2" data-number="7.4">
-<h2 data-number="7.4" class="anchored" data-anchor-id="clustering-revisited-dendrograms-as-0-dimensional-persistence"><span class="header-section-number">7.4</span> Clustering revisited: dendrograms as 0-dimensional persistence</h2>
+<section id="bottleneck-distance" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="bottleneck-distance"><span class="header-section-number">7.4</span> Bottleneck distance</h2>
+<p>To compare two persistence diagrams <span class="math inline">\(D_1\)</span> and <span class="math inline">\(D_2\)</span>, we use the bottleneck distance.</p>
+<p>We consider bijections between the two diagrams after adding infinitely many copies of the diagonal <span class="math inline">\(y=x\)</span> (so points can be matched to the diagonal, interpreted as “feature created/destroyed as noise”). For a matching <span class="math inline">\(\gamma\)</span>, its cost is the largest <span class="math inline">\(L^\infty\)</span> move:</p>
+<p><span class="math display">\[
+\mathrm{cost}(\gamma) = \sup_{p \in D_1 \cup \Delta} \|p-\gamma(p)\|_\infty,
+\]</span></p>
+<p>where <span class="math inline">\(\Delta=\{(x,x)\mid x\in\mathbb{R}\}\)</span> is the diagonal.</p>
+<p>Then</p>
+<p><span class="math display">\[
+d_B(D_1,D_2)=\inf_{\gamma}\mathrm{cost}(\gamma).
+\]</span></p>
+<p>Intuition:</p>
+<ul>
+<li>It is the minimum worst-case displacement needed to transform one diagram into the other.</li>
+<li>Points near the diagonal are cheap to match to the diagonal, so short-lived features are treated as low-cost noise.</li>
+<li>Points far from the diagonal are expensive to remove, so long-persistent features dominate the distance.</li>
+</ul>
+</section>
+<section id="clustering-revisited-dendrograms-as-0-dimensional-persistence" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="clustering-revisited-dendrograms-as-0-dimensional-persistence"><span class="header-section-number">7.5</span> Clustering revisited: dendrograms as 0-dimensional persistence</h2>
 <p>Here’s a beautiful connection between classical clustering and persistent homology.</p>
 <p>Consider agglomerative (hierarchical) clustering: we start with <span class="math inline">\(n\)</span> clusters (one per point) and progressively merge the closest pair. The dendrogram records this merging process.</p>
 <p>Now consider the 0-dimensional Vietoris-Rips persistence: as we increase <span class="math inline">\(\epsilon\)</span>, connected components merge. The birth of a component is at <span class="math inline">\(\epsilon = 0\)</span> (each point starts as its own component), and the death is the scale at which it merges with another.</p>
 <p><strong>These are the same thing!</strong> The 0-dimensional persistence barcode is precisely the dendrogram rewritten in the language of topology. The “gap” in the dendrogram that tells you how many clusters to choose corresponds to the gap between long and short bars in the barcode.</p>
 <p>This is the first example of how persistence provides a principled, multi-scale view of structure that classical methods handle in an ad hoc way.</p>
 </section>
-<section id="the-stability-theorem" class="level2" data-number="7.5">
-<h2 data-number="7.5" class="anchored" data-anchor-id="the-stability-theorem"><span class="header-section-number">7.5</span> The stability theorem</h2>
+<section id="the-stability-theorem" class="level2" data-number="7.6">
+<h2 data-number="7.6" class="anchored" data-anchor-id="the-stability-theorem"><span class="header-section-number">7.6</span> The stability theorem</h2>
 <p>One of the most important theoretical results in TDA is the <em>stability theorem</em> (Chazal, Cohen-Steiner, Glisse, Guibas, Oudot):</p>
 <blockquote class="blockquote">
 <p>If two datasets <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are “close” (in a precise sense), then their persistence diagrams are also close.</p>
@@ -468,10 +564,10 @@ X_t = \{x \in X \mid f(x) \leq t\}.
 <p><span class="math display">\[
 d_B(\text{Dgm}(f), \text{Dgm}(g)) \leq \|f - g\|_\infty.
 \]</span></p>
-<p>This is crucial for applications: it means that small perturbations (noise) in the data produce small changes in the persistence diagram, not wild jumps. Persistent homology is <em>robust</em>.</p>
+<p>This says that if the input changes a little (in sup norm), the diagram changes a little in bottleneck distance. So persistent homology is not only descriptive, but also quantitatively robust.</p>
 </section>
-<section id="summary" class="level2" data-number="7.6">
-<h2 data-number="7.6" class="anchored" data-anchor-id="summary"><span class="header-section-number">7.6</span> Summary</h2>
+<section id="summary" class="level2" data-number="7.7">
+<h2 data-number="7.7" class="anchored" data-anchor-id="summary"><span class="header-section-number">7.7</span> Summary</h2>
 <p>Persistent homology gives us:</p>
 <ol type="1">
 <li>A <strong>multi-scale</strong> view of topological features (no need to choose a single <span class="math inline">\(\epsilon\)</span>)</li>

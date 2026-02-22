@@ -21,7 +21,38 @@ Each $K_i$ is called a *level* of the filtration, and the parameter controlling 
 
 ### The Vietoris-Rips filtration
 
-The most common filtration in TDA is the Vietoris-Rips filtration. Given a point cloud $X$:
+The most common filtration in TDA is the Vietoris-Rips filtration.
+
+::: {#def-}
+Let $(X,d)$ be a finite metric space and $\epsilon \geq 0$. The *Vietoris-Rips complex at scale $\epsilon$* is
+
+$$
+\mathrm{VR}(X,\epsilon)=\left\{\sigma \subseteq X \;\middle|\; d(x,x') \leq \epsilon \text{ for all } x,x' \in \sigma \right\}.
+$$
+
+In words: a finite subset of points is a simplex if all pairwise distances are at most $\epsilon$.
+:::
+
+Why this gives a filtration:
+
+- If $\epsilon \leq \epsilon'$, then $\mathrm{VR}(X,\epsilon) \subseteq \mathrm{VR}(X,\epsilon')$.
+- So increasing $\epsilon$ can only add simplices, never remove them.
+
+For a finite point cloud, the complex changes only at finitely many scales (critical values from pairwise distances). So we can write:
+
+$$
+K_0=\mathrm{VR}(X,\epsilon_0)\subseteq K_1=\mathrm{VR}(X,\epsilon_1)\subseteq \cdots \subseteq K_m=\mathrm{VR}(X,\epsilon_m).
+$$
+
+Equivalent simplex-level view: each simplex $\sigma$ appears at
+
+$$
+\mathrm{filt}(\sigma)=\max_{x,x' \in \sigma} d(x,x').
+$$
+
+Then $K_t=\{\sigma \mid \mathrm{filt}(\sigma)\leq t\}$. Faces always appear no later than the simplex itself, so this really is a filtration.
+
+This is the Vietoris-Rips filtration. Operationally:
 
 1. Start with $\epsilon = 0$: the complex $\text{VR}(X, 0)$ has only vertices (isolated points).
 2. Increase $\epsilon$: edges appear between nearby points, then triangles, tetrahedra, etc.
@@ -34,7 +65,37 @@ As $\epsilon$ grows, topological features are **born** and **die**:
 
 The *persistence* of a feature is its lifetime: $\text{death} - \text{birth}$.
 
-### Sublevel set filtrations
+### From filtrations to persistent homology
+
+The filtration is geometric/combinatorial data. Persistent homology is what we get after applying homology to it.
+
+Fix a homology dimension $k$ and a field $\mathbb{F}$. For each inclusion $K_i \hookrightarrow K_j$, functoriality of homology gives a linear map:
+
+$$
+H_k(K_i;\mathbb{F}) \longrightarrow H_k(K_j;\mathbb{F}).
+$$
+
+So a filtration becomes a sequence of vector spaces and linear maps:
+
+$$
+H_k(K_0) \to H_k(K_1) \to \cdots \to H_k(K_m).
+$$
+
+This is the $k$-th *persistence module* (or persistence vector space).
+
+Intuitively:
+
+- A generator of $H_k(K_i)$ is a $k$-dimensional cycle class (component for $k=0$, loop for $k=1$, cavity for $k=2$, ...).
+- As $i$ increases, the image of that class can survive, merge with others, or become trivial.
+- The persistent homology group between levels $i \leq j$ is
+
+$$
+H_k^{i,j} := \mathrm{im}\!\left(H_k(K_i) \to H_k(K_j)\right),
+$$
+
+which captures classes born by time $i$ that are still alive at time $j$.
+
+### Sublevel set filtrations and simplicial filtrations
 
 Another important type of filtration comes from a function $f: X \to \mathbb{R}$. The *sublevel set* at threshold $t$ is:
 
@@ -42,11 +103,33 @@ $$
 X_t = \{x \in X \mid f(x) \leq t\}.
 $$
 
-As $t$ increases, more of $X$ is revealed, and topological features appear and disappear. This is used, for example, in the digits classification chapter (where $f$ is the grayscale intensity of an image) and in the ToMATo algorithm (where $f$ is a density function).
+As $t$ increases, these sets are nested: $X_s \subseteq X_t$ for $s \leq t$.
+
+But for computation we usually need simplicial complexes. A standard conversion is:
+
+1. Start with a simplicial complex $K$ (for example, from a triangulation or from a Rips complex).
+2. Give each vertex $v$ a value $f(v)$.
+3. Extend to each simplex by
+
+$$
+F(\sigma) := \max_{v \in \sigma} f(v).
+$$
+
+4. Define
+
+$$
+K_t := \{\sigma \in K \mid F(\sigma) \leq t\}.
+$$
+
+Then $(K_t)_{t \in \mathbb{R}}$ is a simplicial filtration (often called a lower-star filtration).
+
+Why is this valid? If $\tau \subseteq \sigma$, then $F(\tau) \leq F(\sigma)$, so every face of a simplex in $K_t$ is also in $K_t$. Hence each $K_t$ is a simplicial complex, and $K_s \subseteq K_t$ for $s \leq t$.
+
+This is how sublevel-set ideas become computable persistent homology.
 
 ## Persistence diagrams
 
-We can summarize the birth and death of every topological feature in a single picture:
+We can summarize the birth and death of every topological feature in a single picture.
 
 ::: {#def-}
 A *persistence diagram* is a multiset of points $(b_i, d_i) \in \mathbb{R}^2$, where $b_i$ is the birth time and $d_i$ is the death time of the $i$-th feature. Since $b_i \leq d_i$, all points lie on or above the diagonal $y = x$.
@@ -62,13 +145,53 @@ A persistence diagram for dimension $k$ captures:
 
 ## Barcodes
 
-An equivalent representation is the *barcode*: each feature becomes a horizontal bar from $b_i$ to $d_i$.
+An equivalent representation is the *barcode*: each feature becomes an interval (drawn as a horizontal bar) from $b_i$ to $d_i$.
+
+Each bar corresponds to one generator/class in the persistence module. Birth means that class first appears; death means it becomes trivial or merges into an older class.
+
+The key algebraic theorem (Zomorodian-Carlsson structure theorem; extended in full generality by Crawley-Boevey for pointwise finite-dimensional modules) says:
+
+$$
+\mathcal{V} \cong \bigoplus_{\ell} I[b_\ell,d_\ell),
+$$
+
+where $I[b_\ell,d_\ell)$ is an interval module. So every persistence module decomposes into interval pieces, and those intervals are exactly the barcode.
+
+So:
+
+- Barcode and persistence diagram carry the same information (up to the usual conventions for infinite intervals).
+- Diagram: good for geometry and distances between summaries.
+- Barcode: good for interval counting and reading lifetimes directly.
 
 The barcode makes it easy to see:
 
 - How many features exist at any given scale (count the bars crossing a vertical line)
 - Which features are long-lived (long bars) vs. noise (short bars)
 - Natural thresholds for choosing a scale parameter
+
+## Bottleneck distance
+
+To compare two persistence diagrams $D_1$ and $D_2$, we use the bottleneck distance.
+
+We consider bijections between the two diagrams after adding infinitely many copies of the diagonal $y=x$ (so points can be matched to the diagonal, interpreted as "feature created/destroyed as noise"). For a matching $\gamma$, its cost is the largest $L^\infty$ move:
+
+$$
+\mathrm{cost}(\gamma) = \sup_{p \in D_1 \cup \Delta} \|p-\gamma(p)\|_\infty,
+$$
+
+where $\Delta=\{(x,x)\mid x\in\mathbb{R}\}$ is the diagonal.
+
+Then
+
+$$
+d_B(D_1,D_2)=\inf_{\gamma}\mathrm{cost}(\gamma).
+$$
+
+Intuition:
+
+- It is the minimum worst-case displacement needed to transform one diagram into the other.
+- Points near the diagonal are cheap to match to the diagonal, so short-lived features are treated as low-cost noise.
+- Points far from the diagonal are expensive to remove, so long-persistent features dominate the distance.
 
 ## Clustering revisited: dendrograms as 0-dimensional persistence
 
@@ -94,7 +217,7 @@ $$
 d_B(\text{Dgm}(f), \text{Dgm}(g)) \leq \|f - g\|_\infty.
 $$
 
-This is crucial for applications: it means that small perturbations (noise) in the data produce small changes in the persistence diagram, not wild jumps. Persistent homology is *robust*.
+This says that if the input changes a little (in sup norm), the diagram changes a little in bottleneck distance. So persistent homology is not only descriptive, but also quantitatively robust.
 
 ## Summary
 
