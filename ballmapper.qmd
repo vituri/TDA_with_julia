@@ -2,62 +2,59 @@
 
 ## The Vietoris-Rips complex
 
-Another way to reduce the complexity of a metric space is to approximate it by a [simplicial complex](https://en.wikipedia.org/wiki/Simplicial_complex). Simplicial complexes are like small building blocks glued together, each of these blocks a small representative of an $n$-dimensional space: points, line segments, triangles, tetrahedrons, and so on.
+Another way to reduce the complexity of a metric space is to approximate it by a [simplicial complex](https://en.wikipedia.org/wiki/Simplicial_complex). Simplicial complexes are like small building blocks glued together: points, line segments, triangles, tetrahedra, and their higher-dimensional analogues.
 
-The [Vietoris-Rips complex](https://en.wikipedia.org/wiki/Vietoris%E2%80%93Rips_complex) is build as follows: given a metric space $(X, d)$ and an $\epsilon > 0$, define the following simplicial complex:
-
-$$
-VR(X, \epsilon) = \{ [ x_1, \ldots, x_n ] \; d(x_i, x_j) < \epsilon, \forall i, j \}
-$$
-
-that is: the points of $X$ are our vertices, and we have an $n$-simplex $[x_1, \ldots, x_n]$ whenever the pairwise distance between $x_1, \ldots, x_n$ is less than $\epsilon$. This condition is equivalent to ask that 
+The [Vietoris-Rips complex](https://en.wikipedia.org/wiki/Vietoris%E2%80%93Rips_complex) is defined from a metric space $(X, d)$ and a scale $\epsilon > 0$ by
 
 $$
-\cap_i B(x_i, \epsilon) \neq \emptyset
+VR(X, \epsilon) = \{ [x_1, \ldots, x_n] \; ; \; d(x_i, x_j) < \epsilon \text{ for all } i,j \}.
 $$
 
-where $B(x, \epsilon)$ is the ball of center $x$ and radius $\epsilon$.
+So the vertices are the points of $X$, and we add a simplex whenever all of its vertices are pairwise close enough. This is one of the most common ways to turn a metric space into a combinatorial object.
 
-![The black dots are points in a metric space; the pink circles are $\epsilon$ balls around the points; in green, we have the Vietoris-Rips complex. Source: https://www.researchgate.net/publication/331739415_Topological_data_analysis_for_the_string_landscape
-](images/vr.png)
-
+![The black dots are points in a metric space; the pink circles are $\epsilon$-balls around the points; in green, we have the Vietoris-Rips complex. Source: https://www.researchgate.net/publication/331739415_Topological_data_analysis_for_the_string_landscape](images/vr.png)
 
 ## The ball mapper
 
-The ball mapper is clearly inspired by the Vietoris-Rips complex. Given a metric space $(X, d)$ with $X = \{x_1, \ldots, x_n\}$, select a subset of indexes $L \subseteq \{1, \ldots, n\}$ and define the ball mapper graph G as follows: the set of vertices of $G$ is $L$, and set of edges $E$ given by
+Ball Mapper is clearly inspired by the Vietoris-Rips complex, but it restricts the centers of the balls to a chosen subset of landmark points. Given a metric space $(X, d)$, a subset of indices $L \subseteq \{1, \ldots, n\}$, and a radius $\epsilon$, we place an $\epsilon$-ball around each landmark and connect two landmarks when their balls overlap.
 
-$$
-(i, j) \in E \Leftrightarrow B(x_i, \epsilon) \cap B(x_j, \epsilon) \neq \emptyset
-$$
+In that sense, Ball Mapper can be viewed as a landmark-based simplification of the 1-skeleton of a Rips-like construction: it keeps the large-scale geometry while using far fewer centers than the full dataset.
 
-The ball mapper then can be seen as the 1-skeleton of the Vietoris-Rips, but create using balls whose center can only be the elements indexed by $L$.
-
-To exemplify, consider a circle
-
-```{julia}
-using TDAmapper
-import GeometricDatasets as gd
-
-X = gd.sphere(1000, dim = 2);
-```
-
-Check that it is indeed a circle:
+## Example in Julia
 
 ```{julia}
 using CairoMakie
-scatter(X)
+using MetricSpaces
+using MetricSpaces.Datasets
+using TDAplots
+using Random
 ```
 
-Now take $L$ as a hundred random points and let's create the ball mapper of $X$ with radius $\epsilon = 0.1$:
+To exemplify, consider a circle:
 
 ```{julia}
-L = rand(1:1000, 100)
-mp = ball_mapper(X, L, ϵ = 0.5);
+X = sphere(1000, dim = 2)
+metricspace_plot(X, markersize = 4)
 ```
 
+Now choose 100 landmarks with farthest-point sampling and build the Ball Mapper graph:
 
 ```{julia}
-mapper_plot(mp)
+L = farthest_points_sample_ids(X, 100)
+bm = ball_mapper(X, L, 0.35)
 ```
 
-That's quite a circle!
+```{julia}
+mapper_plot(bm, node_values = node_colors(bm, first.(X)))
+```
+
+The resulting graph is a combinatorial shadow of the circle: it keeps the loop, but with far fewer nodes than the original point cloud. That is the point of Ball Mapper: summarize shape without carrying every point around.
+
+## Remarks
+
+- The landmark set $L$ controls the resolution.
+- The radius $\epsilon$ controls how much overlap we allow between neighboring balls.
+- If $\epsilon$ is too small, the graph becomes disconnected.
+- If $\epsilon$ is too large, the graph collapses and loses shape information.
+
+Ball Mapper is especially useful when the raw point cloud is large, because it compresses the dataset before building the graph.

@@ -1,6 +1,8 @@
 project:
   type: book
   output-dir: docs
+  post-render:
+    - scripts/cleanup_quarto_support_dirs.sh
   preview: 
     port: 4200
     browser: true
@@ -8,7 +10,6 @@ project:
 execute:
   freeze: auto  # re-render only when source changes
   cache: true
-  eval: false
 
 book:
   title: "Topological Data Analysis with Julia"
@@ -19,7 +20,6 @@ book:
   author: "G. Vituri"
   date: "2023-09-01"
   # sharing: [twitter, linkedin]
-  downloads: [pdf, epub]
 
   chapters:
     - index.qmd
@@ -64,9 +64,4 @@ format:
     page-layout: full
     max-width: 90vw
     preview-links: true
-    
-  pdf:
-    documentclass: scrreprt
-
-
 

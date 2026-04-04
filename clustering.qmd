@@ -30,9 +30,9 @@ We will use several datasets from the FCPS suite [@data5010013]:
 
 ```{julia}
 function load_fcps(name)
-    data = readdlm("clustering datasets/$name.csv", ',')
-    points = data[:, 1:end-1]'  # column-major
-    labels = Int.(data[:, end])
+    data = readdlm("clustering datasets/$name.csv", ',', Any)
+    points = permutedims(Float64.(data[2:end, 2:end]))
+    labels = Int.(data[2:end, 1])
     return points, labels
 end
 
@@ -205,5 +205,4 @@ Real-world data often violates all of these assumptions simultaneously. The ToMA
 - Automatic selection of the number of clusters (via the persistence diagram)
 
 But first, we need to understand *persistent homology* — the mathematical machinery that makes this possible.
-
 

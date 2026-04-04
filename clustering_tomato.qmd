@@ -1,132 +1,146 @@
 # Clustering with ToMATo
 
-Let's play with some known datasets.
+This chapter applies ToMATo to two datasets from the FCPS benchmark suite stored locally in this repository. The goal is not to pretend that one set of parameters solves every problem. The goal is to see a consistent workflow in action:
 
-## Spiral dataset
+1. load a point cloud;
+2. estimate a density;
+3. build a proximity graph;
+4. inspect peak persistence;
+5. choose $\tau$ and cluster.
 
-Import data from [this file](https://raw.githubusercontent.com/MathieuCarriere/sklearn-tda/master/example/inputs/spiral_w_o_density.txt) and extract a subset of 10000 points
+## Setup
 
 ```{julia}
-using DelimitedFiles, Random;
-using AlgebraOfGraphics, GLMakie;
-import GeometricDatasets as gd;
+using CairoMakie
+using DelimitedFiles
+using MetricSpaces
+using TDAplots
 using ToMATo
-
-X = readdlm("datasets/spiral.txt");
-seed = MersenneTwister(0);
-ids = rand(seed, 1:size(X)[1], 15_000)
-X = X[ids, :]' |> Matrix;
-
-X
-```
-
-plot $X$
-
-```{julia}
-scatter(X)
-```
-
-calculate the density
-
-```{julia}
-ds = gd.density_estimation(X, h = 100)
-
-df = (x1 = X[1, :], x2 = X[2, :], ds = ds)
-plt = data(df) * mapping(:x1, :x2, color = :ds)
-draw(plt)
-```
-
-plot it in 3d
-
-```{julia}
-axis = (type = Axis3, width = 800, height = 450)
-df = (x1 = X[1, :], x2 = X[2, :], ds = ds)
-plt = data(df) * mapping(:x1, :x2, :ds, color = :ds)
-draw(plt; axis = axis)
-```
-
-calculate the proximity graph $g$
-
-```{julia}
-g = proximity_graph(
-    X
-    , epsilon_ball_or_knn(30, min_ball_points = 10, max_ball_points = 25, knn_points = 10)
-    )
-```
-
-estimate $\tau$
-
-```{julia}
-_, births_and_deaths = tomato(X, g, ds, Inf)
-plot_births_and_deaths(births_and_deaths)
-```
-
-choose $\tau = 0.01$, calculate the ToMATo clustering
-
-```{julia}
-τ = 0.01
-clusters, _ = tomato(X, g, ds, τ, max_cluster_height = τ);
-```
-
-and plot it
-
-```{julia}
-axis = (type = Axis, width = 800, height = 450)
-df = (x1 = X[1, :], x2 = X[2, :], cluster = clusters .|> string)
-plt = data(df) * mapping(:x1, :x2, color = :cluster)
-draw(plt; axis = axis)
-```
-
-## Toy example
-
-The next example can be found [in this link](https://raw.githubusercontent.com/MathieuCarriere/sklearn-tda/master/example/inputs/toy_example_w_o_density.txt)
-
-```{julia}
-X = readdlm("datasets/toy_example.txt");
-X = X' |> Matrix;
-
-X
 ```
 
 ```{julia}
-scatter(X)
+function load_fcps(name)
+    raw = readdlm("clustering datasets/$name.csv", ',', Any)
+    X = EuclideanSpace(permutedims(Float64.(raw[2:end, 2:end])))
+    labels = Int.(raw[2:end, 1])
+    return X, labels
+end
+```
+
+## Target
+
+The `Target` dataset is a good stress test because its clusters are non-convex. This is exactly the kind of situation where methods based on convexity assumptions start to struggle.
+
+```{julia}
+target_X, target_labels = load_fcps("Target")
+target_mat = as_matrix(target_X)
+
+fig = Figure(size = (800, 400))
+ax1 = Axis(fig[1, 1], title = "Target: ground truth", aspect = DataAspect())
+scatter!(ax1, target_mat[1, :], target_mat[2, :], color = target_labels, markersize = 5)
+
+target_ds = kde(target_X, bandwidth = 0.35)
+ax2 = Axis(fig[1, 2], title = "Target: density", aspect = DataAspect())
+scatter!(ax2, target_mat[1, :], target_mat[2, :], color = target_ds, markersize = 5)
+fig
+```
+
+The density plot already suggests several meaningful peaks arranged along the non-convex structure.
+
+```{julia}
+target_g = proximity_graph(target_X, 0.35; min_k_ball = 5, max_k_ball = 12, k_nn = 5)
+
+tomato_graph_plot(target_X, target_g, target_ds)
+```
+
+This graph is the geometric skeleton on which ToMATo will climb the density landscape.
+
+```{julia}
+_, target_births_and_deaths = tomato(target_X, target_g, target_ds, Inf)
+
+tomato_persistence_plot(target_births_and_deaths)
+```
+
+As in the previous chapter, the persistence plot tells us which peaks are stable and which ones are just small bumps.
+
+```{julia}
+τ_target = 0.01
+target_clusters, _ = tomato(
+    target_X,
+    target_g,
+    target_ds,
+    τ_target,
+    max_cluster_height = τ_target,
+)
+
+metricspace_plot(target_X, color = float.(target_clusters), markersize = 5)
+```
+
+With this choice of $\tau$, ToMATo merges the insignificant peaks while keeping the large-scale cluster structure.
+
+## Hepta
+
+`Hepta` is a three-dimensional dataset with well-separated dense regions. It is a useful contrast with `Target`: the geometry is simpler, but the data now lives in three dimensions.
+
+```{julia}
+hepta_X, hepta_labels = load_fcps("Hepta")
+hepta_mat = as_matrix(hepta_X)
+
+fig = Figure(size = (800, 400))
+ax1 = Axis3(fig[1, 1], title = "Hepta: ground truth")
+scatter!(ax1, hepta_mat[1, :], hepta_mat[2, :], hepta_mat[3, :], color = hepta_labels, markersize = 5)
+
+hepta_ds = kde(hepta_X, bandwidth = 0.8)
+ax2 = Axis3(fig[1, 2], title = "Hepta: density-colored cloud")
+scatter!(ax2, hepta_mat[1, :], hepta_mat[2, :], hepta_mat[3, :], color = hepta_ds, markersize = 5)
+fig
+```
+
+Here the density picture is more straightforward: several compact high-density regions stand apart clearly.
+
+```{julia}
+hepta_g = proximity_graph(hepta_X, 1.0; min_k_ball = 4, max_k_ball = 12, k_nn = 4)
+
+tomato_graph_plot(hepta_X, hepta_g, hepta_ds)
 ```
 
 ```{julia}
-ds = gd.density_estimation(X, h = 0.5)
+_, hepta_births_and_deaths = tomato(hepta_X, hepta_g, hepta_ds, Inf)
 
-df = (x1 = X[1, :], x2 = X[2, :], ds = ds)
-plt = data(df) * mapping(:x1, :x2, color = :ds)
-draw(plt)
+tomato_persistence_plot(hepta_births_and_deaths)
 ```
 
 ```{julia}
-axis = (type = Axis3, width = 800, height = 450)
-df = (x1 = X[1, :], x2 = X[2, :], ds = ds)
-plt = data(df) * mapping(:x1, :x2, :ds, color = :ds)
-draw(plt; axis = axis)
+τ_hepta = 0.02
+hepta_clusters, _ = tomato(
+    hepta_X,
+    hepta_g,
+    hepta_ds,
+    τ_hepta,
+    max_cluster_height = τ_hepta,
+)
+
+metricspace_plot(hepta_X, color = float.(hepta_clusters), markersize = 5)
 ```
 
-```{julia}
-g = proximity_graph(
-    X
-    , epsilon_ball_or_knn(0.2, min_ball_points = 5, max_ball_points = 10, knn_points = 5)
-    )
-```
+Again, the persistence threshold decides how aggressively neighboring peaks are merged.
 
-```{julia}
-_, births_and_deaths = tomato(X, g, ds, Inf)
-plot_births_and_deaths(births_and_deaths)
-```
+## Remarks
 
-```{julia}
-τ = 0.005
-clusters, _ = tomato(X, g, ds, τ, max_cluster_height = τ);
-```
+The same recipe appears in both examples, but the parameters change:
 
-```{julia}
-axis = (type = Axis, width = 800, height = 450)
-df = (x1 = X[1, :], x2 = X[2, :], cluster = clusters .|> string)
-plt = data(df) * mapping(:x1, :x2, color = :cluster)
-draw(plt; axis = axis)
-```
+- the density bandwidth depends on the scale of the data;
+- the proximity radius controls how local the neighborhood graph is;
+- the persistence threshold $\tau$ decides how aggressively ToMATo merges peaks.
+
+That is the practical side of ToMATo: the algorithm is simple, but the scale parameters still need to match the geometry of the dataset.
+
+## Summary
+
+These two examples illustrate the same practical lesson:
+
+- first inspect the geometry of the data;
+- then inspect the density and the peak persistence;
+- only then settle on a final threshold $\tau$.
+
+ToMATo is not parameter-free, but it does give you a principled topological diagnostic for choosing how much merging is appropriate.

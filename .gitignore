@@ -5,5 +5,9 @@
 
 /.quarto/
 /_freeze/
+/.cache/
 /.jupyter_cache/
+/*_files/
 CLAUDE.md
+
+**/*.quarto_ipynb

@@ -3,114 +3,137 @@
 > "The real voyage of discovery consists not in seeking new landscapes, but in having new eyes." \
 > --- Marcel Proust, in "In Search of Lost Time"
 
-We have seen two specific instances of the Mapper construction: the classical Mapper (using a filter function and its preimages) and the Ball Mapper (using $\epsilon$-balls). In this chapter, we step back and see the general pattern, then explore how to customize it.
+We have already seen two specific mapper-like constructions:
 
-## What is a mapper algorithm?
+- classical Mapper, based on a filter function and overlapping intervals;
+- Ball Mapper, based on balls around landmark points.
 
-We can boil down the two mapper algorithms we saw earlier as follows:
+The local `TDAmapper.jl` API makes the general pattern explicit: a mapper algorithm is a combination of
 
-1) **(Covering step)** Given a metric space $(X, d)$, create a covering $C$ of $X$;
-2) **(Nerve step)** Using $C$ as vertex set, create a graph (called the *nerve*).
+1. a cover of the data;
+2. a refinement rule for each cover element;
+3. a nerve construction that turns the refined cover into a graph.
 
-In the classical mapper context, $C$ is generated using the clustering of preimages of a function $f: X \to \mathbb{R}$. In the ball mapper scenario, we cover $X$ using $\epsilon$-balls with centers as a subset of $X$.
+The beauty of this decomposition is that each step can be changed independently. That gives us a whole family of Mapper-like algorithms rather than a single fixed recipe.
 
-The beauty of this decomposition is that **each step can be independently modified**, leading to a family of Mapper-like algorithms suited to different problems.
+## The three building blocks
 
 ### Covering step
 
-Let $X$, $L$ and $\epsilon$ be given as in the ball mapper case. For any $l \in L$, define $x_l$ = `X[:, l]`. Examples of how to generalize the covering step:
+Examples of covers include:
 
-- **Adaptive radius**: Fix $n > 0$ integer. Create a ball $B$ of radius $\epsilon$ around $x_l$. If $B$ contains less than $n$ elements, then we redefine $B$ as the set of $n$ nearest neighbors of $x_l$. This adapts to varying local density.
+- overlapping intervals in the image of a filter function;
+- fixed-radius balls around landmarks;
+- adaptive covers whose radius depends on local density.
 
-- **Distance-scaled radius**: Fix $\lambda > 0$. Let $d_l$ be the distance between $x_l$ and its closest point. Create a ball $B$ of radius $\lambda \cdot d_l$. This automatically adapts the ball size to the local spacing of the data.
+In classical Mapper, the cover lives in the image of a filter function. In Ball Mapper, the cover lives directly in the metric space through balls around landmarks.
 
-- **Filter function preimages**: Choose a function $f: X \to \mathbb{R}$ (e.g., a coordinate projection, density, eccentricity), divide $f(X)$ into overlapping intervals, and take preimages. Then cluster each preimage to form the covering elements.
+### Refinement step
+
+Once we have a raw cover, we may refine each element further:
+
+- `DBscan` clusters each cover element into connected dense pieces;
+- `Trivial()` keeps each cover element as a single node.
+
+This is where "connectedness" enters the discrete picture: in the classical Reeb-graph story we would take connected components, but in data analysis we often replace that step by a clustering method.
 
 ### Nerve step
 
-There are many alternatives to the nerve construction. Let $a$ and $b$ be two elements of a covering $C$. Let $G = (V, E)$ be a graph with vertex-set $V = C$. Examples of how to generalize the nerve step:
+Finally, we build a graph from the refined cover:
 
-- **Minimum intersection size**: Fix $k > 0$. Define $(a, b) \in E$ iff $|a \cap b| \geq k$, that is: we will only allow intersections with at least $k$ elements. Setting $k = 1$ will give us the usual nerve graph.
+- `SimpleNerve()` adds an edge whenever two cover elements overlap;
+- more restrictive nerve constructions can require larger intersections or weighted overlaps.
 
-- **Weighted edges**: Instead of a binary "connected or not", assign a weight to each edge proportional to the intersection size: $w(a, b) = |a \cap b|$. This gives a weighted graph that carries more information.
+So the full algorithm is: cover, refine, then take a nerve.
 
-- **Higher-dimensional nerve**: Instead of just a graph (1-skeleton), build a full simplicial complex: add a $k$-simplex whenever $k+1$ covering elements have a non-empty common intersection. This is the classical nerve construction from algebraic topology.
+## Creating a mapper directly
+
+The generic `mapper` function takes one object for each of those stages:
+
+```{julia}
+using MetricSpaces
+using MetricSpaces.Datasets
+using TDAmapper
+using TDAmapper.DomainCovers
+using TDAmapper.Refiners
+using TDAmapper.Nerves
+```
+
+```{julia}
+X_demo = annulus(300)
+L_demo = farthest_points_sample_ids(X_demo, 30)
+
+M_demo = mapper(
+    X_demo,
+    EpsilonBall(X = X_demo, L = L_demo, epsilon = 0.2),
+    Trivial(),
+    SimpleNerve(),
+)
+
+M_demo
+```
+
+That is exactly the pattern Ball Mapper uses under the hood. Writing it this way makes it easier to see what can be customized and why.
 
 ## Interpreting Mapper graphs
 
-The output of any Mapper algorithm is a graph (or simplicial complex). How do we read it?
+Whatever choices we make, the output is still a graph, and we need to know how to read it:
 
-- **Nodes** represent clusters of data points. The node size typically represents the number of points in that cluster.
-- **Edges** connect clusters that share points. Thicker edges (in a weighted version) mean more shared points.
-- **Connected components** in the Mapper graph suggest distinct groups in the data.
-- **Loops** (cycles) suggest the data has a circular or toroidal structure.
-- **Flares** (branches) suggest the data has a branching structure (like a Y-shape).
+- nodes represent local groups of data points;
+- edges connect groups that overlap;
+- connected components suggest distinct macroscopic pieces of the data;
+- loops suggest circular or toroidal structure;
+- branches suggest flares, bifurcations, or tree-like behavior.
 
-You can also **color** the nodes by any function of the data: mean value of a variable, density, class labels, etc. This turns the Mapper graph into a powerful exploratory tool.
+Coloring the nodes by a statistic of the underlying data often adds another layer of meaning to the graph.
 
-## Creating my own mapper
-
-You can change the 2 steps above within the context of the ball mapper, as can be seen in the docs.
+## Example: a noisy figure-eight
 
 ```{julia}
-#| echo: false
-using TDAmapper
-using Quartomenter
-@qdoc ball_mapper_generic
-```
-
-## Example: Mapper on a noisy figure-eight
-
-Let's apply the general approach to a dataset with a more complex shape:
-
-```{julia}
-using TDAmapper
-import GeometricDatasets as gd
 using CairoMakie
-using Random
-
-seed = MersenneTwister(42)
-
-# Create a figure-eight (two circles joined)
-θ1 = 2π .* rand(seed, 200)
-θ2 = 2π .* rand(seed, 200)
-circle1 = [cos.(θ1)'; sin.(θ1)']
-circle2 = [cos.(θ2)' .+ 2; sin.(θ2)']
-X = hcat(circle1, circle2) .+ 0.08 .* randn(seed, 2, 400)
-
-fig = Figure()
-ax = Axis(fig[1, 1], title = "Noisy figure-eight", aspect = DataAspect())
-scatter!(ax, X[1, :], X[2, :], markersize = 4)
-fig
+using TDAplots
 ```
 
 ```{julia}
-# Ball mapper with different radii
-bm1 = ball_mapper(X, 0.3)
-fig1, _, _ = mapper_plot(X, bm1)
-fig1
+X = add_noise(figure_eight(400; r = 1.0), 0.08)
+metricspace_plot(X, markersize = 4)
+```
+
+We now build two mapper graphs using the same landmarks but different radii:
+
+```{julia}
+L = farthest_points_sample_ids(X, 60)
+
+M_small = mapper(
+    X,
+    EpsilonBall(X = X, L = L, epsilon = 0.25),
+    Trivial(),
+    SimpleNerve(),
+)
+
+mapper_plot(M_small, node_values = node_colors(M_small, first.(X)))
 ```
 
 ```{julia}
-bm2 = ball_mapper(X, 0.5)
-fig2, _, _ = mapper_plot(X, bm2)
-fig2
+M_large = mapper(
+    X,
+    EpsilonBall(X = X, L = L, epsilon = 0.4),
+    Trivial(),
+    SimpleNerve(),
+)
+
+mapper_plot(M_large, node_values = node_colors(M_large, first.(X)))
 ```
 
-Notice how the radius affects the graph structure. With a small radius, we see many nodes and the two loops are visible. With a larger radius, the graph becomes simpler — possibly too simple, collapsing the interesting structure.
+With the smaller radius, the two loops of the figure-eight remain visible. With the larger radius, the graph becomes much coarser and starts to collapse the structure.
 
 ## Choosing parameters
 
-There is no universal recipe for choosing Mapper parameters. However, some guidelines help:
+There is no universal recipe, but a few heuristics help:
 
-- **Coverage**: every data point should belong to at least one covering element. If points are "orphaned," the covering is too sparse.
-- **Overlap**: some overlap between covering elements is necessary to create edges. More overlap means a denser graph (more edges), less overlap means a sparser graph.
-- **Resolution**: finer coverings give more detailed graphs but also more noise. Coarser coverings give simpler graphs but may hide structure.
+- **Coverage**: every point should belong to at least one cover element.
+- **Overlap**: if cover elements barely overlap, the graph becomes disconnected.
+- **Resolution**: fine covers reveal more detail but also more noise.
+- **Stability**: features that survive across a range of parameters are more trustworthy.
 
-A common workflow is:
-
-1. Start with a reasonable $\epsilon$ (e.g., based on average nearest-neighbor distance)
-2. Visualize the resulting graph
-3. Adjust parameters and compare
-
-The topological features (loops, branches) that persist across a range of parameters are the meaningful ones — this is the same persistence philosophy we saw in persistent homology!
+That last point is the mapper version of the persistence philosophy: do not trust a single parameter choice more than the structure that persists across several of them.

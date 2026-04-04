@@ -56,26 +56,41 @@ By the end, you will have both the mathematical intuition and the Julia code to 
 
 ## Setting up Julia
 
-To run the code in this book, you will need [Julia](https://julialang.org/) (version 1.9 or later recommended). The easiest way to install packages is via Julia's built-in package manager. Open a Julia REPL and type:
+To run the code in this book, you will need [Julia](https://julialang.org/) (version 1.9 or later recommended). In this repository, the cleanest setup is to activate the book as a project and develop the local JuliaTDA packages from the sibling `../JuliaTDA/` directory:
 
 ```julia
 using Pkg
+
+Pkg.activate(".")
+
+for path in [
+    "../JuliaTDA/MetricSpaces.jl",
+    "../JuliaTDA/TDAmapper.jl",
+    "../JuliaTDA/TDAplots.jl",
+    "../JuliaTDA/ToMATo.jl",
+    "../JuliaTDA/Ripserer.jl",
+    "../JuliaTDA/PersistenceDiagrams.jl",
+]
+    Pkg.develop(path = path)
+end
+
 Pkg.add([
-    "Ripserer",
-    "PersistenceDiagrams",
-    "GeometricDatasets",
-    "ToMATo",
-    "TDAmapper",
     "CairoMakie",
-    "AlgebraOfGraphics",
-    "Distances",
     "Clustering",
-    "DelimitedFiles",
+    "Distances",
     "DataFrames",
+    "Flux",
+    "FreqTables",
+    "Images",
+    "Makie",
+    "MLDatasets",
+    "Plots",
+    "PrettyTables",
+    "ProgressMeter",
 ])
 ```
 
-Not all packages are needed for every chapter — each chapter indicates which packages it uses. If you'd rather install them one at a time as you go, that works too.
+Not every chapter needs every package. The core local stack for most of the book is `MetricSpaces.jl`, `TDAmapper.jl`, `TDAplots.jl`, `ToMATo.jl`, `Ripserer.jl`, and `PersistenceDiagrams.jl`.
 
 If you are new to Julia, here are some excellent resources to get started:
 
@@ -85,4 +100,4 @@ If you are new to Julia, here are some excellent resources to get started:
 
 ## A note on conventions
 
-Throughout this book, we store data in **column-major** format: each column of a matrix represents a data point, and each row represents a dimension. So a dataset with $n$ points in $\mathbb{R}^d$ is stored as a $d \times n$ matrix. This is the natural convention in Julia (which stores matrices column-by-column in memory) and is used by `GeometricDatasets`, `ToMATo`, and `TDAmapper`.
+Throughout this book, point clouds are usually represented as `EuclideanSpace` objects from `MetricSpaces.jl`. If your data starts as a `d \times n` matrix with one point per column, `EuclideanSpace(M)` converts it to the representation expected by the local JuliaTDA packages. When we need matrix-style indexing for plotting, we use `as_matrix(X)`.

@@ -5,16 +5,16 @@
 
 How can we tell if two shapes are "similar"? Traditional approaches rely on specific geometric measurements — lengths, angles, volumes — which depend on the coordinate system and are sensitive to noise. Persistent homology offers a coordinate-free, noise-robust alternative: compare shapes by comparing their persistence diagrams.
 
-In this chapter, we use the Wasserstein and bottleneck distances between persistence diagrams to build a "shape space" — a metric space where each point is a shape, and the distance reflects topological similarity.
+In this chapter, we use Wasserstein distances between persistence diagrams to build a simple "shape space" — a metric space where each point is a shape, and the distance reflects topological similarity. The point is not to compare raw coordinates directly, but to compare the topological signatures extracted from the data.
 
 ## Setup
 
 ```{julia}
-using Ripserer
-using PersistenceDiagrams
-import GeometricDatasets as gd
-using Distances
 using CairoMakie
+using MetricSpaces
+using MetricSpaces.Datasets
+using PersistenceDiagrams
+using Ripserer
 using Random
 ```
 
@@ -26,33 +26,33 @@ Let's create a collection of point clouds from shapes with known topology:
 function sample_shape(shape, n, seed)
     rng = MersenneTwister(seed)
     noise_level = 0.05
-    
+
     if shape == :circle
-        X = gd.sphere(n, dim = 2) .+ noise_level .* randn(rng, 2, n)
+        return EuclideanSpace(as_matrix(sphere(n, dim = 2)) .+ noise_level .* randn(rng, 2, n))
     elseif shape == :sphere
-        X = gd.sphere(n, dim = 3) .+ noise_level .* randn(rng, 3, n)
+        return EuclideanSpace(as_matrix(sphere(n, dim = 3)) .+ noise_level .* randn(rng, 3, n))
     elseif shape == :torus
-        X = gd.torus(n) .+ noise_level .* randn(rng, 3, n)
+        return EuclideanSpace(as_matrix(torus(n)) .+ noise_level .* randn(rng, 3, n))
     elseif shape == :two_circles
-        c1 = gd.sphere(n ÷ 2, dim = 2)
-        c2 = gd.sphere(n ÷ 2, dim = 2) .+ [3.0; 0.0]
-        X = hcat(c1, c2) .+ noise_level .* randn(rng, 2, n)
+        c1 = as_matrix(sphere(n ÷ 2, dim = 2))
+        c2 = as_matrix(sphere(n ÷ 2, dim = 2)) .+ [3.0, 0.0]
+        return EuclideanSpace(hcat(c1, c2) .+ noise_level .* randn(rng, 2, n))
     elseif shape == :blob
-        X = randn(rng, 3, n) .* 0.5
+        return EuclideanSpace(0.5 .* randn(rng, 3, n))
     else
         error("Unknown shape: $shape")
     end
-    return X
 end
 ```
 
 ```{julia}
-# Sample multiple instances of each shape
-shapes = [:circle, :circle, :circle,
-          :sphere, :sphere, :sphere,
-          :torus, :torus, :torus,
-          :two_circles, :two_circles, :two_circles,
-          :blob, :blob, :blob]
+shapes = [
+    :circle, :circle, :circle,
+    :sphere, :sphere, :sphere,
+    :torus, :torus, :torus,
+    :two_circles, :two_circles, :two_circles,
+    :blob, :blob, :blob,
+]
 
 n_points = 100
 clouds = [sample_shape(s, n_points, i) for (i, s) in enumerate(shapes)]
@@ -63,8 +63,7 @@ shape_names = string.(shapes)
 
 ```{julia}
 function compute_ph(X; dim_max = 1, threshold = 3.0)
-    pts = [Tuple(X[:, i]) for i in 1:size(X, 2)]
-    return ripserer(Rips(pts), dim_max = dim_max, threshold = threshold)
+    ripserer(Rips(X; threshold = threshold), dim_max = dim_max)
 end
 
 diagrams = [compute_ph(X) for X in clouds]
@@ -79,18 +78,19 @@ n_shapes = length(diagrams)
 dist_matrix = zeros(n_shapes, n_shapes)
 
 for i in 1:n_shapes
-    for j in (i+1):n_shapes
-        d1 = diagrams[i][2]  # H₁ diagram
-        d2 = diagrams[j][2]  # H₁ diagram
-        
-        if length(d1) > 0 && length(d2) > 0
-            dist_matrix[i, j] = Wasserstein()(d1, d2)
-        elseif length(d1) == 0 && length(d2) == 0
+    for j in (i + 1):n_shapes
+        d1 = diagrams[i][2]
+        d2 = diagrams[j][2]
+
+        if !isempty(d1) && !isempty(d2)
+            d = Wasserstein()(d1, d2)
+            dist_matrix[i, j] = isfinite(d) ? d : 1.0
+        elseif isempty(d1) && isempty(d2)
             dist_matrix[i, j] = 0.0
         else
-            # One has features, the other doesn't — use a penalty
             dist_matrix[i, j] = 1.0
         end
+
         dist_matrix[j, i] = dist_matrix[i, j]
     end
 end
@@ -98,95 +98,100 @@ end
 
 ```{julia}
 fig = Figure(size = (600, 500))
-ax = Axis(fig[1, 1], title = "Pairwise Wasserstein distances (H₁)",
-    xticks = (1:n_shapes, shape_names), 
+ax = Axis(
+    fig[1, 1],
+    title = "Pairwise Wasserstein distances (H₁)",
+    xticks = (1:n_shapes, shape_names),
     yticks = (1:n_shapes, shape_names),
-    xticklabelrotation = π/4)
+    xticklabelrotation = π / 4,
+)
 heatmap!(ax, dist_matrix)
 Colorbar(fig[1, 2], limits = extrema(dist_matrix), label = "Distance")
 fig
 ```
 
-If everything works well, you should see blocks of small distances along the diagonal — shapes of the same type have similar persistence diagrams. Shapes with different topology (different number of loops) will have large distances.
+If everything works well, you should see blocks of small distances along the diagonal — repeated samples of the same shape produce similar persistence diagrams. Shapes with different topology, especially different numbers of loops, should be farther apart.
 
 ## What the distances capture
 
-Let's think about what each shape's persistence looks like:
+Let's think about what each shape's persistence should look like:
 
 | Shape | $\beta_0$ | $\beta_1$ | Expected signature |
 |---|---|---|---|
 | Circle | 1 | 1 | One persistent loop |
-| Sphere | 1 | 0 | No persistent loops (but $\beta_2 = 1$) |
+| Sphere | 1 | 0 | No persistent loops (but a nontrivial $H_2$ class) |
 | Torus | 1 | 2 | Two persistent loops |
 | Two circles | 2 → 1 | 2 | Two persistent loops (one per circle) |
 | Blob | 1 | 0 | No persistent features |
 
-The Wasserstein distance on $H_1$ should cluster:
+Using only $H_1$, we expect:
 
-- Circle, sphere, and blob together (0 or 1 loop)
-- Torus and two_circles together (2 loops)
+- circles to stand apart because they have one strong loop;
+- spheres and blobs to look similar, since both have trivial $H_1$;
+- tori and two-circle clouds to look similar, since both have two prominent loops.
 
-To distinguish sphere from blob (which both have $\beta_1 = 0$), we would need to look at $H_2$ (where the sphere has a cavity but the blob doesn't).
+To distinguish sphere from blob, we would need to look at $H_2$ as well, since the sphere has a cavity while the blob does not.
 
-## Using persistence as features
+## Persistence images as features
 
-A natural workflow for classification tasks:
+A natural workflow for classification tasks is:
 
-1. Compute persistence diagrams for each sample
-2. Convert diagrams to a fixed-size vector representation (persistence images, persistence landscapes, or Betti curves)
-3. Feed these vectors into a standard classifier
+1. Compute persistence diagrams for each sample.
+2. Convert diagrams to a fixed-size vector representation such as persistence images, persistence landscapes, or Betti curves.
+3. Feed these vectors into a standard classifier.
+
+Here we use persistence images, which convert persistence diagrams into fixed-size arrays:
 
 ```{julia}
-# Compute persistence images for each shape
-# Using H₁ diagrams
 function safe_persistence_image(diagram; kwargs...)
-    if length(diagram) > 0
-        return PersistenceImage(diagram; kwargs...)
-    else
-        # Return a zero image if no features
+    if isempty(diagram)
         return zeros(5, 5)
+    else
+        pi = PersistenceImage([diagram]; kwargs...)
+        return pi(diagram)
     end
 end
 
 images = [safe_persistence_image(d[2]) for d in diagrams]
 ```
 
-These feature vectors can then be used with any machine learning algorithm — random forests, SVMs, neural networks — to classify shapes by their topology. We saw a full example of this pipeline in the digits classification chapter.
+These matrices can then be flattened and fed to a standard machine-learning model. This lets us combine topological information with the usual classification toolbox without having to design custom classifiers from scratch.
 
 ## Robustness to noise and sampling
 
-One of the great strengths of persistent homology for shape comparison is its **stability**: small changes in the point cloud lead to small changes in the persistence diagram (and therefore small changes in the distances).
+One of the main strengths of persistent homology for shape comparison is its stability: small perturbations of the input point cloud should produce small perturbations of the persistence diagram, and therefore small changes in the distances.
 
-Let's verify this:
+Let's verify that numerically:
 
 ```{julia}
-# Same circle with different noise levels
 noise_levels = [0.01, 0.05, 0.1, 0.2, 0.3]
-circle_variants = [gd.sphere(100, dim = 2) .+ nl .* randn(MersenneTwister(42), 2, 100) 
-                   for nl in noise_levels]
+base_circle = as_matrix(sphere(100, dim = 2))
+
+circle_variants = [
+    EuclideanSpace(base_circle .+ nl .* randn(MersenneTwister(i), 2, 100))
+    for (i, nl) in enumerate(noise_levels)
+]
 
 diagrams_circle = [compute_ph(X) for X in circle_variants]
 
-# Compare each to the first (least noisy)
 base_diagram = diagrams_circle[1][2]
-for (i, (d, nl)) in enumerate(zip(diagrams_circle, noise_levels))
-    if length(base_diagram) > 0 && length(d[2]) > 0
+for (d, nl) in zip(diagrams_circle, noise_levels)
+    if !isempty(base_diagram) && !isempty(d[2])
         dist = Wasserstein()(base_diagram, d[2])
-        println("Noise level $nl → Wasserstein distance: $(round(dist, digits=4))")
+        println("Noise level $nl -> Wasserstein distance: $(round(dist, digits = 4))")
     end
 end
 ```
 
-The distances should increase gradually with noise — no sudden jumps. This is the stability theorem in action.
+The distances should increase gradually as the noise grows, rather than jumping unpredictably. That is exactly the kind of robustness that makes persistent homology useful for comparing noisy geometric data.
 
 ## Summary
 
 In this chapter we learned:
 
-- Persistence diagrams provide a **coordinate-free summary** of shape
-- The **Wasserstein distance** between diagrams serves as a shape metric
-- Shapes with different topology (different Betti numbers) are well-separated
-- **Persistence images** convert diagrams to vectors for machine learning
-- The approach is **stable** — robust to noise and sampling variation
+- persistence diagrams can serve as topological fingerprints of shapes;
+- Wasserstein distances turn those fingerprints into a metric on shapes;
+- persistence images provide fixed-size features for machine learning;
+- the whole procedure is stable under noise.
 
-This framework applies to any data that can be represented as a point cloud: 3D scans, molecular structures, image features, sensor networks, and more.
+This same workflow applies to 3D scans, image contours, molecular structures, and many other kinds of geometric data.
