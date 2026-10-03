@@ -11,7 +11,7 @@ In this book, we followed a path from pure mathematics to applied data analysis:
 
 **Part II — Working with Data.** We learned to handle point clouds, compute distances, estimate density, and cluster data using classical methods (k-means, DBSCAN, hierarchical clustering). We saw the limitations of each method.
 
-**Part III — Persistent Homology.** We built the central tool of TDA: persistent homology. By examining all scales simultaneously through filtrations, we track the birth and death of topological features and represent them as persistence diagrams. We computed persistent homology in Julia using `Ripserer.jl` and learned to work with persistence images, Wasserstein distances, and barcodes.
+**Part III — Persistent Homology.** We built the central tool of TDA: persistent homology. By examining all scales simultaneously through filtrations, we track the birth and death of topological features and represent them as persistence diagrams. We computed persistent homology in Julia using `TDARipserer.jl` and learned to work with persistence images, Wasserstein distances, and barcodes.
 
 **Part IV — TDA Methods.** We applied topological ideas to data analysis: ToMATo for density-based clustering with automatic cluster selection, Mapper for visual exploration and dimensionality reduction, and Ball Mapper as a flexible alternative.
 
@@ -25,7 +25,7 @@ In this book, we followed a path from pure mathematics to applied data analysis:
 
 3. **Stability makes it practical.** The stability theorem guarantees that small perturbations in data lead to small changes in persistence diagrams. TDA is robust.
 
-4. **The tools are ready.** Julia's ecosystem — `MetricSpaces.jl`, `Ripserer.jl`, `PersistenceDiagrams.jl`, `ToMATo.jl`, `TDAmapper.jl`, and `TDAplots.jl` — provides a coherent stack for applied TDA.
+4. **The tools are ready.** Julia's ecosystem — `MetricSpaces.jl`, `TDARipserer.jl`, `TDAPersistenceDiagrams.jl`, `ToMATo.jl`, `TDAmapper.jl`, and `TDAplots.jl` — provides a coherent stack for applied TDA.
 
 ## Further reading
 
@@ -45,8 +45,8 @@ In this book, we followed a path from pure mathematics to applied data analysis:
 
 ### Julia packages
 
-- [`Ripserer.jl`](https://github.com/mtsch/Ripserer.jl) — fast persistent homology computation
-- [`PersistenceDiagrams.jl`](https://github.com/mtsch/PersistenceDiagrams.jl) — persistence images, landscapes, distances
+- [`TDARipserer.jl`](https://github.com/JuliaTDA/Ripserer.jl) — fast persistent homology computation
+- [`TDAPersistenceDiagrams.jl`](https://github.com/JuliaTDA/PersistenceDiagrams.jl) — persistence images, landscapes, distances
 - [`MetricSpaces.jl`](https://github.com/JuliaTDA/MetricSpaces.jl) — metric spaces, datasets, distances, and sampling
 - [`ToMATo.jl`](https://github.com/JuliaTDA/ToMATo.jl) — persistence-based density clustering
 - [`TDAmapper.jl`](https://github.com/JuliaTDA/TDAmapper.jl) — classical Mapper and Ball Mapper

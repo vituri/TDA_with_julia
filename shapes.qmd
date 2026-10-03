@@ -13,8 +13,8 @@ In this chapter, we use Wasserstein distances between persistence diagrams to bu
 using CairoMakie
 using MetricSpaces
 using MetricSpaces.Datasets
-using PersistenceDiagrams
-using Ripserer
+using TDAPersistenceDiagrams
+using TDARipserer
 using Random
 ```
 

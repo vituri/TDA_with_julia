@@ -18,7 +18,7 @@ using Flux
 import MLDatasets
 using Images, Makie, CairoMakie
 using Distances
-using Ripserer, PersistenceDiagrams
+using TDARipserer, TDAPersistenceDiagrams
 using StatsBase: mean
 import Plots;
 using DataFrames, FreqTables, PrettyTables

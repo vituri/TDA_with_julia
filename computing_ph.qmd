@@ -5,8 +5,8 @@
 
 In the previous chapter we learned what persistent homology is and why it matters. Now it is time to actually compute it. In the local JuliaTDA stack:
 
-- `Ripserer.jl` for the computation itself;
-- `PersistenceDiagrams.jl` for vectorizations and distances;
+- `TDARipserer.jl` for the computation itself;
+- `TDAPersistenceDiagrams.jl` for vectorizations and distances;
 - `TDAplots.jl` for Makie-based visualizations.
 
 ## Setup
@@ -15,8 +15,8 @@ In the previous chapter we learned what persistent homology is and why it matter
 using CairoMakie
 using MetricSpaces
 using MetricSpaces.Datasets
-using PersistenceDiagrams
-using Ripserer
+using TDAPersistenceDiagrams
+using TDARipserer
 using TDAplots
 using Random
 ```
@@ -41,7 +41,7 @@ We expect this point cloud to have:
 - $\beta_1 = 1$ (one loop, namely the circle);
 - $\beta_k = 0$ for $k \geq 2$.
 
-Let us compute persistent homology using the Vietoris-Rips filtration. `Ripserer.jl` can work directly with `MetricSpaces` objects, so there is no need to manually convert the cloud to tuples or row vectors.
+Let us compute persistent homology using the Vietoris-Rips filtration. `TDARipserer.jl` can work directly with `MetricSpaces` objects, so there is no need to manually convert the cloud to tuples or row vectors.
 
 ```{julia}
 result = ripserer(Rips(circle), dim_max = 1)
@@ -75,7 +75,7 @@ The barcode gives a complementary view: each horizontal bar represents one topol
 
 ## Cubical complexes
 
-For gridded data such as images, `Ripserer.jl` can work with cubical complexes, which are often much more efficient than Rips complexes on the same information:
+For gridded data such as images, `TDARipserer.jl` can work with cubical complexes, which are often much more efficient than Rips complexes on the same information:
 
 ```{julia}
 n = 50
@@ -139,7 +139,7 @@ W_p(D_1, D_2) = \left(\inf_\gamma \sum_{x \in D_1} \|x - \gamma(x)\|_\infty^p \r
 $$
 :::
 
-The bottleneck distance is controlled by the single worst match; the Wasserstein distance accumulates all matches. Both are available in `PersistenceDiagrams.jl`:
+The bottleneck distance is controlled by the single worst match; the Wasserstein distance accumulates all matches. Both are available in `TDAPersistenceDiagrams.jl`:
 
 ```{julia}
 circle1 = add_noise(sphere(80, dim = 2), 0.05)
@@ -173,7 +173,7 @@ A torus has $\beta_0 = 1$, $\beta_1 = 2$, and $\beta_2 = 1$. In the barcode, loo
 
 In this chapter we learned to:
 
-- compute Vietoris-Rips persistence with `Ripserer.jl`;
+- compute Vietoris-Rips persistence with `TDARipserer.jl`;
 - compute cubical persistence on gridded data;
 - visualize diagrams and barcodes with `TDAplots.jl`;
 - turn diagrams into persistence images;

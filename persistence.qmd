@@ -228,4 +228,4 @@ Persistent homology gives us:
 3. A **stable** summary of data shape (robust to perturbations)
 4. A **unifying framework** that connects clustering, homology, and data analysis
 
-In the next chapter, we will compute persistent homology in Julia using `Ripserer.jl` and work with persistence diagrams using `PersistenceDiagrams.jl`.
+In the next chapter, we will compute persistent homology in Julia using `TDARipserer.jl` and work with persistence diagrams using `TDAPersistenceDiagrams.jl`.

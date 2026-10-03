@@ -56,23 +56,21 @@ By the end, you will have both the mathematical intuition and the Julia code to 
 
 ## Setting up Julia
 
-To run the code in this book, you will need [Julia](https://julialang.org/) (version 1.9 or later recommended). In this repository, the cleanest setup is to activate the book as a project and develop the local JuliaTDA packages from the sibling `../JuliaTDA/` directory:
+To run the code in this book, you will need [Julia](https://julialang.org/) (version 1.9 or later recommended). In this repository, the cleanest setup is to activate the book as a project and develop the local JuliaTDA packages from the parent directory:
 
 ```julia
 using Pkg
 
 Pkg.activate(".")
 
-for path in [
-    "../JuliaTDA/MetricSpaces.jl",
-    "../JuliaTDA/TDAmapper.jl",
-    "../JuliaTDA/TDAplots.jl",
-    "../JuliaTDA/ToMATo.jl",
-    "../JuliaTDA/Ripserer.jl",
-    "../JuliaTDA/PersistenceDiagrams.jl",
-]
-    Pkg.develop(path = path)
-end
+Pkg.develop([PackageSpec(path = path) for path in [
+    "../MetricSpaces.jl",
+    "../TDAmapper.jl",
+    "../TDAplots.jl",
+    "../ToMATo.jl",
+    "../TDARipserer.jl",
+    "../TDAPersistenceDiagrams.jl",
+]])
 
 Pkg.add([
     "CairoMakie",
@@ -90,7 +88,7 @@ Pkg.add([
 ])
 ```
 
-Not every chapter needs every package. The core local stack for most of the book is `MetricSpaces.jl`, `TDAmapper.jl`, `TDAplots.jl`, `ToMATo.jl`, `Ripserer.jl`, and `PersistenceDiagrams.jl`.
+Not every chapter needs every package. The core local stack for most of the book is `MetricSpaces.jl`, `TDAmapper.jl`, `TDAplots.jl`, `ToMATo.jl`, `TDARipserer.jl`, and `TDAPersistenceDiagrams.jl`.
 
 If you are new to Julia, here are some excellent resources to get started:
 
