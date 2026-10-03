@@ -1,3 +1,7 @@
+---
+jupyter: tda-book
+---
+
 # Point clouds and distances
 
 > "To see a World in a Grain of Sand \
@@ -10,8 +14,8 @@ Before we can apply topological methods to data, we need to understand what "dat
 
 ## What is a point cloud?
 
-::: {#def-}
-A *point cloud* is a finite set $X = \{x_1, \ldots, x_n\}$ where each $x_i \in \mathbb{R}^d$ for some dimension $d$. Once we choose a distance function $d : X \times X \to \mathbb{R}$, the pair $(X, d)$ becomes a finite metric space.
+::: {#def-point-cloud}
+A *point cloud* is a finite collection of observations $X = \{x_1, \ldots, x_n\}$ in a metric space. Often each $x_i \in \mathbb{R}^p$, but a matrix of distances between objects can be enough. A proposed dissimilarity makes the distinct locations into a finite metric space only if it satisfies the metric axioms below. Repeated observations can share a location; their multiplicity still matters for density estimation.
 :::
 
 Point clouds appear everywhere:
@@ -32,6 +36,8 @@ Synthetic datasets are useful because we know their geometry in advance. The `Me
 using CairoMakie
 using MetricSpaces
 using MetricSpaces.Datasets
+using Random, Statistics
+Random.seed!(2026)
 ```
 
 ### Circles and spheres
@@ -64,9 +70,9 @@ scatter!(ax, torus_mat[1, :], torus_mat[2, :], torus_mat[3, :], markersize = 3)
 fig
 ```
 
-## Loading real datasets
+## Loading benchmark datasets
 
-Many real datasets come in CSV or text files. The `clustering datasets/` folder in this repository contains several FCPS benchmark datasets [@data5010013].
+The `clustering datasets/` folder contains synthetic FCPS benchmark datasets designed to challenge clustering algorithms [@data5010013]. They have known labels, which let us examine errors instead of merely admiring a scatter plot. The [Mapper chapter](mapper.qmd) uses real iris measurements.
 
 ```{julia}
 using DelimitedFiles
@@ -98,7 +104,7 @@ fig
 
 The choice of distance function profoundly affects any analysis. The same finite set of points can look very different depending on which notion of distance we put on it.
 
-::: {#def-}
+::: {#def-metric}
 A *metric* on a set $X$ is a function $d : X \times X \to \mathbb{R}$ satisfying:
 
 1. $d(x, y) \geq 0$ and $d(x, y) = 0 \iff x = y$;
@@ -106,7 +112,7 @@ A *metric* on a set $X$ is a function $d : X \times X \to \mathbb{R}$ satisfying
 3. $d(x, z) \leq d(x, y) + d(y, z)$.
 :::
 
-`MetricSpaces.jl` exports several common distances:
+`MetricSpaces.jl` exports several common dissimilarities. Euclidean, city-block, and Chebyshev are metrics; the usual cosine dissimilarity is not:
 
 ```{julia}
 x = [1.0, 2.0, 3.0]
@@ -118,6 +124,14 @@ println("Chebyshev: ", dist_chebyshev(x, y))
 println("Cosine:    ", dist_cosine(x, y))
 ```
 
+Cosine dissimilarity can assign zero to distinct positive multiples of a vector and can violate the triangle inequality. It is useful when direction matters, but do not apply a theorem for metric spaces without checking its assumptions. Angular distance between normalized nonzero vectors is a metric on the unit sphere. On the original unnormalized observations it identifies vectors with the same direction.
+
+```{julia}
+a, b, c = [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]
+println("Cosine triangle: ", dist_cosine(a, c), " versus ",
+        dist_cosine(a, b) + dist_cosine(b, c))
+```
+
 For point clouds, we often compute the full pairwise distance matrix:
 
 ```{julia}
@@ -127,6 +141,69 @@ D
 ```
 
 The matrix $D$ stores all pairwise distances $D_{ij} = d(x_i, x_j)$. Up to isometry, this matrix contains all the geometric information about the point cloud.
+
+## Preprocessing is part of the geometry {#sec-preprocessing}
+
+A height in metres and a weight in kilograms have different units. Adding their squared differences without a scale convention makes kilograms dominate; expressing height in centimetres changes the answer. The computer is not being capricious. We asked it a different geometric question.
+
+Standardization gives each coordinate a chosen reference scale:
+
+$$
+z_{ij}=\frac{x_{ij}-\mu_i}{s_i}.
+$$
+
+Here we fit the means and standard deviations on a reference sample. For prediction, this must be the **training sample**, and the same parameters must transform validation and test observations. Independently standardizing each group would make their distances incomparable.
+
+```{julia}
+function fit_standardization(M)
+    mu = mean(M, dims = 2)
+    scale = std(M, dims = 2, corrected = false)
+    scale = ifelse.(scale .== 0, 1.0, scale)  # constant features
+    (; mu, scale)
+end
+
+standardize(M, parameters) = (M .- parameters.mu) ./ parameters.scale
+
+# Five illustrative observations: height (metres), weight (kilograms).
+measurements = [1.60 1.70 1.80 1.65 1.75;
+                60.0 80.0 75.0 65.0 85.0]
+parameters = fit_standardization(measurements)
+Z = standardize(measurements, parameters)
+println("Raw distance, first pair: ",
+        round(dist_euclidean(measurements[:, 1], measurements[:, 2]), digits = 3))
+println("Standardized distance: ",
+        round(dist_euclidean(Z[:, 1], Z[:, 2]), digits = 3))
+```
+
+Standardization is a modeling choice. A clinically meaningful one-unit change may deserve a different weight, and a coordinate that is mostly noise should not acquire importance simply because its variance is small. Record units and justify the distance using the scientific question. For directional shape descriptors, also decide whether rotation should preserve the label: rotating a handwritten 6 into a 9 should not be ignored by a digit classifier.
+
+Before building a distance matrix, inspect missing values and nonfinite numbers. Decide whether to remove, impute, or model them; fit any imputation rule on training data. Keep track of how many observations change. Likewise, duplicates may be repeated measurements rather than clerical mistakes. Removing them changes density and observation weights even when it leaves the set of geometric locations unchanged.
+
+## Sampling, outliers, and computational cost
+
+A dense cloud may contain more observations than we can afford to process. Random subsampling approximates the sampling distribution; farthest-point sampling emphasizes geometric coverage. Neither preserves every small feature automatically.
+
+```{julia}
+#| label: fig-sampling-comparison
+#| fig-cap: "Forty observations selected from the same 400-point circle. Random sampling preserves sampling weights in expectation; farthest-point sampling spreads representatives over the geometric support."
+X_dense = sphere(400, dim = 2)
+ids_random = randperm(MersenneTwister(4), length(X_dense))[1:40]
+ids_cover = farthest_points_sample_ids(X_dense, 40)
+M_dense = as_matrix(X_dense)
+
+fig = Figure(size = (800, 350))
+for (j, ids, title) in [(1, ids_random, "Random subsample"),
+                       (2, ids_cover, "Farthest-point subsample")]
+    ax = Axis(fig[1, j], title = title, aspect = DataAspect())
+    scatter!(ax, M_dense[1, :], M_dense[2, :], color = :lightgray, markersize = 3)
+    scatter!(ax, M_dense[1, ids], M_dense[2, ids], color = :firebrick, markersize = 6)
+end
+fig
+```
+
+A rare population can disappear from a small random sample. Farthest-point sampling can devote several landmarks to extreme outliers. Check coverage and repeat the analysis at more than one sample size before interpreting a small feature. The [uncertainty chapter](uncertainty.qmd) distinguishes such sensitivity checks from statistical confidence statements.
+
+The full distance matrix requires $n^2$ entries: 10,000 observations give 100 million Float64 values, about 800 MB before overhead. Rips computations may require many simplices in addition to that matrix. Use a smaller demonstration first, select the filtration appropriate for the input, and measure elapsed time rather than assuming that compiled code makes the combinatorics disappear.
 
 ## Density estimation
 
@@ -154,13 +231,13 @@ scatter!(ax2, Xmat[1, :], Xmat[2, :], color = ds, markersize = 4)
 fig
 ```
 
-The density of a point $x$ is estimated by averaging a kernel over all distances to the rest of the dataset:
+The density of a point $x$ is estimated by averaging a kernel over distances to all observations (including itself when evaluated on the sample):
 
 $$
 \mathrm{dens}(x) = \frac{1}{|X|} \sum_{y \in X} K\!\left(\frac{d(x, y)}{h}\right),
 $$
 
-where $h$ is the bandwidth. Larger $h$ produces smoother densities; smaller $h$ reveals finer local structure. Density estimation is one of the basic ingredients behind the ToMATo clustering algorithm that we will study later.
+For the default Gaussian kernel, $K(t)=\exp(-t^2/2)$. This metric-space score omits the Euclidean $h^{-p}$ normalization constant; it measures relative local concentration, rather than a normalized probability density across different bandwidths. Changing $h$ therefore changes both smoothness and the numerical scale relevant to a ToMATo threshold. Larger $h$ produces smoother densities; smaller $h$ reveals finer local structure. Density estimation is one of the basic ingredients behind the ToMATo clustering algorithm that we will study later.
 
 ## Nearest neighbors and local neighborhoods
 
@@ -169,7 +246,7 @@ Another fundamental operation is finding nearby points. Point-cloud algorithms r
 Conceptually, two standard constructions are:
 
 - the $\epsilon$-neighborhood graph, where points are connected when they lie within distance $\epsilon$ of each other;
-- the $k$-nearest-neighbor graph, where each point is connected to its $k$ closest neighbors.
+- the directed $k$-nearest-neighbor relation, where each point selects its $k$ closest other observations. For an undirected graph, specify either the union rule (an edge when either point selects the other) or the mutual rule (both must select each other). These can have different connectivity.
 
 `MetricSpaces.jl` exposes those local queries directly:
 
@@ -195,4 +272,31 @@ In this chapter we learned to:
 - estimate densities with kernel methods;
 - query local neighborhoods.
 
-These are the geometric foundations we will use throughout the rest of the book. Next, we turn to *clustering* point clouds and see both what classical methods can do well and where topology becomes necessary.
+Distances, preprocessing, and sampling determine which structure the later algorithms can see. Next we examine classical clustering methods before adding persistence-based merging.
+
+
+## Exercises
+
+### 1. Changing units
+
+We convert every height from metres to centimetres but leave weights in kilograms. Which distances remain unchanged: raw Euclidean distance, or Euclidean distance after fitting the same standardization procedure?
+
+::: {.callout-note collapse="true" title="Worked answer"}
+Raw distances change because one coordinate receives a factor of 100. When means and scales are converted consistently, standardized heights are unchanged, so standardized Euclidean distances are unchanged. Refit on the same training observations, not independently on test data.
+:::
+
+### 2. A cosine counterexample
+
+Use the three vectors $a,b,c$ in the code above. Why is their cosine dissimilarity a counterexample to the triangle inequality?
+
+::: {.callout-note collapse="true" title="Worked answer"}
+We obtain $d(a,c)=1$, while $d(a,b)+d(b,c)=2(1-1/\sqrt2)\approx0.586$. The direct dissimilarity exceeds the sum of the two steps. The usual metric-space stability theorem cannot simply be invoked for this dissimilarity.
+:::
+
+### 3. An outlier as a landmark
+
+A circle contains 399 observations near its circumference and one observation ten units away. How might random and farthest-point sampling differ?
+
+::: {.callout-note collapse="true" title="Worked answer"}
+A 40-point random subsample includes the outlier with probability $40/400$. Farthest-point sampling tends to select it early because it is far from the other landmarks. Geometric coverage and preserving sampling frequencies are different objectives; decide which one your analysis needs.
+:::

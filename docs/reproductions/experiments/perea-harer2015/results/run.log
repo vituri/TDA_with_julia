@@ -1,0 +1,19 @@
+Exact Figure 3 reproduction: 151 windows, including the endpoint
+g1, F2: (birth = 0.07155908390593636, death = 1.201606249081542, mp = 1.1300471651756057, n = 76), score=0.6524330350111095, lower bound=1.284413956808626
+g1, F3: (birth = 0.07155908390593636, death = 1.6175777735897556, mp = 1.5460186896838193, n = 76), score=0.8925943066611456, lower bound=1.284413956808626
+g2, F2: (birth = 0.06039800339264983, death = 1.6004381787082236, mp = 1.5400401753155737, n = 76), score=0.889142609781285, lower bound=1.3002057540763499
+g2, F3: (birth = 0.06039800339264983, death = 1.61067569654372, mp = 1.55027769315107, n = 76), score=0.8950532434594424, lower bound=1.3002057540763499
+Window sensitivity completed
+Precompiling packages...
+   5633.4 ms  ✓ TDARipserer
+  1 dependency successfully precompiled in 6 seconds. 127 already precompiled.
+Precompiling packages...
+    TDAplots Being precompiled by another process (pid: 185612, pidfile: /home/vituri/.julia/compiled/v1.12/TDAplots/5wseQ_fPNkl.ji.pidfile)
+   3108.9 ms  ✓ TDAplots
+  1 dependency successfully precompiled in 4 seconds. 349 already precompiled.
+Precompiling packages...
+   3263.3 ms  ✓ TDARipserer → TDARipsererChainRulesCoreExt
+  1 dependency successfully precompiled in 4 seconds. 137 already precompiled.
+Passed 39 consistency checks. Artifacts written to /mnt/Dados/Github/JuliaTDA/TDA_with_julia/reproductions/experiments/perea-harer2015
+permuted_g1 score median/min/max: 0.20836663199896854 / 0.18147459999120666 / 0.2683425989806096
+white_noise score median/min/max: 0.2031336538453397 / 0.1735292366104916 / 0.21877015962313867

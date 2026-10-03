@@ -1,0 +1,26 @@
+retrieved_on = "2026-10-03"
+paper = "Singh, Memoli and Carlsson (2007), Topological Methods for the Analysis of High Dimensional Data Sets and 3D Object Recognition"
+paper_url = "https://graphics.stanford.edu/courses/cs233-25-spring/ReferencedPapers/mapperPBG.pdf"
+original_data_reference = "Reaven and Miller (1979), Diabetologia 16:17-24; Andrews and Herzberg (1985), Chapter 36, Table 36.1"
+observations = 145
+features = ["rw", "fpg", "glucose", "insulin", "sspg"]
+missing_paper_feature = "age"
+label_column = "group"
+label_usage = "Post hoc annotation only; excluded from distances, density, clustering and parameter grid."
+csv_sha256 = "2eb0e05331e681a6046a761ba14b81aaee845e24883a5b42059b1db3d31d12b7"
+crosscheck = "All 725 numeric values and all 145 class labels agree with loon.data in the same row order."
+
+[[sources]]
+file = "raw/diabetes.rda"
+url = "https://raw.githubusercontent.com/cran/rrcov/8de24922804db732906b0db3751eb958830abcd5/data/diabetes.rda"
+sha256 = "7c32aad6c8895240ba257048102418e5eeeaaebec4b114a5a4ecff4938612076"
+
+[[sources]]
+file = "raw/diabetes.Rd"
+url = "https://raw.githubusercontent.com/cran/rrcov/8de24922804db732906b0db3751eb958830abcd5/man/diabetes.Rd"
+sha256 = "d453ea639c86a7accaa02b8e02d5a667d0d18b5e6d1a43c26a041d39044ffc10"
+
+[[sources]]
+file = "raw/loon_diabetes.rda"
+url = "https://raw.githubusercontent.com/cran/loon.data/78f60b0e174987f4953ca4cd2436e5a14b2b756d/data/diabetes.rda"
+sha256 = "2699136294d18c82e005d72d0ccd4abd47dc6602dbc71a73b2d1d13564b3fdc0"

@@ -1,0 +1,34 @@
+quarto_version = "1.9.35"
+render_strategy = "Isolated copy of the book; Julia execution disabled"
+shared_book_build_modified = false
+recorded_at_utc = "2026-10-03T06:25:33.943281+00:00"
+new_chapters = 4
+rendered_local_assets_checked = 34
+
+[[chapters]]
+file = "reproductions/lum2013.qmd"
+source_sha256 = "b83f12be92bf745a429503942a17e61ecf6615a10408267c203a2a6bff06bbe9"
+html_rendered = true
+local_assets_resolve = true
+local_assets_checked = 10
+
+[[chapters]]
+file = "reproductions/chazal2013.qmd"
+source_sha256 = "02e30a172007d943c49aebf3636a7402268c4e6aed8cb4fb9dbcc0d1d660b73e"
+html_rendered = true
+local_assets_resolve = true
+local_assets_checked = 9
+
+[[chapters]]
+file = "reproductions/perea-harer2015.qmd"
+source_sha256 = "5dba1db163c8df0ceb57e9b5d6c9924d5d26b0dcc6eb3605db5212a89110c0b7"
+html_rendered = true
+local_assets_resolve = true
+local_assets_checked = 4
+
+[[chapters]]
+file = "reproductions/stability2007.qmd"
+source_sha256 = "9926da0eb1ac4f081a0ac49d6515e56e7c70b7a6b778694ab00c6f2c95c77e60"
+html_rendered = true
+local_assets_resolve = true
+local_assets_checked = 11

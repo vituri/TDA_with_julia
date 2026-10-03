@@ -1,0 +1,73 @@
+relapse = 107
+nonrelapse = 179
+environment_manifest_sha256 = "24fd251dabce998e7092fcaa05db75216a5356c0a12a50e4e8a878e4fe0ed007"
+probes = 22283
+esr1_probes = ["205225_at", "211233_x_at", "211234_x_at", "211235_s_at", "211627_x_at", "215551_at", "215552_s_at", "217163_at", "217190_x_at"]
+julia_version = "1.12.5"
+configurations = 54
+threads = 1
+patients = 286
+source_intensity_range = [0.1, 157291.8]
+seed = 2034
+
+[marker_probes]
+CXCL13 = ["205242_at"]
+PF4V1 = ["207815_at"]
+CCL13 = ["206407_s_at", "216714_at"]
+CCL3 = ["205114_s_at"]
+
+[audits.gene_centered_r20]
+pearson_max_abs_error = 0.0
+single_linkage_checked_against_threshold_components = true
+covered_patients = 286
+all_pairwise_nerve_edges_checked = true
+
+[audits.log2_r70]
+pearson_max_abs_error = 2.220446049250313e-16
+single_linkage_checked_against_threshold_components = true
+covered_patients = 286
+all_pairwise_nerve_edges_checked = true
+
+[audits.log2_r20]
+pearson_max_abs_error = 2.220446049250313e-16
+single_linkage_checked_against_threshold_components = true
+covered_patients = 286
+all_pairwise_nerve_edges_checked = true
+
+[audits.outcome_free_r70]
+pearson_max_abs_error = 2.220446049250313e-16
+single_linkage_checked_against_threshold_components = true
+covered_patients = 286
+all_pairwise_nerve_edges_checked = true
+
+[audits.gene_centered_r70]
+pearson_max_abs_error = 0.0
+single_linkage_checked_against_threshold_components = true
+covered_patients = 286
+all_pairwise_nerve_edges_checked = true
+
+[baseline]
+binary_relapse_resolution = 30
+top_variable_probes = 1553
+rank_equalization = true
+resolution = 70
+log2 = true
+assumed_overlap = 0.6666666666666666
+histogram_bins = 10
+gene_centering = false
+gain = 3.0
+
+[sources.TDAmapper]
+git_head = "1d483ef3f4d3c0a0d318ba4539b7b419df1f8217"
+source_sha256 = "ab7056cb5bf47fb4dcfa821278095ea05260664bd4d6e633ae2c899cde0a9301"
+dirty = true
+
+[sources.MetricSpaces]
+git_head = "08f1bb4f84c7a851ad6f06ae60cc1ccedf80916b"
+source_sha256 = "9a97f960fb82b381561844f53e1f3731b998f1ec86f21d5bd90007a1e1f79f31"
+dirty = true
+
+[sources.TDAplots]
+git_head = "cf60f7a8ffddecd55dca33a7c88bebd2699dd34a"
+source_sha256 = "1d428d6c606a7c67a55131bbc2dc7fef5c9b12607b4972a59578defa2b3f43bf"
+dirty = true

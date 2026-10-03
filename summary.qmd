@@ -1,67 +1,61 @@
 # Summary and further reading
 
-> "We shall not cease from exploration, and the end of all our exploring will be to arrive where we started and know the place for the first time." \
-> --- T. S. Eliot, in "Little Gidding"
+> "We shall not cease from exploration" \
+> --- T. S. Eliot, in *Little Gidding*
 
-## What we covered
+## What we can now calculate
 
-In this book, we followed a path from pure mathematics to applied data analysis:
+We began with a cloud of observations and the question of its shape. The square showed how to turn distances into simplices, simplices into boundary matrices, and cycles modulo boundaries into homology classes. A filtration then let us follow these classes as the scale changed.
 
-**Part I — Topology.** We defined topological spaces and continuity, introduced simplicial complexes as finite combinatorial models of topological spaces, and developed simplicial homology as a way to count "holes" of each dimension.
+The computations added choices that the abstract definitions alone do not make: units, preprocessing, metric, coefficients, filtration, sample size, and cutoff. We compared Rips, alpha, and cubical inputs; learned to read finite and essential intervals; and used shared-grid vectorizations and diagram distances.
 
-**Part II — Working with Data.** We learned to handle point clouds, compute distances, estimate density, and cluster data using classical methods (k-means, DBSCAN, hierarchical clustering). We saw the limitations of each method.
+ToMATo follows density peaks through merges. Mapper builds overlapping groups from a filter and a local clustering rule. Ball Mapper builds a cover around landmarks. Their plots tell us about those constructions. Edges in a displayed graph do not automatically certify holes in the underlying space, and a graph layout is not a faithful geometric map.
 
-**Part III — Persistent Homology.** We built the central tool of TDA: persistent homology. By examining all scales simultaneously through filtrations, we track the birth and death of topological features and represent them as persistence diagrams. We computed persistent homology in Julia using `TDARipserer.jl` and learned to work with persistence images, Wasserstein distances, and barcodes.
+The applications tested those distinctions. The Target benchmark exposed a clustering failure. The digit experiment separated training, validation, and test transformations and included a pixel baseline. Delay embeddings required attention to sampling and independence. Shape comparisons required common vectorization coordinates and a decision about geometric scale.
 
-**Part IV — TDA Methods.** We applied topological ideas to data analysis: ToMATo for density-based clustering with automatic cluster selection, Mapper for visual exploration and dimensionality reduction, and Ball Mapper as a flexible alternative.
+Finally, the uncertainty chapter separated a stability theorem, empirical sampling variation, and a test under a stated null model. A long interval is a lifetime; its scientific interpretation remains a question about the data.
 
-**Part V — Applications.** We saw TDA in action: clustering with ToMATo, classifying handwritten digits using persistence images and neural networks, detecting periodicity in time series via delay embeddings, and comparing shapes through persistence diagram distances.
+## A workflow worth carrying to your next dataset
 
-## Key takeaways
+1. **State the question and sampling units.** What phenomenon would a component, loop, or cavity represent? Which observations are independent?
+2. **Choose and record the representation.** Inspect missing values, duplicates, units, and outliers. Justify the metric and filtration rather than accepting their defaults silently.
+3. **Predict a small result.** Use a synthetic control or a hand-calculable example. Check conventions, including edge length versus ball radius and foreground versus background.
+4. **Separate fitting from evaluation.** Fit preprocessing and diagram vectorizers on training data, select parameters with validation data, and reuse the fitted transformations on test data.
+5. **Check sensitivity and alternatives.** Vary sample size and scientifically plausible parameters. Compare with classical methods and, when inference is intended, a justified null model or confidence procedure.
+6. **Report what the result cannot distinguish.** A diagram is a compressed summary. Different objects can have the same diagram, and different constructions on one dataset can answer different questions.
 
-1. **Data has shape, and shape matters.** Classical statistics can miss geometric and topological structure that is essential for understanding data.
-
-2. **Persistence is the key idea.** Instead of choosing a single scale, examine all scales and focus on features that persist. Long-lived features are signal; short-lived features are noise.
-
-3. **Stability makes it practical.** The stability theorem guarantees that small perturbations in data lead to small changes in persistence diagrams. TDA is robust.
-
-4. **The tools are ready.** Julia's ecosystem — `MetricSpaces.jl`, `TDARipserer.jl`, `TDAPersistenceDiagrams.jl`, `ToMATo.jl`, `TDAmapper.jl`, and `TDAplots.jl` — provides a coherent stack for applied TDA.
+The six JuliaTDA packages used here are frozen with the book's environment. The [setup notes](environment/README.md) explain how to reproduce this edition and how to switch to development sources.
 
 ## Further reading
 
-### Books
+### Books and surveys
 
-- **Computational Topology** by Edelsbrunner & Harer — the classic textbook on computational topology and persistent homology
-- **Topology and Data** by Gunnar Carlsson (2009, Bulletin of the AMS) — an influential survey paper that helped launch TDA as a field
-- **Elementary Applied Topology** by Robert Ghrist — a beautifully illustrated introduction to applied algebraic topology
-- **Topological Data Analysis with Applications** by Zomorodian — covers algorithms and applications
+For algorithms and the underlying mathematics, read **Computational Topology** by Edelsbrunner and Harer [@edelsbrunner2010] or **Topology for Computing** by Zomorodian [@zomorodian2005]. **Topological Data Analysis with Applications** is by Carlsson and Vejdemo-Johansson [@carlsson2021].
 
-### Papers
+Hatcher's **Algebraic Topology** develops the homology theory beyond our finite-field examples [@hatcher2002]. Ghrist's **Elementary Applied Topology** offers a visual route into applied topology [@ghrist2014].
 
-- **Persistence-Based Clustering in Riemannian Manifolds** (Chazal et al., 2011) — the ToMATo paper
-- **Topological Methods for the Analysis of High Dimensional Data Sets and 3D Object Recognition** (Singh, Mémoli, Carlsson, 2007) — the original Mapper paper
-- **Stability of Persistence Diagrams** (Cohen-Steiner, Edelsbrunner, Harer, 2007) — the stability theorem
-- **Barcodes: The Persistent Topology of Data** (Ghrist, 2008) — an accessible introduction to barcodes
+Carlsson's **Topology and Data** [@carlsson2009] and Ghrist's **Barcodes: The Persistent Topology of Data** [@ghrist2008] are survey papers, useful companions to a first pass through this book.
 
-### Julia packages
+### Follow the question into the original papers
 
-- [`TDARipserer.jl`](https://github.com/JuliaTDA/Ripserer.jl) — fast persistent homology computation
-- [`TDAPersistenceDiagrams.jl`](https://github.com/JuliaTDA/PersistenceDiagrams.jl) — persistence images, landscapes, distances
-- [`MetricSpaces.jl`](https://github.com/JuliaTDA/MetricSpaces.jl) — metric spaces, datasets, distances, and sampling
-- [`ToMATo.jl`](https://github.com/JuliaTDA/ToMATo.jl) — persistence-based density clustering
-- [`TDAmapper.jl`](https://github.com/JuliaTDA/TDAmapper.jl) — classical Mapper and Ball Mapper
-- [`TDAplots.jl`](https://github.com/JuliaTDA/TDAplots.jl) — Makie-based visualization for Mapper, persistence, and ToMATo
+| If you want to understand… | Start with… |
+|---|---|
+| Stability under function perturbations | Cohen-Steiner, Edelsbrunner, and Harer [@stability] |
+| Stability for metric-space filtrations | Chazal, de Silva, and Oudot [@ripsstability] |
+| Confidence sets and statistical guarantees | Fasy and colleagues [@bootstrap2014] |
+| Density peaks and persistence-based clustering | Chazal and colleagues, the 2013 ToMATo paper [@tomato] |
+| Covers, filters, and Mapper | Singh, Mémoli, and Carlsson [@mapper] |
+| Landmark covers and Ball Mapper | Dłotko [@ballmapper2019] |
+| Vector features on a common diagram domain | Adams and colleagues [@persistenceimages2017]; Bubenik [@landscapes2015] |
+| Sliding windows and periodicity | Perea and Harer [@slidingwindows2015] |
+| Quasiperiodic delay embeddings | Gakhar and Perea [@quasiperiodic2024] |
 
-### Advanced topics not covered
+### Topics beyond this book
 
-- **Multi-parameter persistence**: extending persistent homology to filtrations indexed by more than one parameter
-- **Sheaves and cosheaves**: a more general framework for local-to-global data structures
-- **Persistent homology transform**: encoding shapes using persistence diagrams from many directions
-- **Topological optimization**: using topological loss functions in neural network training (differentiable TDA)
-- **Zigzag persistence**: handling time-varying data with insertions and deletions
+One-parameter persistence is not the end of the story. **Multiparameter persistence** can track, for example, distance and density together; its invariants are more complicated than a single barcode. **Zigzag persistence** permits objects to be added and removed, useful for changing observations over time. **Cohomology and circular coordinates** can turn a persistent loop into a useful coordinate rather than only a lifetime.
 
-## Final words
+For geometric shape analysis, the **persistent homology transform** compares many directional filtrations; this is a broader construction than our small family of image directions. For other computational budgets, **witness and sparse complexes** and approximation guarantees deserve study. **Distance-to-measure filtrations** address robustness using a different geometric construction, rather than expecting ordinary Rips persistence to ignore outliers.
 
-TDA is a young and rapidly growing field. New applications, algorithms, and theoretical results appear every year. The tools in this book give you a solid foundation — both mathematical and computational — to explore this landscape.
+**Sheaves and cosheaves** extend local-to-global reasoning, while **differentiable topology** brings topological summaries into optimization. These are directions for further study, not prerequisites for the examples we have worked through.
 
-Go forth and find some holes in your data!
+Go forth and find some holes in your data! Then ask why they are there.

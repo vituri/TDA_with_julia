@@ -1,5 +1,6 @@
 ---
-title: "(Classical) mapper"
+title: "Classical Mapper"
+jupyter: tda-book
 ---
 
 ## Reeb graph
@@ -12,14 +13,16 @@ So instead of trying to look directly at a high-dimensional object, we look at h
 
 ### The classical Mapper construction
 
-Mapper is the data-analytic analogue of the Reeb graph. We replace the continuous ingredients by discrete ones:
+Mapper is motivated by the Reeb graph [@mapper]. We replace the continuous ingredients by discrete ones:
 
 - $X$ becomes a finite metric space, or point cloud;
 - $f : X \to \mathbb{R}$ becomes any real-valued function on the data;
 - instead of inverse images of points, we use inverse images of overlapping intervals;
 - instead of connected components, we cluster each inverse image.
 
-The resulting clusters form a cover of the data, and the Mapper graph is the nerve of that cover: two nodes are connected when the corresponding clusters share at least one data point.
+The resulting clusters form a cover of the data. Here the Mapper **graph** is the **1-skeleton** of the nerve: one node per cluster and an edge precisely when two clusters share an observed data point. The full nerve also has a triangle for every nonempty triple intersection, a tetrahedron for every nonempty four-way intersection, and so on. Our graph does not store those higher simplices.
+
+For example, cover elements containing observations `{1, 2}` and `{2, 3}` give an edge because observation 2 belongs to both. Two clusters that merely lie close in feature space do not give an edge. The overlap of filter intervals makes shared membership possible; the local clustering decides which particular nodes share it.
 
 ![](images/mapper.png)
 
@@ -27,9 +30,10 @@ This graph can shed light on the geometry of the dataset:
 
 - nodes represent clusters of data points;
 - node colors summarize some statistic of the points in that node;
-- edges indicate overlap between nearby clusters;
-- loops suggest circular or toroidal structure;
-- branches suggest flares or bifurcations in the data.
+- edges indicate shared membership;
+- loops and branches are questions to investigate through the underlying observations and parameter changes.
+
+A triangle in this graph need not be a hole in the full nerve: a triple intersection fills it. Nor does a graph loop by itself prove that the sampled population has a topological hole. The construction depends on the filter, cover, clustering, and sampling.
 
 ## An example in Julia
 
@@ -37,10 +41,18 @@ This graph can shed light on the geometry of the dataset:
 using CairoMakie
 using MetricSpaces
 using MetricSpaces.Datasets
+using TDAmapper
 using TDAplots
 using TDAmapper.ImageCovers
 using TDAmapper.IntervalCovers
 using TDAmapper.Refiners
+using Random
+using DelimitedFiles
+using Statistics
+using DataFrames
+using Graphs
+
+Random.seed!(2026)
 ```
 
 We work with a torus. It is a useful example because its Reeb graph under a coordinate projection has a recognizable loop-with-flares structure:
@@ -67,7 +79,7 @@ To run classical Mapper we need:
 - an image cover of the filter values;
 - a clustering rule for each inverse image.
 
-Here `Uniform(length = 12, expansion = 0.35)` creates overlapping intervals in the image of the filter, and `DBscan` refines each inverse image into connected dense pieces.
+Here `Uniform(length = 12, expansion = 0.35)` creates overlapping intervals in the image of the filter, and `DBscan` refines each inverse image. If the filter range has width $R$, the 12 centers have spacing $\Delta=R/11$, and each interval has width $1.35\Delta$. Adjacent intervals overlap by $0.35\Delta$, about 26% of their width. `expansion` is **not** the overlap percentage.
 
 ```{julia}
 C = R1Cover(fv, Uniform(length = 12, expansion = 0.35))
@@ -83,10 +95,136 @@ And now we plot the Mapper graph, coloring each node by the mean filter value of
 mapper_plot(mp, node_values = node_colors(mp, fv))
 ```
 
-The graph has the same qualitative feature as the Reeb graph of a torus: a looped structure with two flaring sides. That is exactly what Mapper is supposed to do: replace a complicated point cloud by a graph that still reflects the large-scale shape.
+Compare the graph with the projected torus, then inspect the observation indices in `mp.C`. The drawing places nodes using a graph layout: screen coordinates and edge lengths are **not distances between the original observations**. By default, `mapper_plot` scales node marker size by membership count and colors nodes by the supplied values, here the mean filter value. Since cover elements overlap, the sum of their sizes can exceed the number of observations.
+
+One package detail matters when reading a graph: `DBscan` collects its noise points into an extra node **within each cover element**. That node may contain disconnected observations. Its existence should not be mistaken for a connected dense population. We avoid this issue in the next example by using neighborhood and cluster minima of one, so local refinement is radius-graph connectivity without noise rejection.
+
+## A real dataset: Iris measurements
+
+Enough doughnuts; let us look at flowers. The Iris dataset contains 150 observations, four measurements in centimeters, and three species labels [@irisuci; @iris1936]. We use a bundled copy of UCI's `iris.data`, so rendering needs no network connection. Its provenance and the documented differences from the historical data are recorded in `datasets/README.md`.
+
+```{julia}
+iris_raw = readdlm("datasets/iris.csv", ',', Any, '\n'; skipstart = 1)
+iris_measurements = permutedims(Float64.(iris_raw[:, 1:4]))
+iris_species = String.(iris_raw[:, 5])
+iris_mean = mean(iris_measurements, dims = 2)
+iris_scale = std(iris_measurements, dims = 2)
+iris_Z = (iris_measurements .- iris_mean) ./ iris_scale
+iris_X = EuclideanSpace(iris_Z)
+```
+
+The feature order is sepal length, sepal width, petal length, and petal width. We use standardized Euclidean distance so that a one-standard-deviation difference has the same weight in each measurement. This also gives correlated petal measurements two contributions; scaling does not remove redundancy. Other weighting choices are possible and can change the graph.
+
+Our first filter is standardized **petal length**. This is a deliberate question: how does local similarity change along increasing petal length? Species labels are reserved for interpretation; they are not an input to the construction.
+
+```{julia}
+iris_filter = vec(iris_Z[3, :])
+iris_cover = R1Cover(iris_filter, Uniform(length = 8, expansion = 0.35))
+iris_refiner = DBscan(radius = 0.65, min_neighbors = 1, min_cluster_size = 1)
+iris_mapper = classical_mapper(iris_X, iris_cover, iris_refiner)
+iris_node_sizes(M) = 18 .+ 2 .* sqrt.(length.(M.C))
+
+mapper_plot(iris_mapper,
+    node_values = node_colors(iris_mapper, iris_filter), show_node_ids = true,
+    node_size = iris_node_sizes(iris_mapper), colormap = [:lightblue, :orange])
+```
+
+We can follow the construction all the way back to a node's members:
+
+```{julia}
+iris_node = argmax(length.(iris_mapper.C))
+iris_members = iris_mapper.C[iris_node]
+species_order = sort(unique(iris_species))
+iris_node_table = DataFrame(species = species_order,
+    observations = [count(==(s), iris_species[iris_members]) for s in species_order])
+iris_node_table
+```
+
+The largest node contains 44 observations: 40 versicolor and four virginica. It is a local cluster inside one filter interval, not an exclusive global cluster: an observation can also belong to a neighboring node. A mean color hides variation, so inspect members before assigning a biological interpretation. The Iris drawings use smaller markers based on the square root of membership count to keep nearby node IDs legible.
+
+The same graph can be colored by a statistic **different from its filter**. Here we show the fraction of each node belonging to *Iris-setosa*:
+
+```{julia}
+setosa_indicator = Float64.(iris_species .== "Iris-setosa")
+mapper_plot(iris_mapper,
+    node_values = node_colors(iris_mapper, setosa_indicator), show_node_ids = true,
+    node_size = iris_node_sizes(iris_mapper), colormap = [:lightblue, :orange])
+```
+
+Colors close to 1 mean all or nearly all members are setosa; colors close to 0 mean few are. Mixed nodes, especially among the other two species, deserve inspection. This is exploration of one small dataset, not a species classifier or a test of generalization.
+
+## How sensitive is that picture?
+
+We compare cover resolution, overlap, local radius, and filter choice. In addition to node and edge counts, record coverage, maximum observation multiplicity, graph components, and graph cycle rank $E-V+c$. Cycle rank belongs to the displayed graph, not necessarily to the data or the full nerve.
+
+```{julia}
+function mapper_diagnostics(M)
+    membership_counts = [count(C -> i in C, M.C) for i in eachindex(M.X)]
+    components = length(connected_components(M.g))
+    (nodes = nv(M.g), edges = ne(M.g), components = components,
+     graph_cycles = ne(M.g) - nv(M.g) + components,
+     covered_points = count(>(0), membership_counts),
+     maximum_memberships = maximum(membership_counts))
+end
+
+iris_cases = [
+    (filter = "petal length", values = vec(iris_Z[3, :]), intervals = 8, expansion = 0.35, radius = 0.65),
+    (filter = "petal length", values = vec(iris_Z[3, :]), intervals = 5, expansion = 0.35, radius = 0.65),
+    (filter = "petal length", values = vec(iris_Z[3, :]), intervals = 8, expansion = 0.70, radius = 0.65),
+    (filter = "petal length", values = vec(iris_Z[3, :]), intervals = 8, expansion = 0.35, radius = 0.95),
+    (filter = "sepal width", values = vec(iris_Z[2, :]), intervals = 8, expansion = 0.35, radius = 0.65),
+]
+iris_sensitivity = DataFrame()
+iris_alternatives = []
+for setting in iris_cases
+    cover = R1Cover(setting.values,
+        Uniform(length = setting.intervals, expansion = setting.expansion))
+    M = classical_mapper(iris_X, cover,
+        DBscan(radius = setting.radius, min_neighbors = 1, min_cluster_size = 1))
+    push!(iris_alternatives, M)
+    push!(iris_sensitivity, merge(
+        (filter = setting.filter, intervals = setting.intervals,
+         expansion = setting.expansion, radius = setting.radius),
+        mapper_diagnostics(M)))
+end
+iris_sensitivity
+```
+
+```{julia}
+# The same metric and local clustering, with sepal width as the filter.
+mapper_plot(last(iris_alternatives),
+    node_values = node_colors(last(iris_alternatives), setosa_indicator),
+    node_size = iris_node_sizes(last(iris_alternatives)), colormap = [:lightblue, :orange])
+```
+
+Increasing the local radius joins more points within each inverse image. Increasing overlap repeats more observations across nodes and can introduce extra edges. Coarsening the cover groups broader ranges of the filter. Changing to sepal width asks a different question even with identical distances. Differences between these pictures are part of the result, not inconvenient clutter to discard.
+
+Here the baseline has 22 nodes, 12 edges, and **10 graph components**, while covering all 150 observations. That fragmentation is not ten discovered species: small local radius neighborhoods break the observations into several pieces. Radius 0.95 reduces the graph to 12 nodes and four components. The sepal-width filter produces 30 nodes and nine components with radius 0.65. Even coarsening the cover from eight intervals to five produces *more* nodes (23), because local refinement also changes. These results are a useful reminder that cover resolution alone does not determine graph size.
+
+For a substantive analysis, also compare bootstrap or subsampled observations and track which original memberships support a proposed branch. Agreement across a few settings is a useful diagnostic, but is not a significance test or a proof that a graph recovers a Reeb graph.
 
 ## A note on data representation
 
 The local JuliaTDA packages work natively with `EuclideanSpace` objects from `MetricSpaces.jl`. If your data starts life as a `d \times n` matrix with one point per column, `EuclideanSpace(M)` converts it to the representation expected by `TDAmapper.jl`. When you want a matrix back for plotting, use `as_matrix(X)`.
 
-So the original column-major convention of the book is still there conceptually; it is just wrapped in a metric-space type that keeps the downstream API cleaner.
+The column convention matters: transposing the matrix changes what counts as an observation.
+
+## Try it yourself
+
+1. An observation belongs to three Mapper nodes. How many edges and higher nerve simplices does that shared membership supply?
+
+::: {.callout-note collapse="true" title="Worked answer"}
+All three pairs have an edge, giving a triangle in the graph. In the full nerve their common observation supplies the 2-simplex that fills that triangle. The graph alone omits the filling.
+:::
+
+2. Does a longer drawn edge imply a greater distance between the original flowers?
+
+::: {.callout-note collapse="true" title="Worked answer"}
+No. The default layout arranges an abstract overlap graph. Compare members in the original standardized feature space if you need a distance statement.
+:::
+
+3. In the Iris example, change only the coloring from setosa fraction to mean sepal width. Which part of Mapper changes?
+
+::: {.callout-note collapse="true" title="Worked answer"}
+Only the displayed node statistic changes. The filter, cover, refinement, memberships, and graph stay fixed. Changing the **filter** to sepal width would rebuild the inverse images and potentially change all of them.
+:::

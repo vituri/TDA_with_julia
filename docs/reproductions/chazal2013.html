@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.35">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>20&nbsp; ToMATo: recovering the twin spirals – Topological Data Analysis with Julia</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../reproductions/perea-harer2015.html" rel="next">
+<link href="../reproductions/lum2013.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-66196b26bc71d39a5d05b86c9547f414.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../style.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reproducing-papers.html">Reproducing Famous Papers</a></li><li class="breadcrumb-item"><a href="../reproductions/chazal2013.html"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">ToMATo: recovering the twin spirals</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Topological Data Analysis with Julia</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/vituri/TDA_with_julia" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Topology</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../topology.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Topology</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../simplicial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Simplicial complexes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../homology.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Simplicial homology</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Working with Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pointclouds.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Point clouds and distances</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../clustering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Clustering</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Persistent Homology</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../persistence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Persistent homology</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../computing_ph.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Computing persistent homology in Julia</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../uncertainty.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Uncertainty: which holes should we trust?</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">TDA Methods</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tomato.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">ToMATo</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../mapper.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Classical Mapper</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../ballmapper.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ball Mapper</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../mapper-general.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Applications</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../clustering_tomato.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Clustering with ToMATo</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../digits.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Classifying hand-written digits</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../timeseries.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Time series analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../shapes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Shape analysis and comparison</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../reproducing-papers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reproducing Famous Papers</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reproduction-mapper2007.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Reproducing Mapper: the Reaven–Miller experiment</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reproductions/lum2013.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Lum et al.&nbsp;(2013): Mapper on breast cancer expression data</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reproductions/chazal2013.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">ToMATo: recovering the twin spirals</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reproductions/perea-harer2015.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Perea and Harer (2015): sliding windows, periodicity, and coefficients</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reproductions/stability2007.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Cohen-Steiner et al.&nbsp;(2007): persistence stability</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Closing</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../summary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Summary and further reading</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-paper-and-the-target" id="toc-the-paper-and-the-target" class="nav-link active" data-scroll-target="#the-paper-and-the-target"><span class="header-section-number">20.1</span> The paper and the target</a></li>
+  <li><a href="#obtain-the-authors-data" id="toc-obtain-the-authors-data" class="nav-link" data-scroll-target="#obtain-the-authors-data"><span class="header-section-number">20.2</span> Obtain the authors’ data</a></li>
+  <li><a href="#reconstruct-the-analysis" id="toc-reconstruct-the-analysis" class="nav-link" data-scroll-target="#reconstruct-the-analysis"><span class="header-section-number">20.3</span> Reconstruct the analysis</a>
+  <ul class="collapse">
+  <li><a href="#preserve-the-density" id="toc-preserve-the-density" class="nav-link" data-scroll-target="#preserve-the-density"><span class="header-section-number">20.3.1</span> Preserve the density</a></li>
+  <li><a href="#build-an-actual-radius-graph" id="toc-build-an-actual-radius-graph" class="nav-link" data-scroll-target="#build-an-actual-radius-graph"><span class="header-section-number">20.3.2</span> Build an actual radius graph</a></li>
+  <li><a href="#inspect-persistence-then-apply-the-documented-threshold" id="toc-inspect-persistence-then-apply-the-documented-threshold" class="nav-link" data-scroll-target="#inspect-persistence-then-apply-the-documented-threshold"><span class="header-section-number">20.3.3</span> Inspect persistence, then apply the documented threshold</a></li>
+  </ul></li>
+  <li><a href="#results-on-every-released-point" id="toc-results-on-every-released-point" class="nav-link" data-scroll-target="#results-on-every-released-point"><span class="header-section-number">20.4</span> Results on every released point</a></li>
+  <li><a href="#audit-the-implementation" id="toc-audit-the-implementation" class="nav-link" data-scroll-target="#audit-the-implementation"><span class="header-section-number">20.5</span> Audit the implementation</a></li>
+  <li><a href="#run-and-verify" id="toc-run-and-verify" class="nav-link" data-scroll-target="#run-and-verify"><span class="header-section-number">20.6</span> Run and verify</a></li>
+  <li><a href="#what-has-been-reproduced" id="toc-what-has-been-reproduced" class="nav-link" data-scroll-target="#what-has-been-reproduced"><span class="header-section-number">20.7</span> What has been reproduced?</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reproducing-papers.html">Reproducing Famous Papers</a></li><li class="breadcrumb-item"><a href="../reproductions/chazal2013.html"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">ToMATo: recovering the twin spirals</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-reproduction-tomato2013" class="quarto-section-identifier"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">ToMATo: recovering the twin spirals</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>The JuliaTDA implementation recovers <strong>two spiral-shaped clusters</strong> from all 114,562 points in the original authors’ released benchmark. Both documented graph radii give the expected large-scale structure. At the smaller radius, the final height filter removes 17,688 points; at the larger radius, every point belongs to one of the two clusters.</p>
+<p>This is a reproduction of the <strong>released benchmark and its README commands</strong>, with a qualitative comparison to the paper. The released file is a different realization from the 10,000-point example in the publication. An independent audit also reveals differences in some peak deaths and eight final assignments at the smaller radius. Those differences are retained in the outputs and discussed below.</p>
+<section id="the-paper-and-the-target" class="level2" data-number="20.1">
+<h2 data-number="20.1" class="anchored" data-anchor-id="the-paper-and-the-target"><span class="header-section-number">20.1</span> The paper and the target</h2>
+<p>Frédéric Chazal, Leonidas J. Guibas, Steve Y. Oudot and Primoz Skraba introduced ToMATo in <em>Persistence-Based Clustering in Riemannian Manifolds</em>, <a href="https://doi.org/10.1145/2535927">Journal of the ACM 60(6), article 41 (2013)</a>. We use the <a href="https://geometrica.saclay.inria.fr/data/Steve.Oudot/clustering/jacm_oudot.pdf">authors’ journal manuscript</a>, especially Figure 2, Section 5.1 and Figures 6–8.</p>
+<p>The published twin-spirals example contains 10,000 points in the unit square. A radius graph with <span class="math inline">\(\delta=0.04\)</span> and an inverse distance-to-measure density produce two prominent peaks. A smaller radius, <span class="math inline">\(\delta=0.02\)</span>, creates many disconnected background components; a final filter on peak height removes much of that background. A separate experiment uses roughly 100,000 points. These are useful targets because the two clusters are not convex, and background points can connect them geometrically.</p>
+<p>The mechanism is the one developed in the <a href="../tomato.html">ToMATo chapter</a>: follow higher-density neighbors, measure how far each peak stands above its joining saddle, and merge peaks below a persistence threshold.</p>
+</section>
+<section id="obtain-the-authors-data" class="level2" data-number="20.2">
+<h2 data-number="20.2" class="anchored" data-anchor-id="obtain-the-authors-data"><span class="header-section-number">20.2</span> Obtain the authors’ data</h2>
+<p>The <a href="https://geometrica.saclay.inria.fr/data/ToMATo/">official ToMATo software page</a> supplies a source archive containing synthetic inputs. This experiment uses its <code>ToMaTo/inputs/spiral_w_density.txt</code>, whose three columns are <span class="math inline">\(x\)</span>, <span class="math inline">\(y\)</span> and a precomputed density value. No class labels are supplied.</p>
+<p>The archive’s README specifies radius 10 with <span class="math inline">\(\tau=10^{-3}\)</span> for two spirals with background removed, and radius 25 with the same threshold for two clusters spanning the whole dataset. We follow those commands directly. The existing FCPS <code>Target</code> and <code>Hepta</code> examples in the book are separate datasets and do not reproduce this experiment.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Choice</th>
+<th style="text-align: left;">Published 10k example</th>
+<th style="text-align: left;">Released benchmark used here</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Number of points</td>
+<td style="text-align: left;">10,000</td>
+<td style="text-align: left;">114,562; no subsampling</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Coordinates</td>
+<td style="text-align: left;">Unit square</td>
+<td style="text-align: left;">Native coordinates, approximately <span class="math inline">\([0,2006]^2\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Radius</td>
+<td style="text-align: left;">0.04; comparison at 0.02</td>
+<td style="text-align: left;">25; comparison at 10, from the archive README</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Density</td>
+<td style="text-align: left;">Inverse distance to measure</td>
+<td style="text-align: left;">Author-supplied third column, unchanged</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Threshold</td>
+<td style="text-align: left;">Chosen from the persistence gap</td>
+<td style="text-align: left;"><span class="math inline">\(10^{-3}\)</span>, from the archive README</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Comparison target</td>
+<td style="text-align: left;">Two prominent spirals</td>
+<td style="text-align: left;">Two spirals; filtering at radius 10</td>
+</tr>
+</tbody>
+</table>
+<p>The exact coordinate ranges are <span class="math inline">\(x\in[1.497,2005.79]\)</span> and <span class="math inline">\(y\in[1.145,2005.63]\)</span>. Density ranges from <span class="math inline">\(1.16451\times10^{-5}\)</span> to <span class="math inline">\(1.51124\times10^{-3}\)</span>. Radius and threshold therefore use <strong>the released file’s units</strong>. We do not transfer the paper’s unit-square radii to these coordinates, or equate the released realization with the paper’s 100k sample.</p>
+<p>The compressed archive is stored with the experiment. Loading it verifies these SHA-256 fingerprints before using any values:</p>
+<pre class="text"><code>Archive:
+15d360feb89e7f92aa3e00c0500e4ee439f6cb565932e82547364fcfd777f339
+spiral_w_density.txt:
+cdb64bbd14837a43bf3229c1a7500f7a662ac45ad0c40f2821473580965c82a3</code></pre>
+<p>The source was retrieved on October 3, 2026. The archive also preserves its original README, source code and GPL license. Full provenance and parameters are in <a href="experiments/chazal2013/config.toml">config.toml</a>.</p>
+</section>
+<section id="reconstruct-the-analysis" class="level2" data-number="20.3">
+<h2 data-number="20.3" class="anchored" data-anchor-id="reconstruct-the-analysis"><span class="header-section-number">20.3</span> Reconstruct the analysis</h2>
+<section id="preserve-the-density" class="level3" data-number="20.3.1">
+<h3 data-number="20.3.1" class="anchored" data-anchor-id="preserve-the-density"><span class="header-section-number">20.3.1</span> Preserve the density</h3>
+<p>We use the supplied density rather than inventing missing estimation parameters. This reproduces the graph-and-clustering stages, but does not independently reproduce the original density estimation stage.</p>
+<p>For clarity, the journal manuscript defines the empirical distance to measure as the root mean square of the distances to <span class="math inline">\(k\)</span> nearest neighbors, and uses its reciprocal as density. With the local API, that definition would require an explicit summary function:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">MetricSpaces</span>, <span class="bu">Statistics</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Formula illustration, not used to replace the released density.</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">rms_density</span>(X; k)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    rms_distance <span class="op">=</span> <span class="fu">distance_to_measure</span>(</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        X, X; k<span class="op">=</span>k, summary_function<span class="op">=</span>d <span class="op">-&gt;</span> <span class="fu">sqrt</span>(<span class="fu">mean</span>(abs2, d)),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fl">1</span> <span class="op">./</span> rms_distance</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>knn_density</code> uses the reciprocal of the <strong>maximum</strong> neighbor distance. Its default is therefore a different estimator. Moreover, the released <code>Density.h</code> squares ANN’s already-squared neighbor distances inside its distance-based estimator. The archive does not document how the saved spiral density was produced. We preserve the supplied values and make no claim to recover the unpublished estimator settings from that wrapper.</p>
+</section>
+<section id="build-an-actual-radius-graph" class="level3" data-number="20.3.2">
+<h3 data-number="20.3.2" class="anchored" data-anchor-id="build-an-actual-radius-graph"><span class="header-section-number">20.3.2</span> Build an actual radius graph</h3>
+<p>The book’s demonstration graph combines a radius, a degree cap and a nearest-neighbor fallback. Here we need the complete radius graph: vertices are adjacent exactly when their Euclidean distance is at most the chosen radius.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">ToMATo</span>, <span class="bu">MetricSpaces</span>, <span class="bu">Graphs</span>, <span class="bu">DelimitedFiles</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>archive <span class="op">=</span> <span class="st">"TDA_with_julia/reproductions/experiments/chazal2013/data/ToMATo_code.tar.gz"</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>member <span class="op">=</span> <span class="st">"ToMaTo/inputs/spiral_w_density.txt"</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>raw <span class="op">=</span> <span class="fu">readdlm</span>(<span class="fu">IOBuffer</span>(<span class="fu">read</span>(<span class="ss">`tar -xOzf $archive $member`</span>)), <span class="dt">Float64</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> <span class="fu">EuclideanSpace</span>(<span class="fu">permutedims</span>(raw[<span class="op">:</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>]))</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>density <span class="op">=</span> raw[<span class="op">:</span>, <span class="fl">3</span>]</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>radius <span class="op">=</span> <span class="fl">25.0</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> <span class="fu">proximity_graph</span>(</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    X, radius; min_k_ball<span class="op">=</span><span class="fl">0</span>, max_k_ball<span class="op">=</span><span class="fu">length</span>(X), k_nn<span class="op">=</span><span class="fl">0</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>(<span class="fu">nv</span>(g), <span class="fu">ne</span>(g), <span class="fu">length</span>(<span class="fu">connected_components</span>(g)))</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># (114562, 5864965, 1)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>min_k_ball=0</code> disables the fallback, and <code>max_k_ball=length(X)</code> avoids truncation, including the self-entry in a radius query. The experiment checks every edge against the requested distance bound. The edge counts also agree with an independent radius-neighbor count.</p>
+</section>
+<section id="inspect-persistence-then-apply-the-documented-threshold" class="level3" data-number="20.3.3">
+<h3 data-number="20.3.3" class="anchored" data-anchor-id="inspect-persistence-then-apply-the-documented-threshold"><span class="header-section-number">20.3.3</span> Inspect persistence, then apply the documented threshold</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>_, peak_pairs <span class="op">=</span> <span class="fu">tomato</span>(X, g, density, <span class="cn">Inf</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>tau <span class="op">=</span> <span class="fl">1e-3</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>labels, _ <span class="op">=</span> <span class="fu">tomato</span>(</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    X, g, density, tau; max_cluster_height<span class="op">=</span>tau,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>[<span class="fu">count</span>(<span class="op">==</span>(k), labels) for k <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="fl">2</span>]</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># [0, 58955, 55607]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The two occurrences of <code>tau</code> serve different purposes. The positional threshold merges peaks whose <strong>birth minus saddle density</strong> is less than <code>tau</code>. <code>max_cluster_height</code> then marks a remaining cluster as background when its <strong>absolute peak density</strong> is below that value. Label <code>0</code> is this filtered category, not a third spiral.</p>
+<p>Run with <code>Inf</code> to obtain the merge diagram. Run with <code>0</code> to see unmerged modes. The library stores an essential class as <code>[birth, Inf]</code>; this is a no-merge sentinel, not a finite death density. Our figure places those records in a separate strip.</p>
+</section>
+</section>
+<section id="results-on-every-released-point" class="level2" data-number="20.4">
+<h2 data-number="20.4" class="anchored" data-anchor-id="results-on-every-released-point"><span class="header-section-number">20.4</span> Results on every released point</h2>
+<div id="fig-tomato-reproduction-spirals" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tomato-reproduction-spirals-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="experiments/chazal2013/results/spirals.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tomato-reproduction-spirals-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;20.1: All 114,562 released points. Left: the supplied density. Middle: ToMATo at radius 10, with filtered points in gray. Right: radius 25 assigns the whole dataset to two spirals. Blue and orange identify retained clusters, not ground-truth labels.
+</figcaption>
+</figure>
+</div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Radius</th>
+<th style="text-align: right;">Graph edges</th>
+<th style="text-align: right;">Connected components</th>
+<th style="text-align: right;">Unmerged peaks</th>
+<th style="text-align: right;">Cluster 1</th>
+<th style="text-align: right;">Cluster 2</th>
+<th style="text-align: right;">Filtered points</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">941,251</td>
+<td style="text-align: right;">2,411</td>
+<td style="text-align: right;">8,613</td>
+<td style="text-align: right;">48,215</td>
+<td style="text-align: right;">48,659</td>
+<td style="text-align: right;">17,688</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">5,864,965</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">942</td>
+<td style="text-align: right;">58,955</td>
+<td style="text-align: right;">55,607</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p>At radius 10, <strong>15.44%</strong> of points receive label <code>0</code>. The retained populations trace the two spirals, while many sparse background components are removed. At radius 25, the graph is connected, all points are assigned, and the two spiral populations remain visible. These outcomes match the qualitative behavior described by the archive README.</p>
+<div id="fig-tomato-reproduction-persistence" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tomato-reproduction-persistence-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="experiments/chazal2013/results/persistence.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tomato-reproduction-persistence-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;20.2: Peak lifetime versus birth density from the unmodified Julia library. The dashed horizontal line is the merging threshold. Essential records are shown below each panel; the dashed vertical line there is the height filter. Radius 10 has three additional essential records caused by the library’s strict handling of equal densities, as discussed in the audit.
+</figcaption>
+</figure>
+</div>
+<p>The largest finite lifetime is separated from the next largest:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Radius</th>
+<th style="text-align: right;">Largest finite lifetime</th>
+<th style="text-align: right;">Second finite lifetime</th>
+<th style="text-align: right;">Selected threshold</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.001122660</td>
+<td style="text-align: right;">0.000411036</td>
+<td style="text-align: right;">0.001</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">0.001078604</td>
+<td style="text-align: right;">0.000356202</td>
+<td style="text-align: right;">0.001</td>
+</tr>
+</tbody>
+</table>
+<p>Thus the documented threshold lies inside the observed gap. One prominent finite peak survives alongside the highest essential peak. At the smaller radius, filtering removes the additional low-height essential classes.</p>
+<p>We also varied the two thresholds together, following the archive’s convention:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Threshold</th>
+<th style="text-align: right;">Positive clusters, radius 10</th>
+<th style="text-align: right;">Positive clusters, radius 25</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">8,613</td>
+<td style="text-align: right;">942</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.0005</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.00075</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.001</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.0012</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+<p>The two-cluster result occupies an interval, rather than occurring at a single tested threshold. This is a sensitivity check on this file and density; it does not prove statistical significance or replace evaluating other graph scales. The full sweep, including 0.00025 and filtered counts, is saved as <a href="experiments/chazal2013/results/threshold_sweep.csv">threshold_sweep.csv</a>.</p>
+</section>
+<section id="audit-the-implementation" class="level2" data-number="20.5">
+<h2 data-number="20.5" class="anchored" data-anchor-id="audit-the-implementation"><span class="header-section-number">20.5</span> Audit the implementation</h2>
+<p>A reproduction should also test whether a plausible picture hides a computational difference. <a href="experiments/chazal2013/audit.jl">audit.jl</a> implements an independent union-find sweep of the density graph. Final plots and cluster counts above still come from the unmodified <code>ToMATo.jl</code> implementation.</p>
+<p>The audit makes two comparisons. First, it uses the library’s same strict condition that a neighbor must have higher density. This isolates merge bookkeeping. Second, it allows previously processed equal-density vertices, matching a deterministic total ordering of a graph superlevel filtration.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Diagnostic</th>
+<th style="text-align: right;">Radius 10</th>
+<th style="text-align: right;">Radius 25</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Library essential records</td>
+<td style="text-align: right;">2,414</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Exact graph components / total-order essential classes</td>
+<td style="text-align: right;">2,411</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Peak death records differing from audit with the same tie rule</td>
+<td style="text-align: right;">22 of 8,613</td>
+<td style="text-align: right;">6 of 942</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Final assignments differing from audit with the same tie rule</td>
+<td style="text-align: right;"><strong>8 of 114,562</strong></td>
+<td style="text-align: right;"><strong>0</strong></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Final assignments differing from audit with total-order ties</td>
+<td style="text-align: right;">11 of 114,562</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p>There are two limitations in this checkout:</p>
+<ol type="1">
+<li><strong>Equal densities.</strong> The file has 62,293 distinct density values for 114,562 points. Strictly excluding equal-density neighbors can disconnect flat portions of the filtration. At radius 10 this produces three extra essential records. A graph superlevel filtration should have one essential class per connected component after all vertices appear.</li>
+<li><strong>A root can become stale during a merge.</strong> Inside a vertex’s neighbor loop, the library stores a cluster root in <code>c_max</code>. After merging that root into a higher one, it does not refresh <code>c_max</code> before the next neighbor. The independent sweep updates the root after every union. A seven-vertex example in <code>check.jl</code> verifies the correct deaths when three peaks meet at one saddle and exposes this difference in the library.</li>
+</ol>
+<p>Not all differing peak identities represent differing diagrams: two radius-25 records exchange death values between peaks with equal births. Nevertheless, other death discrepancies remain. Both audited diagrams agree with the library on the <strong>two largest finite lifetimes</strong>, and the independent implementations also find two retained clusters at the selected threshold. At radius 25 their final assignments agree exactly. At radius 10 the eight disagreements with the same tie rule amount to approximately <strong>0.007%</strong> of points.</p>
+<p>The saved <a href="experiments/chazal2013/results/death_audit.csv">death audit</a> includes every peak, its raw death, its audited death and a disagreement flag. The label files preserve raw and both audited assignments for every original row. No library source is changed by this experiment.</p>
+</section>
+<section id="run-and-verify" class="level2" data-number="20.6">
+<h2 data-number="20.6" class="anchored" data-anchor-id="run-and-verify"><span class="header-section-number">20.6</span> Run and verify</h2>
+<p>From the monorepo root, create or refresh the experiment’s private environment, then execute the analysis and checks:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="va">JULIA_PKG_PRECOMPILE_AUTO</span><span class="op">=</span>0 <span class="ex">julia</span> <span class="at">--startup-file</span><span class="op">=</span>no <span class="dt">\</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  TDA_with_julia/reproductions/experiments/chazal2013/setup.jl</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ex">julia</span> <span class="at">--startup-file</span><span class="op">=</span>no <span class="at">--pkgimages</span><span class="op">=</span>existing <span class="at">--compiled-modules</span><span class="op">=</span>existing <span class="at">--threads</span><span class="op">=</span>2 <span class="dt">\</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--project</span><span class="op">=</span>TDA_with_julia/reproductions/experiments/chazal2013/environment <span class="dt">\</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  TDA_with_julia/reproductions/experiments/chazal2013/run.jl</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="ex">julia</span> <span class="at">--startup-file</span><span class="op">=</span>no <span class="dt">\</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">--project</span><span class="op">=</span>TDA_with_julia/reproductions/experiments/chazal2013/environment <span class="dt">\</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  TDA_with_julia/reproductions/experiments/chazal2013/check.jl</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The scripts use the local <code>ToMATo.jl</code> and <code>MetricSpaces.jl</code> packages directly. The private environment avoids changing the book environment or the earlier Mapper reproduction. Julia 1.12.5 was used for the recorded run. The command reuses existing native package images and disables new ones because the host cache filesystem ran out of space during Makie linking; this affects startup and compilation, not the algorithm. <code>tar</code> is required to read the compressed archive. A missing archive is downloaded from the recorded source and checked before use. The chapter itself uses static code and precomputed images, so book rendering requires neither Julia execution nor network access.</p>
+<p>Checks cover dataset integrity, row count, graph radius bounds, graph size, documented cluster sizes and filtering, the persistence gap, threshold sensitivity, audit agreement at radius 25, and a hand-verifiable three-peak merge. <a href="experiments/chazal2013/results/summary.csv">summary.csv</a> contains the numerical comparison. <a href="experiments/chazal2013/results/provenance.toml">provenance.toml</a> records package-source fingerprints and the environment checksum; <a href="experiments/chazal2013/results/runtime.csv">runtime.csv</a> records observed timings, including first-call compilation where applicable.</p>
+</section>
+<section id="what-has-been-reproduced" class="level2" data-number="20.7">
+<h2 data-number="20.7" class="anchored" data-anchor-id="what-has-been-reproduced"><span class="header-section-number">20.7</span> What has been reproduced?</h2>
+<p>We recovered the released benchmark’s <strong>two prominent spirals</strong>, the effect of changing the graph radius, and the documented removal of disconnected background components. We did not recover the exact 10k realization, the unpublished density settings, or a numerical accuracy score from the publication. There are no source class labels, so reporting accuracy or adjusted Rand index would require invented ground truth.</p>
+<p>The experiment demonstrates the intended geometric behavior with the JuliaTDA tools while documenting their current numerical limits. It also leaves a concrete next step: after merge bookkeeping and equal-density handling are repaired in a separate library task, rerun the same saved file and compare the raw outputs against the independent audit.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/vituri\.github\.io\/TDA_with_julia\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../reproductions/lum2013.html" class="pagination-link" aria-label="Lum et al. (2013): Mapper on breast cancer expression data">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Lum et al.&nbsp;(2013): Mapper on breast cancer expression data</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../reproductions/perea-harer2015.html" class="pagination-link" aria-label="Perea and Harer (2015): sliding windows, periodicity, and coefficients">
+        <span class="nav-page-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Perea and Harer (2015): sliding windows, periodicity, and coefficients</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

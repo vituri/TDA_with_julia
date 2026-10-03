@@ -1,0 +1,46 @@
+[paper]
+authors = "Vin de Silva, Dmitriy Morozov, Mikael Vejdemo-Johansson"
+title = "Persistent Cohomology and Circular Coordinates"
+year = 2011
+doi = "10.1007/s00454-011-9344-x"
+source_pdf = "https://mrzv.org/publications/circular/full-dcg/"
+targets = ["Section 3.3, Figure 2: noisy circle", "Section 3.7, Figure 6: torus"]
+version_note = "2011 full author manuscript; the older arXiv0905.4887v1 circle experiment instead says 400 points"
+
+[circle]
+n = 200
+seed = 2011
+phase_distribution = "iid Uniform(0,1); the original sampling law/seed are not supplied"
+noise = "independent Uniform(0,0.4) added to each Cartesian coordinate"
+threshold = 0.5
+global_delta = 0.4
+local_delta = 0.14
+local_selection = "least-persistent active finite interval with lifetime >1e-6; exact original chosen cocycle unavailable"
+
+[torus]
+n = 400
+seed = 2011
+phase_distribution = "iid Uniform(0,1)^2"
+inner_radius = 1.0
+outer_radius = 3.0
+major_radius = 2.0
+minor_radius = 1.0
+noise = "independent Uniform(0,0.2) added to each Cartesian coordinate"
+threshold = "sqrt(3)"
+delta = 1.6
+
+[analysis]
+modulus = 47
+filtration = "Euclidean Vietoris-Rips 2-skeleton; parameter = maximum edge length"
+lift = "closest integer residues in [-23,23]; explicitly verify all triangle coboundaries"
+smoothing = "unweighted least squares min_f ||alpha + B*f||_2, one gauge anchor per graph component"
+coordinates = "f modulo 1; phase/sign gauge recorded"
+histogram_bins = 20
+integer_degree_search = [-2, -1, 0, 1, 2]
+
+[extension]
+api = "TDARipserer.CircularCoordinates implements Perea2020 sparse principal-Z-bundle method, not exactly the 2011 vertex construction"
+landmarks = "all 200 noisy-circle points, explicitly ordered"
+coverage = 1.0
+api_smoothing_delta = 0.5
+comparison_note = "API uses partition-of-unity extension and smoothing at 0.5, whereas original global coordinate uses delta0.4"

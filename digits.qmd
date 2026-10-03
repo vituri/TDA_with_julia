@@ -1,575 +1,375 @@
+---
+jupyter: tda-book
+---
+
 # Classifying hand-written digits
 
 > "Thank God for giving you a glimpse of heaven, but do not imagine yourself a bird because you can flap your wings." \
-> --- Alfred de Musset, in "The confession of a child of the century"
+> --- Alfred de Musset, *The Confession of a Child of the Century*
 
-In this tutorial, we will try to classify hand-written digits using the tools seen in previous chapters.
+Can topology help tell a 6 from a 9? Both often have one hole. A useful answer needs more than counting holes: we must decide which geometry to keep, build comparable features, and test the resulting model on digits it has never seen.
 
-## Loading packages
+Our experiment starts with eccentricity, a function derived from pairwise distances, then adds directional sweeps. We compare these topological features with a simple classifier on raw pixels. The point is to learn what the representation contributes, not to claim a competitive MNIST benchmark.
 
-```{julia}
-#| include: false
-#| echo: false
-#| warning: false
-using Flux
-```
+## Data, seeds, and a held-out test set
 
 ```{julia}
 import MLDatasets
-using Images, Makie, CairoMakie
+using Images: Gray, mosaicview
+using CairoMakie
 using Distances
-using TDARipserer, TDAPersistenceDiagrams
-using StatsBase: mean
-import Plots;
-using DataFrames, FreqTables, PrettyTables
-using Flux, ProgressMeter
+using TDARipserer, TDAPersistenceDiagrams, TDAplots
+using Statistics, Random
+using DataFrames
+using Flux
 ```
 
-## The dataset
+MNIST provides 60,000 training and 10,000 test images, each $28\times28$ pixels. To keep a CPU render bounded, use 1,000 training images, 200 validation images drawn from the training split, and 300 images from the official test split. The first load downloads the dataset if needed; the code explicitly accepts that dataset download.
 
-MNIST is a dataset consisting of 70.000 hand-written digits. Each digit is a 28x28 grayscale image, that is: a 28x28 matrix of values from 0 to 1. To get this dataset, run
+The **training set** fits the persistence-image grids, feature scaling, and classifier weights. The **validation set** checks those choices. The **test set** is used at the end, once the choices are fixed. Looking at test mistakes and then changing the model turns that set into development data; a new held-out evaluation would be needed.
 
 ```{julia}
-n_train = 10_000
-mnist_digits, mnist_labels = MLDatasets.MNIST(split=:train)[:];
-mnist_digits = mnist_digits[:, :, 1:n_train]
-mnist_labels = mnist_labels[1:n_train];
+n_train, n_validation, n_test = 1_000, 200, 300
+train_pixels, train_labels = withenv("DATADEPS_ALWAYS_ACCEPT" => "true") do
+    MLDatasets.MNIST(split = :train)[:]
+end
+rng = MersenneTwister(2026)
+selected = randperm(rng, length(train_labels))[1:(n_train + n_validation)]
+train_ids = selected[1:n_train]
+validation_ids = selected[(n_train + 1):end]
+
+# Transpose once so array row/column coordinates match the displayed orientation.
+as_figures(pixels, ids) = [Matrix(pixels[:, :, i]') for i in ids]
+training_figs = as_figures(train_pixels, train_ids)
+validation_figs = as_figures(train_pixels, validation_ids)
+y_train = Int.(train_labels[train_ids])
+y_validation = Int.(train_labels[validation_ids])
+
+mosaicview([Gray.(fig) for fig in training_figs[1:100]]; nrow = 10, rowmajor = true)
 ```
 
-If the console asks you to download some data, just press `y`.
-
-Notice that we only get the first `n_train` images so this notebook doesn't take too much time to run. You can increase `n_train` to 60000 if you like to live dangerously and have enough RAM memory.
-
-Next, we transpose the digits and save them in a vector
-
-```{julia}
-figs = [mnist_digits[:, :, i]' |> Matrix for i ∈ 1:size(mnist_digits)[3]];
-```
-
-The first digit, for example, is the following matrix:
-
-```{julia}
-figs[1]
-```
-
-We can see a mosaic with the first 10^2 digits
-
-```{julia}
-n = 10
-figs_plot = [fig .|> Gray for fig in figs[1:n^2]]
-mosaicview(figs_plot, nrow = n, rowmajor = true)
-```
+Larger subsets improve the experiment but increase the cost of five filtrations per image and the associated feature transformations. Start here, record the runtime on your machine, and increase the sizes gradually. Training on all 60,000 images is an optional experiment, not a promise of a few seconds.
 
 ## Preparing for war
 
-What topological tools can be useful to distinguish between different digits?
+A 0, 6, or 9 often has one hole; an 8 often has two. Handwriting can break these rules. Foreground connectivity also varies with broken strokes, isolated specks, and thresholding. A Rips filtration on ink pixels would contain useful geometry, but an isotropic metric alone cannot tell an exactly rotated 6 from its 9-shaped counterpart.
 
-Persistence homology with Vietoris-Rips filtration won't be of much help: all digits are connected, so the 0-persistence is useless; for the 1-dimensional persistence,
-
-- 1, 3, 5, 7 do not contain holes;
-- 2 and 4 sometimes contain one hole (depending on the way you write it);
-- 0, 6, 9 contain one hole each; 
-- 8 contains two holes.
-
-What if we starting chopping the digits with sublevels of some functions? The *excentricity* function is able to highlight edges. Doing a sublevel filtration with the excentricity function will permit us to separate digits by the amount of edges they have. So 1 and 3 and 7, for example, will have different persistence diagrams.
-
-### From square matrices to points in the plane
-
-In order to calculate the excentricity, we need to convert the "image digits" (28x28 matrices) to points in $\mathbb{R}^2$ (matrices with 2 columns, one for each dimension, which we will call *pointclouds*). A simple function can do that:
+Instead we use a cubical grid with functions on the ink. First choose a single foreground threshold and keep it fixed across every filtration and split:
 
 ```{julia}
-function img_to_points(img, threshold = 0.3)
-    ids = findall(x -> x >= threshold, img)
-    pts = getindex.(ids, [1 2])
-end;
-```
+foreground_threshold = 0.3
+foreground(fig) = fig .>= foreground_threshold
 
-Notice that we had to define a threshold: coordinates with values less than the threshold are not considered.
-
-Let's also define a function to plot a digit:
-
-```{julia}
-function plot_digit(fig, values = :black)
-    pt = img_to_points(fig)
-    f = Figure();
-    ax = Makie.Axis(f[1, 1], autolimitaspect = 1, yreversed = true)
-    scatter!(ax, pt[:, 2], pt[:, 1]; markersize = 40, marker = :rect, color = values)
-    if values isa Vector{<:Real}
-        Colorbar(f[1, 2])
-    end
+function plot_digit(fig; title = "Digit")
+    f = Figure(size = (300, 300))
+    ax = Axis(f[1, 1]; title = title, aspect = DataAspect(), yreversed = true)
+    heatmap!(ax, permutedims(fig); colormap = :grays)
     f
-end;
+end
+
+plot_digit(training_figs[5]; title = "One training digit")
 ```
 
-We can see that it works as expected
+This threshold changes which strokes and holes exist. It is part of the model, not harmless housekeeping. Use validation data to investigate alternative thresholds; do not tune it on the final test images.
 
-```{julia}
-fig = figs[3]
-heatmap(fig)
-```
+### Eccentricity
 
-but the image is flipped. This is easily fixed:
-
-```{julia}
-heatmap(fig |> rotr90)
-```
-
-### Excentricity
-
-Getting into details: the *excentricity* of a metric space $(X, d)$ is a measure of how far a point is from the "center". It is defined as follows for each $x \in X$:
+We use **mean-distance eccentricity**,
 
 $$
-e(x) = \sum_{y \in X} \frac{d(x, y)}{N}
+e(x)=\frac{1}{N}\sum_{y\in X}d(x,y),
 $$
 
-where $N$ is the amount of points of $X$.
-
-Define a function that takes a digit in $\mathbb{R}^2$ and return the excentricity as an 28x28 image
+on foreground coordinates normalized to the unit square. This differs from the maximum-distance definition also called eccentricity in graph theory. A point far from much of the ink tends to have a high value. It often highlights stroke extremities, but it does not literally count edges.
 
 ```{julia}
-function excentricity(fig)
-    pt = img_to_points(fig)
-    dists = pairwise(Euclidean(), pt')
-    excentricity = [mean(c) for c ∈ eachcol(dists)]
-    exc_matrix = zeros(28, 28)
-
-    for (row, (i, j)) ∈ enumerate(eachrow(pt))
-        exc_matrix[i, j] = excentricity[row]
+function eccentricity(fig)
+    mask = foreground(fig)
+    ids = findall(mask)
+    values = zeros(Float64, size(fig))
+    isempty(ids) && return values
+    coordinates = [Float64(idx[k] - 1) / 27 for k in 1:2, idx in ids]
+    distances = pairwise(Euclidean(), coordinates)
+    means = vec(mean(distances; dims = 1))
+    for (idx, value) in zip(ids, means)
+        values[idx] = value
     end
-
-    return exc_matrix
-end;
-```
-
-We store all the excentricities in the `excs` vector
-
-```{julia}
-excs = excentricity.(figs);
-```
-
-and plot a digit with it's corresponding excentricity
-
-```{julia}
-i = 5
-fig = figs[i]
-exc = excs[i]
-heatmap(exc |> rotr90)
-```
-
-Looks good! Time to chop it.
-
-### Persistence images
-
-Now we calculate all the persistence diagrams using sublevel filtration. This can take some seconds. Julia is incredibly fast, but does not perform miracles (yet!).
-
-```{julia}
-pds = map(excs) do ex
-    m = maximum(ex)
-    ex = m .- ex
-    ripserer(Cubical(ex), cutoff = 0.5)
-end;
-```
-
-We check the first one
-
-```{julia}
-pd = pds[i]
-pd |> barcode
-```
-
-Compare it with the corresponding heatmap above. There are 3 main edges (and one really small one). It seems ok!
-
-We can see the "step-by-step" creation of these connected components in the following mosaic.
-
-```{julia}
-r = range(minimum(exc), maximum(exc), length = 25) |> reverse
-figs_filtration = map(r) do v
-    replace(x -> x ≤ v ? 0 : 1, exc) .|> Gray
+    values
 end
 
-mosaicview(figs_filtration..., rowmajor = true, nrow = 5, npad = 20)
+example_fig = training_figs[5]
+example_eccentricity = eccentricity(example_fig)
+f = Figure()
+ax = Axis(f[1, 1], title = "Mean-distance eccentricity on the ink", aspect = DataAspect(), yreversed = true)
+visible_values = ifelse.(foreground(example_fig), example_eccentricity, NaN)
+hm = heatmap!(ax, permutedims(visible_values))
+Colorbar(f[1, 2], hm)
+f
 ```
 
-Now we create the persistence images of all these barcodes in dimension 0 and 1. We pass the entire collection of barcodes to the `PersistenceImage` function, and it will ensure that all of them are comparable (ie. are on the same grid).
+### Superlevels, foreground, and background
+
+To grow from high eccentricity toward low eccentricity, turn superlevels into sublevels. Use $g=C-e$, where $C=\sqrt2$ is a common bound for distances in the unit square. Then $g\leq a$ means $e\geq C-a$.
+
+Give background vertices value $C+1$ and stop at threshold $C$. They never enter. In this package, grid values belong to vertices and cells enter at the maximum of their vertex values. This is a cubical interpretation of the foreground mask, not a collection of solid squares for every bright pixel. In particular, diagonal pixel contacts and thin strokes deserve inspection.
 
 ```{julia}
-pds_0 = pds .|> first
-pds_1 = pds .|> last
-imgs_0 = PersistenceImage(pds_0; sigma = 1, size = 8)
-imgs_1 = PersistenceImage(pds_1; sigma = 1, size = 8);
-```
+empty_pd(k) = PersistenceDiagram(Tuple{Float64, Float64}[]; dim = k)
 
-The persistence images look ok too:
-
-```{julia}
-#| fig-cap: "Top left: the barcode of a digit with respect to sublevels using the excentricity function. Top right: the corresponding persistence diagram. Bottom: 0 and 1 dimensional persistence images. They create a pixelated view of the persistence diagram, using a gaussian blur."
-
-Plots.plot(
-    barcode(pds[i])
-    , Plots.plot(pds[i]; persistence = true)
-    , Plots.heatmap(imgs_0(pds[i][1]); aspect_ratio=1)
-    ,  Plots.heatmap(imgs_1(pds[i][2]); aspect_ratio=1)
-    , layout = (2, 2)
-    )
-```
-
-## Fitting a model
-
-In order to use these persistence images in a machine learning model, we first need to vectorize them, ie, transform them into a vector. Machine learning models love vectors! The easist way is to just concatenate the persistence images as follows:
-
-```{julia}
-function concatenate_pds(imgs_0, pds_0, imgs_1, pds_1)
-    persims = [
-        [vec(imgs_0(pds_0[i])); vec(imgs_1(pds_1[i])) ] for i in 1:length(pds)
-        ]
-
-    X = reduce(hcat, persims)'
-    X
+function digit_diagrams(fig, value_function, ceiling)
+    mask = foreground(fig)
+    any(mask) || return [empty_pd(0), empty_pd(1)]
+    values = value_function(fig)
+    grid = fill(ceiling + 1.0, size(fig))
+    grid[mask] .= ceiling .- values[mask]
+    # cutoff removes bars of persistence ≤ 0.01; it is not a significance test.
+    ripserer(Cubical(grid; threshold = ceiling), dim_max = 1, cutoff = 0.01)
 end
 
-X = concatenate_pds(imgs_0, pds_0, imgs_1, pds_1)
-y = mnist_labels .|> string;
+example_pd = digit_diagrams(example_fig, eccentricity, sqrt(2.0))
+barcode_plot(example_pd)
 ```
 
+Finite $H_0$ intervals describe components that merge during the sweep. An $H_1$ class describes a loop, not an individual stroke or edge. Bars that reach the threshold remain alive on the completed foreground mask; the background was never added to fill them. We retain the numbers of these surviving components and loops as two extra features, because persistence images alone ignore infinite intervals.
+
 ```{julia}
-#| output: asis
-#| echo: false
-"""
-We can see that `X` is a matrix with $(size(X)[1]) rows (the amount of digits) and $(size(X)[2]) columns (the persistence images concatenated).
-""" |> print
+levels = range(0, sqrt(2.0); length = 10)
+frames = [Gray.(foreground(example_fig) .&
+    (sqrt(2.0) .- example_eccentricity .<= level)) for level in levels]
+mosaicview(frames; nrow = 2, rowmajor = true, npad = 8)
 ```
 
+Read the mosaic from early to late. Components appear near high-value extremities and join as more ink enters. The final foreground can contain multiple connected components or holes, depending on the handwriting.
 
-It was also important to convert the `mnist_labels` to strings, because we want to classify the digits (and not do a regression on them).
+## Five filtrations, fitted once
 
-We now have a vector for each image. What can we do? We need a model that takes a large vector of numbers and try to predict the digit. Neural networks are excellent in finding non-linear relations on vectors. Let's try one!
+Eccentricity depends only on the metric, so translations, rotations, and reflections preserve its values for exactly isometric foreground samples. The cubical filtration also uses grid adjacency: grid-preserving isometries retain it exactly, while arbitrary image rotations require resampling and can change the foreground topology. A handwritten 6 and 9 are not always exactly isometric, but directional features can help where eccentricity loses a useful distinction.
 
-Create the layers
+Four coordinate functions add sweeps from opposite vertical and horizontal directions. Coordinates are normalized to $[0,1]$, so all images use the same units.
 
 ```{julia}
-function nn_model(X)
-  model = Chain(
-      Dense(size(X)[2] => 64)
-      ,Dense(64 => 10)
-  )
+function directional_values(fig; axis = 1, reverse = false)
+    [reverse ? 1 - (idx[axis] - 1) / 27 : (idx[axis] - 1) / 27
+        for idx in CartesianIndices(fig)]
 end
 
-model = nn_model(X)
-```
-
-the loader
-
-```{julia}
-target = Flux.onehotbatch(y, 0:9 .|> string)
-loader = Flux.DataLoader((X' .|> Float32, target), batchsize=32, shuffle=true);
-```
-
-the optimiser
-
-```{julia}
-optim = Flux.setup(Flux.Adam(0.01), model);
-```
-
-and train it
-
-```{julia}
-#| output: false
-@showprogress for epoch in 1:100
-    Flux.train!(model, loader, optim) do m, x, y
-        y_hat = m(x)
-        Flux.logitcrossentropy(y_hat, y)
-    end
-end;
-```
-
-The predictions can be made with
-
-```{julia}
-pred_y = model(X' .|> Float32)
-pred_y = Flux.onecold(pred_y, 0:9 .|> string);
-```
-
-And the accuracy
-
-```{julia}
-accuracy = sum(pred_y .== y) / length(y)
-accuracy = round(accuracy * 100, digits = 2)
-println("The accuracy on the train set was $accuracy %!")
-```
-
-Not bad, taking into account that we only used the excentricity sublevel filtration.
-
-The confusion matrix is the following:
-
-```{julia}
-tbl = freqtable(y, pred_y)
-```
-
-Calculating the proportion of prediction for each digit, we get
-
-```{julia}
-round2(x) = round(100*x, digits = 1)
-
-function prop_table(y1, y2)
-    tbl = freqtable(y1, y2)
-    tbl_prop = prop(tbl, margins = 1) .|> round2
-    tbl_prop
-end
-
-tbl_p = prop_table(y, pred_y)
-```
-
-We see that the biggest errors are the following:
-
-```{julia}
-function top_errors(tbl_p)
-    df = DataFrame(
-        Digit = Integer[]
-        , Prediction = Integer[]
-        , Percentage = Float64[]
-        )
-    
-    for i = eachindex(IndexCartesian(), tbl_p)
-        push!(df, (i[1]-1, i[2]-1, tbl_p[i]))    
-    end   
-   
-    filter!(row -> row.Digit != row.Prediction, df)
-    sort!(df, :Percentage, rev = true)
-    df[1:10, :]    
-end
-
-df_errors = top_errors(tbl_p)
-df_errors |> pretty_table
-```
-
-### The perils of isometric spaces
-
-How to separate "6" and "9"? They are isometric! For some people, "2" and "5" are also isometric (just mirror on the x-axis). Functions that only "see" the metric (like the excentricity) will never be able to separate these digits. In digits, the position of the features is important, so let's add more slicing filtrations to our arsenal.
-
-To avoid writing all the above code-blocks again, we encapsulate the whole process into a function
-
-```{julia}
-function whole_process(
-    mnist_digits, mnist_labels, f
-    ; imgs_0 = nothing, imgs_1 = nothing
-    , dim_max = 1, sigma = 1, size_persistence_image = 8
-    )
-    figs = [mnist_digits[:, :, i]' |> Matrix for i ∈ 1:size(mnist_digits)[3]]
-
-    excs = f.(figs);
-
-    pds = map(excs) do ex
-        m = maximum(ex)
-        ex = m .- ex
-        ripserer(Cubical(ex), cutoff = 0.5, dim_max = dim_max)
-    end;
-
-    pds_0 = pds .|> first
-    pds_1 = pds .|> last
-
-    if isnothing(imgs_0) 
-        imgs_0 = PersistenceImage(pds_0; sigma = sigma, size = size_persistence_image) 
-    end
-    if isnothing(imgs_1) 
-        imgs_1 = PersistenceImage(pds_1; sigma = sigma, size = size_persistence_image) 
-    end
-
-    persims = [
-    [vec(imgs_0(pds_0[i])); vec(imgs_1(pds_1[i])) ] for i in eachindex(pds)
-    ]
-
-    X = reduce(hcat, persims)'
-    y = mnist_labels .|> string
-
-    return X, y, pds_0, pds_1, imgs_0, imgs_1
-end;
-```
-
-We now create the sideways filtrations: from the side and from above.
-
-```{julia}
-set_value(x, threshold = 0.5, value = 0) = x ≥ threshold ? value : 0
-
-function filtration_sideways(fig; axis = 1, invert = false)
-
-  fig2 = copy(fig)
-  if axis == 2 fig2 = fig2' |> Matrix end
-
-  for i ∈ 1:28
-    if invert k = 29 - i else k = i end
-    fig2[i, :] .= set_value.(fig2[i, :], 0.5, k)
-  end
-
-  fig2
-
-end;
-```
-
-and calculate all 4 persistence diagrams. Warning: this can take a few seconds if you are using 60000 digits!
-
-```{julia}
-#| output: false
-fs = [
-    x -> filtration_sideways(x, axis = 1, invert = false)
-    ,x -> filtration_sideways(x, axis = 2, invert = false)
-    ,x -> filtration_sideways(x, axis = 1, invert = true)
-    ,x -> filtration_sideways(x, axis = 2, invert = true)
+filtrations = [
+    (name = "Eccentricity", f = eccentricity, ceiling = sqrt(2.0)),
+    (name = "Vertical", f = fig -> directional_values(fig; axis = 1), ceiling = 1.0),
+    (name = "Horizontal", f = fig -> directional_values(fig; axis = 2), ceiling = 1.0),
+    (name = "Reverse vertical", f = fig -> directional_values(fig; axis = 1, reverse = true), ceiling = 1.0),
+    (name = "Reverse horizontal", f = fig -> directional_values(fig; axis = 2, reverse = true), ceiling = 1.0),
 ]
 
-ret = @showprogress map(fs) do f
-    whole_process(
-        mnist_digits, mnist_labels, f
-        ,size_persistence_image = 8
-    )
-end;
-```
-
-We concatenate all the vectors
-
-```{julia}
-X_list = ret .|> first
-X_all = hcat(X, X_list...);
-```
-
-and try again with a new model:
-
-```{julia}
-#| output: false
-model = nn_model(X_all)
-
-target = Flux.onehotbatch(y, 0:9 .|> string)
-loader = Flux.DataLoader((X_all' .|> Float32, target), batchsize=64, shuffle=true);
-
-optim = Flux.setup(Flux.Adam(0.01), model)
-
-@showprogress for epoch in 1:50
-    Flux.train!(model, loader, optim) do m, x, y
-        y_hat = m(x)
-        Flux.logitcrossentropy(y_hat, y)
+function fit_digit_image(diagrams, ceiling; resolution = 8, sigma = 0.08)
+    if any(isfinite, Iterators.flatten(diagrams))
+        PersistenceImage(diagrams; size = resolution, sigma = sigma)
+    else
+        # Empty or essential-only training collection: a known, shared domain.
+        PersistenceImage((0.0, ceiling), (0.0, ceiling); size = resolution, sigma = sigma)
     end
-end;
+end
+
+function fit_digit_vectorizers(diagrams, ceiling)
+    (h0 = fit_digit_image(first.(diagrams), ceiling),
+     h1 = fit_digit_image(last.(diagrams), ceiling))
+end
+
+function digit_features(diagrams, vectorizers)
+    vectors = [Float32.([
+        vec(vectorizers.h0(pd[1]));
+        vec(vectorizers.h1(pd[2]));
+        count(bar -> !isfinite(bar), pd[1]);
+        count(bar -> !isfinite(bar), pd[2])
+    ]) for pd in diagrams]
+    reduce(hcat, vectors)  # rows are features; columns are images
+end
+
+training_diagrams = [[digit_diagrams(fig, spec.f, spec.ceiling) for fig in training_figs]
+                     for spec in filtrations]
+vectorizers = [fit_digit_vectorizers(pds, spec.ceiling)
+               for (pds, spec) in zip(training_diagrams, filtrations)]
+training_features = [digit_features(pds, fitted) for (pds, fitted) in zip(training_diagrams, vectorizers)]
+
+function transform_digits(figures, specifications, fitted_vectorizers)
+    @assert length(specifications) == length(fitted_vectorizers) == 5
+    [digit_features([digit_diagrams(fig, spec.f, spec.ceiling) for fig in figures], fitted)
+        for (spec, fitted) in zip(specifications, fitted_vectorizers)]
+end
+
+validation_features = transform_digits(validation_figs, filtrations, vectorizers)
+@assert all(size(train, 1) == size(validation, 1)
+    for (train, validation) in zip(training_features, validation_features))
+for fitted in vectorizers, (k, image) in enumerate((fitted.h0, fitted.h1))
+    @assert all(iszero, image(empty_pd(k - 1)))
+    @assert all(iszero, image(PersistenceDiagram([(0.0, Inf)]; dim = k - 1)))
+end
+println("Features per filtration: ", [size(X, 1) for X in training_features])
 ```
 
-Now we have
+Each of the five fitted pairs is stored in `vectorizers`. Validation and test images must reuse those exact objects. Refitting a new grid on a held-out collection would change the meanings of the coordinates consumed by the trained model.
+
+The resolution is 8 bins per direction, unless the fitted birth range collapses to one column. Gaussian width 0.08 smooths in our normalized filtration units. The default weight suppresses short-persistence points near the diagonal [@persistenceimages2017]. These are modest starting choices. Their effect should be evaluated on validation data, including possible test diagrams outside the fitted range.
 
 ```{julia}
-pred_y = model(X_all' .|> Float32)
-pred_y = Flux.onecold(pred_y, 0:9 .|> string)
-
-accuracy = sum(pred_y .== y) / length(y)
-accuracy = round(accuracy * 100, digits = 2)
-println("The accuracy on the train set was $accuracy %!")
+fitted = vectorizers[1]
+f = Figure(size = (650, 300))
+ax0 = Axis(f[1, 1], title = "Eccentricity H₀ image", xlabel = "Birth bin", ylabel = "Persistence bin")
+ax1 = Axis(f[1, 2], title = "Eccentricity H₁ image", xlabel = "Birth bin", ylabel = "Persistence bin")
+heatmap!(ax0, permutedims(fitted.h0(example_pd[1])))
+heatmap!(ax1, permutedims(fitted.h1(example_pd[2])))
+f
 ```
 
-which is certainly an improvement!
+An image can be zero even when the digit has a surviving hole: its separate final-loop count records that information.
 
-The proportional confusion matrix is
+## Classifiers and baselines
+
+We compare three predefined models: eccentricity features alone, all five filtrations, and a linear classifier on raw grayscale pixels. Also report the majority-label baseline. All models use the same training and validation images.
+
+Fit feature scaling on training columns only. Features that never vary receive scale 1, avoiding division by zero. The same mean and scale transform validation and test columns.
 
 ```{julia}
-prop_table(y, pred_y)
+function fit_scaling(X)
+    μ = mean(X; dims = 2)
+    σ = std(X; dims = 2, corrected = false)
+    σ = ifelse.(σ .> 1f-6, σ, 1f0)
+    (μ = μ, σ = σ)
+end
+scale_features(X, fitted) = Float32.((X .- fitted.μ) ./ fitted.σ)
+
+# The completed foreground is identical across sweeps, so keep its two counts once.
+combine_filtrations(features) = vcat(features[1],
+    [X[1:(end - 2), :] for X in features[2:end]]...)
+X_eccentricity = training_features[1]
+X_all = combine_filtrations(training_features)
+eccentricity_scaling = fit_scaling(X_eccentricity)
+all_scaling = fit_scaling(X_all)
+X_eccentricity = scale_features(X_eccentricity, eccentricity_scaling)
+X_all = scale_features(X_all, all_scaling)
+V_eccentricity = scale_features(validation_features[1], eccentricity_scaling)
+V_all = scale_features(combine_filtrations(validation_features), all_scaling)
+raw_features(figures) = Float32.(reduce(hcat, vec.(figures)))
+X_pixels, V_pixels = raw_features(training_figs), raw_features(validation_figs)
+
+function train_classifier(X, labels; nonlinear = true, seed = 1, epochs = 20)
+    Random.seed!(seed)
+    model = nonlinear ? Chain(Dense(size(X, 1) => 64, relu), Dense(64 => 10)) :
+                        Chain(Dense(size(X, 1) => 10))
+    targets = Flux.onehotbatch(labels, 0:9)
+    loader = Flux.DataLoader((X, targets); batchsize = 64, shuffle = true)
+    optimizer = Flux.setup(Flux.Adam(0.001), model)
+    for epoch in 1:epochs
+        Flux.train!(model, loader, optimizer) do m, x, y
+            Flux.logitcrossentropy(m(x), y)
+        end
+    end
+    model
+end
+
+model_eccentricity = train_classifier(X_eccentricity, y_train; seed = 11)
+model_all = train_classifier(X_all, y_train; seed = 12)
+model_pixels = train_classifier(X_pixels, y_train; nonlinear = false, seed = 13)
+predict_labels(model, X) = Int.(Flux.onecold(model(X), 0:9))
+accuracy(model, X, y) = mean(predict_labels(model, X) .== y)
+majority_label = argmax([count(==(label), y_train) for label in 0:9]) - 1
+
+validation_results = DataFrame(
+    Model = ["Majority label", "Raw pixels, linear", "Eccentricity, ReLU", "Five filtrations, ReLU"],
+    Training_accuracy = [mean(y_train .== majority_label),
+        accuracy(model_pixels, X_pixels, y_train), accuracy(model_eccentricity, X_eccentricity, y_train),
+        accuracy(model_all, X_all, y_train)],
+    Validation_accuracy = [mean(y_validation .== majority_label),
+        accuracy(model_pixels, V_pixels, y_validation), accuracy(model_eccentricity, V_eccentricity, y_validation),
+        accuracy(model_all, V_all, y_validation)])
+validation_results
 ```
 
-## Learning from your mistakes
+The `relu` activation makes the topological classifiers nonlinear. Without an activation, two stacked dense layers compose to an affine map. Persistence features themselves are nonlinear functions of the original image; that is a separate issue from the classifier's architecture.
 
-Let's explore a bit where the model is making mistakes. Collect all the errors
+Read the table before judging the result. Does adding directional information help on validation data? Is the training/validation gap larger? How strong is the raw-pixel baseline? The answer is measured by this run; more features do not guarantee an improvement. The small samples and fixed 20-epoch training schedule make this an illustrative comparison.
+
+## The held-out test
+
+Now freeze the entire pipeline. Load a reproducible subset of the official test split, compute the five filtrations, and reuse **all five training vectorizer pairs and both training scaling objects**.
 
 ```{julia}
-errors = findall(pred_y .!= y);
+test_pixels, test_labels = withenv("DATADEPS_ALWAYS_ACCEPT" => "true") do
+    MLDatasets.MNIST(split = :test)[:]
+end
+test_ids = randperm(MersenneTwister(2027), length(test_labels))[1:n_test]
+test_figs = as_figures(test_pixels, test_ids)
+y_test = Int.(test_labels[test_ids])
+test_features = transform_digits(test_figs, filtrations, vectorizers)
+@assert all(size(train, 1) == size(test, 1)
+    for (train, test) in zip(training_features, test_features))
+T_eccentricity = scale_features(test_features[1], eccentricity_scaling)
+T_all = scale_features(combine_filtrations(test_features), all_scaling)
+T_pixels = raw_features(test_figs)
+
+results = copy(validation_results)
+results.Test_accuracy = [mean(y_test .== majority_label),
+    accuracy(model_pixels, T_pixels, y_test), accuracy(model_eccentricity, T_eccentricity, y_test),
+    accuracy(model_all, T_all, y_test)]
+results
 ```
 
-and plot the first 3
+In the seeded run, eccentricity features give about 67% test accuracy, the five-filtration model about 91.7%, and the raw-pixel linear baseline 90%. Directional information helps substantially relative to the eccentricity descriptor in this experiment. The smaller difference from raw pixels needs more evidence before we claim an advantage.
+
+These fractions estimate performance on this held-out subset, with sampling uncertainty. At 300 images, one extra error changes accuracy by about 0.33 percentage points. Avoid reading a small difference as a definitive ranking; repeat a predefined evaluation on larger independent samples when the distinction matters.
+
+### Where does the five-filtration model fail?
+
+A confusion matrix keeps all ten labels even when a subset contains no example or prediction of a class. Rows below are true labels; columns are predicted labels. Each nonempty row is normalized to 100%.
 
 ```{julia}
-i = errors[1]
-println("The model predicted a $(pred_y[i]) but it was a $(y[i])")
-plot_digit(figs[i])
+y_pred = predict_labels(model_all, T_all)
+confusion = zeros(Int, 10, 10)
+for (actual, predicted) in zip(y_test, y_pred)
+    confusion[actual + 1, predicted + 1] += 1
+end
+row_percentages = 100 .* confusion ./ max.(sum(confusion; dims = 2), 1)
+
+f = Figure(size = (600, 500))
+ax = Axis(f[1, 1], title = "Held-out confusion matrix (%)", xlabel = "Predicted digit", ylabel = "True digit",
+    xticks = (1:10, string.(0:9)), yticks = (1:10, string.(0:9)))
+hm = heatmap!(ax, permutedims(row_percentages); colorrange = (0, 100))
+Colorbar(f[1, 2], hm, label = "Row percentage")
+f
 ```
+
+Inspect the largest off-diagonal entries and their example counts. A high error percentage on a class represented by only a few samples is especially uncertain.
 
 ```{julia}
-i = errors[2]
-println("The model predicted a $(pred_y[i]) but it was a $(y[i])")
-plot_digit(figs[i])
+errors = findall(y_pred .!= y_test)
+println("Test errors: ", length(errors), " of ", length(y_test))
+if !isempty(errors)
+    error_ids = errors[1:min(9, length(errors))]
+    println([(true_label = y_test[i], predicted_label = y_pred[i]) for i in error_ids])
+    mosaicview([Gray.(test_figs[i]) for i in error_ids]; nrow = 3, rowmajor = true)
+end
 ```
 
-```{julia}
-i = errors[3]
-println("The model predicted a $(pred_y[i]) but it was a $(y[i])")
-plot_digit(figs[i])
-```
+A mistaken label can result from a broken stroke, an unusual orientation, a small foreground hole, an unsuitable filtration, or limited training data. Look at the actual image before blaming the writer. To develop another filter, use training or validation mistakes and preserve an untouched test set.
 
-We can make a mosaic with the first 100 errors
+## Predict before running
 
-```{julia}
-n = 10
-figs_plot = [figs[i] .|> Gray for i in errors[1:n^2]]
-mosaicview(figs_plot, nrow = n, rowmajor = true)
-```
+1. Why might eccentricity confuse an ideal rotated 6 with a 9?
 
-Many of these digits are really ugly! This makes them hard to classify with our sublevel filtrations. Some other functions could be explored.
+::: {.callout-tip collapse="true" title="Answer"}
+A rotation preserves pairwise Euclidean distances and hence mean-distance eccentricity. The corresponding cubical representation also depends on the grid, but an exact grid-preserving rotation retains the filtration. Directional functions deliberately preserve orientation information that the metric-only function loses.
+:::
 
-## Getting new data
+2. A test diagram has a larger birth range. Should you fit a fresh persistence-image grid on the test collection?
 
-Now we want to see if our model really learned something, or if it just repeated what he saw in the training data. To check data, we need to get new data and calculate the accuracy of the same model on this new data.
+::: {.callout-tip collapse="true" title="Answer"}
+No. The model's coordinates were defined by the training grid. Reuse it, report range drift, and reconsider the domain using development data if necessary. A new held-out evaluation is needed after changing the pipeline.
+:::
 
-```{julia}
-n_test = 5_000
-new_mnist_digits, new_mnist_labels = MLDatasets.MNIST(split=:test)[:];
-new_mnist_digits = new_mnist_digits[:, :, 1:n_test]
-new_mnist_labels = new_mnist_labels[1:n_test];
-```
+3. A foreground loop survives at the threshold. Where is that information in our features?
 
-and obtaning `X` and `y` to feed the model
+::: {.callout-tip collapse="true" title="Answer"}
+Its infinite interval is ignored by the persistence image, but the final $H_1$ count records it. Background vertices never enter this filtration. The endpoint is an observation boundary, not a measured death.
+:::
 
-```{julia}
-#| output: false
-fs = [
-    x -> excentricity(x)
-    ,x -> filtration_sideways(x, axis = 1, invert = false)
-    ,x -> filtration_sideways(x, axis = 2, invert = false)
-    ,x -> filtration_sideways(x, axis = 1, invert = true)
-    ,x -> filtration_sideways(x, axis = 2, invert = true)
-]
-
-ret = @showprogress map(fs) do f
-    whole_process(
-        new_mnist_digits, new_mnist_labels, f
-        ,size_persistence_image = 8
-    )
-end;
-```
-
-Define our new `X` and `y`
-
-```{julia}
-new_X = ret .|> first
-new_X = hcat(new_X...)
-new_y = ret[1][2]
-
-new_pred_y = model(new_X' .|> Float32)
-new_pred_y = Flux.onecold(new_pred_y, 0:9 .|> string);
-```
-
-and calculate the accuracy:
-
-```{julia}
-accuracy = sum(new_pred_y .== new_y) / length(new_y)
-accuracy = round(accuracy * 100, digits = 2)
-println("The accuracy on the test data was $accuracy %!")
-```
-
-A bit less than the training set, but not so bad.
-
-Let's check the confusion matrix
-
-```{julia}
-tbl = prop_table(new_y, new_pred_y)
-```
-
-## Closing remarks
-
-Even though we used heavy machinery from topology, at the end our persistence images were vectors that indicated the birth and death of edges. Apart from that, the only machine learning algorithm we used was a [simple dense neural network](https://en.wikipedia.org/wiki/Artificial_neural_network) to fit these vectors to the correct labels in a non-linear way. State-of-art machine learning models on the MNIST dataset usually can [get more than 99% of accuracy](https://paperswithcode.com/sota/image-classification-on-mnist), but they use some [complicated neural networks](https://en.wikipedia.org/wiki/Convolutional_neural_network) with many layers, and the output prediction are [hard to explain](https://en.wikipedia.org/wiki/Black_box). These methods, however, are not excludent of each other: we can use the persistence images (and any other vectorized output from TDA) together with other algorithms.
-
-A curious exercise to the reader is to check if a neural network with two parallel inputs
-- one for the digits images, followed by convolutional layers
-- other for the vector of persistence images, followed by dense layers
-can achieve a better result than the convolutional alone.
+The representation is the main lesson: invariance can help remove nuisances, but it can also remove the distinction needed for a label. Directional topology, grayscale pixels, and other descriptors can complement one another. A useful next experiment combines topological features with a pixel model, then compares it with both baselines under the same held-out protocol.

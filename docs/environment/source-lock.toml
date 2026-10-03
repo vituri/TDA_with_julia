@@ -1,0 +1,52 @@
+# Runtime source snapshots; the hashes include the listed local changes.
+format_version = 1
+archive = "package-sources.tar"
+archive_sha256 = "6c8b9152790d33957ccca40994cfe9e64dc9eb880bc9f9a1fb3748b2c23ee4ed"
+
+[packages.MetricSpaces]
+uuid = "737298cd-3e4b-40c4-a4ce-863151543a8d"
+version = "0.2.0"
+url = "https://github.com/JuliaTDA/MetricSpaces.jl.git"
+revision = "08f1bb4f84c7a851ad6f06ae60cc1ccedf80916b"
+includes_local_changes = true
+source_sha256 = "b32aabe190ec2923350db9c22785bd9e6bbdd739287b842cf2e031daa87a06fd"
+
+[packages.TDAPersistenceDiagrams]
+uuid = "bbe17acd-c4ea-4f01-a2b8-42969f873a90"
+version = "0.1.0"
+url = "https://github.com/JuliaTDA/PersistenceDiagrams.jl"
+revision = "c78952ba99b0decf03ed55fbcf93adb48d8c4fd0"
+includes_local_changes = true
+source_sha256 = "2612c69d3d06250189dff138f8c2e051d0da799026a4603507b19decd9f39be8"
+
+[packages.TDARipserer]
+uuid = "d8d97730-eb17-4b7a-9fb6-200f7d8ece7d"
+version = "0.1.0"
+url = "https://github.com/JuliaTDA/Ripserer.jl"
+revision = "9583a3b7e64565f11f869155b346b675eb508740"
+includes_local_changes = true
+source_sha256 = "45d21e34f3cd7cf33996ccab5773c04200e16e96eca8990a7e2b5982b146013c"
+
+[packages.TDAmapper]
+uuid = "90314d98-8742-41ec-badb-bb392eb26b11"
+version = "0.1.0"
+url = "https://github.com/JuliaTDA/TDAmapper.jl.git"
+revision = "1d483ef3f4d3c0a0d318ba4539b7b419df1f8217"
+includes_local_changes = true
+source_sha256 = "cfe4da6c24d24757fefd021a130f50e20eafd76522a5f8ee781cbe877acdf7de"
+
+[packages.TDAplots]
+uuid = "a34ba9c9-258a-4d5b-bbaf-9af986d00e54"
+version = "0.1.0"
+url = "https://github.com/JuliaTDA/TDAplots.jl.git"
+revision = "cf60f7a8ffddecd55dca33a7c88bebd2699dd34a"
+includes_local_changes = true
+source_sha256 = "cfbccadbe168cf12182df948f614e4316f80b0f5132218894199502efdc62a81"
+
+[packages.ToMATo]
+uuid = "9853e363-5d33-44e1-8657-922a46906663"
+version = "0.2.0"
+url = "https://github.com/JuliaTDA/ToMATo.jl.git"
+revision = "99e38ea4b6ed121f4109e7bd9d544b432b9cf8f4"
+includes_local_changes = true
+source_sha256 = "a276471218a0c31574bfb3eadde664bd0f6824c50bf53bdc374db8e1886ed13e"

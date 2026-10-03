@@ -1,0 +1,11 @@
+actual_support_hausdorff = 0.061946330299640896
+bootstrap_H1_sensitivity_successes = 15
+bootstrap_radius = 0.061703513256674836
+bootstrap_sensitivity_comparisons = 15
+config_sha256 = "df89acd7945586f84138da11d96ca7681ae596a216a861116698d25ba6ace83f"
+finite_grid_radius = 0.1900711438092789
+julia_version = "1.12.5"
+native_band_max_absolute_difference = 3.608224830031759e-16
+sample_seed = 2014
+script_sha256 = "5a83276c5fa37555dbad37695072c255b83908ec030727c97a86aa4213a487b5"
+target = "Fasy et al. (2014), Example 13 / Figure 6"

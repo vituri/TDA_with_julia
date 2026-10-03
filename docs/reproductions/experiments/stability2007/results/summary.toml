@@ -1,0 +1,13 @@
+project_file = "Project.toml"
+violations = 0
+project_sha256 = "0d8eede36f7a54bcc67cdacaf7fd89447d1bd6614f038b7a6779cc9a3b34089b"
+julia_version = "1.12.5"
+threads = 1
+comparisons = 80
+maximum_bottleneck = 0.19360827886194354
+target = "Bottleneck Stability Theorem; computational verification, not replication of a published empirical figure"
+config_sha256 = "043d88e787ee3a8d07a3dc2ac0a48c62418dc9261827f30e1ca5b63a35e79163"
+max_positive_excess = 0.0
+field_sha256 = "e118e389d9f7ef45efe4db5c947ee524b336ca8997f5244b774167748c32da6a"
+manifest_sha256 = "69b73d8e58c5be3a0f00bd150d86a88e548133f5b2c53c019ae12f1a7b704a65"
+script_sha256 = "b2cc27e029db9f337e2aa15c7fe54151a5f5cafdde0f4e06a5e83e9e26f87a00"

@@ -1,0 +1,178 @@
+---
+jupyter: tda-book
+---
+
+# Uncertainty: which holes should we trust? {#sec-uncertainty}
+
+We have found a long bar. Shall we frame it and hang it on the wall? Perhaps. First we should ask what made it long.
+
+Persistence measures a lifetime in the chosen filtration. It is not a probability, a significance level, or a certificate that we have discovered a scientific mechanism. A large loop can be caused by the phenomenon we care about, by the way we collected the observations, or by a preprocessing decision. Those possibilities deserve different questions.
+
+## Three questions, three kinds of evidence
+
+| Question | What to examine | What this does not establish |
+|---|---|---|
+| Does a small input perturbation change the diagram a little? | A stability bound for the specified filtration and input distance | Whether a feature has scientific meaning |
+| Would another sample from the same population give a similar result? | Independent replicate datasets, subsampling, or an appropriate bootstrap | A universal null hypothesis of “no topology” |
+| Is the observed summary unusual under a stated model? | A test statistic and simulations or permutations valid under that model | That the alternative explanation is uniquely correct |
+
+The [stability theorem](persistence.qmd#sec-stability) answers the first question. Statistical inference needs sampling and model assumptions as well. Confidence-set results for persistence diagrams are developed in [@bootstrap2014]; their guarantees belong to their hypotheses, not to every script with a resampling loop.
+
+## A stated null model
+
+Suppose our question is whether a cloud has more ring-like structure than we would expect from independent points uniformly sampled inside the unit disk. This is a deliberately specific null model. “There is no interesting structure” would be a much harder model to simulate!
+
+We will compare a noisy circle with disk samples containing the same number of observations. To remove overall size from this particular comparison, use the longest finite $H_1$ lifetime divided by the cloud diameter:
+
+$$
+T(X)=\frac{\max\{d-b:(b,d)\in\operatorname{Dgm}_1(X),\ d<\infty\}}
+{\operatorname{diam}(X)},
+$$
+
+with $T(X)=0$ when there are no finite loops. This is invariant under uniform scaling. It is still a summary of the chosen Rips filtration, not a complete description of shape.
+
+```{julia}
+#| label: uncertainty-setup
+#| include: false
+using CairoMakie, MetricSpaces, TDARipserer, TDAPersistenceDiagrams
+using Random, Statistics
+```
+
+```{julia}
+function sample_disk(rng, n)
+    theta = 2pi .* rand(rng, n)
+    radius = sqrt.(rand(rng, n))
+    EuclideanSpace(permutedims(hcat(radius .* cos.(theta),
+                                  radius .* sin.(theta))))
+end
+
+function longest_finite_loop(diagram)
+    lifetimes = [persistence(interval) for interval in diagram if isfinite(interval)]
+    isempty(lifetimes) ? 0.0 : maximum(lifetimes)
+end
+
+function loop_score(X)
+    diameter = maximum(pairwise_distance(X, X, dist_euclidean))
+    diameter == 0 && return 0.0
+    diagrams = ripserer(Rips(X), dim_max = 1)
+    longest_finite_loop(diagrams[2]) / diameter
+end
+
+rng = MersenneTwister(2026)
+n = 80
+theta = 2pi .* rand(rng, n)
+observed = EuclideanSpace(permutedims(hcat(cos.(theta), sin.(theta))) .+
+                          0.04 .* randn(rng, 2, n))
+null_example = sample_disk(rng, n)
+```
+
+```{julia}
+#| label: fig-null-clouds
+#| fig-cap: "Two clouds with 80 observations: the noisy circle whose score we will test, and one independent sample from the uniform-disk null model."
+fig = Figure(size = (800, 350))
+for (j, X, title) in [(1, observed, "Observed: noisy circle"),
+                      (2, null_example, "One null sample: uniform disk")]
+    M = as_matrix(X)
+    ax = Axis(fig[1, j], title = title, aspect = DataAspect(),
+              xlabel = "x", ylabel = "y")
+    scatter!(ax, M[1, :], M[2, :], markersize = 5)
+end
+fig
+```
+
+Now simulate independent null datasets, recomputing the entire statistic for each one:
+
+```{julia}
+B = 99
+observed_score = loop_score(observed)
+null_scores = [loop_score(sample_disk(rng, n)) for _ in 1:B]
+p_value = (1 + count(>=(observed_score), null_scores)) / (B + 1)
+println("Observed score: ", round(observed_score, digits = 3))
+println("Monte Carlo p-value: ", p_value)
+```
+
+The extra $1$ in both numerator and denominator prevents a reported p-value of zero. With 99 null simulations the smallest possible value is $0.01$. A larger simulation budget gives finer resolution, but it cannot repair an inappropriate null model.
+
+Under this fully specified null, the observed sample and the null simulations would be exchangeable. The rank-based calculation is therefore a Monte Carlo test for that model, with conservative treatment of ties. Our seeded noisy circle was generated from a different model, so the example is designed to illustrate a rejection; it is not evidence about an unknown real population.
+
+If we estimated the disk radius, selected the score, or tried many filtrations after inspecting the data, the calculation would need to account for those choices. Testing 20 variants and publishing the smallest p-value is not the same experiment as testing one prespecified statistic.
+
+## Sampling variation: an exploratory bootstrap
+
+Resampling the observed points asks a different question: how sensitive is this observed diagram to the empirical sampling distribution?
+
+```{julia}
+original_h1 = ripserer(Rips(observed), dim_max = 1)[2]
+M = as_matrix(observed)
+bootstrap_distances = map(1:99) do _
+    ids = unique(rand(rng, 1:n, n))  # sample with replacement, then keep distinct locations
+    replica = EuclideanSpace(M[:, ids])
+    replica_h1 = ripserer(Rips(replica), dim_max = 1)[2]
+    Bottleneck()(original_h1, replica_h1)
+end
+resampling_radius = quantile(bootstrap_distances, 0.90)
+println("Exploratory 90% resampling radius: ",
+        round(resampling_radius, digits = 3))
+```
+
+```{julia}
+#| label: fig-null-and-bootstrap
+#| fig-cap: "Left: scores under the stated disk null, with the observed score marked in red. Right: bottleneck distances from empirical bootstrap replicas to the observed diagram. These distributions answer different questions."
+fig = Figure(size = (900, 350))
+ax1 = Axis(fig[1, 1], title = "Disk null distribution",
+           xlabel = "Longest loop / diameter", ylabel = "Replicas")
+hist!(ax1, null_scores, bins = 15)
+vlines!(ax1, [observed_score], color = :firebrick, linewidth = 2)
+ax2 = Axis(fig[1, 2], title = "Empirical resampling variation",
+           xlabel = "Bottleneck distance", ylabel = "Replicas")
+hist!(ax2, bootstrap_distances, bins = 15)
+vlines!(ax2, [resampling_radius], color = :firebrick, linewidth = 2)
+fig
+```
+
+Repeated observations do not add geometric locations to a Rips complex. After drawing with replacement, we keep each selected location once; a replica therefore usually has fewer distinct points than the original sample. This preserves the geometric support of the resample while avoiding duplicate-point warnings. It would not be appropriate for an estimator that uses multiplicities as weights.
+
+The radius contains approximately 90% of these *bootstrap distances*. We have not proved that it is a 90% confidence radius for the population diagram. Coverage for an underlying support or density requires an appropriate estimator, asymptotic conditions, and calibration; naive support resampling can behave poorly. Treat this small experiment as a diagnostic of empirical sampling variation, and consult [@bootstrap2014] before attaching a confidence claim.
+
+A diagram point of lifetime $\ell$ has $L^\infty$ distance $\ell/2$ from the diagonal. If a *valid* bottleneck confidence radius is $c$, points with $\ell>2c$ cannot disappear into the diagonal within that confidence set. The geometry explains the threshold; the statistical argument must establish the radius.
+
+The examples here assume independent observations. Delay-embedding windows from one time series overlap and are dependent. Resampling those windows as though they were independent does not create valid independent replicates; use independent recordings or a resampling scheme justified for the temporal dependence.
+
+## Robustness has limits
+
+Hausdorff stability does not make Rips persistence immune to outliers. A single distant observation can make the Hausdorff distance large. Likewise, changing the metric or bandwidth changes the question; it is not a small perturbation of a fixed analysis merely because the same data file is used.
+
+Before interpreting a result, record:
+
+1. which observations are independent sampling units;
+2. the preprocessing, metric, filtration, and parameter-selection rule;
+3. the statistic and null model, if a hypothesis test is intended;
+4. which alternative explanations the topological summary cannot distinguish.
+
+Independent replicate clouds can be compared through shared-grid landscapes or other summaries [@landscapes2015]. For prediction, fit preprocessing and vectorization on training data, choose parameters on validation data, and evaluate once on held-out data. The [digits chapter](digits.qmd) follows that separation.
+
+## Exercises
+
+### 1. A circle twice as large
+
+If all coordinates are multiplied by $2$, what happens to Rips birth and death values? What happens to $T(X)$?
+
+::: {.callout-note collapse="true" title="Worked answer"}
+All pairwise distances, births, deaths, and lifetimes double. The diameter also doubles, so the normalized score is unchanged. An unnormalized persistence threshold would need to double to represent the same geometric decision.
+:::
+
+### 2. A very small p-value
+
+None of 99 null scores equals or exceeds the observed score. What p-value do we report, and does it prove that the data came from a circle?
+
+::: {.callout-note collapse="true" title="Worked answer"}
+The p-value is $(1+0)/(99+1)=0.01$. It provides evidence against the specified uniform-disk model. Many alternatives, including sampling artifacts, can produce a large loop; the test does not uniquely identify a circle-generating mechanism.
+:::
+
+### 3. A bootstrap confidence claim
+
+Why is the empirical 90% quantile above insufficient, by itself, to claim 90% population coverage? What changes for overlapping time-series windows?
+
+::: {.callout-note collapse="true" title="Worked answer"}
+The empirical bootstrap distribution must approximate the relevant sampling distribution, and the target estimator and calibration must satisfy appropriate conditions. The quantile alone proves no such approximation. Overlapping windows add dependence, so an independent-observation bootstrap is not justified without a dependence-aware argument.
+:::

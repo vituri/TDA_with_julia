@@ -1,0 +1,11 @@
+checks = ["dataset SHA256 and schema", "KDE vs explicit Gaussian sum", "each nerve edge vs patient intersection", "single linkage vs distance-threshold connected components"]
+configurations = 480
+all_configurations_cover_145_patients = true
+
+[models]
+k4_h8 = true
+k4_h4 = true
+k3_h8 = true
+k3_h1 = true
+k3_h4 = true
+k4_h1 = true

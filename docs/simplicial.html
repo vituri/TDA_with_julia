@@ -23,7 +23,26 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -125,7 +144,7 @@ window.Quarto = {
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
@@ -233,6 +252,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Computing persistent homology in Julia</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./uncertainty.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Uncertainty: which holes should we trust?</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -247,25 +272,25 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./tomato.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">ToMATo</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">ToMATo</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./mapper.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">(Classical) mapper</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Classical Mapper</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ballmapper.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ball mapper</span></span></a>
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ball Mapper</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./mapper-general.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></span></a>
   </div>
 </li>
       </ul>
@@ -282,33 +307,33 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./clustering_tomato.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Clustering with ToMATo</span></span></a>
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Clustering with ToMATo</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./digits.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Classifying hand-written digits</span></span></a>
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Classifying hand-written digits</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./timeseries.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Time series analysis</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Time series analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./shapes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Shape analysis and comparison</span></span></a>
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Shape analysis and comparison</span></span></a>
   </div>
 </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
- <span class="menu-text">Closing</span></a>
+            <a href="./reproducing-papers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reproducing Famous Papers</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -316,8 +341,49 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./reproduction-mapper2007.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Reproducing Mapper: the Reaven–Miller experiment</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reproductions/lum2013.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Lum et al.&nbsp;(2013): Mapper on breast cancer expression data</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reproductions/chazal2013.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">ToMATo: recovering the twin spirals</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reproductions/perea-harer2015.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Perea and Harer (2015): sliding windows, periodicity, and coefficients</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reproductions/stability2007.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Cohen-Steiner et al.&nbsp;(2007): persistence stability</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Closing</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./summary.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Summary and further reading</span></span></a>
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Summary and further reading</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -343,28 +409,30 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#the-essence-of-a-circle" id="toc-the-essence-of-a-circle" class="nav-link" data-scroll-target="#the-essence-of-a-circle"><span class="header-section-number">3.2.1</span> The essence of a circle</a></li>
   </ul></li>
-  <li><a href="#simplicial-complexes" id="toc-simplicial-complexes" class="nav-link" data-scroll-target="#simplicial-complexes"><span class="header-section-number">3.3</span> Simplicial complexes</a></li>
-  <li><a href="#sec-data-to-sc" id="toc-sec-data-to-sc" class="nav-link" data-scroll-target="#sec-data-to-sc"><span class="header-section-number">3.4</span> From data to simplicial complexes</a>
+  <li><a href="#simplices-and-their-faces" id="toc-simplices-and-their-faces" class="nav-link" data-scroll-target="#simplices-and-their-faces"><span class="header-section-number">3.3</span> Simplices and their faces</a></li>
+  <li><a href="#sec-geometric-realization" id="toc-sec-geometric-realization" class="nav-link" data-scroll-target="#sec-geometric-realization"><span class="header-section-number">3.4</span> Abstract objects, geometric spaces</a></li>
+  <li><a href="#sec-data-to-sc" id="toc-sec-data-to-sc" class="nav-link" data-scroll-target="#sec-data-to-sc"><span class="header-section-number">3.5</span> From data to simplicial complexes</a>
   <ul class="collapse">
-  <li><a href="#vietoris-rips-complex" id="toc-vietoris-rips-complex" class="nav-link" data-scroll-target="#vietoris-rips-complex"><span class="header-section-number">3.4.1</span> Vietoris-Rips complex</a></li>
-  <li><a href="#čech-complex" id="toc-čech-complex" class="nav-link" data-scroll-target="#čech-complex"><span class="header-section-number">3.4.2</span> Čech complex</a></li>
-  <li><a href="#the-role-of-epsilon" id="toc-the-role-of-epsilon" class="nav-link" data-scroll-target="#the-role-of-epsilon"><span class="header-section-number">3.4.3</span> The role of <span class="math inline">\(\epsilon\)</span></a></li>
+  <li><a href="#sec-rips-definition" id="toc-sec-rips-definition" class="nav-link" data-scroll-target="#sec-rips-definition"><span class="header-section-number">3.5.1</span> Vietoris–Rips complex</a></li>
+  <li><a href="#čech-complex" id="toc-čech-complex" class="nav-link" data-scroll-target="#čech-complex"><span class="header-section-number">3.5.2</span> Čech complex</a></li>
   </ul></li>
-  <li><a href="#abstract-vs-geometric-simplicial-complexes" id="toc-abstract-vs-geometric-simplicial-complexes" class="nav-link" data-scroll-target="#abstract-vs-geometric-simplicial-complexes"><span class="header-section-number">3.5</span> Abstract vs geometric simplicial complexes</a></li>
+  <li><a href="#sec-square-complexes" id="toc-sec-square-complexes" class="nav-link" data-scroll-target="#sec-square-complexes"><span class="header-section-number">3.6</span> Our square at three scales</a></li>
+  <li><a href="#the-role-of-scale" id="toc-the-role-of-scale" class="nav-link" data-scroll-target="#the-role-of-scale"><span class="header-section-number">3.7</span> The role of scale</a></li>
+  <li><a href="#stop-and-predict" id="toc-stop-and-predict" class="nav-link" data-scroll-target="#stop-and-predict"><span class="header-section-number">3.8</span> Stop and predict</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content column-body" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./topology.html">Topology</a></li><li class="breadcrumb-item"><a href="./simplicial.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Simplicial complexes</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Simplicial complexes</span></h1>
+<h1 class="title"><span id="sec-simplicial-complexes" class="quarto-section-identifier"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Simplicial complexes</span></span></h1>
 </div>
 
 
 
-<div class="quarto-title-meta column-body">
+<div class="quarto-title-meta">
 
     
   
@@ -377,143 +445,239 @@ window.Quarto = {
 
 
 <blockquote class="blockquote">
-<p>“Are you a man, Octave? Do you see the leaves falling from the trees, the sun rising and setting? Do you hear the ticking of the horologe of time with each pulsation of your heart? Is there, then, such a difference between the love of a year and the love of an hour? I challenge you to answer that, you fool, as you sit there looking out at the infinite through a window not larger than your hand.”<br>
-— Alfred de Musset, in “The confession of a child of the century”</p>
+<p>“Do you see the leaves falling from the trees, the sun rising and setting?”<br>
+— Alfred de Musset, in <em>The Confession of a Child of the Century</em></p>
 </blockquote>
 <section id="the-infinite-through-a-window" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="the-infinite-through-a-window"><span class="header-section-number">3.1</span> The infinite through a window</h2>
-<p>Topological spaces are nice, but all the interesting ones have an infinite amount of points: torus, circle, the real line, mobius band, projective plane, and so on. Topology usually is not interested in finite sets because their standard topology is trivial: just take every point as an open set.</p>
-<p>We, as humans, can’t really grasp the infinite. Our universe is finite, and so is our mind. To think about the infinite, we need to use finite “tricks”. Take, for example, the way we prove something is valid for all the infinite natural numbers, a principle called <a href="https://en.wikipedia.org/wiki/Mathematical_induction">finite induction</a>:</p>
-<ul>
-<li>first prove that a certain property <span class="math inline">\(P\)</span> is true for 1;</li>
-<li>then, prove that if it is valid for <span class="math inline">\(n\)</span>, then it is also valid for <span class="math inline">\(n+1\)</span>.</li>
-</ul>
-<p>Peano <a href="https://en.wikipedia.org/wiki/Peano_axioms">needed an axiom</a> to guarantee that these 2 conditions are enough to prove that <span class="math inline">\(P\)</span> is valid for all <span class="math inline">\(\mathbb{N}\)</span>.</p>
+<p>A circle, a torus, and the real line contain infinitely many points. A computer has a finite amount of memory, and so do I. We need a finite description that still remembers something about the shape.</p>
+<p>As <a href="topology.html#sec-square-topology" class="quarto-xref"><span>Section 2.4</span></a> showed, a finite metric point cloud has a discrete topology. Just storing a list of points gives us no loops. This does not make every finite topological space uninteresting—non-discrete finite topologies exist—but it explains why a list of measurements needs another construction.</p>
+<p>Mathematics often handles the infinite with finite descriptions. Induction uses a starting case and a rule for the next case. A finite-dimensional vector space uses a finite basis to describe infinitely many vectors. Simplicial complexes offer a similar bargain: finitely many building blocks can describe a space with infinitely many points.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/Dominoeffect.png" class="img-fluid figure-img"></p>
-<figcaption>The finite induction principle can be tought of as a domino falling and pushing the next piece. But with infinite domino pieces and infinite patience. Source: Wikipedia<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></figcaption>
+<figcaption>Induction as a domino pushing the next piece. Infinite dominoes would require infinite patience. Source: Wikimedia Commons.</figcaption>
 </figure>
 </div>
-<p>As another example, when studying linear algebra we see the concept of <a href="https://en.wikipedia.org/wiki/Basis_(linear_algebra)">basis</a> of a vector space <span class="math inline">\(V\)</span>. With basis, we can describe exactly any point <span class="math inline">\(v \in V\)</span> using a finite combination of its base elements, say <span class="math inline">\(v = \lambda_1 e_1 + \ldots \lambda_n e_n\)</span>. The infinite amount of points in <span class="math inline">\(V\)</span> can then be written as sums of finite objects that we can map mentally.</p>
-<p>Finding a finite representation of a mathematical object is often desired, and with topological spaces it was not different.</p>
 </section>
 <section id="graphs" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="graphs"><span class="header-section-number">3.2</span> Graphs</h2>
-<p>Graphs were created by Euler in 1736 because he wanted to visit Königsberg but was too lazy<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> to walk around like a normal person, and then tried to <a href="https://en.wikipedia.org/wiki/Seven_Bridges_of_K%C3%B6nigsberg">cross all its bridges just one time</a>.</p>
+<p>Euler studied the bridges of Königsberg in 1736 because he wanted to visit the city but was too lazy<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> to walk around like a normal person. Could he cross each bridge exactly once?</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/sc-bridge.png" class="img-fluid figure-img"></p>
-<figcaption>Can you walk through the city crossing each of those bridges once and only once? Spoiler: no, you can’t. Stop trying! Source: Wikipedia<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></figcaption>
+<figcaption>Can you cross each bridge once and only once? Spoiler: no. Source: Wikimedia Commons.</figcaption>
 </figure>
 </div>
-<p>We can abstract away this map with its bridges and just think about the bridges and the portions of land:</p>
+<p>Forget the geography for a moment. Represent each land region by a vertex and each bridge by an edge:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/sc-bridges2.png" class="img-fluid figure-img"></p>
-<figcaption>The map of Königsberg if the city was a green carpet. Source: Wikipedia<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></figcaption>
+<figcaption>The map of Königsberg if the city were a green carpet. Source: Wikimedia Commons.</figcaption>
 </figure>
 </div>
-<p>Euler did even better! He needed just two things to represent this object:</p>
-<ul>
-<li>points: the portions of the cities;</li>
-<li>edges: bridges that connect two points.</li>
-</ul>
-<p>The result is the following:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/sc-bridges3.png" class="img-fluid figure-img"></p>
-<figcaption>A graph representing the original problem. Source: Wikipedia<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></figcaption>
+<figcaption>A graph representing the bridge problem. Parallel bridges are distinct edges. Source: Wikimedia Commons.</figcaption>
 </figure>
 </div>
-<p>Oops, Euler just invented <a href="https://en.wikipedia.org/wiki/Graph_(discrete_mathematics)">graphs</a>!</p>
-<p>Formally,</p>
+<p>An edge records a pairwise relation. The bridge example is a <em>multigraph</em>, because two land regions can have more than one bridge between them. Most graphs in this book are simpler:</p>
 <div id="def-graphs" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.1</strong></span> A <em>directed graph</em> is a pair <span class="math inline">\(G = (V, E)\)</span> where <span class="math inline">\(V\)</span> is a set called <em>vertices</em> and <span class="math inline">\(E \subseteq V \times V\)</span> is a set of <em>edges</em> between the vertices. An element <span class="math inline">\((v, w) \in E\)</span> can also be represented as <span class="math inline">\(v \to w\)</span>.</p>
-<p>An <em>undirected graph</em> is defined similarly, but edges are unordered pairs <span class="math inline">\(\{v, w\}\)</span> instead of ordered pairs <span class="math inline">\((v, w)\)</span>. In an undirected graph, there is no distinction between “from <span class="math inline">\(v\)</span> to <span class="math inline">\(w\)</span>” and “from <span class="math inline">\(w\)</span> to <span class="math inline">\(v\)</span>” — the edge simply connects the two vertices. Unless stated otherwise, <strong>graphs in this book are undirected</strong>.</p>
+<p><span class="theorem-title"><strong>Definition 3.1</strong></span> A <em>simple undirected graph</em> is a pair <span class="math inline">\(G=(V,E)\)</span>, with vertex set <span class="math inline">\(V\)</span> and edges that are two-element subsets <span class="math inline">\(\{v,w\}\subseteq V\)</span>. There are no repeated edges or edges from a vertex to itself.</p>
+<p>A <em>directed graph</em> instead uses ordered pairs <span class="math inline">\((v,w)\)</span>, often written <span class="math inline">\(v\to w\)</span>. Unless stated otherwise, our graphs are undirected.</p>
 </div>
-<p>He noticed that when you travel to a green point <span class="math inline">\(v\)</span>, you need to take another bridge to get out of <span class="math inline">\(v\)</span>. Thus, the number of edges need to be <em>even</em> for all the points we visit during the middle of our journey (excluding the beginning and the end). But all points in the above graph have an odd number of edges! Therefore, it is impossible to travel cross each bridge just once and still visit all the green points.</p>
-<p>Graphs can be used whenever we need to represent a set of objects and a pairwise relation between these objects.</p>
+<p>At every intermediate stop on a bridge-crossing walk, an arrival must pair with a departure. Thus at most two vertices—the start and the finish—can have odd degree. All four land regions in the Königsberg graph have odd degree, so the proposed walk is impossible. A finite description has answered the question without making Euler wear out his shoes.</p>
 <section id="the-essence-of-a-circle" class="level3" data-number="3.2.1">
 <h3 data-number="3.2.1" class="anchored" data-anchor-id="the-essence-of-a-circle"><span class="header-section-number">3.2.1</span> The essence of a circle</h3>
-<p>What is a circle, really? The boring answer is “the set of points that dist <span class="math inline">\(r\)</span> of a point <span class="math inline">\(p\)</span>”. But in a topological view, a circle is just a 1-dimensional closed real interval with its extremities glued together, forming a hole inside.</p>
-<p>The following graph, when seen as a subset of <span class="math inline">\(\mathbb{R}^2\)</span> is homeomorphic to a circle:</p>
-<div id="fig-" class="quarto-float quarto-figure quarto-figure-center anchored">
+<p>A geometric circle is the set of points a fixed distance from a center. Topologically, it is also what we get by joining the ends of an interval.</p>
+<div id="fig-simplicial-circle" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig--caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div aria-describedby="fig-simplicial-circle-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="images/sc-circle.png" class="img-fluid figure-img">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig--caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-simplicial-circle-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;3.1: A poorly drawn graph representing a circle.
 </figcaption>
 </figure>
 </div>
-<p>With this horrendous graph<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a> we can represent a circle in a finite way: three points <span class="math inline">\(a, b, c\)</span> and all possible edges: <span class="math inline">\(a \to b\)</span>, <span class="math inline">\(b \to c\)</span>, <span class="math inline">\(c \to a\)</span>.</p>
+<p>The drawing has three vertices and three edges. The <strong>geometric realization</strong> of this graph includes every point along the edges, not just the three vertices; it is homeomorphic to a circle. There is no filled triangular face. That missing face will become very important.</p>
 </section>
 </section>
-<section id="simplicial-complexes" class="level2" data-number="3.3">
-<h2 data-number="3.3" class="anchored" data-anchor-id="simplicial-complexes"><span class="header-section-number">3.3</span> Simplicial complexes</h2>
-<p>Why stop with vertices and edges? Edges are just pairs of edges. Why not take triples and quadruples and so on?</p>
-<p>Well, now you’ve reinvented <a href="https://en.wikipedia.org/wiki/Simplicial_complex">simplicial complexes</a>! Congratulations!</p>
-<div id="def-" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.2</strong></span> A simplicial complex <span class="math inline">\(\Sigma\)</span> is a set of subsets of <span class="math inline">\(X\)</span> with the following property:</p>
-<ul>
-<li>for any <span class="math inline">\(\sigma \in \Sigma\)</span>, every subset of <span class="math inline">\(\sigma\)</span> (also called <em>a face</em> of <span class="math inline">\(\sigma\)</span>) is also in <span class="math inline">\(\Sigma\)</span>;</li>
-<li>given non-empty <span class="math inline">\(\sigma_1, \sigma_2 \in \Sigma\)</span>, the intersection <span class="math inline">\(\sigma_1 \cap \sigma_2\)</span> is also in <span class="math inline">\(\Sigma\)</span>.</li>
-</ul>
+<section id="simplices-and-their-faces" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="simplices-and-their-faces"><span class="header-section-number">3.3</span> Simplices and their faces</h2>
+<p>Why stop with vertices and edges? An edge uses two vertices; three can specify a filled triangle, four a filled tetrahedron, and so on. Congratulations, you have reinvented simplicial complexes!</p>
+<div id="def-abstract-simplicial-complex" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 3.2</strong></span> A finite <em>abstract simplicial complex</em> <span class="math inline">\(K\)</span> on a vertex set <span class="math inline">\(V\)</span> is a collection of subsets of <span class="math inline">\(V\)</span> such that every subset of a member of <span class="math inline">\(K\)</span> also belongs to <span class="math inline">\(K\)</span>.</p>
+<p>A nonempty member <span class="math inline">\(\sigma\in K\)</span> is a <em>simplex</em>. If <span class="math inline">\(\sigma\)</span> has <span class="math inline">\(k+1\)</span> vertices, its dimension is <span class="math inline">\(k\)</span>. Its subsets are its <em>faces</em>. We include the empty face by convention, but do not count it when computing ordinary homology.</p>
 </div>
+<p>Thus a <span class="math inline">\(0\)</span>-simplex is a vertex, a <span class="math inline">\(1\)</span>-simplex an edge, a <span class="math inline">\(2\)</span>-simplex a filled triangle, and a <span class="math inline">\(3\)</span>-simplex a filled tetrahedron. Including <span class="math inline">\(\{a,b,c\}\)</span> requires including its three edges and three vertices. The converse fails: having all three edges does not force an abstract complex to contain the triangle.</p>
+<p>The intersection of two simplices is automatically a face of both. This follows from closure under subsets; we do not need a second axiom for the abstract definition.</p>
 </section>
-<section id="sec-data-to-sc" class="level2" data-number="3.4">
-<h2 data-number="3.4" class="anchored" data-anchor-id="sec-data-to-sc"><span class="header-section-number">3.4</span> From data to simplicial complexes</h2>
-<p>So far, simplicial complexes are abstract mathematical objects. But why should we care? Because they give us a way to build topology from data!</p>
-<p>Suppose we have a finite set of points <span class="math inline">\(X = \{x_1, \ldots, x_n\}\)</span> in some metric space (for example, <span class="math inline">\(\mathbb{R}^d\)</span> with the Euclidean distance). We can build a simplicial complex from <span class="math inline">\(X\)</span> by declaring that points that are “close enough” form simplices. There are several ways to do this:</p>
-<section id="vietoris-rips-complex" class="level3" data-number="3.4.1">
-<h3 data-number="3.4.1" class="anchored" data-anchor-id="vietoris-rips-complex"><span class="header-section-number">3.4.1</span> Vietoris-Rips complex</h3>
-<p>Fix a parameter <span class="math inline">\(\epsilon &gt; 0\)</span>. The <em>Vietoris-Rips complex</em> <span class="math inline">\(\text{VR}(X, \epsilon)\)</span> is the simplicial complex where a subset <span class="math inline">\(\sigma = \{x_{i_0}, \ldots, x_{i_k}\} \subseteq X\)</span> is a simplex if and only if</p>
+<section id="sec-geometric-realization" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="sec-geometric-realization"><span class="header-section-number">3.4</span> Abstract objects, geometric spaces</h2>
+<p>The definition is a list of subsets; it says nothing about coordinates. To turn this list into a space, realize each simplex as a solid geometric simplex and glue matching faces.</p>
+<p>For <span class="math inline">\(n\)</span> vertices, there is a convenient construction in <span class="math inline">\(\mathbb R^n\)</span>. Assign vertex <span class="math inline">\(i\)</span> the standard basis vector <span class="math inline">\(e_i\)</span>. For every <span class="math inline">\(\sigma\in K\)</span>, take the convex hull of its assigned vertices. Their union is the <em>geometric realization</em>, written <span class="math inline">\(|K|\)</span>:</p>
 <p><span class="math display">\[
-d(x_{i_j}, x_{i_l}) \leq \epsilon \quad \text{for all } j, l.
+|K|=\left\{\sum_{i=1}^n t_i e_i\ \middle|\ t_i\geq0,\ \sum_i t_i=1,
+\ \{i:t_i&gt;0\}\in K\right\}.
 \]</span></p>
-<p>In words: a set of points forms a simplex if every pair of points in the set is within distance <span class="math inline">\(\epsilon\)</span>.</p>
+<p>A simplex has only finitely many vertices, but its geometric realization has infinitely many points. There is our window onto the infinite.</p>
+<p>We can often draw the same realization in a smaller ambient space. However, the coordinates of the original data need not realize the abstract complex faithfully. Four coplanar square corners cannot be the vertices of a nondegenerate tetrahedron! When the Rips construction below includes a <span class="math inline">\(3\)</span>-simplex, it means an abstract tetrahedron; it does not suddenly lift one of our measured points off the table.</p>
+<p>We use the combinatorial view for computation and the geometric view for intuition. Results about the topology of a complex refer to its realization <span class="citation" data-cites="hatcher2002">(<a href="references.html#ref-hatcher2002" role="doc-biblioref">Hatcher 2002</a>)</span>.</p>
 </section>
-<section id="čech-complex" class="level3" data-number="3.4.2">
-<h3 data-number="3.4.2" class="anchored" data-anchor-id="čech-complex"><span class="header-section-number">3.4.2</span> Čech complex</h3>
-<p>Fix <span class="math inline">\(\epsilon &gt; 0\)</span>. The <em>Čech complex</em> <span class="math inline">\(\check{C}(X, \epsilon)\)</span> is the simplicial complex where <span class="math inline">\(\sigma = \{x_{i_0}, \ldots, x_{i_k}\}\)</span> is a simplex if and only if the balls <span class="math inline">\(B(x_{i_j}, \epsilon/2)\)</span> have a common intersection:</p>
+<section id="sec-data-to-sc" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="sec-data-to-sc"><span class="header-section-number">3.5</span> From data to simplicial complexes</h2>
+<p>Let <span class="math inline">\(X=\{x_1,\ldots,x_n\}\)</span> be a finite set in a metric space. Distances tell us which vertices are near one another. A scale parameter turns that information into simplices.</p>
+<section id="sec-rips-definition" class="level3" data-number="3.5.1">
+<h3 data-number="3.5.1" class="anchored" data-anchor-id="sec-rips-definition"><span class="header-section-number">3.5.1</span> Vietoris–Rips complex</h3>
+<div id="def-vietoris-rips" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 3.3</strong></span> For <span class="math inline">\(\epsilon\geq0\)</span>, the <em>Vietoris–Rips complex</em> <span class="math inline">\(\mathrm{VR}(X,\epsilon)\)</span> consists of the subsets <span class="math inline">\(\sigma\subseteq X\)</span> such that</p>
 <p><span class="math display">\[
-\bigcap_{j=0}^{k} B(x_{i_j}, \epsilon/2) \neq \emptyset.
-\]</span></p>
-<p>The Čech complex has a beautiful theoretical property: by the <a href="https://en.wikipedia.org/wiki/Nerve_of_a_covering#Nerve_theorem">Nerve Theorem</a>, it is homotopy equivalent to the union of balls <span class="math inline">\(\bigcup_i B(x_i, \epsilon/2)\)</span>. However, it is more expensive to compute than the Vietoris-Rips complex, so in practice Rips complexes are used more often.</p>
-</section>
-<section id="the-role-of-epsilon" class="level3" data-number="3.4.3">
-<h3 data-number="3.4.3" class="anchored" data-anchor-id="the-role-of-epsilon"><span class="header-section-number">3.4.3</span> The role of <span class="math inline">\(\epsilon\)</span></h3>
-<p>The choice of <span class="math inline">\(\epsilon\)</span> is crucial. Too small, and the complex is just a collection of isolated points (no edges, no triangles). Too large, and everything is connected into a single giant simplex that hides all interesting structure.</p>
-<p>This is a fundamental problem: <strong>there is no single “correct” <span class="math inline">\(\epsilon\)</span></strong>. The solution? Don’t choose one — examine all of them! This idea leads to <em>persistent homology</em>, which we will explore in a later chapter.</p>
-</section>
-</section>
-<section id="abstract-vs-geometric-simplicial-complexes" class="level2" data-number="3.5">
-<h2 data-number="3.5" class="anchored" data-anchor-id="abstract-vs-geometric-simplicial-complexes"><span class="header-section-number">3.5</span> Abstract vs geometric simplicial complexes</h2>
-<p>In our definition above, a simplicial complex is defined purely in terms of sets and subsets — there is no mention of geometry or coordinates. This is called an <em>abstract</em> simplicial complex.</p>
-<p>However, every abstract simplicial complex can be “realized” as a geometric object: a <span class="math inline">\(k\)</span>-simplex can be embedded in <span class="math inline">\(\mathbb{R}^{k}\)</span> as the convex hull of <span class="math inline">\(k+1\)</span> points in general position. More precisely,</p>
-<div id="def-" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3.3</strong></span> The <em>standard <span class="math inline">\(k\)</span>-simplex</em> is the convex hull of the <span class="math inline">\(k+1\)</span> standard basis vectors <span class="math inline">\(e_0, e_1, \ldots, e_k\)</span> in <span class="math inline">\(\mathbb{R}^{k+1}\)</span>:</p>
-<p><span class="math display">\[
-\Delta^k = \left\{ \sum_{i=0}^{k} t_i e_i \;\middle|\; t_i \geq 0, \sum_{i=0}^{k} t_i = 1 \right\}.
+d(x,x')\leq\epsilon\qquad\text{for every }x,x'\in\sigma.
 \]</span></p>
 </div>
-<p>For example, <span class="math inline">\(\Delta^0\)</span> is a point, <span class="math inline">\(\Delta^1\)</span> is a line segment, <span class="math inline">\(\Delta^2\)</span> is a triangle (with its interior), and <span class="math inline">\(\Delta^3\)</span> is a tetrahedron.</p>
-<p>Any abstract simplicial complex with <span class="math inline">\(n\)</span> vertices can be geometrically realized in <span class="math inline">\(\mathbb{R}^{2n+1}\)</span> (this is a theorem!). The practical consequence is that we can think of simplicial complexes both as combinatorial objects (lists of subsets) and as geometric shapes — whichever is more convenient for the task at hand.</p>
-<p>We will use the combinatorial view when computing homology and the geometric view when building intuition.</p>
+<p>We use the <strong>diameter convention</strong>: <span class="math inline">\(\epsilon\)</span> is the largest allowed pairwise distance, not a ball radius. Some references use a different factor of two, so always check the convention before comparing scales.</p>
+<p>First build a graph linking points at distance at most <span class="math inline">\(\epsilon\)</span>. Then fill every clique: three mutually linked vertices give a triangle, four give a tetrahedron, and so on. This automatically includes all faces. Notice the difference from the graph in <a href="#fig-simplicial-circle" class="quarto-xref">Figure&nbsp;<span>3.1</span></a>: in a Rips complex, a complete three-vertex graph comes with its filling.</p>
+</section>
+<section id="čech-complex" class="level3" data-number="3.5.2">
+<h3 data-number="3.5.2" class="anchored" data-anchor-id="čech-complex"><span class="header-section-number">3.5.2</span> Čech complex</h3>
+<p>Fix an ambient metric space containing <span class="math inline">\(X\)</span>, and place a <strong>closed</strong> ball of radius <span class="math inline">\(\epsilon/2\)</span> at each data point. The <em>Čech complex</em> contains <span class="math inline">\(\sigma\)</span> when those balls have a common intersection:</p>
+<p><span class="math display">\[
+\bigcap_{x\in\sigma}\overline B(x,\epsilon/2)\neq\emptyset.
+\]</span></p>
+<p>The ambient space matters: an intersection in <span class="math inline">\(\mathbb R^2\)</span> is different from an intersection restricted to the finite set <span class="math inline">\(X\)</span>.</p>
+<p>In Euclidean space, these balls and their nonempty intersections are convex, hence contractible. The nerve theorem for a finite family of convex sets implies that the Čech realization has the homotopy type of their union <span class="citation" data-cites="edelsbrunner2010">(<a href="references.html#ref-edelsbrunner2010" role="doc-biblioref">Edelsbrunner and Harer 2010</a>)</span>. “Same homotopy type” is weaker than “homeomorphic,” but it is enough to preserve homology.</p>
+<p>The corresponding general theorem uses a <em>good cover</em>: nonempty finite intersections must be contractible, together with appropriate cover hypotheses, such as a finite open cover. Balls in an arbitrary metric space do not automatically satisfy this condition. The Čech definition still makes sense there; the Euclidean conclusion does not follow merely because we named the sets balls.</p>
+<p>Rips needs only pairwise distances; Čech requires testing common intersections. This helps explain why Rips is convenient for general data, while Čech and its Euclidean relatives offer a closer connection to unions of balls. We revisit the computational choices in <a href="./computing_ph.html">Computing persistent homology</a>.</p>
+</section>
+</section>
+<section id="sec-square-complexes" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="sec-square-complexes"><span class="header-section-number">3.6</span> Our square at three scales</h2>
+<p>Label the square corners in cyclic order as in <a href="topology.html#sec-square-topology" class="quarto-xref"><span>Section 2.4</span></a>. Their Euclidean distance matrix is</p>
+<p><span class="math display">\[
+D=\begin{array}{c|cccc}
+&amp;a&amp;b&amp;c&amp;d\\\hline
+a&amp;0&amp;1&amp;\sqrt2&amp;1\\
+b&amp;1&amp;0&amp;1&amp;\sqrt2\\
+c&amp;\sqrt2&amp;1&amp;0&amp;1\\
+d&amp;1&amp;\sqrt2&amp;1&amp;0
+\end{array}.
+\]</span></p>
+<p>The sides have length <span class="math inline">\(1\)</span>; the diagonals have length <span class="math inline">\(\sqrt2\)</span>. We can therefore list every change in the Rips complex without guessing:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Scale</th>
+<th>Simplices present</th>
+<th>Shape of the realization</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(0\leq\epsilon&lt;1\)</span></td>
+<td>Four vertices</td>
+<td>Four isolated points</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(1\leq\epsilon&lt;\sqrt2\)</span></td>
+<td>Vertices and the four side edges</td>
+<td>One square loop</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\epsilon\geq\sqrt2\)</span></td>
+<td>All subsets of the four vertices</td>
+<td>A filled tetrahedron</td>
+</tr>
+</tbody>
+</table>
+<p>At the middle scale there are no triangles: every three square vertices include a pair separated by a diagonal. At the last scale, both diagonals, all four triangles, and the tetrahedron enter together. It is a full <span class="math inline">\(3\)</span>-simplex, rather than just a square with its planar interior colored in.</p>
+<p>A tetrahedron’s <strong>surface</strong> would include its four triangular faces but omit its <span class="math inline">\(3\)</span>-simplex. That surface encloses a cavity; the full tetrahedron does not. Listing simplices carefully saves us from letting a drawing invent a hole.</p>
+</section>
+<section id="the-role-of-scale" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="the-role-of-scale"><span class="header-section-number">3.7</span> The role of scale</h2>
+<p>A small scale leaves isolated points. A sufficiently large scale turns a finite metric space into one full simplex. Neither extreme usually describes the structure we hoped to study.</p>
+<p>There need not be a single best scale. Persistent homology will track the changes across scales rather than requiring us to choose one at the start. We will still need to choose a metric, preprocessing, and a computational limit; persistence does not make those choices disappear. The <a href="./uncertainty.html">uncertainty chapter</a> explains how to examine their consequences.</p>
+</section>
+<section id="stop-and-predict" class="level2" data-number="3.8">
+<h2 data-number="3.8" class="anchored" data-anchor-id="stop-and-predict"><span class="header-section-number">3.8</span> Stop and predict</h2>
+<ol type="1">
+<li>At <span class="math inline">\(\epsilon=1.2\)</span>, does our square Rips complex contain <span class="math inline">\(\{a,b,c\}\)</span>? Does it contain <span class="math inline">\(\{a,b\}\)</span>?</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled" title="Answer: check every pair">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Answer: check every pair
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>It contains <span class="math inline">\(\{a,b\}\)</span> because <span class="math inline">\(d(a,b)=1\leq1.2\)</span>. It does not contain <span class="math inline">\(\{a,b,c\}\)</span> because <span class="math inline">\(d(a,c)=\sqrt2&gt;1.2\)</span>. One missing edge is enough to exclude a simplex.</p>
+</div>
+</div>
+</div>
+<ol start="2" type="1">
+<li>Three points form an equilateral triangle of side length <span class="math inline">\(1\)</span>. Does their Rips filtration ever contain an unfilled triangular loop for a positive range of scales?</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled" title="Answer: edges and filling enter together">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Answer: edges and filling enter together
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>No.&nbsp;Below <span class="math inline">\(1\)</span>, there are only vertices. At <span class="math inline">\(1\)</span>, all three edges and the <span class="math inline">\(2\)</span>-simplex enter together. A hand-drawn triangular graph has a loop, but its Rips completion fills that loop immediately. Any interval from an artificial ordering within this tied scale has zero length.</p>
+</div>
+</div>
+</div>
+<ol start="3" type="1">
+<li>What must you omit from a full tetrahedron to leave a hollow sphere? May you instead omit one edge but retain every triangular face?</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled" title="Answer: faces must remain consistent">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Answer: faces must remain consistent
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Omit the <span class="math inline">\(3\)</span>-simplex and keep its four faces, edges, and vertices. The realization is the tetrahedron’s surface, homeomorphic to a sphere. Keeping a triangle while deleting one of its edges violates closure under faces, so it would not be a simplicial complex.</p>
+</div>
+</div>
+</div>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-edelsbrunner2010" class="csl-entry" role="listitem">
+Edelsbrunner, Herbert, and John Harer. 2010. <em>Computational Topology: An Introduction</em>. American Mathematical Society.
+</div>
+<div id="ref-hatcher2002" class="csl-entry" role="listitem">
+Hatcher, Allen. 2002. <em>Algebraic Topology</em>. Cambridge University Press. <a href="https://pi.math.cornell.edu/~hatcher/AT/ATpage.html">https://pi.math.cornell.edu/~hatcher/AT/ATpage.html</a>.
+</div>
+</div>
 </section>
 <section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>
 <ol>
-<li id="fn1"><p>https://commons.wikimedia.org/wiki/File:Dominoeffect.png<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2"><p>The original text is in Latin, so I just invented this.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3"><p>https://en.wikipedia.org/wiki/File:Konigsberg_bridges.png<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn4"><p>https://en.wikipedia.org/wiki/File:7_bridges.svg<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn5"><p><a href="">https://en.wikipedia.org/wiki/File:K%C3%B6nigsberg_graph.svg</a><a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn6"><p>See <a href="">https://en.wikipedia.org/wiki/Monster_group</a> for more terror tales in mathematics.<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>I invented the laziness. The bridge problem is real.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
@@ -918,7 +1082,7 @@ d(x_{i_j}, x_{i_l}) \leq \epsilon \quad \text{for all } j, l.
     }
   });
   </script>
-<nav class="page-navigation column-body">
+<nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./topology.html" class="pagination-link" aria-label="Topology">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Topology</span></span>

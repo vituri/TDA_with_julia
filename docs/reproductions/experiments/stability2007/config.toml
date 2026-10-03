@@ -1,0 +1,11 @@
+paper_doi = "10.1007/s00454-006-1276-5"
+target = "Bottleneck Stability Theorem; computational verification, not replication of a published empirical figure"
+grid_size = 31
+grid_lower = -2.0
+grid_upper = 2.0
+noise_amplitudes = [0.0, 0.01, 0.03, 0.10, 0.20]
+seeds = [2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014]
+translation = 0.1
+coefficient_field = 2
+absolute_tolerance = 1.0e-10
+base_function = "(sqrt(x^2+y^2)-1)^2 + 0.12*cos(3*x)*cos(2*y)"

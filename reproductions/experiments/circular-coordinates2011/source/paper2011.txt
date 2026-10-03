@@ -1,0 +1,1113 @@
+Noname manuscript No.
+(will be inserted by the editor)
+
+
+
+
+Persistent Cohomology and Circular
+Coordinates
+Vin de Silva1? , Dmitriy Morozov2 , Mikael Vejdemo-Johansson3??
+1
+  Department of Mathematics
+  Pomona College
+  e-mail: vin.desilva@pomona.edu
+2
+  Departments of Computer Science and Mathematics
+  Stanford University
+  e-mail: dmitriy@mrzv.org
+3
+  Department of Mathematics
+  Stanford University
+  e-mail: mik@math.stanford.edu
+
+The date of receipt and acceptance will be inserted by the editor
+
+
+Abstract Nonlinear dimensionality reduction (NLDR) algorithms such as
+Isomap, LLE and Laplacian Eigenmaps address the problem of representing
+high-dimensional nonlinear data in terms of low-dimensional coordinates
+which represent the intrinsic structure of the data. This paradigm incor-
+porates the assumption that real-valued coordinates provide a rich enough
+class of functions to represent the data faithfully and efficiently. On the other
+hand, there are simple structures which challenge this assumption: the cir-
+cle, for example, is one-dimensional but its faithful representation requires
+two real coordinates. In this work, we present a strategy for constructing
+circle-valued functions on a statistical data set. We develop a machinery of
+persistent cohomology to identify candidates for significant circle-structures
+in the data, and we use harmonic smoothing and integration to obtain the
+circle-valued coordinate functions themselves. We suggest that this enriched
+class of coordinate functions permits a precise NLDR analysis of a broader
+range of realistic data sets.
+
+Key words dimensionality reduction, computational topology, persistent
+homology, persistent cohomology
+
+    ?
+    Partially supported by DARPA, through grants HR0011-07-1-0002 and
+HR0011-05-1-0007.
+??
+    Partially supported by the Office of Naval Research, through grant N00014-
+08-1-0931.
+2                                            de Silva, Morozov, Vejdemo-Johansson
+
+
+1 Introduction
+
+
+Nonlinear dimensionality reduction (nldr) algorithms address the following
+problem: given a high-dimensional collection of data points X ⊂ RN , find
+a low-dimensional embedding φ : X → Rn (for some n  N ) which faith-
+fully preserves the ‘intrinsic’ structure of the data. For instance, if the data
+have been obtained by sampling from some unknown manifold M ⊂ RN —
+perhaps the parameter space of some physical system — then φ might cor-
+respond to an n-dimensional coordinate system on M . If M is completely
+and non-redundantly parametrized by these n coordinates, then the nldr
+is regarded as having succeeded completely.
+     Principal components analysis, or linear regression, is the simplest form
+of dimensionality reduction; the embedding function φ is taken to be a linear
+projection. This is closely related to (and sometimes identifed with) classical
+multidimensional scaling [2].
+     When there are no satisfactory linear projections, it becomes necessary
+to use nldr. Prominent algorithms for nldr include Locally Linear Em-
+bedding [16], Isomap [18], Laplacian Eigenmaps [1], Hessian Eigenmaps [5],
+and many more.
+     These techniques share an implicit assumption that the unknown mani-
+fold M is well-described by a finite set of coordinate functions φ1 , φ2 , . . . , φn :
+M → R. Explicitly, some of the correctness theorems in these studies de-
+pend on the hypothesis that M has the topological structure of a convex
+domain in some Rn . This hypothesis guarantees that good coordinates ex-
+ist, and shifts the burden of proof onto showing that the algorithm recovers
+these coordinates.
+     In this paper we ask what happens when this assumption fails. The
+simplest space which challenges the assumption is the circle, which is one-
+dimensional but requires two real coordinates for a faithful embedding.
+Other simple examples include the annulus, the torus, the figure eight, the
+2-sphere, the last three of which present topological obstructions to being
+embedded in the Euclidean space of their natural dimension. We propose
+that an appropriate response to the problem is to enlarge the class of co-
+ordinate functions to include circle-valued coordinates θ : M → S 1 . In a
+physical setting, circular coordinates occur naturally as angular and phase
+variables. Spaces like the annulus and the torus are well described by a
+combination of real and circular coordinates. (The 2-sphere is not so lucky,
+and must await its day.)
+     The goal of this paper is to describe a natural procedure for constructing
+circular coordinates on a nonlinear data set using techniques from classical
+algebraic topology and its 21st-century grandchild, persistent topology. We
+direct the reader to [10] as a general reference for algebraic topology, and
+to [6] for a survey of the theory of persistence. We also recommend [19] for
+a more technical description of persistent homology.
+Persistent Cohomology and Circular Coordinates                               3
+
+
+1.1 Related work
+
+There have been other attempts to address the problem of finding good
+coordinate representations of simple non-Euclidean data spaces. One ap-
+proach [15] is to use modified versions of multidimensional scaling specifi-
+cally devised to find the best embedding of a data set into the cylinder, the
+sphere and so on. The target space has to be chosen in advance. Another
+class of approaches [11, 4] involves cutting the data manifold along arcs and
+curves until it has trivial topology. The resulting configuration can then
+be embedded in Euclidean space in the usual way. In our approach, the
+number of circular coordinates is not fixed in advance, but is determined
+experimentally after a persistent homology calculation. Moreover, there is
+no cutting involved; the coordinate functions respect the original topology
+of the data.
+
+
+1.2 Overview
+
+The principle behind our algorithm is the following equation from homotopy
+theory, valid for topological spaces X with the homotopy type of a cell
+complex (which covers everything we normally encounter):
+
+                             [X, S 1 ] = H1 (X; Z)                         (1)
+
+The left-hand side denotes the set of equivalence classes of continuous maps
+from X to the circle S 1 ; two maps are equivalent if they are homotopic
+(meaning that one map can be deformed continuously into the other); the
+right-hand side denotes the 1-dimensional cohomology of X, taken with
+integer coefficients. In other language: S 1 is the classifying space for H1 ,
+or equivalently S 1 is the Eilenberg–MacLane space K(Z, 1). See section 4.3
+of [10].
+    If X is a contractible space (such as a convex subset of Rn ), then
+  1
+H (X; Z) = 0 and equation (1) tells us not to bother looking for circu-
+lar functions: any such function is homotopic to a constant function, and
+can therefore be lifted to a real-valued function. On the other hand, if X has
+nontrivial topology then there may well exist a nonzero cohomology class
+[α] ∈ H1 (X; Z); we can then build a continuous function X → S 1 which in
+some sense reveals [α].
+    Our strategy divides into the following steps.
+1. Represent the given discrete data set as a simplicial complex or filtered
+   simplicial complex.
+2. Use persistent cohomology to identify a ‘significant’ cohomology class
+   in the data. For technical reasons, we carry this out with coefficients
+   in the field Fp of integers modulo p, for some prime p. This gives us
+   [αp ] ∈ H1 (X; Fp ).
+3. Lift [αp ] to a cohomology class with integer coefficients: [α] ∈ H1 (X; Z).
+4                                         de Silva, Morozov, Vejdemo-Johansson
+
+
+4. Smoothing: replace the integer cocycle α by a harmonic cocycle in the
+   same cohomology class: ᾱ ∈ C1 (X; R).
+5. Integrate the harmonic cocycle ᾱ to a circle-valued function θ : X → S 1 .
+    The paper is organized as follows. In Section 2.1, we derive what we need
+of equation (1). Steps (1–5) of the algorithm are addressed in Sections 2.2–
+2.6, respectively. The correctness of the algorithm for persistent cocycles is
+addressed in an appendix, Section 2.A.
+    In Section 3 we report some experimental results.
+
+
+2 Algorithm Details
+
+2.1 Cohomology and circular functions
+
+Let X be a finite simplicial complex. Let X 0 , X 1 , X 2 denote the sets of
+vertices, edges and triangles of X, respectively. We suppose that the vertices
+are totally ordered (in an arbitrary way). If a < b then the edge between
+vertices a, b is always written ab and not ba. Similarly, if a < b < c then the
+triangle with vertices a, b, c is always written abc.
+    Cohomology can be defined as follows. Let A be a commutative ring (for
+example A = Z, Fp , R). We define 0-cochains, 1-cochains, and 2-cochains as
+follows:
+                  C0 = C0 (X; A) = functions f : X 0 → A
+                                      
+
+                  C1 = C1 (X; A) = functions α : X 1 → A
+                                      
+
+                  C2 = C2 (X; A) = functions A : X 2 → A
+                                      
+
+These are modules over A. We now define coboundary maps d0 : C0 → C1
+and d1 : C1 → C2 .
+                      (d0 f )(ab) = f (b) − f (a)
+                    (d1 α)(abc) = α(bc) − α(ac) + α(ab)
+    Let α ∈ C1 . If d1 α = 0 we say that α is a cocycle. If d0 f = α admits a
+solution f ∈ C0 we say that α is a coboundary. The solution f , if it exists,
+can be thought of as the discrete integral of α. It is unique up to adding
+constants on each connected component of X.
+    It is easily verified that d1 d0 f = 0 for any f ∈ C0 . Thus, coboundaries
+are always cocycles, or equivalently Im(d0 ) ⊆ Ker(d1 ). We can measure the
+difference between coboundaries and cocycles by defining the 1-cohomology
+of X to be the quotient module
+                        H1 (X; A) = Ker(d1 )/ Im(d0 ).
+We say that two cocycles α, β are cohomologous if α − β is a coboundary.
+   We now consider integer coefficients. The following proposition fulfils
+part of the promise of equation (1), by producing circle-valued functions
+from integer cocycles. It will be helpful to think of S 1 as the quotient group
+R/Z.
+Persistent Cohomology and Circular Coordinates                                5
+
+
+Proposition 1 Let α ∈ C1 (X; Z) be a cocycle. Then there exists a contin-
+uous function θ : X → R/Z which maps each vertex to 0, and each edge ab
+around the entire circle with winding number α(ab).
+
+Proof We can define θ inductively on the vertices, edges, triangles, . . . of X.
+The vertices and edges follow the prescription in the statement of the propo-
+sition. To extend θ to the triangles, it is necessary that the winding number
+of θ along the boundary of each triangle abc is zero. And indeed this is
+α(bc) − α(ac) + α(ab) = d1 α(abc) = 0. Since the higher homotopy groups
+of S 1 are all zero ([10], section 4.3), θ can then be extended to the higher
+cells of X without obstruction. t   u
+
+   The construction in Proposition 1 is unsatisfactory in the sense that all
+vertices are mapped to the same point. All variation in the circle parameter
+takes place in the interior of the edges (and higher cells). This is rather
+unsmooth. For more leeway, we consider real coefficients.
+Proposition 2 Let ᾱ ∈ C1 (X; R) be a cocycle. Suppose we can find α ∈
+C1 (X; Z) and f ∈ C0 (X; R) such that ᾱ = α + d0 f . Then there exists a
+continuous function θ : X → R/Z which maps each edge ab linearly to an
+interval of length ᾱ(ab), measured with sign.
+    In other words, we can construct a circle-valued function out of any
+real cocycle ᾱ whose cohomology class [ᾱ] lies in the image of the natural
+homomorphism H1 (X; Z) → H1 (X; R).
+
+Proof Define θ on the vertices of X by setting θ(a) to be f (a) mod Z. For
+each edge ab, we have
+                         θ(b) − θ(a) = f (b) − f (a)
+                                     = d0 f (ab)
+                                     = ᾱ(ab) − α(ab)
+which is congruent to ᾱ(ab) mod Z, since α(ab) is an integer.
+    It follows that θ can be taken to map ab linearly onto an interval of
+signed length ᾱ(ab). Since ᾱ is a cocycle, θ can be extended to the triangles
+as before; then to the higher cells. t u
+
+    Proposition 2 suggests the following tactic: from an integer cocycle α
+we construct a cohomologous real cocycle ᾱ = α + d0 f , and then define
+θ = f mod Z on the vertices of X. If we can construct ᾱ so that the edge-
+lengths |ᾱ(ab)| are small, then the behaviour of θ will be apparent from its
+restriction to the vertices. See Section 2.5.
+
+
+2.2 Point-cloud data to simplicial complex
+
+We now begin describing the workflow in detail. The input is a point-cloud
+data set: in other words, a finite set S ⊂ RN or more generally a finite
+6                                          de Silva, Morozov, Vejdemo-Johansson
+
+
+metric space. The first step is to convert S into a simplicial complex and
+to identify a stable-looking integer cohomology class. This will occupy the
+next three subsections.
+    The first lesson of point-cloud topology [8] is that point-clouds are
+best represented by 1-parameter nested families of simplicial complexes.
+There are several candidate constructions: the Vietoris–Rips complex X  =
+Rips(S, ) has vertex set S and includes a k-simplex whenever all k + 1
+vertices lie pairwise within distance  of each other. The witness complex
+X  = Witness(L, S, ) uses a smaller vertex set L ⊂ S and includes a k-
+simplex when the k + 1 vertices lie close to other points of S, in a certain
+                                                    0
+precise sense (see [3, 9]). In both cases, X  ⊆ X  whenever  ≤ 0 . Either
+of these constructions will serve our purposes, but the witness complex has
+the computational advantage of being considerably smaller.
+    We determine X  only up to its 2-skeleton, since we are interested in H1 .
+
+
+2.3 Persistent cohomology
+
+Having constructed a 1-parameter family {X  }, we apply the principle of
+persistence to identify cocycles that are stable across a large range for .
+Suppose that 1 , 2 , . . . , m are the critical values where the complex X 
+gains new cells. The family can be represented as a diagram
+                         X 1 −→ X 2 −→ . . . −→ X m
+of simplicial complexes and inclusion maps. For any coefficient field F, the
+cohomology functor H1 (−; F) converts this diagram into a diagram of vector
+spaces and linear maps over F; the arrows are reversed:
+             H1 (X 1 ; F) ←− H1 (X 2 ; F) ←− . . . ←− H1 (X m ; F)
+According to the theory of persistence [7, 19], such a diagram decomposes
+as a direct sum of 1-dimensional terms indexed by half-open intervals of
+the form [i , j ). Each such term corresponds to a cochain α ∈ Ci (X  )
+that satisfies the cocycle condition for  < j and becomes a coboundary
+for  < i . The collection of intervals can be displayed graphically as a
+persistence diagram, by representing each interval [i , j ) as a point (i , j )
+in the Cartesian plane above the main diagonal. We think of long intervals
+as representing trustworthy (i.e. stable) topological information.
+    Remark. This is where we start worrying about the coefficient ring.
+The persistence decomposition theorem applies to diagrams of vector spaces
+over a field. When we work over the ring of integers Z, however, the result
+is known to fail: there need not be an interval decomposition. This is unfor-
+tunate, since we require integer cocycles to construct circle maps. To finesse
+this problem, we pick an arbitrary prime number p (such as p = 47) and
+carry out our persistence calculations over the finite field F = Fp . The re-
+sulting Fp cocycle must then be converted to integer coefficients: we address
+this in Section 2.4.
+Persistent Cohomology and Circular Coordinates                                            7
+
+
+   In principle we can use the ideas in [19] to calculate the persistent co-
+homology intervals and then select a long interval [i , j ) and a specific
+δ ∈ [i , j ). We then let X = X δ and take α to be the cocycle in C1 (X; F)
+corresponding to the interval.
+    Persistent cocycle algorithm. Explicitly, persistent cocycles can
+be calculated in the following way. We discuss the correctness of this algo-
+rithm in Section 2.A.
+    Suppose that the simplices in the filtered complex are totally ordered,
+and labelled σ1 , σ2 , . . . , σm so that σj arrives at time j , where the se-
+quence (j ) is non-decreasing. Write X` = σ1 ∪ σ2 ∪ · · · ∪ σ` . A cochain
+α ∈ C∗ (X` ) = C∗ (X` ; F) can be represented as a vector (a1 , a2 , . . . , a` ),
+where aj = α(σj ). The cochains corresponding to the standard basis vec-
+tors are denoted σ̂1 , σ̂2 , . . . , σ̂` .
+    We iterate over ` = 0, 1, . . . , m, maintaining the following information
+as we go:
+ – a set of indices I` ⊆ {1, 2, . . . , `} associated with ‘live’ cocycles;
+ – a list of cocycles (αi : i ∈ I` ) in C∗ (X` ).
+The cocycle αi involves only σi and those simplices of the same dimension
+that appear later in the filtration sequence (thus only σj with j ≥ i).
+Initialize (` = 0): Set I0 = ∅. The list of cocycles is empty.
+
+Update (from ` − 1 to `): Our convention is to extend each cochain α =
+(a1 , a2 , . . . , a`−1 ) in C∗ (X`−1 ) to a cochain α = (a1 , . . . , a`−1 , 0) in C∗ (X` )
+by appending 0. We still call it α.
+    Begin by computing, for each i ∈ I`−1 , the coboundaries of the cocycles
+αi of X`−1 within the larger complex X` . Since dαi = 0 in C∗ (X`−1 ), it
+follows that the coboundary dαi in C∗ (X` ) must be a multiple of the newest
+basis vector σ̂` = (0, . . . , 0, 1). Write dαi = ci σ̂` .
+ – If all the ci are zero, then we have one new cocycle: let I` = I`−1 ∪ {`}
+   and define α` = σ̂` .
+ – Otherwise, we lose a cocycle. Let j ∈ I`−1 be the largest index for which
+   cj 6= 0. Delete αj by setting I` = I`−1 \ {j}, and restore the earlier
+   cocycles by setting αi ← αi − (ci /cj )αj . The ‘lost’ cocycle is recorded
+   for posterity: write the persistence interval [j , ` ) to the output, together
+   with its associated cocycle αj .
+Finish (` = m): Surviving cocycles are associated with semi-infinite inter-
+vals. For each i ∈ Im , write the interval [i , ∞) to the output, together with
+its associated cocycle αi .
+    Remark. The reader may be more familiar with persistence diagrams
+in homology rather than cohomology. In fact, the universal coefficient theo-
+rem [10] implies that the two diagrams are identical. The salient point is that
+cohomology is the vector-space dual of homology, when working with field
+8                                              de Silva, Morozov, Vejdemo-Johansson
+
+
+coefficients. That said, we cannot simply use the usual algorithm for persis-
+tent homology: we are interested in obtaining explicit cocycles, whereas the
+classical algorithm [19] returns cycles.
+    After completing the persistent cocycle calculation, up to some param-
+eter value max , we are left with a collection of finite and semi-infinite per-
+sistence intervals. For the next step, we select one such interval and a pa-
+rameter value δ ≤ max contained in it. Henceforth, we fix our attention on
+the complex X δ . The cocycle associated to the interval can be regarded as a
+cocycle on X δ , by restriction. If we are working over the field Fp , we denote
+this cocycle αp .
+    In some of the experimental examples in Section 3, we consider several
+persistence intervals at once, and use a value of δ common to all of them.
+This can be done elegantly using the persistence diagram. Select a point
+(δ, δ) on the diagonal and draw the upper-left quadrant at that point. The
+chosen persistence intervals must appear in the diagram as points in that
+quadrant. We use this visual convention in all of our examples.
+
+
+2.4 Lifting to integer coefficients
+
+We now have a simplicial complex X = X δ and a cocycle αp ∈ C1 (X; Fp ).
+The next step is to ‘lift’ αp by constructing an integer cocycle α which
+reduces to αp modulo p.
+    Theory. To show that this is (almost) always possible, note that the
+                                                     ·p
+short exact sequence of coefficient rings 0 −→ Z −→ Z −→ Fp −→ 0 gives
+rise to a long exact sequence, called the Bockstein sequence (see Section 3.E
+of [10]). Here is the relevant section of the sequence:
+                                           β              ·p
+           → H1 (X; Z) → H1 (X; Fp ) → H2 (X; Z) → H2 (X; Z) →
+
+By exactness, the Bockstein homomorphism β induces an isomorphism be-
+                                                                               ·p
+tween the cokernel of H1 (X; Z) → H1 (X; Fp ) and the kernel of H2 (X; Z) →
+H2 (X; Z), and this kernel is precisely the set of p-torsion elements of H2 (X; Z).
+If there is no p-torsion, then it follows immediately that the cokernel of the
+first map is zero. In other words H1 (X; Z) → H1 (X; Fp ) is surjective; any
+cocycle αp ∈ C1 (X; Fp ) can be lifted to a cocycle α ∈ C1 (X; Z).
+    If we are unluckily sabotaged by p-torsion, then we pick another prime
+and redo the calculation from scratch: it is enough to pick a prime that
+does not divide the order of the torsion subgroup of H2 (X; Z), so almost
+any prime will do.
+   Practice. We construct α by taking the coefficients of αp in Fp and
+replacing them with integers in the correct congruence class modulo p. The
+default is to choose coefficients close to zero; that is, in the range
+
+                   {−(p − 1)/2, . . . , −1, 0, 1, . . . , (p − 1)/2}
+Persistent Cohomology and Circular Coordinates                               9
+
+
+when p is an odd prime. (We do not recommend using p = 2; there is no
+way to distinguish 1 from −1.)
+    We then evaluate d1 α. If d1 α = 0 then α is a cocycle and we are done.
+Otherwise, it becomes necessary to do some repair work. Certainly d1 α ≡ 0
+modulo p, so we can write d1 α = pη for some η ∈ C2 (X; Z). To effect the
+repair, we must write η as a coboundary by solving the equation η = d1 ζ
+for ζ ∈ C1 (X; Z). Given a solution, the 1-cochain α − pζ is the required lift
+of αp , since d1 (α − pζ) = pη − pη = 0.
+    When can this fail? We know that pη is a coboundary (indeed pη = d1 α),
+and we know that η is a cocycle (since p(d1 η) = d1 (pη) = d1 d1 α = 0). Thus
+we have a cohomology class [η] in H1 (X; Z) such that p[η] = [pη] is zero
+in cohomology. If H2 (X; Z) has no p-torsion, then [η] must itself be zero,
+meaning that η is a coboundary and there exists a solution to η = d1 ζ. On
+the other hand, if H2 (X; Z) has p-torsion then there is no such guarantee.
+    This is all very well. Unfortunately, the equation η = d1 ζ is a Diophan-
+tine linear system. At present, we can provide no particular guidance as
+to how to solve the system (other than by vague appeal to off-the-shelf
+Diophantine or integer linear programming solvers), even if we know that a
+solution exists. Fortunately, and mysteriously, this has not proved necessary
+in any of our examples. In our experiments, the heuristic of lifting to integer
+coefficients close to zero (that is, between ±(p − 1)/2) produces a cocycle
+every time. We wonder why.
+
+    To finish this section, we draw attention to a basic fact from classical
+algebraic topology.
+
+Proposition 3 Let X be a finite simplicial complex. Then H1 (X; Z) is tor-
+sion free, and H2 (X; Z) has the same torsion as H1 (X; Z).
+
+Proof More generally, Hk+1 (X; Z) and Hk (X; Z) have isomorphic torsion
+subgroups. This is a consequence of the universal coefficient theorems for
+homology and cohomology: see [10, Corollary 3.3]. For the first statement,
+note that H0 (X; Z) is the free abelian group generated by the connected
+components of X. It is therefore torsion-free, hence so is H1 (X; Z). t
+                                                                      u
+
+
+    Remark. We expect that p-torsion is extremely rare in ‘real’ data sets,
+since it is symptomatic of rather subtle topological phenomena. For instance,
+the simplest examples which exhibit 2-torsion are the nonorientable closed
+surfaces (such as the projective plane and the Klein bottle). For a ‘randomly’
+chosen prime p, one would be very surprised to find p-torsion arising from
+a statistical data set. We do not know how to quantify this.
+    At any rate, the arguments in this section show us that we can recognize
+torsion trouble when it occurs, by observing the failure of d1 α = 0 for the
+chosen lift α. We then have the choice of changing primes or setting up an
+appropriate integer linear programming problem.
+10                                           de Silva, Morozov, Vejdemo-Johansson
+
+
+2.5 Harmonic smoothing
+
+Given an integer cocycle α ∈ C1 (X; Z), or indeed a real cocycle α ∈
+C1 (X; R), we wish to find the ‘smoothest’ real cocycle ᾱ ∈ C1 (X; R) co-
+homologous to α. It turns out that what we want is the harmonic cocycle
+representing the cohomology class [α].
+    We define smoothness. Each of the spaces Ci (X; R) comes with a natural
+Euclidean metric:
+                                  X
+                         kf k2 =       |f (a)|2 ,
+                                   a ∈X 0
+                                     X
+                          kαk2 =             |α(ab)|2 ,
+                                   ab ∈X 1
+                                     X
+                          kAk2 =              |A(abc)|2 .
+                                   abc ∈X 2
+
+A circle-valued function θ is ‘smooth’ if its total variation across the edges
+of X is small. The terms |ᾱ(ab)|2 capture the variation across individual
+edges; therefore what we must minimize is kᾱk2 .
+Proposition 4 Let α ∈ C1 (X; R). There is a unique solution ᾱ to the
+least-squares minimization problem
+
+               argmin kᾱk2 | ∃f ∈ C0 (X; R), ᾱ = α + d0 f .
+                     
+                                                                  (2)
+                  ᾱ
+
+Moreover, ᾱ is characterized by the equation d∗0 ᾱ = 0, where d∗0 is the
+adjoint of d0 with respect to the inner products on C0 , C1 .
+
+Proof Note that if d∗0 ᾱ = 0 then for any f ∈ C0 we have
+
+                 kᾱ + d0 f k2 = kᾱk2 + 2hᾱ, d0 f i + kd0 f k2
+                              = kᾱk2 + 2hd∗0 ᾱ, f i + kd0 f k2
+                              = kᾱk2 + kd0 f k2
+
+which implies that such an ᾱ must be the unique minimizer. For existence,
+note that
+                             d∗0 α + d∗0 d0 f = 0
+certainly has a solution f if Im(d∗0 ) = Im(d∗0 d0 ). But this is a standard
+fact in finite-dimensional linear algebra: Im(At ) = Im(At A) for any real
+matrix A; this follows from the singular value decomposition, for instance.
+t
+u
+
+   It is customary to construct the Laplacian ∆ = d∗1 d1 + d0 d∗0 . The twin
+equations d1 ᾱ = 0 and d∗0 ᾱ = 0 immediately imply (and conversely, can be
+deduced from) the single equation ∆ᾱ = 0; in other words ᾱ is harmonic.
+  Remark. The space of harmonic 1-forms H1 = Ker(∆) is naturally iso-
+morphic to both the cohomology H1 (X; R) and the homology H1 (X; R) with
+Persistent Cohomology and Circular Coordinates                              11
+
+
+
+
+Fig. 1 A torus, and the integer cohomology • and homology ◦ lattices of its
+harmonic space H1 . The two lattices are dual with respect to the inner product
+whose unit circle is shown. We seek points in the cohomology lattice.
+
+
+real coefficients. These are related to the integer cohomology and homology
+groups via natural maps:
+
+         H1 (X; Z) → H1 (X; R) = H1 (X) = H1 (X; R) ← H1 (X; Z)
+
+For our purposes (following Propositions 1 and 2) we seek points in the
+image of the map H1 (X; Z) → H1 (X). The set of these points is a full-rank
+discrete lattice of the real vector space H1 (X). The Diophantine nature of
+our calculations arises from the fact that we are trying to work in a lattice.
+    Remark. Dual to the integer cohomology lattice is the integer homology
+lattice, which is the image of the map H1 (X; Z) → H1 (X). The two lattices
+are generally different. This is why we must compute persistent cocycles
+rather than cycles. See Figure 1.
+
+
+
+2.6 Integration
+
+The least-squares problem in equation (2) can be solved using a standard
+algorithm such as LSQR [14]. By Proposition 2 we can use the solution
+parameter f to define the circular coordinate θ on the vertices of X: simply
+let θ be the reduction of f modulo Z. This works because the original cocycle
+α has integer coefficients.
+   Remark. More generally, if ᾱ is an arbitrary real cocycle such that
+
+                      [ᾱ] ∈ Im(H1 (X; Z) → H1 (X; R)),
+
+it is a straightforward matter to integrate ᾱ to a circle-valued function θ
+on the vertex set X 0 . Suppose that X is connected (if not, each connected
+component can be treated separately) and pick a starting vertex x0 and
+assign θ(x0 ) = 0. One can use Dijkstra’s algorithm to find shortest paths to
+12                                              de Silva, Morozov, Vejdemo-Johansson
+
+
+each remaining vertex from x0 . When a new vertex b enters the structure
+via an edge ab, we assign θ(b) = θ(a) + ᾱ(ab) (or θ(a) − ᾱ(ba) if the edge is
+correctly identified as ba). If a vertex a is connected to x0 by multiple paths
+then the different possible values of θ(a) differ by an integer; this is where
+we use the hypothesis that ᾱ is cohomologous to an integer cocycle.
+
+
+
+2.7 Summary
+
+The procedure described above seeks a 1-cocycle ᾱ with real coefficients
+which is:
+ – harmonic (for smoothness)
+ – in the integer cohomology lattice (for integrability to S 1 = R/Z)
+ – persistent (for geometric significance)
+The circular coordinate θ is obtained by integrating ᾱ, either by brute force
+or as a side-effect of the smoothing step.
+    In order to compute persistent cocycles we are forced to work over a field,
+so we choose Fp and then attempt to lift the results to Z. This step may fail
+if H2 (X; Z) (or equivalently H1 (X; Z)) has nontrivial p-torsion. Even when
+the lifting problem has a solution, we might have to solve a Diophantine
+linear system to find it.
+
+
+2.A Correctness of the cocycle algorithm.
+
+The persistent cocycle algorithm is a stripped-down version of a more com-
+plete calculation, which we describe now. The output of this calculation is
+the following information:
+
+ – A partition {1, 2, . . . , m} = I ∪ P ∪ Q, (where I, P, Q are disjoint).
+ – A bijective pairing between the sets P, Q. We write p / q to indicate
+   that p is paired with q.
+ – An ‘echelon basis’ α1 , α2 , . . . , αm for C∗ (Xm ). By ‘echelon’ we mean that
+   αj involves σj (with a nonzero coefficient) and subsequent cells only. In
+   vector notation, each αj is of the form
+
+                         αj = (0, . . . , 0, ajj , ajj+1 , . . . , ajm )
+
+   where ajj 6= 0.
+ – The coboundaries of the basis cochains αj are:
+
+                         dαi = 0         for i ∈ I,                             (∗i )
+                         dαp = αq        for p ∈ P with p / q.                  (∗p )
+                         dαq = 0         for q ∈ Q,                             (∗q )
+Persistent Cohomology and Circular Coordinates                                   13
+
+
+Note that the echelon form implies that the kernel of each restriction map
+C∗ (Xm ) → C∗ (Xj ) is spanned by the cochains αj+1 , . . . , αm .
+    The key point is that the persistent cohomology of the filtered complex
+can be deduced from any partition, pairing, and echelon basis which sat-
+isfy the coboundary equations (∗i ), (∗p ) and (∗q ). Indeed, the equations
+imply that the space of coboundaries in C∗ (Xj ) has basis consisting of the
+(restrictions of the) cochains
+
+                            αq    for q ∈ Q with q ≤ j,
+
+and the space of cocycles has basis consisting of these boundary cochains
+together with the (restrictions of the) cochains
+
+                    αi    for i ∈ I with i ≤ j,
+                   αp     for p ∈ P with p / q and p ≤ j < q.
+
+Thus, each αi , for i ∈ I, restricts to a nonzero cocycle over the index range
+{i, . . . , m}; and each αp , for p ∈ P with p / q, restricts to a nonzero cocycle
+over the index range {p, . . . , q−1}. These give us persistence intervals [i , ∞)
+and [p , q ) respectively.
+     We now describe the computation, carried out iteratively. Suppose we
+have determined a partition
+
+                      {1, . . . , ` − 1} = I`−1 ∪ P`−1 ∪ Q`−1 ,
+
+a pairing /, and an echelon basis α1 , . . . , α`−1 for C∗ (X`−1 ), with cobound-
+aries as above. We now add the cell σ` .
+    The immediate impact is that coboundaries computed in C∗ (X` ) have
+an extra coefficient for the new cell. Thus, for some scalars c1 , c2 , . . . , c`−1
+we have
+
+                   dαi = ci σ̂`        for i ∈ I`−1 ,
+                  dαp = αq + cp σ̂`    for p ∈ P`−1 with p / q.
+                  dαq = cq σ̂`         for q ∈ Q`−1 ,
+
+We can begin defining a new echelon basis ᾱ1 , ᾱ2 , . . . , ᾱ` as follows:
+
+               ᾱp = αp                   for p ∈ P`−1
+               ᾱq = dᾱp = αq + cp σ̂`   for q ∈ Q`−1 with p / q.
+
+Note that the leading term of ᾱq is unchanged from αq , and that dᾱq =
+d(dαp ) = 0.
+   Now we must consider ᾱi for i ∈ I`−1 , and ᾱ` .
+Case 1: each ci = 0, for i ∈ I`−1 . Then we can set ᾱi = αi for each i ∈ I`−1 ,
+and ᾱ` = σ̂` . We set
+
+                  I` = I`−1 ∪ {`},    P` = P`−1 ,       Q` = Q`−1 ,
+14                                         de Silva, Morozov, Vejdemo-Johansson
+
+
+and the coboundary equations (∗i ), (∗p ), (∗q ) are clearly satisfied.
+Case 2: some ci 6= 0, for i ∈ I`−1 . Let j be the largest such index. Define
+
+                ᾱj = αj ,
+                ᾱi = αi − (ci /cj )αj   for i ∈ I`−1 with i 6= j,
+                ᾱ` = dαj = cj σ̂.
+
+The echelon property still holds (since j was chosen largest). If we set
+
+          I` = I`−1 \ {j},    P` = P`−1 ∪ {j},      Q` = Q`−1 ∪ {`},
+
+and extend the pairing by adding the relation j / `, then it is easily seen
+that the coboundary equations are satisfied.
+     The persistent cocycle algorithm can be thought of as a ‘forgetful’ or
+‘neglectful’ version of the the calculation above. We maintain only the I`
+and the echelon basis vectors αi . The index sets P` and Q` , the pairing /, and
+the remaning basis vectors are not necessary for this. We write each interval
+[p , q ) to output as soon as we identify a pair p / q, but we immediately
+discard the pairing information from memory. At the end we collect the
+remaining intervals [i , ∞).
+     Thus, the correctness of the cocycle algorithm follows from the correct-
+ness of the full cohomology algorithm. The correctness of the cohomology al-
+gorithm follows from the fact that the persistent cohomology can be deduced
+from any partition, pairing and echelon basis which satisfy the coboundary
+equations.
+
+
+3 Experiments
+
+3.1 Software
+
+Early experimental trials were performed with the Java-based jPlex simpli-
+cial complex software [17]. The present results and timings are obtained with
+the C++ library Dionysus [12]. We used Paige and Saunders’ implementa-
+tion of LSQR [13] for the least-squares problems in the harmonic smoothing
+step.
+
+
+3.2 General procedure
+
+We tested our methods on several synthetic data sets with known topology,
+ranging from the humble circle itself to a genus-2 surface (‘double torus’).
+Most of the examples were embedded in R2 or R3 , with the exception of a
+sample from a complex projective curve (embedded in CP 2 ) and a synthetic
+image-like data set (embedded in R120000 ).
+   In each case we selected vertices for the filtered simplicial complex: either
+the whole set, or a smaller well-distributed subset of ‘landmarks’ selected by
+Persistent Cohomology and Circular Coordinates                              15
+
+
+iterative furthest-point sampling. We then built a Rips or witness complex,
+with maximum radius generally chosen to ensure around 105 simplices in
+the complex.
+    In most cases, we show the persistence diagram produced by the cocycle
+computation. The chosen value δ is marked on the diagonal, with its upper-
+left quadrant indicated in green lines. The persistent cocycles available at
+parameter value δ are precisely those contained in that quadrant. Each of
+those cocycles then produces a circular coordinate.
+    There are various figures associated with each example. Most important
+are the correlation scatter plots: each scatter plot compares two circular
+coordinate functions. These may be functions produced by the computation
+(‘inferred coordinates’) or known parameters. These scatter plots are drawn
+in the unit square, which is of course really a torus S 1 × S 1 .
+    When the original data are embedded in R2 or R3 , we also display the
+circular coordinates directly on the data set, plotting each point in color
+according to its coordinate value interpreted on the standard hue-circle.
+This works less well in grayscale reproductions, of course.
+    Finally, in certain cases we plot coordinate values against frequency, as
+a histogram. This distributional information can sometimes be useful in the
+absence of other information.
+    Remark. When the goal is to infer the topology of a data set whose
+structure is unknown, we do not have any ‘known parameters’ available to
+us. We can still construct correlation scatter plots between pairs of inferred
+coordinates, and the distributional histograms for each coordinate individ-
+ually. We exhort the reader to view the following examples through the lens
+of the topological inference problem: what structures can be distinguished
+using scatter plots and histograms (and persistence diagrams) alone?
+
+
+3.3 Noisy circle
+
+We begin with the circle itself, and its tautological circle-valued coordinate.
+    We picked 200 points distributed along the unit circle. We added a uni-
+form random variable from [0.0, 0.4] to each coordinate. A Rips complex
+was constructed in 0.07 seconds with maximal radius 0.5, resulting in 23475
+simplices. The computation of cohomology finished in 0.03 seconds.
+    Parametrizing at 0.4 yielded a single coordinate function, which very
+closely reproduces the tautological angle function. Parametrizing at 0.14
+yielded several possible cocycles. We selected one of those with low persis-
+tence; this produced a parametrization which ‘snags’ around a small gap in
+the data.
+    See Figure 2. The left panel in each row shows the histogram of coordi-
+nate values; the middle panel shows the correlation scatter plot against the
+known angle function; the right panel displays the coordinate using color.
+The high-persistence (‘global’) coordinate correlates with the angle func-
+tion with topological degree 1. Variation in that coordinate is uniformly
+16                                        de Silva, Morozov, Vejdemo-Johansson
+
+                                1
+
+
+                              0.5
+
+
+                                0
+                                    0    0.5      1
+
+
+
+
+Fig. 2 Noisy circle. Persistence diagram (top). Global coordinate (middle row),
+local coordinate (bottom row). In the coordinate rows: histogram of coordinate
+values (left), correlation scatter plot against known angle function (middle), in-
+ferred coordinate in color (right).
+
+
+distributed, as seen in the histogram. In contrast, the low-persistence (‘lo-
+cal’) coordinate has a spiky distribution.
+
+
+3.4 Trefoil torus knot
+
+Another example with circle topology: see Figure 3. We picked 400 points
+distributed along the (2, 3) torus knot on a torus with radii 2.0 and 1.0.
+We jittered them by a uniform random variable from [0.0, 0.2] added to
+each coordinate. We generated a Rips complex in 0.11 seconds up to ra-
+dius 1.0, acquiring 36936 simplices. We computed persistent cohomology
+in 0.05 seconds. As expected, the inferred coordinate correlates strongly
+with the known parameter with topological degree 1. The histogram shows
+three ‘bulges’ corresponding to the three high-density regions of the sam-
+pled curve, which occur when the curve approaches the central axis of the
+torus.
+Persistent Cohomology and Circular Coordinates                                 17
+
+
+
+         1
+
+
+       0.5
+
+
+         0
+             0    0.5     1
+Fig. 3 Trefoil torus knot. Persistence diagram (left), correlation scatter plot of
+inferred coordinate against known parametrization (middle), inferred coordinate
+in color (right).
+
+
+
+
+Fig. 4 Images of a rotating cube. Histogram of coordinate values (left); scatter
+plot against known angle function (middle); a selection of images matched to
+recovered circle coordinate (right).
+
+
+3.5 Rotating cube
+
+For a more elaborate data set with S 1 -topology, we generated a sequence
+of 657 rendered images of a colorful cube rotating around one axis. Each
+image was regarded as a vector in the Euclidean space R200·200·3 . From this
+data we built a witness complex with 50 landmark points and constructed
+a single circular coordinate. Interpolating the resulting function linearly
+between the landmarks gave us coordinates for all the points in the family.
+    See Figure 4. The frequency distribution is comparatively smooth (by
+which we mean that there are no large spikes in the histogram), which indi-
+cates that the coordinate does not have large static regions. The correlation
+plot of the inferred coordinate against the original known sequence of the
+cube images shows a correlation with topological degree 1. We show the
+progression of the animation on an evenly-spaced sample of representative
+points around the circle.
+
+
+3.6 Pair of circles
+
+See Figure 5 for these two examples.
+18                                        de Silva, Morozov, Vejdemo-Johansson
+
+  1                                      1
+
+0.5                                     0.5
+
+  0                                      0
+      0   0.5    1                            0   0.5    1
+
+
+
+
+Fig. 5 Two conjoined circles (left); two disjoint circles (right). In each case we
+show the persistence diagram (top left), the two inferred coordinates (right col-
+umn), the correlation scatter plot (bottom left).
+
+
+    Conjoined circles: we picked 400 points distributed along circles in the
+plane with radius 1 and with centres at (±1, 0). The points were then jit-
+tered by adding noise to each coordinate taken uniformly randomly from
+the interval [0.0, 0.3]. A Rips complex was constructed in 0.26 seconds with
+maximal radius 0.5, resulting in 76763 simplices. The cohomology was com-
+puted in 0.10 seconds.
+    Disjoint circles: 400 points were distributed on circles of radius 1 centered
+around (±2, 0) in the plane. These points were subsequently disturbed by a
+uniform random variable from [0.0, 0.5]. We constructed a Rips complex in
+0.14 seconds with maximum radius 0.5, which gave us 45809 simplices. The
+cohomology computation finished in 0.06 seconds.
+    In both cases, our method detects the two most natural circle-valued
+functions. The scatter plots appear very similar. In the conjoined case, there
+is some interference between the two circles, near their meeting point.
+
+
+3.7 Torus
+
+See Figure 6. We picked 400 points at random in the unit square, and then
+used a standard parametrization to map the points onto a torus with inner
+and outer radii 1.0 and 3.0. These were subsequently jittered by adding a
+uniform random variable from [0.0, 0.2] to each coordinate.
+                                                        √     We constructed
+a Rips complex in 0.20 seconds with maximal radius 3, resulting in 61522
+simplices. The corresponding cohomology was computed in 0.09 seconds.
+    The two inferred coordinates at the radius 1.6 in this (fairly typical)
+experimental run recover the original coordinates essentially perfectly: the
+first inferred coordinate correlates with the meridional coordinate with topo-
+logical degree −1, while the second inferred coordinate correlates with the
+longitudinal coordinate with degree 1.
+Persistent Cohomology and Circular Coordinates                                     19
+
+
+        1.5
+
+           1
+
+        0.5
+
+           0
+            0    0.5 1     1.5
+        (a) Persistence diagram (left); first inferred coordinate (middle); sec-
+        ond inferred coordinate (right).
+
+                      Inferred2             Original1              Original2
+          Inferred1
+          Inferred2
+          Original1
+
+
+
+
+        (b) Correlation scatter plots between the two original and two inferred
+        coordinates.
+
+        Fig. 6 Torus in R3 .
+
+
+
+
+    When the original coordinates are unavailable, the important figure is
+the inferred-versus-inferred scatter plot. In this case the scatter plot is fairly
+uniformly distributed over the entire coordinate square (i.e. torus). In other
+words, the two coordinates are decorrelated. This is slightly truer (and more
+clearly apparent in the scatter plot) for the two original coordinates. Con-
+trast these with the corresponding scatter plots for a pair of circles (con-
+joined or disjoint).
+20                                         de Silva, Morozov, Vejdemo-Johansson
+
+     0.2
+
+
+
+
+     0.1
+
+
+
+
+      0
+           0         0.1           0.2
+Fig. 7 Elliptic curve. Persistence diagram (left), correlation scatter plot between
+the two coordinates (right).
+
+
+3.8 Elliptic curve
+
+See Figure 7. For fun, we repeated the previous experiment with a torus
+abstractly defined as the zero set of a homogeneous cubic polynomial in
+three variables, interpreted as a complex projective curve. We picked 400
+points at random on S 5 ⊂ C3 , subject to the cubic equation
+
+                             x2 y + y 2 z + z 2 x = 0.
+
+To interpret these as points in CP 2 , we used the projectively invariant
+metric
+                         d(ξ, η) = cos−1 (|ξ¯ · η|)
+for all pairs ξ, η ∈ S 5 . With this metric we built a Rips complex in 0.08
+seconds with maximal radius 0.15. The resulting complex had 44184 sim-
+plices, and the cohomology was computed in 0.06 seconds. We found two
+dominant coclasses that survived beyond radius 0.15, and we computed our
+parametrizations at the 0.15 mark.
+    The resulting scatter plot quite clearly exhibits the decorrelation which
+is characteristic of the torus.
+
+
+3.9 Double torus
+
+See Figure 9. We constructed a torus by generating 1600 points, uniformly
+distributed in the unit square, and then using a standard parametrization of
+the torus to wrap the points onto a torus surface with inner and outer radii
+1.0 and 3.0. This was done twice, translating the two tori to place centers
+5.7 apart from each other. The points, from each torus, that overrun the
+intersection plane were dropped, resulting in a data set with 2885 points
+distributed on a double torus. We build a Rips complex on these points in
+12.97 seconds up to radius 1.25 which yields 1,879,805 simplices. The per-
+sistent cohomology computation took 8.46 seconds, and identified the four
+most significant cocycles. The resulting persistence diagram is in Figure 8.
+Persistent Cohomology and Circular Coordinates                              21
+
+                                     4 points
+
+
+                             1
+
+                           0.5
+
+                             0
+                                 0   0.5     1
+Fig. 8 Double torus: persistence diagram.
+
+
+    The identified cocycles and the resulting parametrizations are not espe-
+cially perspicuous; we present them in Figure 9(a). On the other hand, by
+taking linear combinations we can find a new basis of circular coordinate
+functions whose correlation scatter-plot matrix is much more suggestive of
+the double torus: see Figure 9(b).
+    This particular coordinate transformation was obtained ‘by inspection’.
+Open question: is there a systematic way to transform a basis of circular
+coordinate functions so that the structure of the data is revealed as helpfully
+as possible?
+    After the update, coordinates 1 and 2 are ‘coupled’, in the sense that
+they are supported over the same subtorus of the double torus. The scatter
+plot shows that the two coordinates appear to be completely decorrelated
+except for a large mass concentrated at a single point. This mass corresponds
+to the other subtorus, on which coordinates 1 and 2 are essentially constant.
+A similar discussion holds for coordinates 3 and 4.
+    The uncoupled coordinate pairs (1,3), (1,4), (2,3), (2,4) produce scatter
+plots reminiscent of two conjoined circles.
+
+
+4 Discussion
+
+Although our procedure works well in these simple examples, there are vari-
+ous unanswered questions about the behaviour of this algorithm in general.
+We discuss these now.
+Diophantine algebra
+ – When lifting from Fp coefficients to Z coefficients, why does the ‘close to
+   zero’ heuristic work perfectly in the given examples? In fact, coefficients
+   of cocycles produced by the persistence algorithm appear to be almost
+   always 0, ±1. What makes this happen?
+ – Are there efficient ways to repair an integer lift α of an Fp -cocycle αp ,
+   when d1 α 6= 0? What about under special conditions, such as d1 α being
+   sparse?
+ – Are there a priori geometric estimates on the largest torsion prime in
+   H2 (X; Z)? In other words, can one quantify the assertion “p-torsion is
+   rare”?
+22                                          de Silva, Morozov, Vejdemo-Johansson
+
+
+
+
+       (a) The four discovered coordinates θ1 , θ2 , θ3 , θ4 and their matrix
+       of correlation scatter plots.
+
+
+
+
+       (b) Taking linear combinations for a geometrically more ‘natural’
+       basis of circular coordinates: φ1 = θ1 , φ2 = θ2 +θ3 +θ4 , φ3 = θ3 , and
+       φ4 = θ1 + θ4 . The pairs φ1 , φ2 and φ3 , φ4 respectively parametrize
+       the left and right halves of the double torus.
+
+Fig. 9 Double torus in R3 .
+Persistent Cohomology and Circular Coordinates                                 23
+
+
+ – The cohomology group H1 (X; Z) is torsion-free, and hence isomorphic
+   to some Zn . Are there efficient ways to compute an independent set of
+   generators?
+
+Generalized multidimensional scaling (mds)
+ – The real coordinates in classical mds have an absolute scale, which can be
+   related to the metric structure on the input data. Circular coordinates,
+   on the other hand, have no absolute scale. Is there a meaningful way to
+   assign radius values to each circular coordinate, for instance to estimate
+   the longitudinal and meridional radii of a general torus?
+ – The methods presented in this paper will recover topologically indepen-
+   dent circle coordinates (since the generators of the persistence diagram
+   are by definition linearly independent elements of H1 ). Classical mds,
+   similarly, recovers statistically independent real coordinates. Is there
+   some way to combine the two approaches to obtain mixed families of
+   real and circular coordinates? What is the appropriate notion of inde-
+   pendence?
+
+Higher dimensions
+ – Can we apply similar methods to obtain sphere-valued coordinates, for
+   spheres S n with n ≥ 2? The simplest analogue of (1) in 2 dimensions is
+                               [X, CP∞ ] ∼
+                                         = H2 (X; Z)
+   where CP∞ can be thought of as S 2 with a sequence of attached disks
+   D4 , D6 , D8 , . . . in even dimensions. One can therefore define S 2 -valued
+   maps up to the 3-skeleton of X, which are homotopy-unique up to the
+   2-skeleton. Is there a tractable smoothing procedure analogous to the
+   harmonic smoothing used here for S 1 -maps?
+
+    Our hope is that the methods presented here are simply the first steps
+in a larger, more ambitious theory of topological multidimensional scaling
+and structure discovery.
+
+Acknowledgements Thanks to Jennifer Kloke for sharing her analysis of a visual
+image data set; this example did not make the present version of this paper. We
+also thank Gunnar Carlsson, for his support and encouragement as leader of the
+topological data analysis research group at Stanford; and Robert Ghrist, as leader
+of the DARPA-funded project Sensor Topology and Minimal Planning (SToMP).
+
+
+References
+
+ 1. M. Belkin and P. Niyogi. Laplacian Eigenmaps and spectral techniques for
+    embedding and clustering. In T. Diettrich, S. Becker, and Z. Ghahramani,
+    editors, Advances in Neural Information Processing Systems 14, pages 585–
+    591. MIT Press, Cambridge, Massachussetts, 2002.
+24                                        de Silva, Morozov, Vejdemo-Johansson
+
+
+ 2. T. F. Cox and M. A. A. Cox. Multidimensional Scaling. Chapman & Hall,
+    London, 1994.
+ 3. V. de Silva and G. Carlsson. Topological estimation using witness complexes.
+    In M. Alexa and S. Rusinkiewicz, editors, Eurographics Symposium on Point-
+    Based Graphics, ETH, Zürich, Switzerland, 2004.
+ 4. M. Dixon, N. Jacobs, and R. Pless. Finding minimal parameterizations of
+    cylindrical image manifolds. In CVPRW ’06: Proc. 2006 Conference on Com-
+    puter Vision and Pattern Recognition Workshop, page 192, Washington, DC,
+    USA, 2006. IEEE Computer Society.
+ 5. D. L. Donoho and C. Grimes. Hessian Eigenmaps: New locally linear em-
+    bedding techniques for high-dimensional data. Technical Report TR 2003-08,
+    Department of Statistics, Stanford University, 2003.
+ 6. H. Edelsbrunner and J. Harer. Persistent homology — a survey. In J. E. Good-
+    man, J. Pach and R. Pollack, editors, Surveys on Discrete and Computational
+    Geometry: Twenty Years Later, pages 257–282. Contemporary Mathematics,
+    453. American Mathematical Society, Rhode Island, 2008.
+ 7. H. Edelsbrunner, D. Letscher, and A. Zomorodian. Topological persistence
+    and simplification. Discrete and Computational Geometry, 28:511–533, 2002.
+ 8. R. Ghrist. Barcodes: the persistent topology of data. Bulletin of the American
+    Mathematical Society, 45(1):61–75, 2008.
+ 9. L. J. Guibas and S. Y. Oudot. Reconstruction using witness complexes. In
+    Proc. 18th ACM-SIAM Symposium on Discrete Algorithms, pages 1076–1085,
+    2007.
+10. A. Hatcher. Algebraic Topology. Cambridge University Press, Cambridge,
+    2002.
+11. J. A. Lee and M. Verleysen. Nonlinear dimensionality reduction of data man-
+    ifolds with essential loops. Neurocomputing, 67:29–53, 2005.
+12. D. Morozov.        Dionysus library for computing persistent homology.
+    http://www.mrzv.org/software/dionysus/.
+13. C. C. Paige and M. A. Saunders. LSQR: Sparse equations and least squares.
+    http://www.stanford.edu/group/SOL/software/lsqr.html.
+14. C. C. Paige and M. A. Saunders. LSQR: An algorithm for sparse linear equa-
+    tions and sparse least squares. ACM Transactions on Mathematical Software,
+    8(1):43–71, March 1982.
+15. R. Pless and I. Simon. Embedding images in non-flat spaces. In Conference
+    on Imaging Science Systems and Technology, pages 182–188, 2002.
+16. S. Roweis and L. Saul. Nonlinear dimensionality reduction by locally linear
+    embedding. Science, 290:2323–2326, Dec. 2000.
+17. H. Sexton and M. Vejdemo-Johansson. jPlex simplicial complex library.
+    http://comptop.stanford.edu/programs/jplex/.
+18. J. B. Tenenbaum, V. de Silva, and J. C. Langford. A global geometric frame-
+    work for nonlinear dimensionality reduction. Science, 290:2319–2323, Dec.
+    2000.
+19. A. Zomorodian and G. Carlsson. Computing persistent homology. Discrete
+    and Computational Geometry, 33(2):249–274, 2005.
+

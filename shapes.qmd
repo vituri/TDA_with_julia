@@ -1,197 +1,232 @@
+---
+jupyter: tda-book
+---
+
 # Shape analysis and comparison
 
 > "The book of nature is written in the language of mathematics." \
 > --- Galileo Galilei
 
-How can we tell if two shapes are "similar"? Traditional approaches rely on specific geometric measurements — lengths, angles, volumes — which depend on the coordinate system and are sensitive to noise. Persistent homology offers a coordinate-free, noise-robust alternative: compare shapes by comparing their persistence diagrams.
+How can we tell whether two shapes are similar? A persistence diagram gives us one answer: compare the way components, loops, or cavities appear across scales. It ignores translations and rotations when we use Euclidean distances, but it still sees geometry. Doubling a circle's radius doubles its Rips birth and death scales. Choose whether that change matters *before* comparing the diagrams.
 
-In this chapter, we use Wasserstein distances between persistence diagrams to build a simple "shape space" — a metric space where each point is a shape, and the distance reflects topological similarity. The point is not to compare raw coordinates directly, but to compare the topological signatures extracted from the data.
+In this chapter we build a small library of noisy shapes, compare their $H_1$ diagrams, and create shared persistence-image features. The aim is to understand what this representation keeps and what it loses, rather than to declare every shape recognizable from its barcode.
 
-## Setup
+## A reproducible shape library
 
 ```{julia}
 using CairoMakie
 using MetricSpaces
-using MetricSpaces.Datasets
 using TDAPersistenceDiagrams
 using TDARipserer
 using Random
+using Statistics
 ```
 
-## Generating a shape library
-
-Let's create a collection of point clouds from shapes with known topology:
+Every sample below has 100 points and independent, seeded noise. Circles have radius 1; tori have major radius 2 and minor radius 0.6. Torus angles are uniform, which is convenient for this example but is not uniform sampling with respect to surface area.
 
 ```{julia}
-function sample_shape(shape, n, seed)
+function sample_shape(shape, n, seed; noise_level = 0.05)
     rng = MersenneTwister(seed)
-    noise_level = 0.05
-
-    if shape == :circle
-        return EuclideanSpace(as_matrix(sphere(n, dim = 2)) .+ noise_level .* randn(rng, 2, n))
+    circle_points(k) = begin
+        θ = 2π .* rand(rng, k)
+        permutedims(hcat(cos.(θ), sin.(θ)))
+    end
+    points = if shape == :circle
+        circle_points(n)
     elseif shape == :sphere
-        return EuclideanSpace(as_matrix(sphere(n, dim = 3)) .+ noise_level .* randn(rng, 3, n))
+        p = randn(rng, 3, n)
+        p ./ sqrt.(sum(abs2, p; dims = 1))
     elseif shape == :torus
-        return EuclideanSpace(as_matrix(torus(n)) .+ noise_level .* randn(rng, 3, n))
+        θ, φ = 2π .* rand(rng, n), 2π .* rand(rng, n)
+        r = 2 .+ 0.6 .* cos.(φ)
+        permutedims(hcat(r .* cos.(θ), r .* sin.(θ), 0.6 .* sin.(φ)))
     elseif shape == :two_circles
-        c1 = as_matrix(sphere(n ÷ 2, dim = 2))
-        c2 = as_matrix(sphere(n ÷ 2, dim = 2)) .+ [3.0, 0.0]
-        return EuclideanSpace(hcat(c1, c2) .+ noise_level .* randn(rng, 2, n))
+        hcat(circle_points(n ÷ 2), circle_points(n - n ÷ 2) .+ [3.0, 0.0])
     elseif shape == :blob
-        return EuclideanSpace(0.5 .* randn(rng, 3, n))
+        0.5 .* randn(rng, 3, n)
     else
         error("Unknown shape: $shape")
     end
+    EuclideanSpace(points .+ noise_level .* randn(rng, size(points)))
 end
-```
 
-```{julia}
-shapes = [
-    :circle, :circle, :circle,
-    :sphere, :sphere, :sphere,
-    :torus, :torus, :torus,
-    :two_circles, :two_circles, :two_circles,
-    :blob, :blob, :blob,
-]
-
-n_points = 100
-clouds = [sample_shape(s, n_points, i) for (i, s) in enumerate(shapes)]
+shapes = repeat([:circle, :sphere, :torus, :two_circles, :blob], inner = 3)
+clouds = [sample_shape(s, 100, i) for (i, s) in enumerate(shapes)]
 shape_names = string.(shapes)
+comparison_scale = 3.0
+
+diagrams = [ripserer(Rips(X; threshold = comparison_scale), dim_max = 1) for X in clouds]
 ```
 
-## Computing persistence diagrams for each shape
+The samples have matched point counts, but the geometry and sampling densities differ. These differences can affect the diagrams as much as the number of holes does. For an application, record the units, metric, preprocessing, sample sizes, and filtration horizon along with the distances.
+
+## What to do with bars that survive the computation
+
+A bar printed with death `Inf` in this calculation may simply survive the threshold 3.0. We have not observed its death; it is **right-censored**. Comparing the raw diagrams can give infinite distances if the counts of such bars differ. Replacing that infinity by an arbitrary number would change the meaning of the distance.
+
+Here we make an explicit choice: compare only the scale window $[0,T)$, with $T=3$. We cap every death at the same $T$, keep the time lived inside the window, and discard intervals born at or after $T$. A capped endpoint records the observation horizon, *not* a measured death. This creates finite signatures on a common window; it deliberately loses all information beyond that window.
 
 ```{julia}
-function compute_ph(X; dim_max = 1, threshold = 3.0)
-    ripserer(Rips(X; threshold = threshold), dim_max = dim_max)
+function window_diagram(diagram, T)
+    T > 0 || throw(ArgumentError("T must be positive"))
+    pairs = [(birth(bar), min(death(bar), T)) for bar in diagram if birth(bar) < T]
+    PersistenceDiagram(pairs; dim = dim(diagram))
 end
 
-diagrams = [compute_ph(X) for X in clouds]
+censored_example = window_diagram(PersistenceDiagram([(1.0, Inf)]; dim = 1), comparison_scale)
+@assert birth(only(censored_example)) == 1.0
+@assert death(only(censored_example)) == comparison_scale
+h1 = [window_diagram(d[2], comparison_scale) for d in diagrams]
+println("Bars still alive at T in each original H₁ diagram: ",
+        [count(bar -> !isfinite(bar), d[2]) for d in diagrams])
 ```
+
+Other defensible choices include computing far enough to observe all $H_1$ deaths, or comparing finite and essential intervals separately. Merely dropping all censored bars would erase precisely the features that survived longest. Whatever policy you use, apply it consistently and report it.
 
 ## Building a distance matrix
 
-Now we compare every pair of shapes using the Wasserstein distance on their $H_1$ persistence diagrams:
+For a finite interval $(b,d)$, its cheapest match to the diagonal has $L^\infty$ cost $(d-b)/2$. Consequently,
+
+$$
+W_1(D,\varnothing)=\sum_{(b,d)\in D}\frac{d-b}{2}.
+$$
+
+The helper below uses this exact formula when one side is empty and the package's matching algorithm otherwise. Making the empty case explicit also lets us check the answer by hand. Its inputs must be finite; a raw infinite interval requires an explicit policy first.
 
 ```{julia}
-n_shapes = length(diagrams)
-dist_matrix = zeros(n_shapes, n_shapes)
-
-for i in 1:n_shapes
-    for j in (i + 1):n_shapes
-        d1 = diagrams[i][2]
-        d2 = diagrams[j][2]
-
-        if !isempty(d1) && !isempty(d2)
-            d = Wasserstein()(d1, d2)
-            dist_matrix[i, j] = isfinite(d) ? d : 1.0
-        elseif isempty(d1) && isempty(d2)
-            dist_matrix[i, j] = 0.0
-        else
-            dist_matrix[i, j] = 1.0
-        end
-
-        dist_matrix[j, i] = dist_matrix[i, j]
-    end
+function finite_wasserstein1(left, right)
+    all(isfinite, left) && all(isfinite, right) ||
+        throw(ArgumentError("Apply an explicit finite-window policy first"))
+    isempty(left) && return sum(persistence(bar) / 2 for bar in right; init = 0.0)
+    isempty(right) && return sum(persistence(bar) / 2 for bar in left; init = 0.0)
+    Wasserstein(1, Inf)(left, right)
 end
-```
 
-```{julia}
-fig = Figure(size = (600, 500))
-ax = Axis(
-    fig[1, 1],
-    title = "Pairwise Wasserstein distances (H₁)",
-    xticks = (1:n_shapes, shape_names),
-    yticks = (1:n_shapes, shape_names),
-    xticklabelrotation = π / 4,
-)
-heatmap!(ax, dist_matrix)
-Colorbar(fig[1, 2], limits = extrema(dist_matrix), label = "Distance")
+# A distance we can check by hand: lifetimes 2 and 1 cost 1 + 0.5.
+empty_diagram = PersistenceDiagram(Tuple{Float64, Float64}[]; dim = 1)
+toy_diagram = PersistenceDiagram([(0.0, 2.0), (1.0, 2.0)]; dim = 1)
+@assert finite_wasserstein1(toy_diagram, empty_diagram) == 1.5
+@assert finite_wasserstein1(empty_diagram, toy_diagram) == 1.5
+@assert finite_wasserstein1(empty_diagram, empty_diagram) == 0.0
+@assert finite_wasserstein1(PersistenceDiagram([(0.0, 2.0)]; dim = 1),
+    PersistenceDiagram([(0.0, 3.0)]; dim = 1)) == 1.0
+
+n_shapes = length(h1)
+dist_matrix = [finite_wasserstein1(h1[i], h1[j]) for i in 1:n_shapes, j in 1:n_shapes]
+
+fig = Figure(size = (750, 600))
+ax = Axis(fig[1, 1], title = "H₁ Wasserstein distance on [0, 3)",
+    xticks = (1:n_shapes, shape_names), yticks = (1:n_shapes, shape_names),
+    xticklabelrotation = π / 4)
+hm = heatmap!(ax, dist_matrix)
+Colorbar(fig[1, 2], hm, label = "Distance")
 fig
 ```
 
-If everything works well, you should see blocks of small distances along the diagonal — repeated samples of the same shape produce similar persistence diagrams. Shapes with different topology, especially different numbers of loops, should be farther apart.
+Look for small distances among repeated samples, then check the exceptions. Three samples per class are far too few to establish a reliable classifier, and matching point counts does not guarantee matching coverage of the underlying surfaces.
 
 ## What the distances capture
 
-Let's think about what each shape's persistence should look like:
+These are the Betti numbers of the *ideal underlying spaces*, not a promise about a sparse Rips computation:
 
-| Shape | $\beta_0$ | $\beta_1$ | Expected signature |
-|---|---|---|---|
-| Circle | 1 | 1 | One persistent loop |
-| Sphere | 1 | 0 | No persistent loops (but a nontrivial $H_2$ class) |
-| Torus | 1 | 2 | Two persistent loops |
-| Two circles | 2 → 1 | 2 | Two persistent loops (one per circle) |
-| Blob | 1 | 0 | No persistent features |
+| Underlying space | $\beta_0$ | $\beta_1$ | $\beta_2$ |
+|---|---:|---:|---:|
+| Circle | 1 | 1 | 0 |
+| Sphere surface | 1 | 0 | 1 |
+| Torus surface | 1 | 2 | 1 |
+| Two disjoint circles | 2 | 2 | 0 |
+| Solid ball (model for a blob) | 1 | 0 | 0 |
 
-Using only $H_1$, we expect:
+Using only $H_1$ discards component and cavity information. A sphere surface and a ball can therefore have similar signatures despite being topologically different. Two circles and a torus also share the same ideal $\beta_1$, but their bar lengths can differ because their geometries differ. The finite cloud is discrete at scale zero and eventually becomes contractible in a complete Rips filtration; the interesting topology occupies intermediate scales.
 
-- circles to stand apart because they have one strong loop;
-- spheres and blobs to look similar, since both have trivial $H_1$;
-- tori and two-circle clouds to look similar, since both have two prominent loops.
+Wasserstein distance is a metric on suitable finite persistence diagrams. Pulling it back to point clouds through a chosen diagram produces a **pseudometric**: distinct clouds can have identical diagrams and hence distance zero. Neither diagrams nor persistence images are complete shape invariants.
 
-To distinguish sphere from blob, we would need to look at $H_2$ as well, since the sphere has a cavity while the blob does not.
+## Shared persistence images
 
-## Persistence images as features
+A persistence image moves each $(b,d)$ to birth–persistence coordinates $(b,d-b)$, weights it, spreads it with a Gaussian, and discretizes the resulting surface [@persistenceimages2017]. Its three main choices have different jobs:
 
-A natural workflow for classification tasks is:
+- **Weight:** reduce the influence of points near the diagonal. Here the weight rises linearly from zero to one as persistence reaches the top of the fitted range.
+- **Bandwidth `sigma`:** control smoothing, in the same units as birth and persistence. Small values preserve fine distinctions but make the features more sensitive to sampling.
+- **Grid size and range:** fix the feature coordinates. More pixels increase dimension; they do not create more information.
 
-1. Compute persistence diagrams for each sample.
-2. Convert diagrams to a fixed-size vector representation such as persistence images, persistence landscapes, or Betti curves.
-3. Feed these vectors into a standard classifier.
-
-Here we use persistence images, which convert persistence diagrams into fixed-size arrays:
+Fit the transformation once on a training collection. Reuse that exact object for every validation or test diagram. A separate grid for each sample would make the same array entry mean different things.
 
 ```{julia}
-function safe_persistence_image(diagram; kwargs...)
-    if isempty(diagram)
-        return zeros(5, 5)
+train_ids = [i for i in eachindex(h1) if i % 3 != 0]
+test_ids = [i for i in eachindex(h1) if i % 3 == 0]
+
+function fit_shape_image(training_diagrams, T; size = 8, sigma = 0.15)
+    if any(bar -> isfinite(bar), Iterators.flatten(training_diagrams))
+        PersistenceImage(training_diagrams; size = size, sigma = sigma)
     else
-        pi = PersistenceImage([diagram]; kwargs...)
-        return pi(diagram)
+        # No observed finite features: use the known comparison domain for all samples.
+        PersistenceImage((0.0, T), (0.0, T); size = size, sigma = sigma)
     end
 end
 
-images = [safe_persistence_image(d[2]) for d in diagrams]
+empty_transform = fit_shape_image([empty_diagram], comparison_scale)
+@assert size(empty_transform(empty_diagram)) == (8, 8)
+@assert all(iszero, empty_transform(empty_diagram))
+image_transform = fit_shape_image(h1[train_ids], comparison_scale)
+images = [image_transform(diagram) for diagram in h1]
+feature_length = length(first(images))
+@assert all(image -> length(image) == feature_length, images)
+@assert all(iszero, image_transform(empty_diagram))
+@assert all(iszero, image_transform(PersistenceDiagram([(0.0, Inf)]; dim = 1)))
+features = reduce(hcat, vec.(images))  # one sample per column
+println("Training features: ", size(features[:, train_ids]))
+println("Held-out features: ", size(features[:, test_ids]))
 ```
 
-These matrices can then be flattened and fed to a standard machine-learning model. This lets us combine topological information with the usual classification toolbox without having to design custom classifiers from scratch.
+The package ignores infinite intervals when making images. That is why we capped our censored $H_1$ bars *before* fitting. On a genuinely empty diagram the fitted transformation naturally returns zeros with the same shape. If all training diagrams are empty or essential-only, a collection has no finite range to learn; the explicit fallback keeps a defined, shared coordinate system.
 
-## Robustness to noise and sampling
+A test feature outside the training range can contribute only its Gaussian tail inside the fixed image. Check for such range drift; do not solve it by refitting on the test set. Tune bandwidth and resolution using training/validation data.
 
-One of the main strengths of persistent homology for shape comparison is its stability: small perturbations of the input point cloud should produce small perturbations of the persistence diagram, and therefore small changes in the distances.
+## A noise experiment, with a measurable bound
 
-Let's verify that numerically:
+Keep the sampling fixed and change only the perturbation. This separates sensitivity to coordinate noise from sensitivity to drawing another sample.
 
 ```{julia}
+θ = 2π .* collect(0:99) ./ 100
+base_circle = permutedims(hcat(cos.(θ), sin.(θ)))
+base_h1 = window_diagram(ripserer(Rips(EuclideanSpace(base_circle);
+    threshold = comparison_scale), dim_max = 1)[2], comparison_scale)
 noise_levels = [0.01, 0.05, 0.1, 0.2, 0.3]
-base_circle = as_matrix(sphere(100, dim = 2))
+rng = MersenneTwister(37)
+perturbation = randn(rng, 2, 100)
 
-circle_variants = [
-    EuclideanSpace(base_circle .+ nl .* randn(MersenneTwister(i), 2, 100))
-    for (i, nl) in enumerate(noise_levels)
-]
-
-diagrams_circle = [compute_ph(X) for X in circle_variants]
-
-base_diagram = diagrams_circle[1][2]
-for (d, nl) in zip(diagrams_circle, noise_levels)
-    if !isempty(base_diagram) && !isempty(d[2])
-        dist = Wasserstein()(base_diagram, d[2])
-        println("Noise level $nl -> Wasserstein distance: $(round(dist, digits = 4))")
-    end
+for noise_level in noise_levels
+    noisy_points = base_circle .+ noise_level .* perturbation
+    noisy_h1 = window_diagram(ripserer(Rips(EuclideanSpace(noisy_points);
+        threshold = comparison_scale), dim_max = 1)[2], comparison_scale)
+    max_displacement = maximum(sqrt.(sum(abs2, noisy_points .- base_circle; dims = 1)))
+    println("noise = ", noise_level,
+        "; max displacement = ", round(max_displacement; digits = 3),
+        "; W₁ = ", round(finite_wasserstein1(base_h1, noisy_h1); digits = 3),
+        "; bottleneck = ", round(Bottleneck()(base_h1, noisy_h1); digits = 3))
 end
 ```
 
-The distances should increase gradually as the noise grows, rather than jumping unpredictably. That is exactly the kind of robustness that makes persistent homology useful for comparing noisy geometric data.
+For the diameter convention used by Rips, moving every point by at most $\delta$ changes pairwise distances by at most $2\delta$. The corresponding bottleneck stability bound controls shifts of the diagram [@ripsstability]. It does not say the measured distance must rise monotonically with noise. Wasserstein distance additionally accumulates many short bars, so its behavior depends on feature counts. Neither bound establishes statistical significance; compare with an appropriate null model if that is the question, as in the [uncertainty chapter](uncertainty.qmd).
 
-## Summary
+## Predict before running
 
-In this chapter we learned:
+1. What happens to Rips intervals if all coordinates are multiplied by two?
 
-- persistence diagrams can serve as topological fingerprints of shapes;
-- Wasserstein distances turn those fingerprints into a metric on shapes;
-- persistence images provide fixed-size features for machine learning;
-- the whole procedure is stable under noise.
+::: {.callout-tip collapse="true" title="Answer"}
+Birth and finite death scales double. A fixed numerical threshold now observes a different relative scale window. Normalize size first only if size is irrelevant to your scientific question.
+:::
 
-This same workflow applies to 3D scans, image contours, molecular structures, and many other kinds of geometric data.
+2. If a diagram has one interval $[1,5)$, what is its $W_1$ distance to the empty diagram?
+
+::: {.callout-tip collapse="true" title="Answer"}
+It is $(5-1)/2=2$, the cost of matching the point to the diagonal. An empty diagram is a legitimate signature, not an error requiring an arbitrary fallback distance.
+:::
+
+3. Can a perfect classifier on these persistence images identify every possible shape?
+
+::: {.callout-tip collapse="true" title="Answer"}
+No. The chosen $H_1$ signature omits $H_0$ and $H_2$, different clouds can share a diagram, and vectorization loses further detail. Good performance on a small library is evidence about that library and preprocessing pipeline.
+:::
+
+The useful workflow is now concrete: choose the geometry and scale window, compute diagrams, state how censoring is handled, fit shared feature coordinates, and evaluate on samples that did not fit the transformation.

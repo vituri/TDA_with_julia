@@ -1,3 +1,7 @@
+---
+jupyter: tda-book
+---
+
 # Clustering
 
 > "There are more things in heaven and earth, Horatio, \
@@ -6,14 +10,14 @@
 
 Clustering is one of the most fundamental tasks in data analysis: given a dataset, group the points into meaningful subsets. It sounds simple, but the devil is in the details. What does "meaningful" mean? How many clusters should there be? And what shape can they have?
 
-In this chapter we cover classical clustering methods, their strengths and limitations. Understanding these limitations will motivate the topological approach (ToMATo) in a later chapter.
+In this chapter we cover classical clustering methods, their strengths and limitations. They also supply useful baselines for the density-and-persistence approach of ToMATo. Topology does not relieve us of choosing what similarity should mean.
 
 ## What is a clustering?
 
-::: {#def-}
+::: {#def-clustering}
 A *clustering* of a set $X$ is a collection $C_1, \ldots, C_n \subset X$ such that $\bigcup C_i = X$ and $C_i \cap C_j = \emptyset$ for any $i \neq j$. In other words: it is a partition of $X$ into disjoint subsets. Each $C_i$ is called a *cluster*.
 
-A *clustering method* is a function $f: X \to \{1, \ldots, n\}$ that assigns each point $x \in X$ to a cluster label $f(x)$.
+A *clustering method* assigns a label to each point, often after we choose a metric and parameters. Methods that allow unassigned points commonly reserve label `0` for noise. That is useful bookkeeping, but the noise points need not form one coherent cluster.
 :::
 
 Let's load some packages and datasets to work with:
@@ -24,6 +28,10 @@ using CairoMakie
 using Clustering
 using Distances
 using Random
+using Statistics
+using StatsBase: counts
+
+Random.seed!(2026)
 ```
 
 We will use several datasets from the FCPS suite [@data5010013]:
@@ -67,7 +75,25 @@ scatter!(ax4, lsun_pts[1,:], lsun_pts[2,:],
 fig
 ```
 
-Each dataset has different challenges: Hepta has well-separated spherical clusters, Target has concentric rings, Chainlink has interlocking loops, and Lsun has clusters of different shapes and sizes.
+These are **synthetic benchmark datasets**, with labels supplied by their designers. Hepta has well-separated compact groups, Target combines a ring, a central population, and four tiny groups, Chainlink has interlocking loops, and Lsun has groups of different shapes and sizes. Labels make comparison possible; they do not turn every visually plausible partition into the same scientific question.
+
+## Before choosing an algorithm, choose a distance
+
+Our matrices have one point per column, and all examples use Euclidean distance. We retain the benchmark coordinates so that radius values can be compared with the later ToMATo chapter. For measurements in different units, an unscaled distance can be dominated by whichever coordinate has the largest numerical spread. Standardizing each feature to mean zero and standard deviation one is one possible remedy:
+
+```{julia}
+function standardize_features(M)
+    scales = std(M, dims = 2)
+    # A constant feature contributes no distance; avoid division by zero.
+    scales[scales .== 0] .= 1
+    (M .- mean(M, dims = 2)) ./ scales
+end
+
+# Optional alternative geometry; the examples below retain hepta_pts.
+hepta_standardized = standardize_features(hepta_pts)
+```
+
+Standardization is a modeling decision: it changes distances, neighborhoods, and clusters. Outliers can affect its mean and variance, and giving every feature equal variance can amplify irrelevant measurements. Record units, missing-value handling, and scaling before comparing algorithms. If you later evaluate a classifier, estimate these transformations on training data and reuse them on test data.
 
 ## K-means
 
@@ -93,10 +119,10 @@ scatter!(ax2, hepta_pts[1,:], hepta_pts[2,:], hepta_pts[3,:],
 fig
 ```
 
-K-means works well on Hepta because the clusters are spherical and well-separated, which is exactly what k-means assumes. But what happens with less friendly shapes?
+K-means minimizes the sum of **squared Euclidean distances** to the assigned centroids. Compact, separated groups suit this objective, so Hepta is a friendly first example. The algorithm does not formally assume that every cluster is a sphere, but its nearest-centroid assignment partitions the ambient space into convex Voronoi cells. What happens with less friendly shapes?
 
 ```{julia}
-# K-means on Target (k=2)
+# A deliberate two-group model: this is not the benchmark's six labels.
 result_target = kmeans(target_pts, 2)
 km_labels_target = assignments(result_target)
 
@@ -110,28 +136,30 @@ scatter!(ax2, target_pts[1,:], target_pts[2,:],
 fig
 ```
 
-K-means struggles here: it can only create convex (roughly spherical) clusters, so it splits the ring rather than separating the ring from the core.
+This two-centroid fit cuts across the ring. A nearest-centroid boundary cannot separate a ring from an enclosed core. Notice also that we requested two groups, whereas Target has six benchmark labels: the four tiny groups count too. Compare results using the same objective and number of requested groups before declaring a winner.
 
 **Limitations of k-means:**
 
-- Assumes clusters are convex (spherical)
+- Its nearest-centroid regions are convex; elongated and nested groups may be split
 - Requires knowing $k$ in advance
 - Sensitive to initialization
 - Sensitive to outliers
 
 ## DBSCAN
 
-DBSCAN (*Density-Based Spatial Clustering of Applications with Noise*) takes a completely different approach: clusters are regions of high density separated by regions of low density.
+DBSCAN (*Density-Based Spatial Clustering of Applications with Noise*) builds clusters through connected chains of dense neighborhoods [@dbscan1996].
 
-The algorithm has two parameters:
+Conventional DBSCAN has two main parameters, the neighborhood radius and the core-point count. This package exposes an additional rule for accepting a finished cluster:
 
 - $\epsilon$: the radius of a neighborhood
-- `minpts`: the minimum number of points in a neighborhood for a point to be a "core point"
+- `min_neighbors`: the minimum neighborhood count required for a core point (the package counts the point itself)
+- `min_cluster_size`: the minimum accepted size of a resulting cluster
 
 ```{julia}
 # DBSCAN on Target
 D_target = pairwise(Euclidean(), target_pts, dims = 2)
-result_db = dbscan(D_target, 0.5, 10)  # ε=0.5, minpts=10
+result_db = dbscan(D_target, 0.5; metric = nothing,
+    min_neighbors = 10, min_cluster_size = 10)
 
 # dbscan returns a DbscanResult; extract cluster assignments
 db_labels = zeros(Int, size(target_pts, 2))
@@ -150,13 +178,15 @@ scatter!(ax2, target_pts[1,:], target_pts[2,:],
 fig
 ```
 
-DBSCAN can find non-convex clusters and automatically determines the number of clusters. It also identifies noise points (points not belonging to any cluster).
+`metric = nothing` tells this API that the input is already a **distance matrix**. Without it, the columns would be interpreted as observations in a different space. Alternatively, pass `target_pts` with `metric = Euclidean()` and the same radius and count settings.
+
+DBSCAN permits non-convex clusters and does not require a requested cluster count. Its count still depends on radius and density thresholds. The plotting label `0` marks unassigned points, which can be scattered across the figure.
 
 **Limitations of DBSCAN:**
 
 - Struggles with clusters of varying density
-- Sensitive to $\epsilon$ and `minpts` parameters
-- No straightforward way to choose parameters
+- Sensitive to $\epsilon$ and neighborhood count parameters
+- Neighborhood-distance plots and domain scales help choose parameters, but should be checked across a range
 
 ## Hierarchical clustering
 
@@ -186,23 +216,47 @@ scatter!(ax2, lsun_pts[1,:], lsun_pts[2,:],
 fig
 ```
 
-The dendrogram itself is an interesting object: it encodes a nested sequence of clusterings at different scales. We will see later that dendrograms can be interpreted as *0-dimensional persistence diagrams* — our first connection between clustering and topology!
+Ward's method merges groups to control the increase in within-group squared Euclidean variation. Its geometric interpretation depends on Euclidean input; replacing the distance matrix by an arbitrary dissimilarity does not preserve that interpretation. Other linkages answer different questions.
 
-## Why do we need topology?
+The dendrogram encodes a nested sequence of partitions. **Single linkage** has a precise connection to $H_0$ persistence of the Rips filtration: at radius $r$, its clusters are the components of the graph joining points at distance at most $r$. Ward, complete, and average linkage do not have this correspondence. An $H_0$ barcode records merge scales, but loses the information about which labeled points merged that the dendrogram retains.
+
+```{julia}
+hc_single = hclust(D_lsun, linkage = :single)
+(ward_sizes = counts(hc_labels),
+ single_sizes = counts(cutree(hc_single, k = 3)))
+```
+
+Single linkage follows chains of short edges and can therefore connect distant populations through a few intermediate points. This is useful for some geometries and a nuisance for others.
+
+## Comparing models of a cluster
 
 Each of the methods above has assumptions that can fail:
 
-| Method | Assumes |
+| Method | What we choose; common difficulty |
 |---|---|
-| K-means | Convex, equally-sized clusters; known $k$ |
-| DBSCAN | Uniform density across clusters |
-| Hierarchical | Choice of linkage affects results dramatically |
+| K-means | $k$, scaling, initialization; nested or elongated groups |
+| DBSCAN | Radius and neighborhood counts; a shared threshold can struggle with very different densities |
+| Hierarchical | Metric, linkage, cut level; the linkage controls which merges are favored |
+| ToMATo | Density bandwidth, proximity graph, peak lifetime and height thresholds; errors in any ingredient propagate |
 
-Real-world data often violates all of these assumptions simultaneously. The ToMATo algorithm (which we will study in a later chapter) combines density estimation with persistence-based merging to handle:
+ToMATo combines mode seeking with persistence-based merging. It gives us a plot of peak lifetimes that helps inspect a choice of threshold; it still needs parameters and can still disagree with the benchmark labels. First, we need to understand *persistent homology* so that the diagnostic has a clear meaning.
 
-- Clusters of different densities
-- Clusters of arbitrary shape
-- Automatic selection of the number of clusters (via the persistence diagram)
+## Try it yourself
 
-But first, we need to understand *persistent homology* — the mathematical machinery that makes this possible.
+1. Multiply the first coordinate by 100. Predict what happens to Euclidean neighborhoods, then rerun a clustering.
 
+::: {.callout-note collapse="true" title="Worked answer"}
+A difference in that coordinate contributes 10,000 times as much to squared Euclidean distance. Radius neighborhoods shrink in that direction, and k-means prioritizes fitting that coordinate. Standardization restores the original relative scales only if equal feature variance is the intended geometry.
+:::
+
+2. Can one DBSCAN noise label or one k-means cluster be interpreted automatically as a biological population?
+
+::: {.callout-note collapse="true" title="Worked answer"}
+No. Noise is a rule for points that do not satisfy the chosen density conditions; it need not be connected. A fitted cluster is a group under the chosen metric and objective. A population interpretation requires relevant measurements and validation outside the algorithm.
+:::
+
+3. Which hierarchy matches Rips $H_0$ persistence, and what extra information does its dendrogram retain?
+
+::: {.callout-note collapse="true" title="Worked answer"}
+Single linkage matches the connected components and their merge scales. Its labeled tree also records which points and clusters merge. The barcode retains the scales and multiplicities, not those memberships.
+:::

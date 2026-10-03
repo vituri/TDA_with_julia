@@ -1,0 +1,58 @@
+# Reproducing Famous Papers {.unnumbered}
+
+The preceding chapters introduced the methods and applied them to examples.
+In this part, we return to published experiments and ask whether JuliaTDA can
+recover their results using the original data and the reported analysis.
+
+A reproduction begins with a concrete target: a figure, a numerical result,
+or a structural feature of the data. We identify the dataset, translate the
+published procedure into Julia, and compare the result with that target.
+When a paper leaves an implementation choice unspecified, we record our
+choice and investigate how much it affects the answer.
+
+Each chapter follows the same sequence:
+
+1. **Target and data.** Identify the published experiment and verify the source,
+   measurements, sample order, and checksum of the data.
+2. **Analysis.** Explain the transformations and parameters, with Julia code
+   that reproduces the computation.
+3. **Comparison.** Show the observed result, including differences from the paper.
+4. **Sensitivity and verification.** Check the implementation and expose the
+   effects of choices that are not fully specified in the publication.
+
+We distinguish an exact numerical match from a qualitative recovery of a
+pattern. An unsuccessful match is also useful: it can reveal a missing variable,
+an undocumented parameter, or an implementation convention that changes the
+analysis.
+
+## The first experiment
+
+We begin with [Mapper on the Reaven–Miller diabetes data](reproduction-mapper2007.qmd),
+targeting Figure 5 of @mapper. The outcome is a **partial qualitative
+reproduction**. Some configurations recover the two low-density flares, while
+the automatic bandwidth produces a chain. The chapter includes both outcomes.
+
+The data, scripts, parameter grid, recorded results, and resolved environment
+are included in `reproductions/experiments/mapper2007/`. The chapter uses saved
+figures, so building the book does not rerun the experiment; instructions
+explain how to run it separately.
+
+## Further papers
+
+Four additional chapters compare JuliaTDA computations with published targets:
+
+- [Lum et al. (2013)](reproductions/lum2013.qmd): a partial reconstruction of
+  Mapper on the public GSE2034 breast cancer cohort, with verified clinical
+  alignment and explicit preprocessing assumptions.
+- [Chazal et al. (2013)](reproductions/chazal2013.qmd): the full author-released
+  ToMATo twin-spirals benchmark, including an independent merge audit.
+- [Perea and Harer (2015)](reproductions/perea-harer2015.qmd): the specified
+  sliding-window signals and coefficient-field comparison from Figure 3,
+  with the remaining numerical mismatch documented.
+- [Cohen-Steiner et al. (2007)](reproductions/stability2007.qmd): a numerical
+  verification of the stability theorem on a new cubical example. This target
+  is a mathematical bound, rather than a published empirical figure.
+
+Each chapter includes executed analyses, saved results, figures, verification
+and commands for rerunning its private experiment. The PAD/Mapper analysis of
+@nicolau2011 remains a future target.

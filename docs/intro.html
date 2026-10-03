@@ -58,7 +58,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -160,7 +179,7 @@ window.Quarto = {
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
@@ -268,6 +287,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Computing persistent homology in Julia</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./uncertainty.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Uncertainty: which holes should we trust?</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -282,25 +307,25 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./tomato.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">ToMATo</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">ToMATo</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./mapper.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">(Classical) mapper</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Classical Mapper</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ballmapper.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ball mapper</span></span></a>
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ball Mapper</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./mapper-general.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></span></a>
   </div>
 </li>
       </ul>
@@ -317,33 +342,33 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./clustering_tomato.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Clustering with ToMATo</span></span></a>
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Clustering with ToMATo</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./digits.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Classifying hand-written digits</span></span></a>
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Classifying hand-written digits</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./timeseries.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Time series analysis</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Time series analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./shapes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Shape analysis and comparison</span></span></a>
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Shape analysis and comparison</span></span></a>
   </div>
 </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
- <span class="menu-text">Closing</span></a>
+            <a href="./reproducing-papers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reproducing Famous Papers</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -351,8 +376,49 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./reproduction-mapper2007.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Reproducing Mapper: the Reaven–Miller experiment</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reproductions/lum2013.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Lum et al.&nbsp;(2013): Mapper on breast cancer expression data</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reproductions/chazal2013.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">ToMATo: recovering the twin spirals</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reproductions/perea-harer2015.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Perea and Harer (2015): sliding windows, periodicity, and coefficients</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reproductions/stability2007.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Cohen-Steiner et al.&nbsp;(2007): persistence stability</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Closing</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./summary.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Summary and further reading</span></span></a>
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Summary and further reading</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -375,17 +441,22 @@ window.Quarto = {
   <ul>
   <li><a href="#why-topological-data-analysis" id="toc-why-topological-data-analysis" class="nav-link active" data-scroll-target="#why-topological-data-analysis"><span class="header-section-number">1.1</span> Why Topological Data Analysis?</a>
   <ul class="collapse">
-  <li><a href="#what-makes-tda-special" id="toc-what-makes-tda-special" class="nav-link" data-scroll-target="#what-makes-tda-special"><span class="header-section-number">1.1.1</span> What makes TDA special?</a></li>
-  <li><a href="#where-has-tda-been-used" id="toc-where-has-tda-been-used" class="nav-link" data-scroll-target="#where-has-tda-been-used"><span class="header-section-number">1.1.2</span> Where has TDA been used?</a></li>
+  <li><a href="#what-information-do-the-methods-use" id="toc-what-information-do-the-methods-use" class="nav-link" data-scroll-target="#what-information-do-the-methods-use"><span class="header-section-number">1.1.1</span> What information do the methods use?</a></li>
   </ul></li>
-  <li><a href="#what-you-will-learn" id="toc-what-you-will-learn" class="nav-link" data-scroll-target="#what-you-will-learn"><span class="header-section-number">1.2</span> What you will learn</a></li>
+  <li><a href="#how-to-read-this-book" id="toc-how-to-read-this-book" class="nav-link" data-scroll-target="#how-to-read-this-book"><span class="header-section-number">1.2</span> How to read this book</a></li>
   <li><a href="#setting-up-julia" id="toc-setting-up-julia" class="nav-link" data-scroll-target="#setting-up-julia"><span class="header-section-number">1.3</span> Setting up Julia</a></li>
-  <li><a href="#a-note-on-conventions" id="toc-a-note-on-conventions" class="nav-link" data-scroll-target="#a-note-on-conventions"><span class="header-section-number">1.4</span> A note on conventions</a></li>
+  <li><a href="#a-first-computation" id="toc-a-first-computation" class="nav-link" data-scroll-target="#a-first-computation"><span class="header-section-number">1.4</span> A first computation</a></li>
+  <li><a href="#conventions" id="toc-conventions" class="nav-link" data-scroll-target="#conventions"><span class="header-section-number">1.5</span> Conventions</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">1.6</span> Exercises</a>
+  <ul class="collapse">
+  <li><a href="#the-point-at-the-center" id="toc-the-point-at-the-center" class="nav-link" data-scroll-target="#the-point-at-the-center"><span class="header-section-number">1.6.1</span> 1. The point at the center</a></li>
+  <li><a href="#coordinates-in-two-different-plots" id="toc-coordinates-in-two-different-plots" class="nav-link" data-scroll-target="#coordinates-in-two-different-plots"><span class="header-section-number">1.6.2</span> 2. Coordinates in two different plots</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content column-body" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -394,7 +465,7 @@ window.Quarto = {
 
 
 
-<div class="quarto-title-meta column-body">
+<div class="quarto-title-meta">
 
     
   
@@ -407,95 +478,164 @@ window.Quarto = {
 
 
 <blockquote class="blockquote">
-<p>“The unexpected elation with which I had talked about mathematics had suddenly evaporated, and I sat beside him, feeling the weight of my own body, its unnecessary size. Outside of mathematics we had nothing to say to each other, and we both knew it. Then it occurred to me that the emotion with which I had spoken of the blessed role of mathematics on the voyage was a deception. I had been deceiving myself with the modesty, the serious heroism of the pilot who occupies himself, in the gaps of the nebulae, with theoretical studies of infinity. Hypocrisy. For what had it been, really? If a castaway, adrift for months at sea, has a thousand times counted the number of wood fibers that make up his raft, in order to keep sane, should he boast about it when he reaches land? That he had the tenacity to survive? And what of it? Who cared? Why should it matter to anyone how I had filled my poor brain those ten years, and why was that more important than how I had filled my stomach?”<br>
-— Stanisław Lem, in “Return from the stars”</p>
+<p>“Who cared? Why should it matter to anyone how I had filled my poor brain those ten years?”<br>
+— Stanisław Lem, in <em>Return from the Stars</em></p>
 </blockquote>
 <section id="why-topological-data-analysis" class="level2" data-number="1.1">
 <h2 data-number="1.1" class="anchored" data-anchor-id="why-topological-data-analysis"><span class="header-section-number">1.1</span> Why Topological Data Analysis?</h2>
 <p>Topological data analysis is an exotic animal.</p>
-<p>How can one mix a field from abstract math (topology) with real world data? In topology, finite topological spaces are trivial and often ignored, but every real-world data is finite. To connect these two areas of study, we need to have tools that transform finite metric spaces into objects that topology can handle and say something interesting about.</p>
-<p>And this is precisely what TDA does. The core insight is deceptively simple: <strong>data has shape, and the shape matters</strong>. Classical statistics summarizes data with means, variances, and correlations — numbers that can miss the geometry lurking beneath. Consider a dataset shaped like a circle: its mean is at the center (where no data exists!), and its variance tells you nothing about the hole.</p>
-<p>TDA provides tools to detect and quantify these geometric and topological features: clusters, loops, cavities, and higher-dimensional “holes” that persist across multiple scales. These features are often invisible to traditional methods but can be crucial for understanding the data.</p>
-<section id="what-makes-tda-special" class="level3" data-number="1.1.1">
-<h3 data-number="1.1.1" class="anchored" data-anchor-id="what-makes-tda-special"><span class="header-section-number">1.1.1</span> What makes TDA special?</h3>
-<p>Here are some properties that set TDA apart from other approaches:</p>
-<ul>
-<li><p><strong>Coordinate-free</strong>: TDA works with distances between points, not their coordinates. Rotate, translate, or reflect your data — the topological features remain the same.</p></li>
-<li><p><strong>Multi-scale</strong>: Instead of choosing a single scale (like a bandwidth parameter), TDA examines all scales simultaneously and identifies features that <em>persist</em> across many of them. Features that persist are “real”; features that vanish quickly are noise.</p></li>
-<li><p><strong>Stability</strong>: Small perturbations in the data lead to small changes in the topological summary. This is not just a nice intuition — it is a theorem.</p></li>
-<li><p><strong>Dimensionality-agnostic</strong>: Whether your data lives in <span class="math inline">\(\mathbb{R}^2\)</span> or <span class="math inline">\(\mathbb{R}^{1000}\)</span>, the same tools apply.</p></li>
-</ul>
-</section>
-<section id="where-has-tda-been-used" class="level3" data-number="1.1.2">
-<h3 data-number="1.1.2" class="anchored" data-anchor-id="where-has-tda-been-used"><span class="header-section-number">1.1.2</span> Where has TDA been used?</h3>
-<p>TDA has found applications across many fields:</p>
-<ul>
-<li><strong>Biology</strong>: detecting loops in gene expression data, analyzing protein structures, understanding neural activity patterns</li>
-<li><strong>Materials science</strong>: characterizing porous materials, studying granular packings</li>
-<li><strong>Image analysis</strong>: classifying textures, detecting features in medical imaging</li>
-<li><strong>Finance</strong>: identifying market regimes, early warning signals for crashes</li>
-<li><strong>Signal processing</strong>: detecting periodicity in time series, analyzing sensor data</li>
-<li><strong>Machine learning</strong>: creating topological features that boost classifier performance</li>
-</ul>
+<p>How can one mix a field from abstract mathematics with real-world data? A cloud of finitely many distinct points, with its usual subspace topology, is discrete: every point sits alone, and there is no continuous loop to find. Finite topological spaces in general can be surprisingly rich; the problem here is specifically that a discrete cloud does not directly represent the shape we think it samples.</p>
+<p>To connect the two, we use distances to build a family of geometric objects. Nearby observations become connected; triangles and higher-dimensional pieces fill in as the scale grows. We can then ask which components, loops, and cavities appear, and how long they survive.</p>
+<p>Imagine points sampled around a circle. The mean lies near the empty center, and coordinate-wise variances do not describe the hole. A graph connecting nearby points may reveal the loop. At a much larger scale, the hole fills in. Persistent homology records that changing picture. It complements statistical and geometric methods; whether it helps with a particular scientific question must be checked.</p>
+<section id="what-information-do-the-methods-use" class="level3" data-number="1.1.1">
+<h3 data-number="1.1.1" class="anchored" data-anchor-id="what-information-do-the-methods-use"><span class="header-section-number">1.1.1</span> What information do the methods use?</h3>
+<p>For a distance-based filtration, translating, rotating, or reflecting a Euclidean cloud preserves all distances and its persistence diagrams. Changing units, rescaling one coordinate, or replacing the metric can change them. For an image filtration, the chosen pixel values and spatial adjacency play that role.</p>
+<p>A filtration studies a range of scales, but we still choose the data representation, metric, filtration, and computational cutoff. A long interval can be useful evidence of structure at those scales. It is not automatically statistically significant, and a short interval can be meaningful at a finer scale. The <a href="./uncertainty.html">uncertainty chapter</a> will make that distinction concrete.</p>
+<p>Stability theorems bound diagram changes under particular input perturbations <span class="citation" data-cites="stability ripsstability">(<a href="references.html#ref-stability" role="doc-biblioref">Cohen-Steiner et al. 2007</a>; <a href="references.html#ref-ripsstability" role="doc-biblioref">Chazal et al. 2014</a>)</span>. Their hypotheses matter. They do not promise immunity to outliers or to changes in how the observations were collected.</p>
+<p>The definitions work in many dimensions. The computational cost may not: the number of simplices can grow very quickly. We will use small examples whose results we can inspect before attempting larger ones.</p>
 </section>
 </section>
-<section id="what-you-will-learn" class="level2" data-number="1.2">
-<h2 data-number="1.2" class="anchored" data-anchor-id="what-you-will-learn"><span class="header-section-number">1.2</span> What you will learn</h2>
-<p>This book is divided into five parts:</p>
+<section id="how-to-read-this-book" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="how-to-read-this-book"><span class="header-section-number">1.2</span> How to read this book</h2>
+<p>You need basic familiarity with vectors, matrices, functions, and Julia arrays. Some linear algebra helps in the homology chapter; we work through the necessary finite-field matrix calculation rather than assuming that algebraic topology is already an old friend.</p>
+<p>The book follows five main instructional parts, followed by paper reproductions and closing material:</p>
 <ol type="1">
-<li><p><strong>Topology</strong>: We introduce the mathematical foundations — topological spaces, simplicial complexes, and homology. Don’t worry: we keep it light and intuitive, with formal definitions serving as anchors rather than obstacles.</p></li>
-<li><p><strong>Working with Data</strong>: Before adding topology, we need to handle data. We cover point clouds, distance metrics, density estimation, and classical clustering. This sets the stage for understanding <em>why</em> TDA is needed.</p></li>
-<li><p><strong>Persistent Homology</strong>: The heart of TDA. We build filtrations from data, track how topological features are born and die, and learn to read persistence diagrams. Then we compute everything in Julia.</p></li>
-<li><p><strong>TDA Methods</strong>: We apply persistent homology ideas to concrete algorithms: ToMATo (density-based clustering), Mapper (a tool for visualization and exploration), and Ball Mapper.</p></li>
-<li><p><strong>Applications</strong>: Full worked examples on real and synthetic datasets — clustering, digit classification, time series analysis, and shape comparison.</p></li>
+<li><strong>Topology:</strong> spaces, simplicial complexes, and homology. Four corners of a square provide a running example from edges to boundary matrices.</li>
+<li><strong>Working with data:</strong> point clouds, preprocessing, distances, density estimates, and classical clustering.</li>
+<li><strong>Persistent homology:</strong> filtrations, barcodes, diagrams, Julia computations, and the distinction between stability, sampling variation, and statistical evidence.</li>
+<li><strong>TDA methods:</strong> ToMATo, Mapper, Ball Mapper, and the covers and nerves behind them.</li>
+<li><strong>Applications:</strong> benchmark clustering, handwritten digits, delay embeddings, and shape comparison, including sensitivity checks and examples that do not recover everything we hoped for.</li>
 </ol>
-<p>By the end, you will have both the mathematical intuition and the Julia code to apply TDA to your own data.</p>
+<p>Each mathematical chapter starts with intuition, then specifies what we are calculating. Try the prediction exercises before opening their worked answers. They ask you to explain a result, not merely copy a command.</p>
+<p>For a first computational pass, run the quick start below, then read <a href="./pointclouds.html">point clouds</a> and <a href="./computing_ph.html">computing persistence</a>. When the notation starts looking like a collection of insects, return to the square in <a href="./simplicial.html">simplicial complexes</a>, <a href="./homology.html">homology</a>, and <a href="./persistence.html">persistence</a>. The applications link back to the definitions they use.</p>
 </section>
 <section id="setting-up-julia" class="level2" data-number="1.3">
 <h2 data-number="1.3" class="anchored" data-anchor-id="setting-up-julia"><span class="header-section-number">1.3</span> Setting up Julia</h2>
-<p>To run the code in this book, you will need <a href="https://julialang.org/">Julia</a> (version 1.9 or later recommended). In this repository, the cleanest setup is to activate the book as a project and develop the local JuliaTDA packages from the sibling <code>../JuliaTDA/</code> directory:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Pkg</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">Pkg</span>.<span class="fu">activate</span>(<span class="st">"."</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> path <span class="kw">in</span> [</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"../JuliaTDA/MetricSpaces.jl"</span>,</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"../JuliaTDA/TDAmapper.jl"</span>,</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"../JuliaTDA/TDAplots.jl"</span>,</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"../JuliaTDA/ToMATo.jl"</span>,</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"../JuliaTDA/Ripserer.jl"</span>,</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"../JuliaTDA/PersistenceDiagrams.jl"</span>,</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">Pkg</span>.<span class="fu">develop</span>(path <span class="op">=</span> path)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="bu">Pkg</span>.<span class="fu">add</span>([</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"CairoMakie"</span>,</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Clustering"</span>,</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Distances"</span>,</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"DataFrames"</span>,</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Flux"</span>,</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">"FreqTables"</span>,</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Images"</span>,</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Makie"</span>,</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MLDatasets"</span>,</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Plots"</span>,</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">"PrettyTables"</span>,</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ProgressMeter"</span>,</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Not every chapter needs every package. The core local stack for most of the book is <code>MetricSpaces.jl</code>, <code>TDAmapper.jl</code>, <code>TDAplots.jl</code>, <code>ToMATo.jl</code>, <code>Ripserer.jl</code>, and <code>PersistenceDiagrams.jl</code>.</p>
-<p>If you are new to Julia, here are some excellent resources to get started:</p>
-<ul>
-<li><a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html">Think Julia</a></li>
-<li><a href="https://juliateachingctu.github.io/Julia-for-Optimization-and-Learning/dev/">Julia for Optimization and Learning</a></li>
-<li><a href="https://datasciencejuliahackers.com/">Data Science in Julia for Hackers</a></li>
-</ul>
+<p>This edition was checked with <strong>Julia 1.12.5</strong>. Its project requires Julia 1.12 or later; later versions may need their own validation. From the book directory, run:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">julia</span> scripts/setup.jl</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">julia</span> <span class="at">--project</span><span class="op">=</span>.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The setup script installs the pinned environment and extracts the six JuliaTDA packages included with the book. You do not need the author’s sibling repositories. The <a href="environment/README.md">environment notes</a> explain the source snapshot, downloads, and development setup.</p>
+<p>To rebuild the HTML book, also install Quarto and Python with Jupyter, then run:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render <span class="at">--cache-refresh</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Setup registers the <code>tda-book</code> Julia kernel used by Quarto. The first installation compiles dependencies; the digit chapter downloads MNIST on its first run. Its defaults use a small training subset so that the complete experiment is practical on a CPU. Timings include a separate discussion of compilation and data preparation.</p>
+<p>This book teaches TDA rather than Julia itself. For language fundamentals, see <a href="https://benlauwens.github.io/ThinkJulia.jl/latest/book.html">Think Julia</a> or <a href="https://juliateachingctu.github.io/Julia-for-Optimization-and-Learning/dev/">Julia for Optimization and Learning</a>.</p>
 </section>
-<section id="a-note-on-conventions" class="level2" data-number="1.4">
-<h2 data-number="1.4" class="anchored" data-anchor-id="a-note-on-conventions"><span class="header-section-number">1.4</span> A note on conventions</h2>
-<p>Throughout this book, point clouds are usually represented as <code>EuclideanSpace</code> objects from <code>MetricSpaces.jl</code>. If your data starts as a <code>d \times n</code> matrix with one point per column, <code>EuclideanSpace(M)</code> converts it to the representation expected by the local JuliaTDA packages. When we need matrix-style indexing for plotting, we use <code>as_matrix(X)</code>.</p>
+<section id="a-first-computation" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="a-first-computation"><span class="header-section-number">1.4</span> A first computation</h2>
+<p>Let us make a circle before we define all the machinery. We use 40 equally spaced points, connect points according to their distance, and ask for components (<span class="math inline">\(H_0\)</span>) and loops (<span class="math inline">\(H_1\)</span>).</p>
+<div id="intro-quick-start" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">CairoMakie</span>, <span class="bu">MetricSpaces</span>, <span class="bu">TDARipserer</span>, <span class="bu">TDAPersistenceDiagrams</span>, <span class="bu">TDAplots</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>theta <span class="op">=</span> <span class="fu">range</span>(<span class="fl">0</span>, <span class="fl">2</span>pi, length <span class="op">=</span> <span class="fl">41</span>)[<span class="fl">1</span><span class="op">:</span><span class="kw">end</span><span class="op">-</span><span class="fl">1</span>]</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> <span class="fu">permutedims</span>(<span class="fu">hcat</span>(<span class="fu">cos</span>.(theta), <span class="fu">sin</span>.(theta)))</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> <span class="fu">EuclideanSpace</span>(M)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>diagrams <span class="op">=</span> <span class="fu">ripserer</span>(<span class="fu">Rips</span>(X), dim_max <span class="op">=</span> <span class="fl">1</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>finite_loops <span class="op">=</span> [interval for interval <span class="kw">in</span> diagrams[<span class="fl">2</span>] if <span class="fu">isfinite</span>(interval)]</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"Finite loop intervals: "</span>, <span class="fu">length</span>(finite_loops))</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"Longest loop lifetime: "</span>, <span class="fu">round</span>(<span class="fu">maximum</span>(persistence, finite_loops), digits <span class="op">=</span> <span class="fl">3</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Finite loop intervals: 1
+Longest loop lifetime: 1.625</code></pre>
+</div>
+</div>
+<div id="cell-fig-intro-circle" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(size <span class="op">=</span> (<span class="fl">850</span>, <span class="fl">350</span>))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">"Input cloud"</span>, aspect <span class="op">=</span> <span class="fu">DataAspect</span>(),</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>          xlabel <span class="op">=</span> <span class="st">"x"</span>, ylabel <span class="op">=</span> <span class="st">"y"</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">scatter!</span>(ax, M[<span class="fl">1</span>, <span class="op">:</span>], M[<span class="fl">2</span>, <span class="op">:</span>], markersize <span class="op">=</span> <span class="fl">6</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>ax2 <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">2</span>], title <span class="op">=</span> <span class="st">"Persistence diagrams"</span>, aspect <span class="op">=</span> <span class="fu">DataAspect</span>(),</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>           xlabel <span class="op">=</span> <span class="st">"Birth (edge length)"</span>, ylabel <span class="op">=</span> <span class="st">"Death (edge length)"</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">lines!</span>(ax2, [<span class="fl">0</span>, <span class="fl">2.1</span>], [<span class="fl">0</span>, <span class="fl">2.1</span>], color <span class="op">=</span> <span class="op">:</span>gray)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (j, diagram) <span class="kw">in</span> <span class="fu">enumerate</span>(diagrams)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatter!</span>(ax2, <span class="fu">birth</span>.(diagram),</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>             [<span class="fu">isfinite</span>(bar) ? <span class="fu">death</span>(bar) <span class="op">:</span> <span class="fl">2.1</span> for bar <span class="kw">in</span> diagram],</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>             label <span class="op">=</span> <span class="st">"H</span><span class="sc">$</span>(j <span class="op">-</span> <span class="fl">1</span>)<span class="st">"</span>, markersize <span class="op">=</span> <span class="fl">7</span>)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="fu">hlines!</span>(ax2, [<span class="fl">2.1</span>], color <span class="op">=</span> <span class="op">:</span>gray, linestyle <span class="op">=</span> <span class="op">:</span>dash)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="fu">text!</span>(ax2, <span class="fl">0.3</span>, <span class="fl">2.1</span>, text <span class="op">=</span> <span class="st">"∞ (essential H₀)"</span>, align <span class="op">=</span> (<span class="op">:</span>left, <span class="op">:</span>top))</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="fu">axislegend</span>(ax2, position <span class="op">=</span> <span class="op">:</span>rb)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>fig</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-yellow-fg ansi-bold">┌ </span><span class="ansi-yellow-fg ansi-bold">Warning: </span>Found `resolution` in the theme when creating a `Scene`. The `resolution` keyword for `Scene`s and `Figure`s has been deprecated. Use `Figure(; size = ...` or `Scene(; size = ...)` instead, which better reflects that this is a unitless size and not a pixel resolution. The key could also come from `set_theme!` calls or related theming functions.
+
+<span class="ansi-yellow-fg ansi-bold">└ </span><span class="ansi-bright-black-fg">@ Makie ~/.julia/packages/Makie/UjJJY/src/scenes.jl:238</span>
+</pre>
+</div>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<div id="fig-intro-circle" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-intro-circle-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="intro_files/figure-html/fig-intro-circle-output-2.svg" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-intro-circle-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1.1: Forty points on a unit circle and their persistence diagrams. In H₁, the point far from the diagonal records a loop that survives over a range of connection distances; it is not a point in the original cloud.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>In the left panel, each dot is an observation in the plane. In the right panel, each dot represents an interval, with a birth on the horizontal axis and a death on the vertical axis. A loop born at <span class="math inline">\(b\)</span> and filled at <span class="math inline">\(d\)</span> has lifetime <span class="math inline">\(d-b\)</span>. Its location in this diagram does not tell us where the loop lies in the cloud. The 39 short <span class="math inline">\(H_0\)</span> intervals have almost identical coordinates here, so their points overlap. The dashed line displays the essential component at a convenient height; it does not give it a finite death. We will unpack every step of this computation in Part III.</p>
+</section>
+<section id="conventions" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="conventions"><span class="header-section-number">1.5</span> Conventions</h2>
+<p>A point cloud is usually a <code>EuclideanSpace</code> from <code>MetricSpaces.jl</code>. In a <span class="math inline">\(p \times n\)</span> input matrix, each <strong>column is one observation</strong>, and each row is one coordinate. Use <code>as_matrix(X)</code> to recover a matrix for plotting.</p>
+<p>Unless a chapter says otherwise, persistent homology uses coefficients in the field <span class="math inline">\(\mathbb F_2\)</span>. We distinguish geometric coordinates, filtration parameters, and diagram coordinates throughout. Rips uses a maximum <strong>edge length</strong> parameter; Čech balls and the alpha filtration have their own scale conventions, which we explain when comparing them.</p>
+</section>
+<section id="exercises" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="exercises"><span class="header-section-number">1.6</span> Exercises</h2>
+<section id="the-point-at-the-center" class="level3" data-number="1.6.1">
+<h3 data-number="1.6.1" class="anchored" data-anchor-id="the-point-at-the-center"><span class="header-section-number">1.6.1</span> 1. The point at the center</h3>
+<p>Why does the mean of the sampled circle not count as an observation? Does moving the cloud change its Rips diagram?</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Worked answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Worked answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The mean is a summary computed from the observations; it need not be among them. Translating the cloud preserves all pairwise distances, so it preserves this distance-based filtration and its persistence diagram.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="coordinates-in-two-different-plots" class="level3" data-number="1.6.2">
+<h3 data-number="1.6.2" class="anchored" data-anchor-id="coordinates-in-two-different-plots"><span class="header-section-number">1.6.2</span> 2. Coordinates in two different plots</h3>
+<p>What does a point near <span class="math inline">\((0.16, 1.78)\)</span> in an <span class="math inline">\(H_1\)</span> persistence diagram represent? Is it a point at those coordinates in the original plane?</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Worked answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Worked answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>It represents a loop interval born around scale <span class="math inline">\(0.16\)</span> and dying around scale <span class="math inline">\(1.78\)</span>. Its lifetime is about <span class="math inline">\(1.62\)</span>. These are filtration coordinates, not spatial coordinates of an observation.</p>
+</div>
+</div>
+</div>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-ripsstability" class="csl-entry" role="listitem">
+Chazal, Frédéric, Vin de Silva, and Steve Oudot. 2014. <span>“Persistence Stability for Geometric Complexes.”</span> <em>Geometriae Dedicata</em> 173: 193–214. <a href="https://doi.org/10.1007/s10711-013-9937-z">https://doi.org/10.1007/s10711-013-9937-z</a>.
+</div>
+<div id="ref-stability" class="csl-entry" role="listitem">
+Cohen-Steiner, David, Herbert Edelsbrunner, and John Harer. 2007. <span>“Stability of Persistence Diagrams.”</span> <em>Discrete &amp; Computational Geometry</em> 37 (1): 103–20. <a href="https://doi.org/10.1007/s00454-006-1276-5">https://doi.org/10.1007/s00454-006-1276-5</a>.
+</div>
+</div>
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -899,7 +1039,7 @@ window.Quarto = {
     }
   });
   </script>
-<nav class="page-navigation column-body">
+<nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./index.html" class="pagination-link" aria-label="Preface">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Preface</span>

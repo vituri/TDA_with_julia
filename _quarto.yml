@@ -1,6 +1,22 @@
 project:
   type: book
   output-dir: docs
+  resources:
+    - "environment/**"
+    - "scripts/setup.jl"
+    - "reproductions/experiments/mapper2007/**"
+    - "!reproductions/experiments/mapper2007/Manifest.toml"
+    - "reproductions/experiments/lum2013/README.md"
+    - "reproductions/experiments/lum2013/data/sources.toml"
+    - "reproductions/experiments/lum2013/data/clinical.tsv"
+    - "reproductions/experiments/lum2013/results/**"
+    - "reproductions/experiments/lum2013/scripts/**"
+    - "reproductions/experiments/lum2013/environment/**"
+    - "reproductions/experiments/chazal2013/**"
+    - "reproductions/experiments/perea-harer2015/**"
+    - "reproductions/experiments/stability2007/**"
+    - "!reproductions/experiments/stability2007/Manifest.toml"
+    - "!reproductions/experiments/**/*.tmp"
   post-render:
     - scripts/cleanup_quarto_support_dirs.sh
   preview: 
@@ -8,8 +24,12 @@ project:
     browser: true
 
 execute:
-  freeze: auto  # re-render only when source changes
+  freeze: false
   cache: true
+  error: false
+
+engines: [jupyter]
+jupyter: tda-book
 
 book:
   title: "Topological Data Analysis with Julia"
@@ -18,7 +38,7 @@ book:
   site-url: https://vituri.github.io/TDA_with_julia/
   repo-url: https://github.com/vituri/TDA_with_julia
   author: "G. Vituri"
-  date: "2023-09-01"
+  date: "2026-10-03"
   # sharing: [twitter, linkedin]
 
   chapters:
@@ -37,6 +57,7 @@ book:
       chapters:
       - persistence.qmd
       - computing_ph.qmd
+      - uncertainty.qmd
     - part: "TDA Methods"
       chapters:
       - tomato.qmd
@@ -49,6 +70,13 @@ book:
       - digits.qmd
       - timeseries.qmd
       - shapes.qmd
+    - part: reproducing-papers.qmd
+      chapters:
+      - reproduction-mapper2007.qmd
+      - reproductions/lum2013.qmd
+      - reproductions/chazal2013.qmd
+      - reproductions/perea-harer2015.qmd
+      - reproductions/stability2007.qmd
     - part: "Closing"
       chapters:
       - summary.qmd
@@ -61,7 +89,5 @@ format:
     theme: cosmo
     css: style.css
     code-link: true
-    page-layout: full
-    max-width: 90vw
+    page-layout: article
     preview-links: true
-

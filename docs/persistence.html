@@ -23,7 +23,61 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -125,7 +179,7 @@ window.Quarto = {
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
@@ -233,6 +287,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Computing persistent homology in Julia</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./uncertainty.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Uncertainty: which holes should we trust?</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -247,25 +307,25 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./tomato.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">ToMATo</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">ToMATo</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./mapper.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">(Classical) mapper</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Classical Mapper</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ballmapper.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ball mapper</span></span></a>
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ball Mapper</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./mapper-general.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></span></a>
   </div>
 </li>
       </ul>
@@ -282,33 +342,33 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./clustering_tomato.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Clustering with ToMATo</span></span></a>
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Clustering with ToMATo</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./digits.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Classifying hand-written digits</span></span></a>
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Classifying hand-written digits</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./timeseries.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Time series analysis</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Time series analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./shapes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Shape analysis and comparison</span></span></a>
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Shape analysis and comparison</span></span></a>
   </div>
 </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
- <span class="menu-text">Closing</span></a>
+            <a href="./reproducing-papers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reproducing Famous Papers</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -316,8 +376,49 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./reproduction-mapper2007.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Reproducing Mapper: the Reaven–Miller experiment</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reproductions/lum2013.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Lum et al.&nbsp;(2013): Mapper on breast cancer expression data</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reproductions/chazal2013.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">ToMATo: recovering the twin spirals</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reproductions/perea-harer2015.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Perea and Harer (2015): sliding windows, periodicity, and coefficients</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reproductions/stability2007.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Cohen-Steiner et al.&nbsp;(2007): persistence stability</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Closing</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./summary.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Summary and further reading</span></span></a>
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Summary and further reading</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -340,30 +441,41 @@ window.Quarto = {
   <ul>
   <li><a href="#filtrations" id="toc-filtrations" class="nav-link active" data-scroll-target="#filtrations"><span class="header-section-number">7.1</span> Filtrations</a>
   <ul class="collapse">
-  <li><a href="#the-vietoris-rips-filtration" id="toc-the-vietoris-rips-filtration" class="nav-link" data-scroll-target="#the-vietoris-rips-filtration"><span class="header-section-number">7.1.1</span> The Vietoris-Rips filtration</a></li>
-  <li><a href="#from-filtrations-to-persistent-homology" id="toc-from-filtrations-to-persistent-homology" class="nav-link" data-scroll-target="#from-filtrations-to-persistent-homology"><span class="header-section-number">7.1.2</span> From filtrations to persistent homology</a></li>
-  <li><a href="#sublevel-set-filtrations-and-simplicial-filtrations" id="toc-sublevel-set-filtrations-and-simplicial-filtrations" class="nav-link" data-scroll-target="#sublevel-set-filtrations-and-simplicial-filtrations"><span class="header-section-number">7.1.3</span> Sublevel set filtrations and simplicial filtrations</a></li>
+  <li><a href="#the-vietorisrips-filtration" id="toc-the-vietorisrips-filtration" class="nav-link" data-scroll-target="#the-vietorisrips-filtration"><span class="header-section-number">7.1.1</span> The Vietoris–Rips filtration</a></li>
+  <li><a href="#other-filtrations" id="toc-other-filtrations" class="nav-link" data-scroll-target="#other-filtrations"><span class="header-section-number">7.1.2</span> Other filtrations</a></li>
   </ul></li>
-  <li><a href="#persistence-diagrams" id="toc-persistence-diagrams" class="nav-link" data-scroll-target="#persistence-diagrams"><span class="header-section-number">7.2</span> Persistence diagrams</a></li>
-  <li><a href="#barcodes" id="toc-barcodes" class="nav-link" data-scroll-target="#barcodes"><span class="header-section-number">7.3</span> Barcodes</a></li>
+  <li><a href="#sec-square-persistence" id="toc-sec-square-persistence" class="nav-link" data-scroll-target="#sec-square-persistence"><span class="header-section-number">7.2</span> Following a class through the maps</a>
+  <ul class="collapse">
+  <li><a href="#see-the-three-complexes" id="toc-see-the-three-complexes" class="nav-link" data-scroll-target="#see-the-three-complexes"><span class="header-section-number">7.2.1</span> See the three complexes</a></li>
+  </ul></li>
+  <li><a href="#sec-barcodes-diagrams" id="toc-sec-barcodes-diagrams" class="nav-link" data-scroll-target="#sec-barcodes-diagrams"><span class="header-section-number">7.3</span> Barcodes and persistence diagrams</a>
+  <ul class="collapse">
+  <li><a href="#essential-versus-unobserved-deaths" id="toc-essential-versus-unobserved-deaths" class="nav-link" data-scroll-target="#essential-versus-unobserved-deaths"><span class="header-section-number">7.3.1</span> Essential versus unobserved deaths</a></li>
+  <li><a href="#lifetime-is-not-significance" id="toc-lifetime-is-not-significance" class="nav-link" data-scroll-target="#lifetime-is-not-significance"><span class="header-section-number">7.3.2</span> Lifetime is not significance</a></li>
+  </ul></li>
   <li><a href="#bottleneck-distance" id="toc-bottleneck-distance" class="nav-link" data-scroll-target="#bottleneck-distance"><span class="header-section-number">7.4</span> Bottleneck distance</a></li>
-  <li><a href="#clustering-revisited-dendrograms-as-0-dimensional-persistence" id="toc-clustering-revisited-dendrograms-as-0-dimensional-persistence" class="nav-link" data-scroll-target="#clustering-revisited-dendrograms-as-0-dimensional-persistence"><span class="header-section-number">7.5</span> Clustering revisited: dendrograms as 0-dimensional persistence</a></li>
-  <li><a href="#the-stability-theorem" id="toc-the-stability-theorem" class="nav-link" data-scroll-target="#the-stability-theorem"><span class="header-section-number">7.6</span> The stability theorem</a></li>
-  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">7.7</span> Summary</a></li>
+  <li><a href="#clustering-revisited-single-linkage-and-h_0" id="toc-clustering-revisited-single-linkage-and-h_0" class="nav-link" data-scroll-target="#clustering-revisited-single-linkage-and-h_0"><span class="header-section-number">7.5</span> Clustering revisited: single linkage and <span class="math inline">\(H_0\)</span></a></li>
+  <li><a href="#sec-stability" id="toc-sec-stability" class="nav-link" data-scroll-target="#sec-stability"><span class="header-section-number">7.6</span> Two stability statements</a>
+  <ul class="collapse">
+  <li><a href="#perturbing-a-function-on-the-same-space" id="toc-perturbing-a-function-on-the-same-space" class="nav-link" data-scroll-target="#perturbing-a-function-on-the-same-space"><span class="header-section-number">7.6.1</span> Perturbing a function on the same space</a></li>
+  <li><a href="#perturbing-a-finite-point-cloud" id="toc-perturbing-a-finite-point-cloud" class="nav-link" data-scroll-target="#perturbing-a-finite-point-cloud"><span class="header-section-number">7.6.2</span> Perturbing a finite point cloud</a></li>
+  </ul></li>
+  <li><a href="#what-we-have-gained" id="toc-what-we-have-gained" class="nav-link" data-scroll-target="#what-we-have-gained"><span class="header-section-number">7.7</span> What we have gained</a></li>
+  <li><a href="#stop-and-predict" id="toc-stop-and-predict" class="nav-link" data-scroll-target="#stop-and-predict"><span class="header-section-number">7.8</span> Stop and predict</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content column-body" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./persistence.html">Persistent Homology</a></li><li class="breadcrumb-item"><a href="./persistence.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Persistent homology</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Persistent homology</span></h1>
+<h1 class="title"><span id="sec-persistent-homology" class="quarto-section-identifier"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Persistent homology</span></span></h1>
 </div>
 
 
 
-<div class="quarto-title-meta column-body">
+<div class="quarto-title-meta">
 
     
   
@@ -376,194 +488,382 @@ window.Quarto = {
 
 
 <blockquote class="blockquote">
-<p>“The essence of this architecture is movement synchronized towards a precise objective. We observe a fraction of the process, like hearing the vibration of a single string in an orchestra of supergiants. We know, but cannot grasp, that above and below, beyond the limits of perception or imagination, thousands and millions of simultaneous transformations are at work, interlinked like a musical score by mathematical counterpoint. It has been described as a symphony in geometry, but we lack the ears to hear it.”<br>
-— Stanisław Lem, in “Solaris”</p>
+<p>“We know, but cannot grasp, that above and below, beyond the limits of perception or imagination, thousands and millions of simultaneous transformations are at work.”<br>
+— Stanisław Lem, in <em>Solaris</em></p>
 </blockquote>
-<p>In the chapter on simplicial complexes, we saw that we can build a Vietoris-Rips complex from a point cloud by connecting points within distance <span class="math inline">\(\epsilon\)</span>. But we faced a fundamental problem: <strong>how to choose <span class="math inline">\(\epsilon\)</span>?</strong></p>
-<p>Too small, and we see only isolated points. Too large, and everything collapses into a single blob. The brilliant insight of persistent homology is: <em>don’t choose</em> — look at <strong>all</strong> scales simultaneously and track which topological features persist.</p>
+<p>Our square has four components at small scales, one loop at intermediate scales, and no loop at large scales. Which answer is correct? All three describe the specified construction at their respective scales.</p>
+<p>Persistent homology records the changes <strong>and the relationships between them</strong>. Instead of selecting a scale before looking, we follow classes across a filtration. We still need to choose the metric, filtration, coefficient field, and computational range.</p>
 <section id="filtrations" class="level2" data-number="7.1">
 <h2 data-number="7.1" class="anchored" data-anchor-id="filtrations"><span class="header-section-number">7.1</span> Filtrations</h2>
-<div id="def-" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 7.1</strong></span> A <em>filtration</em> is a nested sequence of simplicial complexes:</p>
-<p><span class="math display">\[
-\emptyset = K_0 \subseteq K_1 \subseteq K_2 \subseteq \cdots \subseteq K_m = K.
-\]</span></p>
-<p>Each <span class="math inline">\(K_i\)</span> is called a <em>level</em> of the filtration, and the parameter controlling the nesting is called the <em>filtration value</em>.</p>
+<div id="def-filtration" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 7.1</strong></span> A <em>filtration</em> is a nested family of complexes <span class="math inline">\((K_t)\)</span>, with</p>
+<p><span class="math display">\[s\leq t\quad\Longrightarrow\quad K_s\subseteq K_t.\]</span></p>
+<p>A finite complex with finitely many changes can be represented by a finite sequence of these levels. The parameter <span class="math inline">\(t\)</span> is the <em>filtration value</em>.</p>
 </div>
-<section id="the-vietoris-rips-filtration" class="level3" data-number="7.1.1">
-<h3 data-number="7.1.1" class="anchored" data-anchor-id="the-vietoris-rips-filtration"><span class="header-section-number">7.1.1</span> The Vietoris-Rips filtration</h3>
-<p>The most common filtration in TDA is the Vietoris-Rips filtration.</p>
-<div id="def-" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 7.2</strong></span> Let <span class="math inline">\((X,d)\)</span> be a finite metric space and <span class="math inline">\(\epsilon \geq 0\)</span>. The <em>Vietoris-Rips complex at scale <span class="math inline">\(\epsilon\)</span></em> is</p>
+<p>Give each simplex <span class="math inline">\(\sigma\)</span> an entrance value <span class="math inline">\(F(\sigma)\)</span>, with every face entering no later than <span class="math inline">\(\sigma\)</span>. Then</p>
+<p><span class="math display">\[K_t=\{\sigma:F(\sigma)\leq t\}\]</span></p>
+<p>is a filtration. This face condition makes every level a valid complex.</p>
+<section id="the-vietorisrips-filtration" class="level3" data-number="7.1.1">
+<h3 data-number="7.1.1" class="anchored" data-anchor-id="the-vietorisrips-filtration"><span class="header-section-number">7.1.1</span> The Vietoris–Rips filtration</h3>
+<p>For our diameter convention from <a href="simplicial.html#sec-rips-definition" class="quarto-xref"><span>Section 3.5.1</span></a>,</p>
+<p><span class="math display">\[F(\sigma)=\max_{x,x'\in\sigma}d(x,x'),\]</span></p>
+<p>with each vertex entering at <span class="math inline">\(0\)</span>. Increasing <span class="math inline">\(t\)</span> adds edges and the higher-dimensional simplices they determine. A finite metric space has only finitely many distinct pairwise distances, so there are finitely many changes.</p>
+<p>Edges, triangles, and tetrahedra may enter <strong>at the same scale</strong>. An implementation orders tied simplices so that faces precede cofaces, but that auxiliary ordering should not be mistaken for a positive lifetime in the original scale parameter.</p>
+</section>
+<section id="other-filtrations" class="level3" data-number="7.1.2">
+<h3 data-number="7.1.2" class="anchored" data-anchor-id="other-filtrations"><span class="header-section-number">7.1.2</span> Other filtrations</h3>
+<p>A function <span class="math inline">\(f:X\to\mathbb R\)</span> gives a <em>sublevel-set filtration</em>:</p>
+<p><span class="math display">\[X_t=\{x:f(x)\leq t\}.\]</span></p>
+<p>For vertex values on a fixed complex <span class="math inline">\(K\)</span>, set</p>
+<p><span class="math display">\[F(\sigma)=\max_{v\in\sigma}f(v).\]</span></p>
+<p>The resulting lower-star filtration includes a simplex when all its vertices have entered. On a triangulated space with a piecewise-linear function, it gives a computable model for sublevel-set topology. Images have related cubical constructions, which we will use in <a href="./computing_ph.html">Computing persistent homology</a>.</p>
+<p>A filtration is a modeling choice: a Rips scale measures distance, an image threshold measures intensity, and a density filtration measures something else again. Their birth and death coordinates have different units and interpretations.</p>
+</section>
+</section>
+<section id="sec-square-persistence" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="sec-square-persistence"><span class="header-section-number">7.2</span> Following a class through the maps</h2>
+<p>Fix a dimension <span class="math inline">\(k\)</span> and a coefficient field, here <span class="math inline">\(\mathbb F_2\)</span>. Inclusion <span class="math inline">\(K_s\hookrightarrow K_t\)</span> sends a cycle to the same chain in the larger complex. It also sends boundaries to boundaries, so it induces a well-defined map</p>
 <p><span class="math display">\[
-\mathrm{VR}(X,\epsilon)=\left\{\sigma \subseteq X \;\middle|\; d(x,x') \leq \epsilon \text{ for all } x,x' \in \sigma \right\}.
+\phi_{s,t}:H_k(K_s;\mathbb F_2)\longrightarrow H_k(K_t;\mathbb F_2),\qquad
+[z]\longmapsto[z].
 \]</span></p>
-<p>In words: a finite subset of points is a simplex if all pairwise distances are at most <span class="math inline">\(\epsilon\)</span>.</p>
+<p>The notation looks unchanged, but the target class may now be zero: the larger complex may contain a filling that was absent before. These maps compose consistently: <span class="math inline">\(\phi_{s,u}=\phi_{t,u}\phi_{s,t}\)</span> for <span class="math inline">\(s\leq t\leq u\)</span>. The vector spaces <strong>together with these maps</strong> form a <em>persistence module</em>.</p>
+<p>For the square’s <span class="math inline">\(H_1\)</span>, the three distinct stages are</p>
+<p><span class="math display">\[
+0\ \longrightarrow\ \mathbb F_2\langle[z]\rangle\ \longrightarrow\ 0,
+\qquad z=[a,b]+[b,c]+[c,d]+[d,a].
+\]</span></p>
+<p>The class appears at <span class="math inline">\(1\)</span>, because the four edges now form a cycle. Its images at larger scales below <span class="math inline">\(\sqrt2\)</span> remain nonzero. At <span class="math inline">\(\sqrt2\)</span>,</p>
+<p><span class="math display">\[z=\partial_2([a,b,c]+[a,c,d]),\]</span></p>
+<p>so its image is zero. The edges have not vanished; their class has become a boundary. The loop is <strong>born at <span class="math inline">\(1\)</span> and dies at <span class="math inline">\(\sqrt2\)</span></strong>.</p>
+<p>For <span class="math inline">\(H_0\)</span>, the map from the initial four components to the connected complex is</p>
+<p><span class="math display">\[
+\mathbb F_2^4\longrightarrow\mathbb F_2,\qquad
+(\lambda_a,\lambda_b,\lambda_c,\lambda_d)
+\longmapsto\lambda_a+\lambda_b+\lambda_c+\lambda_d.
+\]</span></p>
+<p>It has rank <span class="math inline">\(1\)</span> and a three-dimensional kernel. For example, <span class="math inline">\([a]+[b]\)</span>, <span class="math inline">\([a]+[c]\)</span>, and <span class="math inline">\([a]+[d]\)</span> map to zero. Individual vertex classes all map to the <strong>same</strong> surviving component class. Saying “three components die” is convenient shorthand for this algebraic merging.</p>
+<p>When components with different birth times merge, the usual <em>elder rule</em> keeps the older component and ends the younger one’s bar. Here every component was born at <span class="math inline">\(0\)</span>, so there is no uniquely oldest vertex. A tie-breaking rule may name <span class="math inline">\(a\)</span> or another vertex as the survivor; the interval multiset is unchanged. It does not make one corner of the square more important than the others.</p>
+<p>More generally, the rank of</p>
+<p><span class="math display">\[H_k^{s,t}=\operatorname{im}\phi_{s,t}\]</span></p>
+<p>counts independent classes that were already present at <span class="math inline">\(s\)</span> and still survive at <span class="math inline">\(t\)</span>. Betti numbers at separate levels alone do not provide these maps.</p>
+<section id="see-the-three-complexes" class="level3" data-number="7.2.1">
+<h3 data-number="7.2.1" class="anchored" data-anchor-id="see-the-three-complexes"><span class="header-section-number">7.2.1</span> See the three complexes</h3>
+<p>The following computation uses four fixed points, with no randomness. We include the full range of square distances by setting the threshold to <span class="math inline">\(2\)</span>.</p>
+<div id="d67d8921" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">CairoMakie</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">TDARipserer</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">TDAPersistenceDiagrams</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>square_points <span class="op">=</span> [(<span class="fl">0.0</span>, <span class="fl">0.0</span>), (<span class="fl">1.0</span>, <span class="fl">0.0</span>), (<span class="fl">1.0</span>, <span class="fl">1.0</span>), (<span class="fl">0.0</span>, <span class="fl">1.0</span>)]</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>square_diagrams <span class="op">=</span> <span class="fu">ripserer</span>(<span class="fu">Rips</span>(square_points; threshold <span class="op">=</span> <span class="fl">2.0</span>);</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                           dim_max <span class="op">=</span> <span class="fl">1</span>, modulus <span class="op">=</span> <span class="fl">2</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="pp">@assert</span> <span class="fu">count</span>(isfinite, square_diagrams[<span class="fl">1</span>]) <span class="op">==</span> <span class="fl">3</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="pp">@assert</span> <span class="fu">count</span>(i <span class="op">-&gt;</span> !<span class="fu">isfinite</span>(i), square_diagrams[<span class="fl">1</span>]) <span class="op">==</span> <span class="fl">1</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="pp">@assert</span> <span class="fu">all</span>(i <span class="op">-&gt;</span> <span class="fu">birth</span>(i) <span class="op">==</span> <span class="fl">0</span> <span class="op">&amp;&amp;</span> <span class="fu">death</span>(i) <span class="op">==</span> <span class="fl">1</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>            <span class="fu">filter</span>(isfinite, square_diagrams[<span class="fl">1</span>]))</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="pp">@assert</span> <span class="fu">length</span>(square_diagrams[<span class="fl">2</span>]) <span class="op">==</span> <span class="fl">1</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="pp">@assert</span> <span class="fu">birth</span>(<span class="fu">only</span>(square_diagrams[<span class="fl">2</span>])) <span class="op">≈</span> <span class="fl">1</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="pp">@assert</span> <span class="fu">death</span>(<span class="fu">only</span>(square_diagrams[<span class="fl">2</span>])) <span class="op">≈</span> <span class="fu">sqrt</span>(<span class="fl">2</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>[[(<span class="fu">birth</span>(i), <span class="fu">death</span>(i)) for i <span class="kw">in</span> d] for d <span class="kw">in</span> square_diagrams]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<pre><code>2-element Vector{Vector{Tuple{Float64, Float64}}}:
+ [(0.0, 1.0), (0.0, 1.0), (0.0, 1.0), (0.0, Inf)]
+ [(1.0, 1.4142135623730951)]</code></pre>
 </div>
-<p>Why this gives a filtration:</p>
-<ul>
-<li>If <span class="math inline">\(\epsilon \leq \epsilon'\)</span>, then <span class="math inline">\(\mathrm{VR}(X,\epsilon) \subseteq \mathrm{VR}(X,\epsilon')\)</span>.</li>
-<li>So increasing <span class="math inline">\(\epsilon\)</span> can only add simplices, never remove them.</li>
-</ul>
-<p>For a finite point cloud, the complex changes only at finitely many scales (critical values from pairwise distances). So we can write:</p>
-<p><span class="math display">\[
-K_0=\mathrm{VR}(X,\epsilon_0)\subseteq K_1=\mathrm{VR}(X,\epsilon_1)\subseteq \cdots \subseteq K_m=\mathrm{VR}(X,\epsilon_m).
-\]</span></p>
-<p>Equivalent simplex-level view: each simplex <span class="math inline">\(\sigma\)</span> appears at</p>
-<p><span class="math display">\[
-\mathrm{filt}(\sigma)=\max_{x,x' \in \sigma} d(x,x').
-\]</span></p>
-<p>Then <span class="math inline">\(K_t=\{\sigma \mid \mathrm{filt}(\sigma)\leq t\}\)</span>. Faces always appear no later than the simplex itself, so this really is a filtration.</p>
-<p>This is the Vietoris-Rips filtration. Operationally:</p>
-<ol type="1">
-<li>Start with <span class="math inline">\(\epsilon = 0\)</span>: the complex <span class="math inline">\(\text{VR}(X, 0)\)</span> has only vertices (isolated points).</li>
-<li>Increase <span class="math inline">\(\epsilon\)</span>: edges appear between nearby points, then triangles, tetrahedra, etc.</li>
-<li>Eventually, for large enough <span class="math inline">\(\epsilon\)</span>, everything is connected into one giant simplex.</li>
-</ol>
-<p>As <span class="math inline">\(\epsilon\)</span> grows, topological features are <strong>born</strong> and <strong>die</strong>:</p>
-<ul>
-<li><strong>Birth</strong>: A new connected component appears (at <span class="math inline">\(\epsilon = 0\)</span>, every point is its own component), or a new loop or cavity forms.</li>
-<li><strong>Death</strong>: A component merges with another (two clusters become one), or a loop gets filled in by a triangle.</li>
-</ul>
-<p>The <em>persistence</em> of a feature is its lifetime: <span class="math inline">\(\text{death} - \text{birth}\)</span>.</p>
-</section>
-<section id="from-filtrations-to-persistent-homology" class="level3" data-number="7.1.2">
-<h3 data-number="7.1.2" class="anchored" data-anchor-id="from-filtrations-to-persistent-homology"><span class="header-section-number">7.1.2</span> From filtrations to persistent homology</h3>
-<p>The filtration is geometric/combinatorial data. Persistent homology is what we get after applying homology to it.</p>
-<p>Fix a homology dimension <span class="math inline">\(k\)</span> and a field <span class="math inline">\(\mathbb{F}\)</span>. For each inclusion <span class="math inline">\(K_i \hookrightarrow K_j\)</span>, functoriality of homology gives a linear map:</p>
-<p><span class="math display">\[
-H_k(K_i;\mathbb{F}) \longrightarrow H_k(K_j;\mathbb{F}).
-\]</span></p>
-<p>So a filtration becomes a sequence of vector spaces and linear maps:</p>
-<p><span class="math display">\[
-H_k(K_0) \to H_k(K_1) \to \cdots \to H_k(K_m).
-\]</span></p>
-<p>This is the <span class="math inline">\(k\)</span>-th <em>persistence module</em> (or persistence vector space).</p>
-<p>Intuitively:</p>
-<ul>
-<li>A generator of <span class="math inline">\(H_k(K_i)\)</span> is a <span class="math inline">\(k\)</span>-dimensional cycle class (component for <span class="math inline">\(k=0\)</span>, loop for <span class="math inline">\(k=1\)</span>, cavity for <span class="math inline">\(k=2\)</span>, …).</li>
-<li>As <span class="math inline">\(i\)</span> increases, the image of that class can survive, merge with others, or become trivial.</li>
-<li>The persistent homology group between levels <span class="math inline">\(i \leq j\)</span> is</li>
-</ul>
-<p><span class="math display">\[
-H_k^{i,j} := \mathrm{im}\!\left(H_k(K_i) \to H_k(K_j)\right),
-\]</span></p>
-<p>which captures classes born by time <span class="math inline">\(i\)</span> that are still alive at time <span class="math inline">\(j\)</span>.</p>
-</section>
-<section id="sublevel-set-filtrations-and-simplicial-filtrations" class="level3" data-number="7.1.3">
-<h3 data-number="7.1.3" class="anchored" data-anchor-id="sublevel-set-filtrations-and-simplicial-filtrations"><span class="header-section-number">7.1.3</span> Sublevel set filtrations and simplicial filtrations</h3>
-<p>Another important type of filtration comes from a function <span class="math inline">\(f: X \to \mathbb{R}\)</span>. The <em>sublevel set</em> at threshold <span class="math inline">\(t\)</span> is:</p>
-<p><span class="math display">\[
-X_t = \{x \in X \mid f(x) \leq t\}.
-\]</span></p>
-<p>As <span class="math inline">\(t\)</span> increases, these sets are nested: <span class="math inline">\(X_s \subseteq X_t\)</span> for <span class="math inline">\(s \leq t\)</span>.</p>
-<p>But for computation we usually need simplicial complexes. A standard conversion is:</p>
-<ol type="1">
-<li>Start with a simplicial complex <span class="math inline">\(K\)</span> (for example, from a triangulation or from a Rips complex).</li>
-<li>Give each vertex <span class="math inline">\(v\)</span> a value <span class="math inline">\(f(v)\)</span>.</li>
-<li>Extend to each simplex by</li>
-</ol>
-<p><span class="math display">\[
-F(\sigma) := \max_{v \in \sigma} f(v).
-\]</span></p>
-<ol start="4" type="1">
-<li>Define</li>
-</ol>
-<p><span class="math display">\[
-K_t := \{\sigma \in K \mid F(\sigma) \leq t\}.
-\]</span></p>
-<p>Then <span class="math inline">\((K_t)_{t \in \mathbb{R}}\)</span> is a simplicial filtration (often called a lower-star filtration).</p>
-<p>Why is this valid? If <span class="math inline">\(\tau \subseteq \sigma\)</span>, then <span class="math inline">\(F(\tau) \leq F(\sigma)\)</span>, so every face of a simplex in <span class="math inline">\(K_t\)</span> is also in <span class="math inline">\(K_t\)</span>. Hence each <span class="math inline">\(K_t\)</span> is a simplicial complex, and <span class="math inline">\(K_s \subseteq K_t\)</span> for <span class="math inline">\(s \leq t\)</span>.</p>
-<p>This is how sublevel-set ideas become computable persistent homology.</p>
-</section>
-</section>
-<section id="persistence-diagrams" class="level2" data-number="7.2">
-<h2 data-number="7.2" class="anchored" data-anchor-id="persistence-diagrams"><span class="header-section-number">7.2</span> Persistence diagrams</h2>
-<p>We can summarize the birth and death of every topological feature in a single picture.</p>
-<div id="def-" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 7.3</strong></span> A <em>persistence diagram</em> is a multiset of points <span class="math inline">\((b_i, d_i) \in \mathbb{R}^2\)</span>, where <span class="math inline">\(b_i\)</span> is the birth time and <span class="math inline">\(d_i\)</span> is the death time of the <span class="math inline">\(i\)</span>-th feature. Since <span class="math inline">\(b_i \leq d_i\)</span>, all points lie on or above the diagonal <span class="math inline">\(y = x\)</span>.</p>
 </div>
-<p>Points far from the diagonal represent features with long persistence — these are the “real” topological features. Points near the diagonal are short-lived and likely correspond to noise.</p>
-<p>A persistence diagram for dimension <span class="math inline">\(k\)</span> captures:</p>
-<ul>
-<li><strong><span class="math inline">\(k = 0\)</span></strong>: Connected components. A point <span class="math inline">\((b, d)\)</span> means a component was born at scale <span class="math inline">\(b\)</span> and merged with another at scale <span class="math inline">\(d\)</span>. The component that never dies (the last one standing) has <span class="math inline">\(d = \infty\)</span>.</li>
-<li><strong><span class="math inline">\(k = 1\)</span></strong>: Loops. A loop appeared at scale <span class="math inline">\(b\)</span> and was filled in at scale <span class="math inline">\(d\)</span>.</li>
-<li><strong><span class="math inline">\(k = 2\)</span></strong>: Cavities. And so on for higher dimensions.</li>
-</ul>
+<div id="cell-fig-square-filtration" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Draw the three square stages</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size <span class="op">=</span> (<span class="fl">1050</span>, <span class="fl">420</span>))</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    names <span class="op">=</span> [<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>, <span class="st">"d"</span>]</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    xs, ys <span class="op">=</span> <span class="fu">first</span>.(square_points), <span class="fu">last</span>.(square_points)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    titles <span class="op">=</span> [<span class="st">"0 ≤ ε &lt; 1"</span>, <span class="st">"1 ≤ ε &lt; √2"</span>]</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> panel <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, panel], title <span class="op">=</span> titles[panel], aspect <span class="op">=</span> <span class="fu">DataAspect</span>(),</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                  width <span class="op">=</span> <span class="fl">290</span>, height <span class="op">=</span> <span class="fl">270</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> panel <span class="op">==</span> <span class="fl">2</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> (i, j) <span class="kw">in</span> [(<span class="fl">1</span>, <span class="fl">2</span>), (<span class="fl">2</span>, <span class="fl">3</span>), (<span class="fl">3</span>, <span class="fl">4</span>), (<span class="fl">4</span>, <span class="fl">1</span>)]</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>                <span class="fu">lines!</span>(ax, xs[[i, j]], ys[[i, j]]; color <span class="op">=</span> <span class="op">:</span>darkorange, linewidth <span class="op">=</span> <span class="fl">3</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">end</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">end</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">scatter!</span>(ax, xs, ys; color <span class="op">=</span> <span class="op">:</span>steelblue, markersize <span class="op">=</span> <span class="fl">14</span>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        <span class="fu">text!</span>(ax, xs, ys; text <span class="op">=</span> names, offset <span class="op">=</span> (<span class="fl">8</span>, <span class="fl">8</span>), fontsize <span class="op">=</span> <span class="fl">18</span>)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>        <span class="fu">limits!</span>(ax, <span class="op">-</span><span class="fl">0.18</span>, <span class="fl">1.22</span>, <span class="op">-</span><span class="fl">0.18</span>, <span class="fl">1.22</span>)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>        <span class="fu">hidedecorations!</span>(ax)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>        <span class="fu">hidespines!</span>(ax)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    tetra <span class="op">=</span> [<span class="fl">0.0</span> <span class="fl">0.0</span> <span class="fl">0.0</span>; <span class="fl">1.0</span> <span class="fl">0.0</span> <span class="fl">0.0</span>;</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>             <span class="fl">0.5</span> <span class="fu">sqrt</span>(<span class="fl">3</span>)<span class="op">/</span><span class="fl">2</span> <span class="fl">0.0</span>; <span class="fl">0.5</span> <span class="fu">sqrt</span>(<span class="fl">3</span>)<span class="op">/</span><span class="fl">6</span> <span class="fu">sqrt</span>(<span class="fl">2</span><span class="op">/</span><span class="fl">3</span>)]</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    faces <span class="op">=</span> [<span class="fl">1</span> <span class="fl">3</span> <span class="fl">2</span>; <span class="fl">1</span> <span class="fl">2</span> <span class="fl">4</span>; <span class="fl">1</span> <span class="fl">4</span> <span class="fl">3</span>; <span class="fl">2</span> <span class="fl">3</span> <span class="fl">4</span>]</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    ax <span class="op">=</span> <span class="fu">Axis3</span>(fig[<span class="fl">1</span>, <span class="fl">3</span>], title <span class="op">=</span> <span class="st">"ε ≥ √2: filled tetrahedron"</span>,</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>               width <span class="op">=</span> <span class="fl">290</span>, height <span class="op">=</span> <span class="fl">270</span>,</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>               aspect <span class="op">=</span> <span class="op">:</span>data, azimuth <span class="op">=</span> <span class="fl">0.5</span>, elevation <span class="op">=</span> <span class="fl">0.35</span>)</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mesh!</span>(ax, tetra, faces; color <span class="op">=</span> <span class="op">:</span>peachpuff, shading <span class="op">=</span> NoShading)</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, j <span class="kw">in</span> (i <span class="op">+</span> <span class="fl">1</span>)<span class="op">:</span><span class="fl">4</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>        <span class="fu">lines!</span>(ax, tetra[[i, j], <span class="fl">1</span>], tetra[[i, j], <span class="fl">2</span>], tetra[[i, j], <span class="fl">3</span>];</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>               color <span class="op">=</span> <span class="op">:</span>darkorange, linewidth <span class="op">=</span> <span class="fl">2</span>)</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scatter!</span>(ax, tetra[<span class="op">:</span>, <span class="fl">1</span>], tetra[<span class="op">:</span>, <span class="fl">2</span>], tetra[<span class="op">:</span>, <span class="fl">3</span>];</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>             color <span class="op">=</span> <span class="op">:</span>steelblue, markersize <span class="op">=</span> <span class="fl">12</span>)</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">text!</span>(ax, tetra[<span class="op">:</span>, <span class="fl">1</span>], tetra[<span class="op">:</span>, <span class="fl">2</span>], tetra[<span class="op">:</span>, <span class="fl">3</span>];</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>          text <span class="op">=</span> names, offset <span class="op">=</span> (<span class="fl">8</span>, <span class="fl">8</span>), fontsize <span class="op">=</span> <span class="fl">18</span>)</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">hidedecorations!</span>(ax)</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">hidespines!</span>(ax)</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Label</span>(fig[<span class="fl">2</span>, <span class="fl">1</span>], <span class="st">"β₀ = 4, β₁ = 0"</span>)</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Label</span>(fig[<span class="fl">2</span>, <span class="fl">2</span>], <span class="st">"β₀ = 1, β₁ = 1"</span>)</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Label</span>(fig[<span class="fl">2</span>, <span class="fl">3</span>], <span class="st">"β₀ = 1, β₁ = 0"</span>)</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-yellow-fg ansi-bold">┌ </span><span class="ansi-yellow-fg ansi-bold">Warning: </span>Found `resolution` in the theme when creating a `Scene`. The `resolution` keyword for `Scene`s and `Figure`s has been deprecated. Use `Figure(; size = ...` or `Scene(; size = ...)` instead, which better reflects that this is a unitless size and not a pixel resolution. The key could also come from `set_theme!` calls or related theming functions.
+
+<span class="ansi-yellow-fg ansi-bold">└ </span><span class="ansi-bright-black-fg">@ Makie ~/.julia/packages/Makie/UjJJY/src/scenes.jl:238</span>
+</pre>
+</div>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<div id="fig-square-filtration" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-square-filtration-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="persistence_files/figure-html/fig-square-filtration-output-2.svg" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-square-filtration-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.1: The square filtration: four points, a loop, and then a full simplex. The final panel draws a tetrahedral realization with new display coordinates; its filtration scale still comes from the original square distances. The tetrahedron includes its solid interior.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The numerical result should agree with our hand calculation. If it does not, inspect the metric, threshold, coefficient field, and package environment before inventing a geometric explanation.</p>
 </section>
-<section id="barcodes" class="level2" data-number="7.3">
-<h2 data-number="7.3" class="anchored" data-anchor-id="barcodes"><span class="header-section-number">7.3</span> Barcodes</h2>
-<p>An equivalent representation is the <em>barcode</em>: each feature becomes an interval (drawn as a horizontal bar) from <span class="math inline">\(b_i\)</span> to <span class="math inline">\(d_i\)</span>.</p>
-<p>Each bar corresponds to one generator/class in the persistence module. Birth means that class first appears; death means it becomes trivial or merges into an older class.</p>
-<p>The key algebraic theorem (Zomorodian-Carlsson structure theorem; extended in full generality by Crawley-Boevey for pointwise finite-dimensional modules) says:</p>
+</section>
+<section id="sec-barcodes-diagrams" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="sec-barcodes-diagrams"><span class="header-section-number">7.3</span> Barcodes and persistence diagrams</h2>
+<p>A <em>barcode</em> summarizes an interval decomposition of a persistence module. An interval module <span class="math inline">\(I[b,d)\)</span> is one copy of the field at each parameter <span class="math inline">\(b\leq t&lt;d\)</span>, zero outside, with identity maps between its nonzero levels. It is the algebraic version of a feature’s lifetime.</p>
+<p>For finite filtrations over a field, the module decomposes as</p>
+<p><span class="math display">\[\mathcal V\cong\bigoplus_\ell I[b_\ell,d_\ell).\]</span></p>
+<p>The intervals, including multiplicities, are uniquely determined even though the particular basis and representative cycles need not be. For finite filtration algorithms and their algebraic justification, see Zomorodian <span class="citation" data-cites="zomorodian2005">(<a href="references.html#ref-zomorodian2005" role="doc-biblioref">Zomorodian 2005</a>)</span>. More generally, real-indexed modules whose vector space at each parameter is finite-dimensional decompose into interval modules <span class="citation" data-cites="intervaldecomposition">(<a href="references.html#ref-intervaldecomposition" role="doc-biblioref">Crawley-Boevey 2015</a>)</span>. Arbitrary modules without such hypotheses need not have this description. The half-open convention here comes from including simplices at their entrance values in our finite filtration.</p>
+<p>For our square, the full ordinary barcode is</p>
 <p><span class="math display">\[
-\mathcal{V} \cong \bigoplus_{\ell} I[b_\ell,d_\ell),
+\begin{array}{ll}
+H_0:&amp;[0,1),\ [0,1),\ [0,1),\ [0,\infty),\\
+H_1:&amp;[1,\sqrt2).
+\end{array}
 \]</span></p>
-<p>where <span class="math inline">\(I[b_\ell,d_\ell)\)</span> is an interval module. So every persistence module decomposes into interval pieces, and those intervals are exactly the barcode.</p>
-<p>So:</p>
-<ul>
-<li>Barcode and persistence diagram carry the same information (up to the usual conventions for infinite intervals).</li>
-<li>Diagram: good for geometry and distances between summaries.</li>
-<li>Barcode: good for interval counting and reading lifetimes directly.</li>
-</ul>
-<p>The barcode makes it easy to see:</p>
-<ul>
-<li>How many features exist at any given scale (count the bars crossing a vertical line)</li>
-<li>Which features are long-lived (long bars) vs.&nbsp;noise (short bars)</li>
-<li>Natural thresholds for choosing a scale parameter</li>
-</ul>
+<p>The <em>persistence diagram</em> instead places one point <span class="math inline">\((b,d)\)</span> for each interval. It is a <strong>multiset</strong>, so our three copies of <span class="math inline">\((0,1)\)</span> must not collapse into one feature merely because they overlap in a plot. The essential interval has death <span class="math inline">\(\infty\)</span> and is displayed separately from finite deaths.</p>
+<div id="cell-fig-square-barcode-diagram" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Draw and annotate the computed barcode and diagram</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> <span class="fu">Figure</span>(size <span class="op">=</span> (<span class="fl">1050</span>, <span class="fl">420</span>))</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    ticks <span class="op">=</span> ([<span class="fl">0.0</span>, <span class="fl">1.0</span>, <span class="fu">sqrt</span>(<span class="fl">2</span>)], [<span class="st">"0"</span>, <span class="st">"1"</span>, <span class="st">"√2"</span>])</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    colors <span class="op">=</span> [<span class="op">:</span>steelblue, <span class="op">:</span>darkorange]</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    display_end <span class="op">=</span> <span class="fl">1.8</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    bar_ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], title <span class="op">=</span> <span class="st">"Filtration → barcode"</span>, xlabel <span class="op">=</span> <span class="st">"scale ε"</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                  xticks <span class="op">=</span> ticks, yticks <span class="op">=</span> (<span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, [<span class="st">"H₀"</span>, <span class="st">"H₀"</span>, <span class="st">"H₀"</span>, <span class="st">"H₀"</span>, <span class="st">"H₁"</span>]))</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">vlines!</span>(bar_ax, [<span class="fl">1.0</span>, <span class="fu">sqrt</span>(<span class="fl">2</span>)]; color <span class="op">=</span> (<span class="op">:</span>gray, <span class="fl">0.5</span>), linestyle <span class="op">=</span> <span class="op">:</span>dash)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    row <span class="op">=</span> <span class="fl">0</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (k, diagram) <span class="kw">in</span> <span class="fu">enumerate</span>(square_diagrams)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> interval <span class="kw">in</span> <span class="fu">sort</span>(<span class="fu">collect</span>(diagram); by <span class="op">=</span> i <span class="op">-&gt;</span> (<span class="fu">isinf</span>(<span class="fu">death</span>(i)), <span class="fu">death</span>(i)))</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>            row <span class="op">+=</span> <span class="fl">1</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>            b, d <span class="op">=</span> <span class="fu">birth</span>(interval), <span class="fu">death</span>(interval)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>            right <span class="op">=</span> <span class="fu">isfinite</span>(d) ? d <span class="op">:</span> display_end</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>            <span class="fu">lines!</span>(bar_ax, [b, right], [row, row]; color <span class="op">=</span> colors[k], linewidth <span class="op">=</span> <span class="fl">4</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>            <span class="fu">scatter!</span>(bar_ax, [b], [row]; color <span class="op">=</span> colors[k], markersize <span class="op">=</span> <span class="fl">12</span>)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="fu">isfinite</span>(d)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>                <span class="fu">scatter!</span>(bar_ax, [d], [row]; color <span class="op">=</span> <span class="op">:</span>white, strokecolor <span class="op">=</span> colors[k],</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>                         strokewidth <span class="op">=</span> <span class="fl">2</span>, markersize <span class="op">=</span> <span class="fl">12</span>)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>                <span class="fu">scatter!</span>(bar_ax, [right], [row]; color <span class="op">=</span> colors[k],</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>                         marker <span class="op">=</span> <span class="op">:</span>rtriangle, markersize <span class="op">=</span> <span class="fl">16</span>)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>            <span class="cf">end</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">end</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">text!</span>(bar_ax, <span class="fl">1.35</span>, <span class="fl">4.35</span>; text <span class="op">=</span> <span class="st">"continues to ∞"</span>, fontsize <span class="op">=</span> <span class="fl">16</span>)</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">text!</span>(bar_ax, <span class="fl">1.03</span>, <span class="fl">5.35</span>; text <span class="op">=</span> <span class="st">"square loop"</span>, color <span class="op">=</span> colors[<span class="fl">2</span>], fontsize <span class="op">=</span> <span class="fl">16</span>)</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">limits!</span>(bar_ax, <span class="op">-</span><span class="fl">0.08</span>, <span class="fl">2.0</span>, <span class="fl">0.4</span>, <span class="fl">5.8</span>)</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    diagram_ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">2</span>], title <span class="op">=</span> <span class="st">"Barcode → diagram"</span>, xlabel <span class="op">=</span> <span class="st">"birth"</span>,</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>                      ylabel <span class="op">=</span> <span class="st">"death"</span>, aspect <span class="op">=</span> <span class="fu">DataAspect</span>(), xticks <span class="op">=</span> ticks,</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>                      yticks <span class="op">=</span> ([<span class="fl">0.0</span>, <span class="fl">1.0</span>, <span class="fu">sqrt</span>(<span class="fl">2</span>), display_end], [<span class="st">"0"</span>, <span class="st">"1"</span>, <span class="st">"√2"</span>, <span class="st">"∞"</span>]))</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lines!</span>(diagram_ax, [<span class="fl">0.0</span>, <span class="fl">1.9</span>], [<span class="fl">0.0</span>, <span class="fl">1.9</span>]; color <span class="op">=</span> <span class="op">:</span>gray, linestyle <span class="op">=</span> <span class="op">:</span>dash)</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">hlines!</span>(diagram_ax, [display_end]; color <span class="op">=</span> (<span class="op">:</span>gray, <span class="fl">0.5</span>), linestyle <span class="op">=</span> <span class="op">:</span>dot)</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (k, diagram) <span class="kw">in</span> <span class="fu">enumerate</span>(square_diagrams)</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> interval <span class="kw">in</span> diagram</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>            b, d <span class="op">=</span> <span class="fu">birth</span>(interval), <span class="fu">death</span>(interval)</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>            <span class="fu">scatter!</span>(diagram_ax, [b], [<span class="fu">isfinite</span>(d) ? d <span class="op">:</span> display_end];</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>                     color <span class="op">=</span> colors[k], markersize <span class="op">=</span> <span class="fl">16</span>,</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>                     marker <span class="op">=</span> <span class="fu">isfinite</span>(d) ? <span class="op">:</span>circle <span class="op">:</span> <span class="op">:</span>utriangle)</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>        <span class="cf">end</span></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">text!</span>(diagram_ax, <span class="fl">0.08</span>, <span class="fl">1.03</span>; text <span class="op">=</span> <span class="st">"×3"</span>, color <span class="op">=</span> colors[<span class="fl">1</span>], fontsize <span class="op">=</span> <span class="fl">20</span>)</span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">text!</span>(diagram_ax, <span class="fl">1.08</span>, <span class="fu">sqrt</span>(<span class="fl">2</span>) <span class="op">+</span> <span class="fl">0.05</span>; text <span class="op">=</span> <span class="st">"square loop"</span>,</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>          color <span class="op">=</span> colors[<span class="fl">2</span>], fontsize <span class="op">=</span> <span class="fl">16</span>)</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>    <span class="fu">limits!</span>(diagram_ax, <span class="op">-</span><span class="fl">0.08</span>, <span class="fl">2.0</span>, <span class="op">-</span><span class="fl">0.08</span>, <span class="fl">2.0</span>)</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>    fig</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-yellow-fg ansi-bold">┌ </span><span class="ansi-yellow-fg ansi-bold">Warning: </span>Found `resolution` in the theme when creating a `Scene`. The `resolution` keyword for `Scene`s and `Figure`s has been deprecated. Use `Figure(; size = ...` or `Scene(; size = ...)` instead, which better reflects that this is a unitless size and not a pixel resolution. The key could also come from `set_theme!` calls or related theming functions.
+
+<span class="ansi-yellow-fg ansi-bold">└ </span><span class="ansi-bright-black-fg">@ Makie ~/.julia/packages/Makie/UjJJY/src/scenes.jl:238</span>
+</pre>
+</div>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<div id="fig-square-barcode-diagram" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-square-barcode-diagram-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="persistence_files/figure-html/fig-square-barcode-diagram-output-2.svg" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-square-barcode-diagram-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.2: One filtration, two summaries. Blue marks H₀ and orange marks H₁. The three finite H₀ bars overlap at the same diagram point, labeled ×3. Infinity is drawn at an arbitrary display position, not a measured death time. Closed birth markers and open death markers illustrate the half-open interval convention.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>To recover a Betti number at scale <span class="math inline">\(t\)</span>, count bars satisfying <span class="math inline">\(b\leq t&lt;d\)</span>. At <span class="math inline">\(t=1.2\)</span>, this gives one <span class="math inline">\(H_0\)</span> bar and one <span class="math inline">\(H_1\)</span> bar. At <span class="math inline">\(t=\sqrt2\)</span>, the loop’s bar has ended, so <span class="math inline">\(\beta_1=0\)</span>. Endpoints matter!</p>
+<section id="essential-versus-unobserved-deaths" class="level3" data-number="7.3.1">
+<h3 data-number="7.3.1" class="anchored" data-anchor-id="essential-versus-unobserved-deaths"><span class="header-section-number">7.3.1</span> Essential versus unobserved deaths</h3>
+<p>An <em>essential</em> interval survives for the rest of the specified filtration. The square has one such ordinary <span class="math inline">\(H_0\)</span> interval: its final full simplex is connected.</p>
+<p>A computational threshold can also produce an infinite death in the returned diagram. If we stop the square filtration at <span class="math inline">\(1.2\)</span>, the loop has not yet died; software may report <span class="math inline">\([1,\infty)\)</span>. We know from the full calculation that it actually dies at <span class="math inline">\(\sqrt2\)</span>. In that truncated computation, infinity means <strong>death not observed within the range</strong>, rather than evidence of an eternal hole.</p>
+<p>Check the filtration’s threshold and diagram metadata when interpreting infinite intervals. Different numbers of infinite intervals can also make diagram distances infinite; replacing that distance by a convenient finite constant changes the mathematics. We revisit this issue in <a href="./shapes.html">Comparing shapes</a>.</p>
+</section>
+<section id="lifetime-is-not-significance" class="level3" data-number="7.3.2">
+<h3 data-number="7.3.2" class="anchored" data-anchor-id="lifetime-is-not-significance"><span class="header-section-number">7.3.2</span> Lifetime is not significance</h3>
+<p>For a finite interval, persistence is <span class="math inline">\(d-b\)</span>. Long bars represent classes surviving across a wide range of the selected filtration parameter. That is useful, but “long” depends on units, scaling, and the chosen filtration.</p>
+<p>A long bar can arise from an outlier, a sampling bias, or a poor metric. A short bar can describe a real small feature. Neither length nor distance from the diagonal, by itself, supplies a statistical significance test. Compare perturbations and suitable null models, and connect the feature to the scientific question. The <a href="./uncertainty.html">uncertainty chapter</a> develops these distinctions.</p>
+</section>
 </section>
 <section id="bottleneck-distance" class="level2" data-number="7.4">
 <h2 data-number="7.4" class="anchored" data-anchor-id="bottleneck-distance"><span class="header-section-number">7.4</span> Bottleneck distance</h2>
-<p>To compare two persistence diagrams <span class="math inline">\(D_1\)</span> and <span class="math inline">\(D_2\)</span>, we use the bottleneck distance.</p>
-<p>We consider bijections between the two diagrams after adding infinitely many copies of the diagonal <span class="math inline">\(y=x\)</span> (so points can be matched to the diagonal, interpreted as “feature created/destroyed as noise”). For a matching <span class="math inline">\(\gamma\)</span>, its cost is the largest <span class="math inline">\(L^\infty\)</span> move:</p>
+<p>For finite diagram points, a matching may pair points from two diagrams or send a point to the diagonal <span class="math inline">\(\Delta=\{(u,u):u\in\mathbb R\}\)</span>. Add arbitrarily many diagonal copies so diagrams with different numbers of finite features can still be matched. Then</p>
 <p><span class="math display">\[
-\mathrm{cost}(\gamma) = \sup_{p \in D_1 \cup \Delta} \|p-\gamma(p)\|_\infty,
+d_B(D,E)=\inf_\gamma\ \sup_p\|p-\gamma(p)\|_\infty,
 \]</span></p>
-<p>where <span class="math inline">\(\Delta=\{(x,x)\mid x\in\mathbb{R}\}\)</span> is the diagonal.</p>
-<p>Then</p>
+<p>where <span class="math inline">\(\gamma\)</span> ranges over these matchings. This is the smallest possible largest displacement.</p>
+<p>The cheapest diagonal match for <span class="math inline">\((b,d)\)</span> uses <span class="math inline">\(((b+d)/2,(b+d)/2)\)</span> and costs <span class="math inline">\((d-b)/2\)</span>. Our square’s finite <span class="math inline">\(H_1\)</span> point therefore has distance</p>
+<p><span class="math display">\[\frac{\sqrt2-1}{2}\approx0.2071\]</span></p>
+<p>from the empty diagram. An empty diagram is a valid summary; we do not need to assign it an arbitrary comparison value.</p>
+<p>Essential points with infinite death cannot be matched to the finite diagonal at finite cost. They must be matched to compatible essential points, with their birth difference determining the cost. If the essential counts differ, the usual extended bottleneck distance is infinite. Specify how essential or truncated intervals are handled before comparing diagrams.</p>
+<p>A zero diagram distance does not imply that the original datasets are identical. Diagram distance is a metric on suitable diagram spaces, but only a <strong>pseudometric on datasets</strong> after applying a summary that can send different datasets to the same diagram.</p>
+</section>
+<section id="clustering-revisited-single-linkage-and-h_0" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="clustering-revisited-single-linkage-and-h_0"><span class="header-section-number">7.5</span> Clustering revisited: single linkage and <span class="math inline">\(H_0\)</span></h2>
+<p>At a Rips scale <span class="math inline">\(t\)</span>, two points belong to the same component if a path of edges of length at most <span class="math inline">\(t\)</span> joins them. This is exactly the partition produced by <strong>single-linkage</strong> hierarchical clustering at threshold <span class="math inline">\(t\)</span>.</p>
+<p>The correspondence does not hold for arbitrary hierarchical methods. Complete linkage and average linkage use different merge rules; they do not simply take connected components of the threshold graph.</p>
+<p>A labeled dendrogram records which groups of points merge. The <span class="math inline">\(H_0\)</span> barcode records their birth and death scales, with multiplicities, but omits those memberships and much of the merge-tree structure. It is therefore a summary of the single-linkage process, rather than a dendrogram with all information preserved. Ties may be resolved differently in a binary drawing while producing the same partitions at each distinct scale.</p>
+<p>For our square, all four components join at <span class="math inline">\(1\)</span>, giving three finite bars ending there. The barcode tells us the merge scale, but does not identify which square edges were used to form a spanning tree. Also, a long chain of short edges can connect distant regions: the familiar single-linkage <em>chaining</em> effect remains present in <span class="math inline">\(H_0\)</span> persistence.</p>
+</section>
+<section id="sec-stability" class="level2" data-number="7.6">
+<h2 data-number="7.6" class="anchored" data-anchor-id="sec-stability"><span class="header-section-number">7.6</span> Two stability statements</h2>
+<p>Stability bounds changes in the <strong>summary</strong> under specified changes in the <strong>input</strong>. The bound depends on what input and filtration we use.</p>
+<section id="perturbing-a-function-on-the-same-space" class="level3" data-number="7.6.1">
+<h3 data-number="7.6.1" class="anchored" data-anchor-id="perturbing-a-function-on-the-same-space"><span class="header-section-number">7.6.1</span> Perturbing a function on the same space</h3>
+<p>For tame continuous real-valued functions <span class="math inline">\(f,g\)</span> on the same triangulable space, with the same coefficient field, sublevel-set persistence satisfies <span class="citation" data-cites="stability">(<a href="references.html#ref-stability" role="doc-biblioref">Cohen-Steiner et al. 2007</a>)</span></p>
+<p><span class="math display">\[d_B(\operatorname{Dgm}_k(f),\operatorname{Dgm}_k(g))\leq\|f-g\|_\infty.\]</span></p>
+<p>Finite piecewise-linear functions on a finite complex give a concrete setting where the required finiteness conditions hold. If every function value changes by at most <span class="math inline">\(\delta\)</span>, every sublevel set for <span class="math inline">\(f\)</span> at <span class="math inline">\(t\)</span> lies inside the sublevel set for <span class="math inline">\(g\)</span> at <span class="math inline">\(t+\delta\)</span>, and conversely. This explains why birth and death scales can be controlled by that shift.</p>
+</section>
+<section id="perturbing-a-finite-point-cloud" class="level3" data-number="7.6.2">
+<h3 data-number="7.6.2" class="anchored" data-anchor-id="perturbing-a-finite-point-cloud"><span class="header-section-number">7.6.2</span> Perturbing a finite point cloud</h3>
+<p>For finite point clouds <span class="math inline">\(X,Y\)</span> in the same ambient metric space, <strong>Rips persistence with our diameter convention</strong> satisfies <span class="citation" data-cites="ripsstability">(<a href="references.html#ref-ripsstability" role="doc-biblioref">Chazal et al. 2014</a>)</span></p>
 <p><span class="math display">\[
-d_B(D_1,D_2)=\inf_{\gamma}\mathrm{cost}(\gamma).
+d_B(\operatorname{Dgm}_k\mathrm{VR}(X),
+     \operatorname{Dgm}_k\mathrm{VR}(Y))\leq2d_H(X,Y),
 \]</span></p>
-<p>Intuition:</p>
-<ul>
-<li>It is the minimum worst-case displacement needed to transform one diagram into the other.</li>
-<li>Points near the diagonal are cheap to match to the diagonal, so short-lived features are treated as low-cost noise.</li>
-<li>Points far from the diagonal are expensive to remove, so long-persistent features dominate the distance.</li>
-</ul>
+<p>where <span class="math inline">\(d_H\)</span> is the Hausdorff distance: the largest distance required to find a nearby point in the other set. A more general statement uses <span class="math inline">\(2d_{GH}(X,Y)\)</span> for finite metric spaces without a shared ambient space.</p>
+<p>The factor two has a geometric reason. If each endpoint of a pair can move by at most <span class="math inline">\(\delta\)</span>, its pairwise distance can change by as much as <span class="math inline">\(2\delta\)</span>. A Rips simplex at scale <span class="math inline">\(t\)</span> can therefore be compared with one at scale <span class="math inline">\(t+2\delta\)</span>. For example, moving every square corner by at most <span class="math inline">\(0.01\)</span> bounds the diagram change by <span class="math inline">\(0.02\)</span> under the stated metric assumptions.</p>
+<p>These are bounds for the full specified filtrations. Independently truncating computations can conceal matching deaths, so an infinity in a limited output requires care. Stability is also not a guarantee that a sampled cloud recovers the topology of an unknown underlying object. It controls sensitivity to perturbation, not scientific truth or statistical significance.</p>
 </section>
-<section id="clustering-revisited-dendrograms-as-0-dimensional-persistence" class="level2" data-number="7.5">
-<h2 data-number="7.5" class="anchored" data-anchor-id="clustering-revisited-dendrograms-as-0-dimensional-persistence"><span class="header-section-number">7.5</span> Clustering revisited: dendrograms as 0-dimensional persistence</h2>
-<p>Here’s a beautiful connection between classical clustering and persistent homology.</p>
-<p>Consider agglomerative (hierarchical) clustering: we start with <span class="math inline">\(n\)</span> clusters (one per point) and progressively merge the closest pair. The dendrogram records this merging process.</p>
-<p>Now consider the 0-dimensional Vietoris-Rips persistence: as we increase <span class="math inline">\(\epsilon\)</span>, connected components merge. The birth of a component is at <span class="math inline">\(\epsilon = 0\)</span> (each point starts as its own component), and the death is the scale at which it merges with another.</p>
-<p><strong>These are the same thing!</strong> The 0-dimensional persistence barcode is precisely the dendrogram rewritten in the language of topology. The “gap” in the dendrogram that tells you how many clusters to choose corresponds to the gap between long and short bars in the barcode.</p>
-<p>This is the first example of how persistence provides a principled, multi-scale view of structure that classical methods handle in an ad hoc way.</p>
 </section>
-<section id="the-stability-theorem" class="level2" data-number="7.6">
-<h2 data-number="7.6" class="anchored" data-anchor-id="the-stability-theorem"><span class="header-section-number">7.6</span> The stability theorem</h2>
-<p>One of the most important theoretical results in TDA is the <em>stability theorem</em> (Chazal, Cohen-Steiner, Glisse, Guibas, Oudot):</p>
-<blockquote class="blockquote">
-<p>If two datasets <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are “close” (in a precise sense), then their persistence diagrams are also close.</p>
-</blockquote>
-<p>More formally, the bottleneck distance between persistence diagrams is bounded by the Hausdorff distance or the <span class="math inline">\(L^\infty\)</span> distance between the corresponding functions:</p>
-<p><span class="math display">\[
-d_B(\text{Dgm}(f), \text{Dgm}(g)) \leq \|f - g\|_\infty.
-\]</span></p>
-<p>This says that if the input changes a little (in sup norm), the diagram changes a little in bottleneck distance. So persistent homology is not only descriptive, but also quantitatively robust.</p>
+<section id="what-we-have-gained" class="level2" data-number="7.7">
+<h2 data-number="7.7" class="anchored" data-anchor-id="what-we-have-gained"><span class="header-section-number">7.7</span> What we have gained</h2>
+<p>We can now follow classes rather than merely count them at isolated scales. The square’s single loop gives the interval <span class="math inline">\([1,\sqrt2)\)</span>; its components give three finite intervals and one essential interval. Barcodes and diagrams record the same interval data, and stability tells us how that data responds to certain input changes.</p>
+<p>In the next chapter, we will compute less toy-like examples in Julia. Keep the square nearby as a sanity check: it is small enough that we do not have to trust either the computer or the author blindly.</p>
 </section>
-<section id="summary" class="level2" data-number="7.7">
-<h2 data-number="7.7" class="anchored" data-anchor-id="summary"><span class="header-section-number">7.7</span> Summary</h2>
-<p>Persistent homology gives us:</p>
+<section id="stop-and-predict" class="level2" data-number="7.8">
+<h2 data-number="7.8" class="anchored" data-anchor-id="stop-and-predict"><span class="header-section-number">7.8</span> Stop and predict</h2>
 <ol type="1">
-<li>A <strong>multi-scale</strong> view of topological features (no need to choose a single <span class="math inline">\(\epsilon\)</span>)</li>
-<li>A way to <strong>distinguish signal from noise</strong> (long-lived features vs.&nbsp;short-lived ones)</li>
-<li>A <strong>stable</strong> summary of data shape (robust to perturbations)</li>
-<li>A <strong>unifying framework</strong> that connects clustering, homology, and data analysis</li>
+<li>At scales <span class="math inline">\(0.9\)</span>, <span class="math inline">\(1\)</span>, and <span class="math inline">\(\sqrt2\)</span>, what are the square’s <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span>? Why does the answer at the endpoint matter?</li>
 </ol>
-<p>In the next chapter, we will compute persistent homology in Julia using <code>Ripserer.jl</code> and work with persistence diagrams using <code>PersistenceDiagrams.jl</code>.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Answer: count half-open bars">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Answer: count half-open bars
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>At <span class="math inline">\(0.9\)</span>, <span class="math inline">\((\beta_0,\beta_1)=(4,0)\)</span>. At <span class="math inline">\(1\)</span>, the three finite component bars have ended and the loop bar has begun, giving <span class="math inline">\((1,1)\)</span>. At <span class="math inline">\(\sqrt2\)</span>, the loop bar ends, giving <span class="math inline">\((1,0)\)</span>. The interval <span class="math inline">\([b,d)\)</span> includes its birth and excludes its death.</p>
+</div>
+</div>
+</div>
+<ol start="2" type="1">
+<li>You stop the computation at <span class="math inline">\(1.2\)</span> and see <span class="math inline">\([1,\infty)\)</span> in <span class="math inline">\(H_1\)</span>. Can you conclude that the loop never fills? What is its bottleneck distance to the empty diagram using the full calculation?</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled" title="Answer: a cutoff is not a death theorem">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Answer: a cutoff is not a death theorem
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The limited computation only establishes survival through <span class="math inline">\(1.2\)</span>. The full square filtration kills the class at <span class="math inline">\(\sqrt2\)</span>. Its finite full diagram point can be matched to the diagonal for <span class="math inline">\((\sqrt2-1)/2\approx0.2071\)</span>. A truncated infinite interval cannot simply be used as if its actual death were known.</p>
+</div>
+</div>
+</div>
+<ol start="3" type="1">
+<li>Each square corner moves at most <span class="math inline">\(0.01\)</span> in Euclidean distance. What Rips bottleneck bound follows? Does that make its loop statistically significant?</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled" title="Answer: robustness and significance answer different questions">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Answer: robustness and significance answer different questions
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The Hausdorff distance is at most <span class="math inline">\(0.01\)</span>, giving <span class="math inline">\(d_B\leq0.02\)</span> under our diameter convention. This bound concerns sensitivity to the specified perturbation. Significance requires a sampling or null model and a relevant scientific interpretation; the stability inequality alone does not provide either.</p>
+</div>
+</div>
+</div>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-ripsstability" class="csl-entry" role="listitem">
+Chazal, Frédéric, Vin de Silva, and Steve Oudot. 2014. <span>“Persistence Stability for Geometric Complexes.”</span> <em>Geometriae Dedicata</em> 173: 193–214. <a href="https://doi.org/10.1007/s10711-013-9937-z">https://doi.org/10.1007/s10711-013-9937-z</a>.
+</div>
+<div id="ref-stability" class="csl-entry" role="listitem">
+Cohen-Steiner, David, Herbert Edelsbrunner, and John Harer. 2007. <span>“Stability of Persistence Diagrams.”</span> <em>Discrete &amp; Computational Geometry</em> 37 (1): 103–20. <a href="https://doi.org/10.1007/s00454-006-1276-5">https://doi.org/10.1007/s00454-006-1276-5</a>.
+</div>
+<div id="ref-intervaldecomposition" class="csl-entry" role="listitem">
+Crawley-Boevey, William. 2015. <span>“Decomposition of Pointwise Finite-Dimensional Persistence Modules.”</span> <em>Proceedings of the American Mathematical Society</em> 143: 555–65. <a href="https://arxiv.org/abs/1210.0819">https://arxiv.org/abs/1210.0819</a>.
+</div>
+<div id="ref-zomorodian2005" class="csl-entry" role="listitem">
+Zomorodian, Afra J. 2005. <em>Topology for Computing</em>. Cambridge University Press. <a href="https://www.cambridge.org/core/books/topology-for-computing/1171035B570105A57865CEA390BA5E74">https://www.cambridge.org/core/books/topology-for-computing/1171035B570105A57865CEA390BA5E74</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->
@@ -967,7 +1267,7 @@ d_B(\text{Dgm}(f), \text{Dgm}(g)) \leq \|f - g\|_\infty.
     }
   });
   </script>
-<nav class="page-navigation column-body">
+<nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./clustering.html" class="pagination-link" aria-label="Clustering">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Clustering</span></span>

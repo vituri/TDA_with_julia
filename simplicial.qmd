@@ -1,130 +1,161 @@
-# Simplicial complexes
+# Simplicial complexes {#sec-simplicial-complexes}
 
-> "Are you a man, Octave? Do you see the leaves falling from the trees, the sun rising and setting? Do you hear the ticking of the horologe of time with each pulsation of your heart? Is there, then, such a difference between the love of a year and the love of an hour? I challenge you to answer that, you fool, as you sit there looking out at the infinite through a window not larger than your hand." \
-> --- Alfred de Musset, in "The confession of a child of the century"
+> "Do you see the leaves falling from the trees, the sun rising and setting?" \
+> --- Alfred de Musset, in *The Confession of a Child of the Century*
 
 ## The infinite through a window
 
-Topological spaces are nice, but all the interesting ones have an infinite amount of points: torus, circle, the real line, mobius band, projective plane, and so on. Topology usually is not interested in finite sets because their standard topology is trivial: just take every point as an open set.
+A circle, a torus, and the real line contain infinitely many points. A computer has a finite amount of memory, and so do I. We need a finite description that still remembers something about the shape.
 
-We, as humans, can't really grasp the infinite. Our universe is finite, and so is our mind. To think about the infinite, we need to use finite "tricks". Take, for example, the way we prove something is valid for all the infinite natural numbers, a principle called [finite induction](https://en.wikipedia.org/wiki/Mathematical_induction):
+As @sec-square-topology showed, a finite metric point cloud has a discrete topology. Just storing a list of points gives us no loops. This does not make every finite topological space uninteresting—non-discrete finite topologies exist—but it explains why a list of measurements needs another construction.
 
-- first prove that a certain property $P$ is true for 1;
-- then, prove that if it is valid for $n$, then it is also valid for $n+1$.
+Mathematics often handles the infinite with finite descriptions. Induction uses a starting case and a rule for the next case. A finite-dimensional vector space uses a finite basis to describe infinitely many vectors. Simplicial complexes offer a similar bargain: finitely many building blocks can describe a space with infinitely many points.
 
-Peano [needed an axiom](https://en.wikipedia.org/wiki/Peano_axioms) to guarantee that these 2 conditions are enough to prove that $P$ is valid for all $\mathbb{N}$.
-
-![The finite induction principle can be tought of as a domino falling and pushing the next piece. But with infinite domino pieces and infinite patience. Source: Wikipedia^[https://commons.wikimedia.org/wiki/File:Dominoeffect.png]](images/Dominoeffect.png)
-
-As another example, when studying linear algebra we see the concept of [basis](https://en.wikipedia.org/wiki/Basis_(linear_algebra)) of a vector space $V$. With basis, we can describe exactly any point $v \in V$ using a finite combination of its base elements, say $v = \lambda_1 e_1 + \ldots \lambda_n e_n$. The infinite amount of points in $V$ can then be written as sums of finite objects that we can map mentally.
-
-Finding a finite representation of a mathematical object is often desired, and with topological spaces it was not different.
+![Induction as a domino pushing the next piece. Infinite dominoes would require infinite patience. Source: Wikimedia Commons.](images/Dominoeffect.png)
 
 ## Graphs
 
-Graphs were created by Euler in 1736 because he wanted to visit Königsberg but was too lazy^[The original text is in Latin, so I just invented this.] to walk around like a normal person, and then tried to [cross all its bridges just one time](https://en.wikipedia.org/wiki/Seven_Bridges_of_K%C3%B6nigsberg).
+Euler studied the bridges of Königsberg in 1736 because he wanted to visit the city but was too lazy^[I invented the laziness. The bridge problem is real.] to walk around like a normal person. Could he cross each bridge exactly once?
 
-![Can you walk through the city crossing each of those bridges once and only once? Spoiler: no, you can't. Stop trying! Source: Wikipedia^[https://en.wikipedia.org/wiki/File:Konigsberg_bridges.png]](images/sc-bridge.png)
+![Can you cross each bridge once and only once? Spoiler: no. Source: Wikimedia Commons.](images/sc-bridge.png)
 
-We can abstract away this map with its bridges and just think about the bridges and the portions of land: 
+Forget the geography for a moment. Represent each land region by a vertex and each bridge by an edge:
 
-![The map of Königsberg if the city was a green carpet. Source: Wikipedia^[https://en.wikipedia.org/wiki/File:7_bridges.svg]](images/sc-bridges2.png)
+![The map of Königsberg if the city were a green carpet. Source: Wikimedia Commons.](images/sc-bridges2.png)
 
-Euler did even better! He needed just two things to represent this object:
+![A graph representing the bridge problem. Parallel bridges are distinct edges. Source: Wikimedia Commons.](images/sc-bridges3.png)
 
-- points: the portions of the cities;
-- edges: bridges that connect two points.
+An edge records a pairwise relation. The bridge example is a *multigraph*, because two land regions can have more than one bridge between them. Most graphs in this book are simpler:
 
-The result is the following:
+::: {#def-graphs}
+A *simple undirected graph* is a pair $G=(V,E)$, with vertex set $V$ and edges that are two-element subsets $\{v,w\}\subseteq V$. There are no repeated edges or edges from a vertex to itself.
 
-![A graph representing the original problem. Source: Wikipedia^[[https://en.wikipedia.org/wiki/File:K%C3%B6nigsberg_graph.svg]()]](images/sc-bridges3.png)
-
-Oops, Euler just invented [graphs](https://en.wikipedia.org/wiki/Graph_(discrete_mathematics))!
-
-Formally,
-
-:::{#def-graphs}
-A *directed graph* is a pair $G = (V, E)$ where $V$ is a set called *vertices* and $E \subseteq V \times V$ is a set of *edges* between the vertices. An element $(v, w) \in E$ can also be represented as $v \to w$. 
-
-An *undirected graph* is defined similarly, but edges are unordered pairs $\{v, w\}$ instead of ordered pairs $(v, w)$. In an undirected graph, there is no distinction between "from $v$ to $w$" and "from $w$ to $v$" — the edge simply connects the two vertices. Unless stated otherwise, **graphs in this book are undirected**.
+A *directed graph* instead uses ordered pairs $(v,w)$, often written $v\to w$. Unless stated otherwise, our graphs are undirected.
 :::
 
-He noticed that when you travel to a green point $v$, you need to take another bridge to get out of $v$. Thus, the number of edges need to be *even* for all the points we visit during the middle of our journey (excluding the beginning and the end). But all points in the above graph have an odd number of edges! Therefore, it is impossible to travel cross each bridge just once and still visit all the green points.
-
-Graphs can be used whenever we need to represent a set of objects and a pairwise relation between these objects.
+At every intermediate stop on a bridge-crossing walk, an arrival must pair with a departure. Thus at most two vertices—the start and the finish—can have odd degree. All four land regions in the Königsberg graph have odd degree, so the proposed walk is impossible. A finite description has answered the question without making Euler wear out his shoes.
 
 ### The essence of a circle
 
-What is a circle, really? The boring answer is "the set of points that dist $r$ of a point $p$". But in a topological view, a circle is just a 1-dimensional closed real interval with its extremities glued together, forming a hole inside.
+A geometric circle is the set of points a fixed distance from a center. Topologically, it is also what we get by joining the ends of an interval.
 
-The following graph, when seen as a subset of $\mathbb{R}^2$ is homeomorphic to a circle:
+![A poorly drawn graph representing a circle.](images/sc-circle.png){#fig-simplicial-circle}
 
-![A poorly drawn graph representing a circle.](images/sc-circle.png){#fig-}
+The drawing has three vertices and three edges. The **geometric realization** of this graph includes every point along the edges, not just the three vertices; it is homeomorphic to a circle. There is no filled triangular face. That missing face will become very important.
 
-With this horrendous graph^[See [https://en.wikipedia.org/wiki/Monster_group]() for more terror tales in mathematics.] we can represent a circle in a finite way: three points $a, b, c$ and all possible edges: $a \to b$, $b \to c$, $c \to a$.
+## Simplices and their faces
 
-## Simplicial complexes
+Why stop with vertices and edges? An edge uses two vertices; three can specify a filled triangle, four a filled tetrahedron, and so on. Congratulations, you have reinvented simplicial complexes!
 
-Why stop with vertices and edges? Edges are just pairs of edges. Why not take triples and quadruples and so on?
+::: {#def-abstract-simplicial-complex}
+A finite *abstract simplicial complex* $K$ on a vertex set $V$ is a collection of subsets of $V$ such that every subset of a member of $K$ also belongs to $K$.
 
-Well, now you've reinvented [simplicial complexes](https://en.wikipedia.org/wiki/Simplicial_complex)! Congratulations!
-
-:::{#def-}
-A simplicial complex $\Sigma$ is a set of subsets of $X$ with the following property:
-
-- for any $\sigma \in \Sigma$, every subset of $\sigma$ (also called *a face* of $\sigma$) is also in $\Sigma$;
-- given non-empty $\sigma_1, \sigma_2 \in \Sigma$, the intersection $\sigma_1 \cap \sigma_2$ is also in $\Sigma$.
+A nonempty member $\sigma\in K$ is a *simplex*. If $\sigma$ has $k+1$ vertices, its dimension is $k$. Its subsets are its *faces*. We include the empty face by convention, but do not count it when computing ordinary homology.
 :::
+
+Thus a $0$-simplex is a vertex, a $1$-simplex an edge, a $2$-simplex a filled triangle, and a $3$-simplex a filled tetrahedron. Including $\{a,b,c\}$ requires including its three edges and three vertices. The converse fails: having all three edges does not force an abstract complex to contain the triangle.
+
+The intersection of two simplices is automatically a face of both. This follows from closure under subsets; we do not need a second axiom for the abstract definition.
+
+## Abstract objects, geometric spaces {#sec-geometric-realization}
+
+The definition is a list of subsets; it says nothing about coordinates. To turn this list into a space, realize each simplex as a solid geometric simplex and glue matching faces.
+
+For $n$ vertices, there is a convenient construction in $\mathbb R^n$. Assign vertex $i$ the standard basis vector $e_i$. For every $\sigma\in K$, take the convex hull of its assigned vertices. Their union is the *geometric realization*, written $|K|$:
+
+$$
+|K|=\left\{\sum_{i=1}^n t_i e_i\ \middle|\ t_i\geq0,\ \sum_i t_i=1,
+\ \{i:t_i>0\}\in K\right\}.
+$$
+
+A simplex has only finitely many vertices, but its geometric realization has infinitely many points. There is our window onto the infinite.
+
+We can often draw the same realization in a smaller ambient space. However, the coordinates of the original data need not realize the abstract complex faithfully. Four coplanar square corners cannot be the vertices of a nondegenerate tetrahedron! When the Rips construction below includes a $3$-simplex, it means an abstract tetrahedron; it does not suddenly lift one of our measured points off the table.
+
+We use the combinatorial view for computation and the geometric view for intuition. Results about the topology of a complex refer to its realization [@hatcher2002].
 
 ## From data to simplicial complexes {#sec-data-to-sc}
 
-So far, simplicial complexes are abstract mathematical objects. But why should we care? Because they give us a way to build topology from data!
+Let $X=\{x_1,\ldots,x_n\}$ be a finite set in a metric space. Distances tell us which vertices are near one another. A scale parameter turns that information into simplices.
 
-Suppose we have a finite set of points $X = \{x_1, \ldots, x_n\}$ in some metric space (for example, $\mathbb{R}^d$ with the Euclidean distance). We can build a simplicial complex from $X$ by declaring that points that are "close enough" form simplices. There are several ways to do this:
+### Vietoris–Rips complex {#sec-rips-definition}
 
-### Vietoris-Rips complex
-
-Fix a parameter $\epsilon > 0$. The *Vietoris-Rips complex* $\text{VR}(X, \epsilon)$ is the simplicial complex where a subset $\sigma = \{x_{i_0}, \ldots, x_{i_k}\} \subseteq X$ is a simplex if and only if 
-
-$$
-d(x_{i_j}, x_{i_l}) \leq \epsilon \quad \text{for all } j, l.
-$$
-
-In words: a set of points forms a simplex if every pair of points in the set is within distance $\epsilon$.
-
-### Čech complex
-
-Fix $\epsilon > 0$. The *Čech complex* $\check{C}(X, \epsilon)$ is the simplicial complex where $\sigma = \{x_{i_0}, \ldots, x_{i_k}\}$ is a simplex if and only if the balls $B(x_{i_j}, \epsilon/2)$ have a common intersection:
+::: {#def-vietoris-rips}
+For $\epsilon\geq0$, the *Vietoris–Rips complex* $\mathrm{VR}(X,\epsilon)$ consists of the subsets $\sigma\subseteq X$ such that
 
 $$
-\bigcap_{j=0}^{k} B(x_{i_j}, \epsilon/2) \neq \emptyset.
-$$
-
-The Čech complex has a beautiful theoretical property: by the [Nerve Theorem](https://en.wikipedia.org/wiki/Nerve_of_a_covering#Nerve_theorem), it is homotopy equivalent to the union of balls $\bigcup_i B(x_i, \epsilon/2)$. However, it is more expensive to compute than the Vietoris-Rips complex, so in practice Rips complexes are used more often.
-
-### The role of $\epsilon$
-
-The choice of $\epsilon$ is crucial. Too small, and the complex is just a collection of isolated points (no edges, no triangles). Too large, and everything is connected into a single giant simplex that hides all interesting structure. 
-
-This is a fundamental problem: **there is no single "correct" $\epsilon$**. The solution? Don't choose one — examine all of them! This idea leads to *persistent homology*, which we will explore in a later chapter.
-
-## Abstract vs geometric simplicial complexes
-
-In our definition above, a simplicial complex is defined purely in terms of sets and subsets — there is no mention of geometry or coordinates. This is called an *abstract* simplicial complex.
-
-However, every abstract simplicial complex can be "realized" as a geometric object: a $k$-simplex can be embedded in $\mathbb{R}^{k}$ as the convex hull of $k+1$ points in general position. More precisely,
-
-::: {#def-}
-The *standard $k$-simplex* is the convex hull of the $k+1$ standard basis vectors $e_0, e_1, \ldots, e_k$ in $\mathbb{R}^{k+1}$:
-
-$$
-\Delta^k = \left\{ \sum_{i=0}^{k} t_i e_i \;\middle|\; t_i \geq 0, \sum_{i=0}^{k} t_i = 1 \right\}.
+d(x,x')\leq\epsilon\qquad\text{for every }x,x'\in\sigma.
 $$
 :::
 
-For example, $\Delta^0$ is a point, $\Delta^1$ is a line segment, $\Delta^2$ is a triangle (with its interior), and $\Delta^3$ is a tetrahedron.
+We use the **diameter convention**: $\epsilon$ is the largest allowed pairwise distance, not a ball radius. Some references use a different factor of two, so always check the convention before comparing scales.
 
-Any abstract simplicial complex with $n$ vertices can be geometrically realized in $\mathbb{R}^{2n+1}$ (this is a theorem!). The practical consequence is that we can think of simplicial complexes both as combinatorial objects (lists of subsets) and as geometric shapes — whichever is more convenient for the task at hand.
+First build a graph linking points at distance at most $\epsilon$. Then fill every clique: three mutually linked vertices give a triangle, four give a tetrahedron, and so on. This automatically includes all faces. Notice the difference from the graph in @fig-simplicial-circle: in a Rips complex, a complete three-vertex graph comes with its filling.
 
-We will use the combinatorial view when computing homology and the geometric view when building intuition.
+### Čech complex
 
+Fix an ambient metric space containing $X$, and place a **closed** ball of radius $\epsilon/2$ at each data point. The *Čech complex* contains $\sigma$ when those balls have a common intersection:
+
+$$
+\bigcap_{x\in\sigma}\overline B(x,\epsilon/2)\neq\emptyset.
+$$
+
+The ambient space matters: an intersection in $\mathbb R^2$ is different from an intersection restricted to the finite set $X$.
+
+In Euclidean space, these balls and their nonempty intersections are convex, hence contractible. The nerve theorem for a finite family of convex sets implies that the Čech realization has the homotopy type of their union [@edelsbrunner2010]. “Same homotopy type” is weaker than “homeomorphic,” but it is enough to preserve homology.
+
+The corresponding general theorem uses a *good cover*: nonempty finite intersections must be contractible, together with appropriate cover hypotheses, such as a finite open cover. Balls in an arbitrary metric space do not automatically satisfy this condition. The Čech definition still makes sense there; the Euclidean conclusion does not follow merely because we named the sets balls.
+
+Rips needs only pairwise distances; Čech requires testing common intersections. This helps explain why Rips is convenient for general data, while Čech and its Euclidean relatives offer a closer connection to unions of balls. We revisit the computational choices in [Computing persistent homology](computing_ph.qmd).
+
+## Our square at three scales {#sec-square-complexes}
+
+Label the square corners in cyclic order as in @sec-square-topology. Their Euclidean distance matrix is
+
+$$
+D=\begin{array}{c|cccc}
+ &a&b&c&d\\\hline
+a&0&1&\sqrt2&1\\
+b&1&0&1&\sqrt2\\
+c&\sqrt2&1&0&1\\
+d&1&\sqrt2&1&0
+\end{array}.
+$$
+
+The sides have length $1$; the diagonals have length $\sqrt2$. We can therefore list every change in the Rips complex without guessing:
+
+| Scale | Simplices present | Shape of the realization |
+|---|---|---|
+| $0\leq\epsilon<1$ | Four vertices | Four isolated points |
+| $1\leq\epsilon<\sqrt2$ | Vertices and the four side edges | One square loop |
+| $\epsilon\geq\sqrt2$ | All subsets of the four vertices | A filled tetrahedron |
+
+At the middle scale there are no triangles: every three square vertices include a pair separated by a diagonal. At the last scale, both diagonals, all four triangles, and the tetrahedron enter together. It is a full $3$-simplex, rather than just a square with its planar interior colored in.
+
+A tetrahedron's **surface** would include its four triangular faces but omit its $3$-simplex. That surface encloses a cavity; the full tetrahedron does not. Listing simplices carefully saves us from letting a drawing invent a hole.
+
+## The role of scale
+
+A small scale leaves isolated points. A sufficiently large scale turns a finite metric space into one full simplex. Neither extreme usually describes the structure we hoped to study.
+
+There need not be a single best scale. Persistent homology will track the changes across scales rather than requiring us to choose one at the start. We will still need to choose a metric, preprocessing, and a computational limit; persistence does not make those choices disappear. The [uncertainty chapter](uncertainty.qmd) explains how to examine their consequences.
+
+## Stop and predict
+
+1. At $\epsilon=1.2$, does our square Rips complex contain $\{a,b,c\}$? Does it contain $\{a,b\}$?
+
+::: {.callout-note collapse="true" title="Answer: check every pair"}
+It contains $\{a,b\}$ because $d(a,b)=1\leq1.2$. It does not contain $\{a,b,c\}$ because $d(a,c)=\sqrt2>1.2$. One missing edge is enough to exclude a simplex.
+:::
+
+2. Three points form an equilateral triangle of side length $1$. Does their Rips filtration ever contain an unfilled triangular loop for a positive range of scales?
+
+::: {.callout-note collapse="true" title="Answer: edges and filling enter together"}
+No. Below $1$, there are only vertices. At $1$, all three edges and the $2$-simplex enter together. A hand-drawn triangular graph has a loop, but its Rips completion fills that loop immediately. Any interval from an artificial ordering within this tied scale has zero length.
+:::
+
+3. What must you omit from a full tetrahedron to leave a hollow sphere? May you instead omit one edge but retain every triangular face?
+
+::: {.callout-note collapse="true" title="Answer: faces must remain consistent"}
+Omit the $3$-simplex and keep its four faces, edges, and vertices. The realization is the tetrahedron's surface, homeomorphic to a sphere. Keeping a triangle while deleting one of its edges violates closure under faces, so it would not be a simplicial complex.
+:::

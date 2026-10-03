@@ -1,0 +1,14 @@
+ERROR: The --output-dir flag can only be used when rendering projects.
+
+Stack trace:
+    at validateDocumentRenderFlags (file:///opt/quarto/bin/quarto.js:142223:15)
+    at render (file:///opt/quarto/bin/quarto.js:142153:3)
+    at eventLoopTick (ext:core/01_core.js:179:7)
+    at async _Command.actionHandler (file:///opt/quarto/bin/quarto.js:142399:24)
+    at async _Command.execute (file:///opt/quarto/bin/quarto.js:102022:7)
+    at async _Command.parseCommand (file:///opt/quarto/bin/quarto.js:101899:14)
+    at async quarto4 (file:///opt/quarto/bin/quarto.js:187518:5)
+    at async file:///opt/quarto/bin/quarto.js:187546:5
+    at async file:///opt/quarto/bin/quarto.js:187401:14
+    at async mainRunner (file:///opt/quarto/bin/quarto.js:187403:5)
+    at async file:///opt/quarto/bin/quarto.js:187539:3

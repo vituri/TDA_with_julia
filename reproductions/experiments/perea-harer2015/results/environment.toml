@@ -1,0 +1,34 @@
+project_sha256 = "47c22b579be2ee3ec8018358baf19efe92566b2b67c3f64f21e834a730794719"
+julia_version = "1.12.5"
+active_project = "/mnt/Dados/Github/JuliaTDA/TDA_with_julia/reproductions/experiments/perea-harer2015/environment/Project.toml"
+script_sha256 = "8500d1e184caa3b41e1d2648f4d522846ab9c91ff20382458e35fabf264cb993"
+config_sha256 = "a1448f07d393b427ba08882575f564f3fc1f22052d174eb80ef97ceeab589bbd"
+manifest_sha256 = "44734f097275fef88ff43bcb5579bddb924f96de3c8b830a0c935a9667e5caff"
+
+[packages.TDARipserer]
+git_head = "9583a3b7e64565f11f869155b346b675eb508740"
+source_tree_sha256 = "6da4d57ecdd760332ea2b7df7d7b053c1b0549432e021e837983d41c5af291f8"
+entrypoint = "/mnt/Dados/Github/JuliaTDA/TDARipserer.jl/src/TDARipserer.jl"
+entrypoint_sha256 = "5a167ccef4c1fe1312e9a6d2b9dd099205fa02e1e06d902c8caef5d40c04e1af"
+git_worktree_clean = false
+
+[packages.MetricSpaces]
+git_head = "08f1bb4f84c7a851ad6f06ae60cc1ccedf80916b"
+source_tree_sha256 = "d53820cc2f10fb65136ecc74e0c791d313a4c0922b35a40b1c49bf54b715bc6c"
+entrypoint = "/mnt/Dados/Github/JuliaTDA/MetricSpaces.jl/src/MetricSpaces.jl"
+entrypoint_sha256 = "739ea8a441de6206f090acafe2b2a5938534085ae33244fa4020ea6b7200bd85"
+git_worktree_clean = false
+
+[packages.TDAplots]
+git_head = "cf60f7a8ffddecd55dca33a7c88bebd2699dd34a"
+source_tree_sha256 = "e17c145a15128e2cff19be9a01e50f872913624fbf61bd7af0a10ec67c6b62e6"
+entrypoint = "/mnt/Dados/Github/JuliaTDA/TDAplots.jl/src/TDAplots.jl"
+entrypoint_sha256 = "d91141911d5bd5fa8197c0151d4fd6823aef06428e2d130099ca3541c934687d"
+git_worktree_clean = false
+
+[packages.TDAPersistenceDiagrams]
+git_head = "c78952ba99b0decf03ed55fbcf93adb48d8c4fd0"
+source_tree_sha256 = "fca9c1574e747e29b12309d918f5d24089e8678f67a782f82c07a8a97ca2fbc3"
+entrypoint = "/mnt/Dados/Github/JuliaTDA/TDAPersistenceDiagrams.jl/src/TDAPersistenceDiagrams.jl"
+entrypoint_sha256 = "9827f894fc7950f66048fb750241ef0c3a6a733b8d32e9ed94457750382cafbf"
+git_worktree_clean = false

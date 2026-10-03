@@ -1,0 +1,6 @@
+name,nodes,edges,components,graph_cycle_rank,covered_patients,largest_component_patients,largest_nonrelapse_component_patients,largest_relapse_component_patients,singleton_nodes,all_nodes_outcome_pure
+gene_centered_r20,140,238,10,108,286,170,170,107,92,true
+gene_centered_r70,419,632,40,253,286,47,47,17,248,true
+log2_r20,104,184,8,88,286,179,179,101,60,true
+log2_r70,371,559,37,225,286,112,112,20,215,true
+outcome_free_r70,160,278,12,130,286,271,1,1,76,false

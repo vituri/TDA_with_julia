@@ -1,0 +1,23 @@
+accession = "GSE2034"
+platform = "GPL96"
+retrieval_date = "2026-10-03"
+
+["GSE2034_series_matrix.txt.gz"]
+url = "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE2nnn/GSE2034/matrix/GSE2034_series_matrix.txt.gz"
+sha256 = "f6a99c62f0a291858f14806ad7b5faf1da159f88630d11cfe994815ff3bf9ea3"
+bytes = 14344700
+
+["GSE2034_family.soft.gz"]
+url = "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE2nnn/GSE2034/soft/GSE2034_family.soft.gz"
+sha256 = "1fa927dc72870434ba799041dcb6dcd292cbb77ab1eac203ea8e5d51272cd279"
+bytes = 65256217
+
+["GPL96.annot.gz"]
+url = "https://ftp.ncbi.nlm.nih.gov/geo/platforms/GPLnnn/GPL96/annot/GPL96.annot.gz"
+sha256 = "88e0b22362bac779eb220b3b185c80faa6510a92b9358eaad159a561ab4351c4"
+bytes = 4522748
+
+["clinical.tsv"]
+source = "GSE2034_family.soft.gz named series table"
+sha256 = "51b8d564706339b2e1419b57feeb3c83712437510852ec5a633715aaa82ad4e8"
+rows = 286

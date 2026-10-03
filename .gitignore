@@ -11,3 +11,5 @@
 CLAUDE.md
 
 **/*.quarto_ipynb
+/.book-packages/
+/.book-packages-staging-*/

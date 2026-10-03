@@ -1,0 +1,16 @@
+# Chapter list for the Codex session creating the paper-reproductions Part.
+# These entries have been added after the existing Mapper chapter in that
+# Part's `chapters:` in _quarto.yml. All paths are relative to the book root.
+# This session changed only this chapter registration and its resource rules;
+# shared environments, references.bib and the existing chapters are preserved.
+chapters:
+  - reproductions/lum2013.qmd
+  - reproductions/chazal2013.qmd
+  - reproductions/perea-harer2015.qmd
+  - reproductions/stability2007.qmd
+
+# Experimental targets, not claims of exact reproduction:
+# Lum et al. (2013): public GSE2034 cohort; disclosed preprocessing choices.
+# Chazal et al. (2013): full author-released ToMATo spiral benchmark.
+# Perea and Harer (2015): Section 6.3, Figure 3, including coefficient fields.
+# Cohen-Steiner et al. (2007): numerical check of the stability theorem.

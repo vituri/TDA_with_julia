@@ -23,7 +23,61 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -125,7 +179,7 @@ window.Quarto = {
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
@@ -233,6 +287,12 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Computing persistent homology in Julia</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./uncertainty.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Uncertainty: which holes should we trust?</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -247,25 +307,25 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./tomato.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">ToMATo</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">ToMATo</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./mapper.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">(Classical) mapper</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Classical Mapper</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ballmapper.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ball mapper</span></span></a>
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ball Mapper</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./mapper-general.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></span></a>
   </div>
 </li>
       </ul>
@@ -282,33 +342,33 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./clustering_tomato.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Clustering with ToMATo</span></span></a>
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Clustering with ToMATo</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./digits.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Classifying hand-written digits</span></span></a>
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Classifying hand-written digits</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./timeseries.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Time series analysis</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Time series analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./shapes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Shape analysis and comparison</span></span></a>
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Shape analysis and comparison</span></span></a>
   </div>
 </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
- <span class="menu-text">Closing</span></a>
+            <a href="./reproducing-papers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reproducing Famous Papers</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -316,8 +376,49 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./reproduction-mapper2007.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Reproducing Mapper: the Reaven–Miller experiment</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reproductions/lum2013.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Lum et al.&nbsp;(2013): Mapper on breast cancer expression data</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reproductions/chazal2013.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">ToMATo: recovering the twin spirals</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reproductions/perea-harer2015.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Perea and Harer (2015): sliding windows, periodicity, and coefficients</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reproductions/stability2007.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Cohen-Steiner et al.&nbsp;(2007): persistence stability</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Closing</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./summary.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Summary and further reading</span></span></a>
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Summary and further reading</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -339,30 +440,34 @@ window.Quarto = {
    
   <ul>
   <li><a href="#what-is-a-hole" id="toc-what-is-a-hole" class="nav-link active" data-scroll-target="#what-is-a-hole"><span class="header-section-number">4.1</span> What is a hole?</a></li>
-  <li><a href="#orientation-and-the-boundary-operator" id="toc-orientation-and-the-boundary-operator" class="nav-link" data-scroll-target="#orientation-and-the-boundary-operator"><span class="header-section-number">4.2</span> Orientation and the boundary operator</a></li>
-  <li><a href="#chain-complexes" id="toc-chain-complexes" class="nav-link" data-scroll-target="#chain-complexes"><span class="header-section-number">4.3</span> Chain complexes</a></li>
+  <li><a href="#sec-homology-coefficients" id="toc-sec-homology-coefficients" class="nav-link" data-scroll-target="#sec-homology-coefficients"><span class="header-section-number">4.2</span> Chains, coefficients, and orientation</a></li>
+  <li><a href="#the-boundary-operator" id="toc-the-boundary-operator" class="nav-link" data-scroll-target="#the-boundary-operator"><span class="header-section-number">4.3</span> The boundary operator</a></li>
   <li><a href="#cycles-and-boundaries" id="toc-cycles-and-boundaries" class="nav-link" data-scroll-target="#cycles-and-boundaries"><span class="header-section-number">4.4</span> Cycles and boundaries</a></li>
-  <li><a href="#homology-the-punchline" id="toc-homology-the-punchline" class="nav-link" data-scroll-target="#homology-the-punchline"><span class="header-section-number">4.5</span> Homology: the punchline</a>
+  <li><a href="#sec-homology-quotient" id="toc-sec-homology-quotient" class="nav-link" data-scroll-target="#sec-homology-quotient"><span class="header-section-number">4.5</span> Homology: the punchline</a>
   <ul class="collapse">
-  <li><a href="#example-the-triangle-without-filling" id="toc-example-the-triangle-without-filling" class="nav-link" data-scroll-target="#example-the-triangle-without-filling"><span class="header-section-number">4.5.1</span> Example: the triangle without filling</a></li>
-  <li><a href="#example-the-filled-triangle" id="toc-example-the-filled-triangle" class="nav-link" data-scroll-target="#example-the-filled-triangle"><span class="header-section-number">4.5.2</span> Example: the filled triangle</a></li>
-  <li><a href="#example-the-sphere" id="toc-example-the-sphere" class="nav-link" data-scroll-target="#example-the-sphere"><span class="header-section-number">4.5.3</span> Example: the sphere</a></li>
+  <li><a href="#two-cycles-one-class" id="toc-two-cycles-one-class" class="nav-link" data-scroll-target="#two-cycles-one-class"><span class="header-section-number">4.5.1</span> Two cycles, one class</a></li>
   </ul></li>
-  <li><a href="#why-homology-matters-for-data" id="toc-why-homology-matters-for-data" class="nav-link" data-scroll-target="#why-homology-matters-for-data"><span class="header-section-number">4.6</span> Why homology matters for data</a></li>
+  <li><a href="#sec-square-homology" id="toc-sec-square-homology" class="nav-link" data-scroll-target="#sec-square-homology"><span class="header-section-number">4.6</span> The square calculation, by hand</a>
+  <ul class="collapse">
+  <li><a href="#when-the-diagonals-enter" id="toc-when-the-diagonals-enter" class="nav-link" data-scroll-target="#when-the-diagonals-enter"><span class="header-section-number">4.6.1</span> When the diagonals enter</a></li>
+  <li><a href="#check-the-arithmetic-in-julia" id="toc-check-the-arithmetic-in-julia" class="nav-link" data-scroll-target="#check-the-arithmetic-in-julia"><span class="header-section-number">4.6.2</span> Check the arithmetic in Julia</a></li>
+  </ul></li>
+  <li><a href="#why-homology-matters-for-data" id="toc-why-homology-matters-for-data" class="nav-link" data-scroll-target="#why-homology-matters-for-data"><span class="header-section-number">4.7</span> Why homology matters for data</a></li>
+  <li><a href="#stop-and-predict" id="toc-stop-and-predict" class="nav-link" data-scroll-target="#stop-and-predict"><span class="header-section-number">4.8</span> Stop and predict</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content column-body" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./topology.html">Topology</a></li><li class="breadcrumb-item"><a href="./homology.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Simplicial homology</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Simplicial homology</span></h1>
+<h1 class="title"><span id="sec-simplicial-homology" class="quarto-section-identifier"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Simplicial homology</span></span></h1>
 </div>
 
 
 
-<div class="quarto-title-meta column-body">
+<div class="quarto-title-meta">
 
     
   
@@ -377,95 +482,104 @@ window.Quarto = {
 <blockquote class="blockquote">
 <p>“Her thoughts were theorems, her words a problem,<br>
 As if she deem’d that mystery would ennoble ’em.”<br>
-— Lord Byron, in “Don Juan”</p>
+— Lord Byron, in <em>Don Juan</em></p>
 </blockquote>
-<p>Simplicial complexes are excellent tools to model finite spaces. But how do we extract topological information from them? How do we <em>count the holes</em>?</p>
-<p>This is what homology does. It is one of the most powerful invariants in topology: a functor that transforms topological spaces into algebraic objects (groups, vector spaces) that we can compute with. In this chapter, we will build it step by step using simplicial complexes.</p>
+<p>Simplicial complexes give us finite descriptions of spaces. Homology turns those descriptions into algebra. Our goal is to understand what the computation measures, rather than merely press the “count holes” button and hope for the best.</p>
+<p>We will first use integer coefficients to explain orientations, then use the field <span class="math inline">\(\mathbb F_2\)</span> for the calculations in this book. Keep the coefficient system fixed whenever you compare answers.</p>
 <section id="what-is-a-hole" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="what-is-a-hole"><span class="header-section-number">4.1</span> What is a hole?</h2>
-<p>How can we detect a hole in a simplicial complex? Intuitively, a hole is something <em>that is not there</em>. A circle has a 1-dimensional hole (a loop with no filling). A hollow sphere has a 2-dimensional hole (a surface enclosing empty space). A solid ball has no holes at all.</p>
-<p>Let’s reason using the following simplicial complex <span class="math inline">\(S\)</span> (with vertex set <span class="math inline">\(V = \{a, b, c\}\)</span>) as an example:</p>
+<p>A circle contains a loop with no filling. A hollow sphere contains a closed surface with no solid filling. A solid ball has neither kind of hole.</p>
+<p>The phrase “something that is not there” is good intuition and a terrible algorithm. Homology instead asks which <strong>closed chains</strong> can be expressed as <strong>boundaries</strong> of higher-dimensional chains.</p>
+<p>Consider the complex <span class="math inline">\(S\)</span> with vertices <span class="math inline">\(a,b,c\)</span> and all three edges, but no filled triangle:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/hm-circle.png" class="img-fluid figure-img"></p>
 <figcaption>An ugly simplicial complex homeomorphic to a circle.</figcaption>
 </figure>
 </div>
-<p>This complex has three vertices (<span class="math inline">\(a, b, c\)</span>) and three edges (<span class="math inline">\([a,b], [b,c], [c,a]\)</span>) but no 2-simplex (no filled triangle). Topologically, it looks like a circle — and a circle has a hole!</p>
+<p>Its realization has one loop. Adding the <span class="math inline">\(2\)</span>-simplex <span class="math inline">\(\{a,b,c\}\)</span> will fill that loop. We want algebra to see the difference.</p>
 </section>
-<section id="orientation-and-the-boundary-operator" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="orientation-and-the-boundary-operator"><span class="header-section-number">4.2</span> Orientation and the boundary operator</h2>
-<p>Let’s add a direction (orientation) to the 1-simplices of <span class="math inline">\(S\)</span>:</p>
+<section id="sec-homology-coefficients" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="sec-homology-coefficients"><span class="header-section-number">4.2</span> Chains, coefficients, and orientation</h2>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/hm-circle2.png" class="img-fluid figure-img"></p>
-<figcaption><span class="math inline">\(S\)</span> with an ordering on its 1-simplices.</figcaption>
+<figcaption><span class="math inline">\(S\)</span> with an orientation on its edges.</figcaption>
 </figure>
 </div>
-<p>Intuitively, a 1-dimensional hole is formed when we have a sequence of edges that closes on itself, like a snake biting its own tail. It would be nice if we could detect these <em>cycles</em> in a formal manner… Luckily for us, <a href="https://en.wikipedia.org/wiki/Analysis_Situs_(paper)">Poincaré was a very smart guy</a>.</p>
-<p>To describe a segment in a vector space, we need only two points: the beginning <span class="math inline">\(u\)</span> and the end <span class="math inline">\(v\)</span>. This vector can be written as <span class="math inline">\(v - u\)</span>. Inspired by this, we define a function <span class="math inline">\(\partial\)</span> called the <em>boundary operator</em> on the edges of <span class="math inline">\(S\)</span> by</p>
+<p>An oriented edge has a beginning and an end, so define</p>
 <p><span class="math display">\[
-\partial_1([x, y]) = y - x.
+\partial_1([x,y])=y-x.
 \]</span></p>
-<p>But what is the meaning of <span class="math inline">\(a - b\)</span>? This is just a “formal sum”: we treat <span class="math inline">\(a, b, c\)</span> as a basis of a vector space. This vector space is called a <a href="https://en.wikipedia.org/wiki/Free_abelian_group">free abelian group</a> on <span class="math inline">\(V\)</span>. Its elements are formal linear combinations like <span class="math inline">\(2a - b + 3c\)</span>.</p>
-</section>
-<section id="chain-complexes" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="chain-complexes"><span class="header-section-number">4.3</span> Chain complexes</h2>
-<p>Let’s organize this properly. For each dimension <span class="math inline">\(k\)</span>, we define:</p>
-<div id="def-" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 4.1</strong></span> The <em><span class="math inline">\(k\)</span>-th chain group</em> <span class="math inline">\(C_k(S)\)</span> is the free abelian group generated by the <span class="math inline">\(k\)</span>-simplices of <span class="math inline">\(S\)</span>. Its elements (called <em><span class="math inline">\(k\)</span>-chains</em>) are formal linear combinations of <span class="math inline">\(k\)</span>-simplices with integer coefficients.</p>
+<p>What could <span class="math inline">\(y-x\)</span> mean when <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> are vertices, rather than numbers? It is a <em>formal sum</em>. The symbols name building blocks, and coefficients say how much of each block occurs.</p>
+<div id="def-chain-groups" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 4.1</strong></span> With <strong>integer coefficients</strong>, <span class="math inline">\(C_k(K;\mathbb Z)\)</span> is the free abelian group generated by the oriented <span class="math inline">\(k\)</span>-simplices of <span class="math inline">\(K\)</span>. A chain is a finite sum with integer coefficients. Reversing orientation changes the sign; for example, <span class="math inline">\([b,a]=-[a,b]\)</span>.</p>
+<p>With coefficients in a <strong>field</strong> <span class="math inline">\(\mathbb F\)</span>, <span class="math inline">\(C_k(K;\mathbb F)\)</span> is a vector space with one basis element per <span class="math inline">\(k\)</span>-simplex, after choosing one orientation for each simplex, and coefficients in <span class="math inline">\(\mathbb F\)</span>.</p>
 </div>
-<p>For our triangle example:</p>
-<ul>
-<li><span class="math inline">\(C_0(S)\)</span> is generated by <span class="math inline">\(\{a, b, c\}\)</span> — formal sums of vertices</li>
-<li><span class="math inline">\(C_1(S)\)</span> is generated by <span class="math inline">\(\{[a,b], [b,c], [c,a]\}\)</span> — formal sums of edges</li>
-<li><span class="math inline">\(C_2(S) = 0\)</span> — there are no 2-simplices (no filled triangle)</li>
-</ul>
-<p>We extend <span class="math inline">\(\partial\)</span> linearly to all chains. We also impose that <span class="math inline">\([a, b] = -[b, a]\)</span> (this makes the orientation consistent). The <em>boundary operator</em> for a <span class="math inline">\(k\)</span>-simplex <span class="math inline">\([v_0, v_1, \ldots, v_k]\)</span> is defined as:</p>
+<p>A free abelian group is not a vector space: division by an arbitrary nonzero scalar is unavailable over <span class="math inline">\(\mathbb Z\)</span>. Its elements can be sums such as <span class="math inline">\(2a-b+3c\)</span>. Over <span class="math inline">\(\mathbb R\)</span>, the analogous chain space permits real coefficients. Over <span class="math inline">\(\mathbb F_2=\{0,1\}\)</span>, addition is modulo two:</p>
 <p><span class="math display">\[
-\partial_k([v_0, v_1, \ldots, v_k]) = \sum_{i=0}^{k} (-1)^i [v_0, \ldots, \hat{v}_i, \ldots, v_k]
+1+1=0,\qquad -1=1.
 \]</span></p>
-<p>where <span class="math inline">\(\hat{v}_i\)</span> means “remove <span class="math inline">\(v_i\)</span>”. For example:</p>
-<ul>
-<li><span class="math inline">\(\partial_1([a, b]) = b - a\)</span> (delete first vertex, then delete second with a sign change)</li>
-<li><span class="math inline">\(\partial_2([a, b, c]) = [b, c] - [a, c] + [a, b] = [a, b] + [b, c] + [c, a]\)</span> (the boundary of a filled triangle is its three edges)</li>
-</ul>
+<p>Thus an <span class="math inline">\(\mathbb F_2\)</span> chain is a selection of simplices. Adding two selections keeps the simplices that occur in exactly one of them. Orientation signs disappear, because a minus sign equals a plus sign. This is convenient for computation, and it is <code>TDARipserer.jl</code>’s default coefficient field.</p>
+<p>For the unfilled triangle, <span class="math inline">\(C_0\)</span> has three vertex generators, <span class="math inline">\(C_1\)</span> has three edge generators, and <span class="math inline">\(C_2=0\)</span>. Remember that a chain is a formal combination of those generators, not an arbitrary curve drawn through the surrounding plane.</p>
+</section>
+<section id="the-boundary-operator" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="the-boundary-operator"><span class="header-section-number">4.3</span> The boundary operator</h2>
+<p>Extend the boundary linearly from simplices to chains. For an oriented simplex,</p>
+<p><span class="math display">\[
+\partial_k([v_0,\ldots,v_k])
+=\sum_{i=0}^k(-1)^i[v_0,\ldots,\widehat v_i,\ldots,v_k],
+\]</span></p>
+<p>where the hat means “remove this vertex.” For example,</p>
+<p><span class="math display">\[
+\partial_2([a,b,c])=[b,c]-[a,c]+[a,b]
+=[a,b]+[b,c]+[c,a].
+\]</span></p>
+<p>A triangle’s boundary consists of its three edges with compatible orientations. Over <span class="math inline">\(\mathbb F_2\)</span>, it is simply the sum of those edges. We use <strong>ordinary, unreduced homology</strong>, for which <span class="math inline">\(\partial_0=0\)</span>.</p>
+<p>A boundary has no boundary of its own:</p>
+<p><span class="math display">\[
+\partial_k\partial_{k+1}=0.
+\]</span></p>
+<p>For the triangle, applying <span class="math inline">\(\partial_1\)</span> to its boundary gives</p>
+<p><span class="math display">\[
+(b-a)+(c-b)+(a-c)=0.
+\]</span></p>
+<p>Every vertex contribution cancels. In higher dimensions, each codimension-two face occurs twice with opposite signs—or twice modulo two. The chain spaces and these boundary maps together form a <em>chain complex</em>.</p>
 </section>
 <section id="cycles-and-boundaries" class="level2" data-number="4.4">
 <h2 data-number="4.4" class="anchored" data-anchor-id="cycles-and-boundaries"><span class="header-section-number">4.4</span> Cycles and boundaries</h2>
-<p>Now, let’s compute <span class="math inline">\(\partial_1\)</span> on the sum of all edges of our circle-like complex:</p>
-<p><span class="math display">\[
-\partial_1([a, b] + [b, c] + [c, a]) = (b - a) + (c - b) + (a - c) = 0.
-\]</span></p>
-<p>The boundary is zero! This makes geometric sense: if you walk along all three edges, you return to where you started — there is no “boundary” left over. This is a <em>cycle</em>.</p>
-<div id="def-" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 4.2</strong></span> A <span class="math inline">\(k\)</span>-chain <span class="math inline">\(\sigma\)</span> is called a <em><span class="math inline">\(k\)</span>-cycle</em> if <span class="math inline">\(\partial_k(\sigma) = 0\)</span>. The set of all <span class="math inline">\(k\)</span>-cycles is denoted <span class="math inline">\(Z_k = \ker(\partial_k)\)</span>.</p>
+<div id="def-cycles-boundaries" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 4.2</strong></span> The <em>cycles</em> are the chains with zero boundary:</p>
+<p><span class="math display">\[Z_k=\ker\partial_k.\]</span></p>
+<p>The <em>boundaries</em> are chains obtained as the boundary of a chain one dimension higher:</p>
+<p><span class="math display">\[B_k=\operatorname{im}\partial_{k+1}.\]</span></p>
+<p>Because <span class="math inline">\(\partial_k\partial_{k+1}=0\)</span>, we always have <span class="math inline">\(B_k\subseteq Z_k\)</span>.</p>
 </div>
-<div id="def-" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 4.3</strong></span> A <span class="math inline">\(k\)</span>-chain <span class="math inline">\(\sigma\)</span> is called a <em><span class="math inline">\(k\)</span>-boundary</em> if there exists a <span class="math inline">\((k+1)\)</span>-chain <span class="math inline">\(\tau\)</span> such that <span class="math inline">\(\partial_{k+1}(\tau) = \sigma\)</span>. The set of all <span class="math inline">\(k\)</span>-boundaries is denoted <span class="math inline">\(B_k = \text{im}(\partial_{k+1})\)</span>.</p>
-</div>
-<p>A key algebraic fact is that <strong>every boundary is a cycle</strong>:</p>
-<p><span class="math display">\[
-\partial_k \circ \partial_{k+1} = 0.
-\]</span></p>
-<p>This means <span class="math inline">\(B_k \subseteq Z_k\)</span>. You can verify this with the filled triangle <span class="math inline">\([a,b,c]\)</span>: its boundary <span class="math inline">\(\partial_2([a,b,c]) = [a,b] + [b,c] + [c,a]\)</span> is indeed a cycle (as we computed above).</p>
+<p>For our unfilled triangle,</p>
+<p><span class="math display">\[z=[a,b]+[b,c]+[c,a]\]</span></p>
+<p>is a cycle. It is not a boundary in <span class="math inline">\(S\)</span>, because <span class="math inline">\(S\)</span> has no <span class="math inline">\(2\)</span>-simplices and hence no nonzero <span class="math inline">\(2\)</span>-chains. If we add the filled triangle, the very same chain becomes <span class="math inline">\(\partial_2([a,b,c])\)</span>. Being a boundary depends on the <strong>whole complex</strong>, rather than just the appearance of the cycle.</p>
+<p>Boundaries can be sums of the boundaries of several simplices. A square can be filled by two triangles even though no single triangle has the square as its boundary. We will calculate that shortly.</p>
 </section>
-<section id="homology-the-punchline" class="level2" data-number="4.5">
-<h2 data-number="4.5" class="anchored" data-anchor-id="homology-the-punchline"><span class="header-section-number">4.5</span> Homology: the punchline</h2>
-<p>Now we arrive at the key idea. Both cycles and boundaries are “things with zero boundary.” But a boundary is a cycle that is <em>trivially</em> zero — it bounds a higher-dimensional simplex. A <em>hole</em> is a cycle that is <strong>not</strong> a boundary. It closes on itself, but there is nothing filling it in.</p>
-<div id="def-" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 4.4</strong></span> The <em><span class="math inline">\(k\)</span>-th homology group</em> of a simplicial complex <span class="math inline">\(S\)</span> is</p>
-<p><span class="math display">\[
-H_k(S) = Z_k / B_k = \ker(\partial_k) / \text{im}(\partial_{k+1}).
-\]</span></p>
-<p>The <span class="math inline">\(k\)</span>-th <em>Betti number</em> <span class="math inline">\(\beta_k\)</span> is the rank of <span class="math inline">\(H_k(S)\)</span>.</p>
+<section id="sec-homology-quotient" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="sec-homology-quotient"><span class="header-section-number">4.5</span> Homology: the punchline</h2>
+<p>We want to forget cycles that can be filled. We also want two cycles to count as the same feature if one can be changed into the other by adding a boundary.</p>
+<div id="def-homology" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 4.3</strong></span> The <em><span class="math inline">\(k\)</span>-th homology</em> is</p>
+<p><span class="math display">\[H_k(K;\mathbb F)=Z_k/B_k.\]</span></p>
+<p>This quotient identifies cycles <span class="math inline">\(z\)</span> and <span class="math inline">\(z'\)</span> exactly when <span class="math inline">\(z-z'\in B_k\)</span>. A class <span class="math inline">\([z]\)</span> is zero precisely when <span class="math inline">\(z\)</span> is a boundary. With field coefficients, <span class="math inline">\(H_k\)</span> is a vector space and its <em>Betti number</em> is</p>
+<p><span class="math display">\[\beta_k(K;\mathbb F)=\dim_{\mathbb F}H_k(K;\mathbb F).\]</span></p>
 </div>
-<p>The Betti numbers count the topological features of each dimension:</p>
+<p>The bracket <span class="math inline">\([z]\)</span> here means a <strong>homology class</strong>, rather than an oriented simplex. A class is a collection of equivalent cycles, not a preferred curve or a particular basis chosen by the computer.</p>
+<p>With integer coefficients, the quotient is an abelian group and the Betti number is the rank of its free part. Integer homology can also contain torsion, which these ranks do not record. Betti numbers over different fields need not agree; we use <span class="math inline">\(\mathbb F_2\)</span> consistently in the examples below.</p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Betti number</th>
-<th>Counts</th>
+<th>Interpretation for familiar shapes</th>
 </tr>
 </thead>
 <tbody>
@@ -475,43 +589,220 @@ H_k(S) = Z_k / B_k = \ker(\partial_k) / \text{im}(\partial_{k+1}).
 </tr>
 <tr class="even">
 <td><span class="math inline">\(\beta_1\)</span></td>
-<td>1-dimensional holes (loops)</td>
+<td>Independent loop classes</td>
 </tr>
 <tr class="odd">
 <td><span class="math inline">\(\beta_2\)</span></td>
-<td>2-dimensional holes (cavities)</td>
-</tr>
-<tr class="even">
-<td><span class="math inline">\(\beta_k\)</span></td>
-<td><span class="math inline">\(k\)</span>-dimensional holes</td>
+<td>Independent closed-surface classes, such as a hollow sphere</td>
 </tr>
 </tbody>
 </table>
-<section id="example-the-triangle-without-filling" class="level3" data-number="4.5.1">
-<h3 data-number="4.5.1" class="anchored" data-anchor-id="example-the-triangle-without-filling"><span class="header-section-number">4.5.1</span> Example: the triangle without filling</h3>
-<p>For our complex <span class="math inline">\(S\)</span> with vertices <span class="math inline">\(\{a, b, c\}\)</span> and edges <span class="math inline">\(\{[a,b], [b,c], [c,a]\}\)</span> but no 2-simplex:</p>
-<ul>
-<li><span class="math inline">\(H_0(S)\)</span>: The complex is connected (you can walk from any vertex to any other), so <span class="math inline">\(\beta_0 = 1\)</span>.</li>
-<li><span class="math inline">\(H_1(S)\)</span>: The cycle <span class="math inline">\([a,b] + [b,c] + [c,a]\)</span> is not a boundary (since <span class="math inline">\(C_2 = 0\)</span>, there are no boundaries at all!). So <span class="math inline">\(\beta_1 = 1\)</span> — there is one loop.</li>
-<li><span class="math inline">\(H_k(S) = 0\)</span> for <span class="math inline">\(k \geq 2\)</span>.</li>
-</ul>
-</section>
-<section id="example-the-filled-triangle" class="level3" data-number="4.5.2">
-<h3 data-number="4.5.2" class="anchored" data-anchor-id="example-the-filled-triangle"><span class="header-section-number">4.5.2</span> Example: the filled triangle</h3>
-<p>Now suppose we add the 2-simplex <span class="math inline">\([a,b,c]\)</span> (filling in the triangle). Then <span class="math inline">\(\partial_2([a,b,c]) = [a,b] + [b,c] + [c,a]\)</span>, which means the cycle from before is now a boundary. The hole is filled! So <span class="math inline">\(\beta_1 = 0\)</span>.</p>
-</section>
-<section id="example-the-sphere" class="level3" data-number="4.5.3">
-<h3 data-number="4.5.3" class="anchored" data-anchor-id="example-the-sphere"><span class="header-section-number">4.5.3</span> Example: the sphere</h3>
-<p>A simplicial sphere (the surface of a tetrahedron, for instance) has <span class="math inline">\(\beta_0 = 1\)</span> (connected), <span class="math inline">\(\beta_1 = 0\)</span> (no loops), and <span class="math inline">\(\beta_2 = 1\)</span> (one cavity — the hollow inside).</p>
+<p>“Independent” matters. Walking around the same loop twice does not produce a second independent hole; over <span class="math inline">\(\mathbb F_2\)</span>, it produces the zero chain.</p>
+<section id="two-cycles-one-class" class="level3" data-number="4.5.1">
+<h3 data-number="4.5.1" class="anchored" data-anchor-id="two-cycles-one-class"><span class="header-section-number">4.5.1</span> Two cycles, one class</h3>
+<p>Here is a small modification of our square, using <span class="math inline">\(\mathbb F_2\)</span> coefficients. Take its four side edges, add the diagonal <span class="math inline">\([a,c]\)</span>, and fill only the triangle <span class="math inline">\([a,c,d]\)</span>. Call this complex <span class="math inline">\(L\)</span>. It is an illustrative complex, <strong>not</strong> one of the square’s Rips levels: the Rips rule would add all four triangles at the same diagonal scale.</p>
+<p>The outside square cycle and the remaining triangle cycle are</p>
+<p><span class="math display">\[
+z=[a,b]+[b,c]+[c,d]+[d,a],\qquad
+z'=[a,b]+[b,c]+[a,c].
+\]</span></p>
+<p>Both have zero boundary, and</p>
+<p><span class="math display">\[
+z+z'=[c,d]+[d,a]+[a,c]=\partial_2([a,c,d]).
+\]</span></p>
+<p>So <span class="math inline">\([z]=[z']\)</span> in <span class="math inline">\(H_1(L;\mathbb F_2)\)</span>. The two drawings trace different routes, but their difference is a filled triangle. Neither class is zero: the unfilled triangle <span class="math inline">\([a,b,c]\)</span> still supplies one loop. The quotient counts that feature once.</p>
 </section>
 </section>
-<section id="why-homology-matters-for-data" class="level2" data-number="4.6">
-<h2 data-number="4.6" class="anchored" data-anchor-id="why-homology-matters-for-data"><span class="header-section-number">4.6</span> Why homology matters for data</h2>
-<p>Homology is a topological invariant: if two spaces are homeomorphic, they have the same homology groups. Conversely, if two spaces have different Betti numbers, they cannot be homeomorphic. This is the “simplification map” <span class="math inline">\(H\)</span> we alluded to in the topology chapter — it reduces a complex topological space to a sequence of numbers.</p>
-<p>Moreover, homology is <em>computable</em>. Given a simplicial complex (which is just a list of sets), we can write the boundary operators as matrices and compute their kernels and images using linear algebra. This makes homology a perfect tool for data analysis: build a simplicial complex from data, compute its homology, and learn about the “shape” of the data.</p>
-<p>The next question is: at which scale should we build the simplicial complex? We will answer this in the chapter on persistent homology, where we build complexes at <em>every</em> scale and track how features appear and disappear.</p>
+<section id="sec-square-homology" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="sec-square-homology"><span class="header-section-number">4.6</span> The square calculation, by hand</h2>
+<p>Return to the Rips complexes in <a href="simplicial.html#sec-square-complexes" class="quarto-xref"><span>Section 3.6</span></a>. At <span class="math inline">\(1\leq\epsilon&lt;\sqrt2\)</span>, use the edge order <span class="math inline">\([a,b],[b,c],[c,d],[d,a]\)</span> and vertex order <span class="math inline">\(a,b,c,d\)</span>. Over <span class="math inline">\(\mathbb F_2\)</span>, the boundary matrix is</p>
+<p><span class="math display">\[
+D_1=\begin{array}{c|cccc}
+&amp;ab&amp;bc&amp;cd&amp;da\\\hline
+a&amp;1&amp;0&amp;0&amp;1\\
+b&amp;1&amp;1&amp;0&amp;0\\
+c&amp;0&amp;1&amp;1&amp;0\\
+d&amp;0&amp;0&amp;1&amp;1
+\end{array}.
+\]</span></p>
+<p>Read a column as an edge’s two endpoints. Multiplying by the coefficient vector <span class="math inline">\((1,1,1,1)^\mathsf T\)</span> gives zero: every vertex occurs twice. That vector describes the square loop.</p>
+<p>The first three columns are independent; the fourth is their sum. Therefore <span class="math inline">\(\operatorname{rank}D_1=3\)</span> and <span class="math inline">\(\dim\ker D_1=4-3=1\)</span>. There are no triangles, so <span class="math inline">\(B_1=0\)</span> and</p>
+<p><span class="math display">\[\beta_1=1,\qquad\beta_0=\dim C_0-\operatorname{rank}D_1=4-3=1.\]</span></p>
+<p>Before <span class="math inline">\(\epsilon=1\)</span>, there are no edges: <span class="math inline">\(D_1=0\)</span>, <span class="math inline">\(\beta_0=4\)</span>, and <span class="math inline">\(\beta_1=0\)</span>.</p>
+<section id="when-the-diagonals-enter" class="level3" data-number="4.6.1">
+<h3 data-number="4.6.1" class="anchored" data-anchor-id="when-the-diagonals-enter"><span class="header-section-number">4.6.1</span> When the diagonals enter</h3>
+<p>At <span class="math inline">\(\epsilon=\sqrt2\)</span>, the Rips complex has six edges, four triangles, and one tetrahedron. Extend the edge order above with <span class="math inline">\([a,c],[b,d]\)</span>. The triangle boundary matrix is</p>
+<p><span class="math display">\[
+D_2=\begin{array}{c|cccc}
+&amp;abc&amp;acd&amp;abd&amp;bcd\\\hline
+ab&amp;1&amp;0&amp;1&amp;0\\
+bc&amp;1&amp;0&amp;0&amp;1\\
+cd&amp;0&amp;1&amp;0&amp;1\\
+da&amp;0&amp;1&amp;1&amp;0\\
+ac&amp;1&amp;1&amp;0&amp;0\\
+bd&amp;0&amp;0&amp;1&amp;1
+\end{array}.
+\]</span></p>
+<p>The square cycle now satisfies</p>
+<p><span class="math display">\[
+z=\partial_2([a,b,c]+[a,c,d]).
+\]</span></p>
+<p>The shared diagonal occurs twice and cancels. This is a boundary of a <strong>chain of two triangles</strong>, exactly the filling we needed.</p>
+<p>For the complete complex, <span class="math inline">\(\operatorname{rank}D_1=3\)</span> and <span class="math inline">\(\operatorname{rank}D_2=3\)</span>. Rank–nullity gives the general formula</p>
+<p><span class="math display">\[
+\beta_k=\dim C_k-\operatorname{rank}D_k-\operatorname{rank}D_{k+1}.
+\]</span></p>
+<p>Thus <span class="math inline">\(\beta_1=6-3-3=0\)</span>. The tetrahedron’s boundary is the sum of all four faces, so <span class="math inline">\(D_3=(1,1,1,1)^\mathsf T\)</span> has rank <span class="math inline">\(1\)</span>. It kills the surface class: <span class="math inline">\(\beta_2=4-3-1=0\)</span>. If we omitted the tetrahedron, its surface would instead have <span class="math inline">\(\beta_2=1\)</span>.</p>
+</section>
+<section id="check-the-arithmetic-in-julia" class="level3" data-number="4.6.2">
+<h3 data-number="4.6.2" class="anchored" data-anchor-id="check-the-arithmetic-in-julia"><span class="header-section-number">4.6.2</span> Check the arithmetic in Julia</h3>
+<p>Ordinary real-valued matrix rank is not the correct operation for arbitrary finite-field calculations. Here is a small row-reduction routine that performs every addition modulo two. You can follow the hand calculation without studying this implementation.</p>
+<div id="05b1ac6d" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Check the square boundary matrices over F₂</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">rank_mod2</span>(A)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    M <span class="op">=</span> <span class="fu">mod</span>.(<span class="fu">copy</span>(A), <span class="fl">2</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    row <span class="op">=</span> <span class="fl">1</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> col <span class="kw">in</span> <span class="fu">axes</span>(M, <span class="fl">2</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        row <span class="op">&gt;</span> <span class="fu">size</span>(M, <span class="fl">1</span>) <span class="op">&amp;&amp;</span> <span class="cf">break</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        pivot <span class="op">=</span> <span class="fu">findfirst</span>(!iszero, <span class="pp">@view</span> M[row<span class="op">:</span><span class="kw">end</span>, col])</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">isnothing</span>(pivot) <span class="op">&amp;&amp;</span> <span class="cf">continue</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        pivot <span class="op">+=</span> row <span class="op">-</span> <span class="fl">1</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        M[row, <span class="op">:</span>], M[pivot, <span class="op">:</span>] <span class="op">=</span> <span class="fu">copy</span>(M[pivot, <span class="op">:</span>]), <span class="fu">copy</span>(M[row, <span class="op">:</span>])</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i <span class="kw">in</span> (row <span class="op">+</span> <span class="fl">1</span>)<span class="op">:</span><span class="fu">size</span>(M, <span class="fl">1</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> M[i, col] <span class="op">==</span> <span class="fl">1</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                M[i, <span class="op">:</span>] <span class="op">.=</span> <span class="fu">mod</span>.(M[i, <span class="op">:</span>] <span class="op">.+</span> M[row, <span class="op">:</span>], <span class="fl">2</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>            <span class="cf">end</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">end</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        row <span class="op">+=</span> <span class="fl">1</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> row <span class="op">-</span> <span class="fl">1</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>D1_square <span class="op">=</span> [<span class="fl">1</span> <span class="fl">0</span> <span class="fl">0</span> <span class="fl">1</span>; <span class="fl">1</span> <span class="fl">1</span> <span class="fl">0</span> <span class="fl">0</span>; <span class="fl">0</span> <span class="fl">1</span> <span class="fl">1</span> <span class="fl">0</span>; <span class="fl">0</span> <span class="fl">0</span> <span class="fl">1</span> <span class="fl">1</span>]</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>D1_full <span class="op">=</span> <span class="fu">hcat</span>(D1_square, [<span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>], [<span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>])</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>D2_full <span class="op">=</span> [<span class="fl">1</span> <span class="fl">0</span> <span class="fl">1</span> <span class="fl">0</span>; <span class="fl">1</span> <span class="fl">0</span> <span class="fl">0</span> <span class="fl">1</span>; <span class="fl">0</span> <span class="fl">1</span> <span class="fl">0</span> <span class="fl">1</span>;</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>           <span class="fl">0</span> <span class="fl">1</span> <span class="fl">1</span> <span class="fl">0</span>; <span class="fl">1</span> <span class="fl">1</span> <span class="fl">0</span> <span class="fl">0</span>; <span class="fl">0</span> <span class="fl">0</span> <span class="fl">1</span> <span class="fl">1</span>]</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>D3_full <span class="op">=</span> <span class="fu">ones</span>(<span class="dt">Int</span>, <span class="fl">4</span>, <span class="fl">1</span>)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="pp">@assert</span> <span class="fu">all</span>(iszero, <span class="fu">mod</span>.(D1_full <span class="op">*</span> D2_full, <span class="fl">2</span>))</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="pp">@assert</span> <span class="fu">all</span>(iszero, <span class="fu">mod</span>.(D2_full <span class="op">*</span> D3_full, <span class="fl">2</span>))</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="pp">@assert</span> <span class="fu">rank_mod2</span>(D1_square) <span class="op">==</span> <span class="fl">3</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="pp">@assert</span> <span class="fu">rank_mod2</span>(D2_full) <span class="op">==</span> <span class="fl">3</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>(beta0 <span class="op">=</span> <span class="fl">4</span> <span class="op">-</span> <span class="fu">rank_mod2</span>(D1_full),</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a> beta1 <span class="op">=</span> <span class="fl">6</span> <span class="op">-</span> <span class="fu">rank_mod2</span>(D1_full) <span class="op">-</span> <span class="fu">rank_mod2</span>(D2_full),</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a> beta2 <span class="op">=</span> <span class="fl">4</span> <span class="op">-</span> <span class="fu">rank_mod2</span>(D2_full) <span class="op">-</span> <span class="fu">rank_mod2</span>(D3_full))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<pre><code>(beta0 = 1, beta1 = 0, beta2 = 0)</code></pre>
+</div>
+</div>
+<p>The answer is <code>(beta0 = 1, beta1 = 0, beta2 = 0)</code>. All three square stages can now be summarized:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Scale</th>
+<th style="text-align: right;"><span class="math inline">\(\beta_0\)</span></th>
+<th style="text-align: right;"><span class="math inline">\(\beta_1\)</span></th>
+<th style="text-align: right;"><span class="math inline">\(\beta_2\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(0\leq\epsilon&lt;1\)</span></td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(1\leq\epsilon&lt;\sqrt2\)</span></td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\epsilon\geq\sqrt2\)</span></td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="why-homology-matters-for-data" class="level2" data-number="4.7">
+<h2 data-number="4.7" class="anchored" data-anchor-id="why-homology-matters-for-data"><span class="header-section-number">4.7</span> Why homology matters for data</h2>
+<p>Homeomorphic realizations have the same homology. Different Betti numbers therefore rule out a homeomorphism, but matching numbers do not prove one. Homology is also preserved by the weaker relation of homotopy equivalence <span class="citation" data-cites="hatcher2002">(<a href="references.html#ref-hatcher2002" role="doc-biblioref">Hatcher 2002</a>)</span>.</p>
+<p>More concretely, we can store a complex as lists of simplices, write its boundary matrices, and calculate kernels and images. These finite algebraic operations tell us about spaces containing infinitely many points. That is quite a good deal.</p>
+<p>Our table records homology at each scale, but it has not told us <strong>which class survives from one scale to another</strong>. Persistent homology adds the maps between these vector spaces. We will trace the square’s loop through those maps in <a href="persistence.html#sec-square-persistence" class="quarto-xref"><span>Section 7.2</span></a>.</p>
+</section>
+<section id="stop-and-predict" class="level2" data-number="4.8">
+<h2 data-number="4.8" class="anchored" data-anchor-id="stop-and-predict"><span class="header-section-number">4.8</span> Stop and predict</h2>
+<ol type="1">
+<li>Is the square loop a boundary at <span class="math inline">\(\epsilon=1.1\)</span>? What about <span class="math inline">\(\epsilon=1.5\)</span>?</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled" title="Answer: the available filling changes">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Answer: the available filling changes
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>At <span class="math inline">\(1.1&lt;\sqrt2\)</span>, there are no triangles, so the loop is not a boundary and represents a nonzero class. At <span class="math inline">\(1.5&gt;\sqrt2\)</span>, it is the boundary of <span class="math inline">\([a,b,c]+[a,c,d]\)</span> and represents zero. The edge chain still exists; its homology class has changed.</p>
+</div>
+</div>
+</div>
+<ol start="2" type="1">
+<li>Over <span class="math inline">\(\mathbb F_2\)</span>, what is the sum of the boundaries of two triangles sharing an edge?</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled" title="Answer: the shared edge cancels">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Answer: the shared edge cancels
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The shared edge occurs twice and vanishes modulo two. For <span class="math inline">\([a,b,c]\)</span> and <span class="math inline">\([a,c,d]\)</span>, the result is the four outside square edges. A boundary need not be the boundary of a single simplex.</p>
+</div>
+</div>
+</div>
+<ol start="3" type="1">
+<li>Two different cycles differ by the boundary of a filled triangle. Do they give two independent homology classes?</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled" title="Answer: this is exactly the quotient relation">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Answer: this is exactly the quotient relation
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>No.&nbsp;Their difference lies in <span class="math inline">\(B_1\)</span>, so they represent the same element of <span class="math inline">\(Z_1/B_1\)</span>. Different cycle drawings or different representatives returned by software can describe the same feature.</p>
+</div>
+</div>
+</div>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-hatcher2002" class="csl-entry" role="listitem">
+Hatcher, Allen. 2002. <em>Algebraic Topology</em>. Cambridge University Press. <a href="https://pi.math.cornell.edu/~hatcher/AT/ATpage.html">https://pi.math.cornell.edu/~hatcher/AT/ATpage.html</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->
@@ -915,7 +1206,7 @@ H_k(S) = Z_k / B_k = \ker(\partial_k) / \text{im}(\partial_{k+1}).
     }
   });
   </script>
-<nav class="page-navigation column-body">
+<nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./simplicial.html" class="pagination-link" aria-label="Simplicial complexes">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Simplicial complexes</span></span>

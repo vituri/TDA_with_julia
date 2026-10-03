@@ -1,0 +1,13 @@
+# All unpublished choices are explicit. Labels never enter geometry or clustering.
+seed = 2007
+interval_counts = [3, 4]
+overlaps = [0.35, 0.50, 0.65]
+normalizations = ["zscore", "raw"]
+bandwidth_factors = [0.5, 1.0, 2.0, 4.0, 8.0]
+histogram_bins = [5, 10, 15, 20]
+histogram_ranges = ["diameter", "merge_heights"]
+illustration_factors = [1.0, 4.0, 8.0]
+illustration_bins = 10
+illustration_overlap = 0.5
+illustration_normalization = "zscore"
+illustration_histogram_range = "diameter"

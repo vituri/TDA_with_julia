@@ -1,231 +1,343 @@
-# Persistent homology
+---
+jupyter: tda-book
+---
 
-> "The essence of this architecture is movement synchronized towards a precise objective. We observe a fraction of the process, like hearing the vibration of a single string in an orchestra of supergiants. We know, but cannot grasp, that above and below, beyond the limits of perception or imagination, thousands and millions of simultaneous transformations are at work, interlinked like a musical score by mathematical counterpoint. It has been described as a symphony in geometry, but we lack the ears to hear it." \
-> --- Stanisław Lem, in "Solaris"
+# Persistent homology {#sec-persistent-homology}
 
-In the chapter on simplicial complexes, we saw that we can build a Vietoris-Rips complex from a point cloud by connecting points within distance $\epsilon$. But we faced a fundamental problem: **how to choose $\epsilon$?**
+> "We know, but cannot grasp, that above and below, beyond the limits of perception or imagination, thousands and millions of simultaneous transformations are at work." \
+> --- Stanisław Lem, in *Solaris*
 
-Too small, and we see only isolated points. Too large, and everything collapses into a single blob. The brilliant insight of persistent homology is: *don't choose* — look at **all** scales simultaneously and track which topological features persist.
+Our square has four components at small scales, one loop at intermediate scales, and no loop at large scales. Which answer is correct? All three describe the specified construction at their respective scales.
+
+Persistent homology records the changes **and the relationships between them**. Instead of selecting a scale before looking, we follow classes across a filtration. We still need to choose the metric, filtration, coefficient field, and computational range.
 
 ## Filtrations
 
-::: {#def-}
-A *filtration* is a nested sequence of simplicial complexes:
+::: {#def-filtration}
+A *filtration* is a nested family of complexes $(K_t)$, with
 
-$$
-\emptyset = K_0 \subseteq K_1 \subseteq K_2 \subseteq \cdots \subseteq K_m = K.
-$$
+$$s\leq t\quad\Longrightarrow\quad K_s\subseteq K_t.$$
 
-Each $K_i$ is called a *level* of the filtration, and the parameter controlling the nesting is called the *filtration value*.
+A finite complex with finitely many changes can be represented by a finite sequence of these levels. The parameter $t$ is the *filtration value*.
 :::
 
-### The Vietoris-Rips filtration
+Give each simplex $\sigma$ an entrance value $F(\sigma)$, with every face entering no later than $\sigma$. Then
 
-The most common filtration in TDA is the Vietoris-Rips filtration.
+$$K_t=\{\sigma:F(\sigma)\leq t\}$$
 
-::: {#def-}
-Let $(X,d)$ be a finite metric space and $\epsilon \geq 0$. The *Vietoris-Rips complex at scale $\epsilon$* is
+is a filtration. This face condition makes every level a valid complex.
 
-$$
-\mathrm{VR}(X,\epsilon)=\left\{\sigma \subseteq X \;\middle|\; d(x,x') \leq \epsilon \text{ for all } x,x' \in \sigma \right\}.
-$$
+### The Vietoris–Rips filtration
 
-In words: a finite subset of points is a simplex if all pairwise distances are at most $\epsilon$.
-:::
+For our diameter convention from @sec-rips-definition,
 
-Why this gives a filtration:
+$$F(\sigma)=\max_{x,x'\in\sigma}d(x,x'),$$
 
-- If $\epsilon \leq \epsilon'$, then $\mathrm{VR}(X,\epsilon) \subseteq \mathrm{VR}(X,\epsilon')$.
-- So increasing $\epsilon$ can only add simplices, never remove them.
+with each vertex entering at $0$. Increasing $t$ adds edges and the higher-dimensional simplices they determine. A finite metric space has only finitely many distinct pairwise distances, so there are finitely many changes.
 
-For a finite point cloud, the complex changes only at finitely many scales (critical values from pairwise distances). So we can write:
+Edges, triangles, and tetrahedra may enter **at the same scale**. An implementation orders tied simplices so that faces precede cofaces, but that auxiliary ordering should not be mistaken for a positive lifetime in the original scale parameter.
 
-$$
-K_0=\mathrm{VR}(X,\epsilon_0)\subseteq K_1=\mathrm{VR}(X,\epsilon_1)\subseteq \cdots \subseteq K_m=\mathrm{VR}(X,\epsilon_m).
-$$
+### Other filtrations
 
-Equivalent simplex-level view: each simplex $\sigma$ appears at
+A function $f:X\to\mathbb R$ gives a *sublevel-set filtration*:
 
-$$
-\mathrm{filt}(\sigma)=\max_{x,x' \in \sigma} d(x,x').
-$$
+$$X_t=\{x:f(x)\leq t\}.$$
 
-Then $K_t=\{\sigma \mid \mathrm{filt}(\sigma)\leq t\}$. Faces always appear no later than the simplex itself, so this really is a filtration.
+For vertex values on a fixed complex $K$, set
 
-This is the Vietoris-Rips filtration. Operationally:
+$$F(\sigma)=\max_{v\in\sigma}f(v).$$
 
-1. Start with $\epsilon = 0$: the complex $\text{VR}(X, 0)$ has only vertices (isolated points).
-2. Increase $\epsilon$: edges appear between nearby points, then triangles, tetrahedra, etc.
-3. Eventually, for large enough $\epsilon$, everything is connected into one giant simplex.
+The resulting lower-star filtration includes a simplex when all its vertices have entered. On a triangulated space with a piecewise-linear function, it gives a computable model for sublevel-set topology. Images have related cubical constructions, which we will use in [Computing persistent homology](computing_ph.qmd).
 
-As $\epsilon$ grows, topological features are **born** and **die**:
+A filtration is a modeling choice: a Rips scale measures distance, an image threshold measures intensity, and a density filtration measures something else again. Their birth and death coordinates have different units and interpretations.
 
-- **Birth**: A new connected component appears (at $\epsilon = 0$, every point is its own component), or a new loop or cavity forms.
-- **Death**: A component merges with another (two clusters become one), or a loop gets filled in by a triangle.
+## Following a class through the maps {#sec-square-persistence}
 
-The *persistence* of a feature is its lifetime: $\text{death} - \text{birth}$.
-
-### From filtrations to persistent homology
-
-The filtration is geometric/combinatorial data. Persistent homology is what we get after applying homology to it.
-
-Fix a homology dimension $k$ and a field $\mathbb{F}$. For each inclusion $K_i \hookrightarrow K_j$, functoriality of homology gives a linear map:
+Fix a dimension $k$ and a coefficient field, here $\mathbb F_2$. Inclusion $K_s\hookrightarrow K_t$ sends a cycle to the same chain in the larger complex. It also sends boundaries to boundaries, so it induces a well-defined map
 
 $$
-H_k(K_i;\mathbb{F}) \longrightarrow H_k(K_j;\mathbb{F}).
+\phi_{s,t}:H_k(K_s;\mathbb F_2)\longrightarrow H_k(K_t;\mathbb F_2),\qquad
+[z]\longmapsto[z].
 $$
 
-So a filtration becomes a sequence of vector spaces and linear maps:
+The notation looks unchanged, but the target class may now be zero: the larger complex may contain a filling that was absent before. These maps compose consistently: $\phi_{s,u}=\phi_{t,u}\phi_{s,t}$ for $s\leq t\leq u$. The vector spaces **together with these maps** form a *persistence module*.
+
+For the square's $H_1$, the three distinct stages are
 
 $$
-H_k(K_0) \to H_k(K_1) \to \cdots \to H_k(K_m).
+0\ \longrightarrow\ \mathbb F_2\langle[z]\rangle\ \longrightarrow\ 0,
+\qquad z=[a,b]+[b,c]+[c,d]+[d,a].
 $$
 
-This is the $k$-th *persistence module* (or persistence vector space).
+The class appears at $1$, because the four edges now form a cycle. Its images at larger scales below $\sqrt2$ remain nonzero. At $\sqrt2$,
 
-Intuitively:
+$$z=\partial_2([a,b,c]+[a,c,d]),$$
 
-- A generator of $H_k(K_i)$ is a $k$-dimensional cycle class (component for $k=0$, loop for $k=1$, cavity for $k=2$, ...).
-- As $i$ increases, the image of that class can survive, merge with others, or become trivial.
-- The persistent homology group between levels $i \leq j$ is
+so its image is zero. The edges have not vanished; their class has become a boundary. The loop is **born at $1$ and dies at $\sqrt2$**.
 
-$$
-H_k^{i,j} := \mathrm{im}\!\left(H_k(K_i) \to H_k(K_j)\right),
-$$
-
-which captures classes born by time $i$ that are still alive at time $j$.
-
-### Sublevel set filtrations and simplicial filtrations
-
-Another important type of filtration comes from a function $f: X \to \mathbb{R}$. The *sublevel set* at threshold $t$ is:
+For $H_0$, the map from the initial four components to the connected complex is
 
 $$
-X_t = \{x \in X \mid f(x) \leq t\}.
+\mathbb F_2^4\longrightarrow\mathbb F_2,\qquad
+(\lambda_a,\lambda_b,\lambda_c,\lambda_d)
+\longmapsto\lambda_a+\lambda_b+\lambda_c+\lambda_d.
 $$
 
-As $t$ increases, these sets are nested: $X_s \subseteq X_t$ for $s \leq t$.
+It has rank $1$ and a three-dimensional kernel. For example, $[a]+[b]$, $[a]+[c]$, and $[a]+[d]$ map to zero. Individual vertex classes all map to the **same** surviving component class. Saying “three components die” is convenient shorthand for this algebraic merging.
 
-But for computation we usually need simplicial complexes. A standard conversion is:
+When components with different birth times merge, the usual *elder rule* keeps the older component and ends the younger one's bar. Here every component was born at $0$, so there is no uniquely oldest vertex. A tie-breaking rule may name $a$ or another vertex as the survivor; the interval multiset is unchanged. It does not make one corner of the square more important than the others.
 
-1. Start with a simplicial complex $K$ (for example, from a triangulation or from a Rips complex).
-2. Give each vertex $v$ a value $f(v)$.
-3. Extend to each simplex by
+More generally, the rank of
+
+$$H_k^{s,t}=\operatorname{im}\phi_{s,t}$$
+
+counts independent classes that were already present at $s$ and still survive at $t$. Betti numbers at separate levels alone do not provide these maps.
+
+### See the three complexes
+
+The following computation uses four fixed points, with no randomness. We include the full range of square distances by setting the threshold to $2$.
+
+```{julia}
+using CairoMakie
+using TDARipserer
+using TDAPersistenceDiagrams
+
+square_points = [(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)]
+square_diagrams = ripserer(Rips(square_points; threshold = 2.0);
+                           dim_max = 1, modulus = 2)
+
+@assert count(isfinite, square_diagrams[1]) == 3
+@assert count(i -> !isfinite(i), square_diagrams[1]) == 1
+@assert all(i -> birth(i) == 0 && death(i) == 1,
+            filter(isfinite, square_diagrams[1]))
+@assert length(square_diagrams[2]) == 1
+@assert birth(only(square_diagrams[2])) ≈ 1
+@assert death(only(square_diagrams[2])) ≈ sqrt(2)
+
+[[(birth(i), death(i)) for i in d] for d in square_diagrams]
+```
+
+```{julia}
+#| label: fig-square-filtration
+#| fig-cap: "The square filtration: four points, a loop, and then a full simplex. The final panel draws a tetrahedral realization with new display coordinates; its filtration scale still comes from the original square distances. The tetrahedron includes its solid interior."
+#| code-fold: true
+#| code-summary: "Draw the three square stages"
+let
+    fig = Figure(size = (1050, 420))
+    names = ["a", "b", "c", "d"]
+    xs, ys = first.(square_points), last.(square_points)
+    titles = ["0 ≤ ε < 1", "1 ≤ ε < √2"]
+    for panel in 1:2
+        ax = Axis(fig[1, panel], title = titles[panel], aspect = DataAspect(),
+                  width = 290, height = 270)
+        if panel == 2
+            for (i, j) in [(1, 2), (2, 3), (3, 4), (4, 1)]
+                lines!(ax, xs[[i, j]], ys[[i, j]]; color = :darkorange, linewidth = 3)
+            end
+        end
+        scatter!(ax, xs, ys; color = :steelblue, markersize = 14)
+        text!(ax, xs, ys; text = names, offset = (8, 8), fontsize = 18)
+        limits!(ax, -0.18, 1.22, -0.18, 1.22)
+        hidedecorations!(ax)
+        hidespines!(ax)
+    end
+    tetra = [0.0 0.0 0.0; 1.0 0.0 0.0;
+             0.5 sqrt(3)/2 0.0; 0.5 sqrt(3)/6 sqrt(2/3)]
+    faces = [1 3 2; 1 2 4; 1 4 3; 2 3 4]
+    ax = Axis3(fig[1, 3], title = "ε ≥ √2: filled tetrahedron",
+               width = 290, height = 270,
+               aspect = :data, azimuth = 0.5, elevation = 0.35)
+    mesh!(ax, tetra, faces; color = :peachpuff, shading = NoShading)
+    for i in 1:4, j in (i + 1):4
+        lines!(ax, tetra[[i, j], 1], tetra[[i, j], 2], tetra[[i, j], 3];
+               color = :darkorange, linewidth = 2)
+    end
+    scatter!(ax, tetra[:, 1], tetra[:, 2], tetra[:, 3];
+             color = :steelblue, markersize = 12)
+    text!(ax, tetra[:, 1], tetra[:, 2], tetra[:, 3];
+          text = names, offset = (8, 8), fontsize = 18)
+    hidedecorations!(ax)
+    hidespines!(ax)
+    Label(fig[2, 1], "β₀ = 4, β₁ = 0")
+    Label(fig[2, 2], "β₀ = 1, β₁ = 1")
+    Label(fig[2, 3], "β₀ = 1, β₁ = 0")
+    fig
+end
+```
+
+The numerical result should agree with our hand calculation. If it does not, inspect the metric, threshold, coefficient field, and package environment before inventing a geometric explanation.
+
+## Barcodes and persistence diagrams {#sec-barcodes-diagrams}
+
+A *barcode* summarizes an interval decomposition of a persistence module. An interval module $I[b,d)$ is one copy of the field at each parameter $b\leq t<d$, zero outside, with identity maps between its nonzero levels. It is the algebraic version of a feature's lifetime.
+
+For finite filtrations over a field, the module decomposes as
+
+$$\mathcal V\cong\bigoplus_\ell I[b_\ell,d_\ell).$$
+
+The intervals, including multiplicities, are uniquely determined even though the particular basis and representative cycles need not be. For finite filtration algorithms and their algebraic justification, see Zomorodian [@zomorodian2005]. More generally, real-indexed modules whose vector space at each parameter is finite-dimensional decompose into interval modules [@intervaldecomposition]. Arbitrary modules without such hypotheses need not have this description. The half-open convention here comes from including simplices at their entrance values in our finite filtration.
+
+For our square, the full ordinary barcode is
 
 $$
-F(\sigma) := \max_{v \in \sigma} f(v).
+\begin{array}{ll}
+H_0:&[0,1),\ [0,1),\ [0,1),\ [0,\infty),\\
+H_1:&[1,\sqrt2).
+\end{array}
 $$
 
-4. Define
+The *persistence diagram* instead places one point $(b,d)$ for each interval. It is a **multiset**, so our three copies of $(0,1)$ must not collapse into one feature merely because they overlap in a plot. The essential interval has death $\infty$ and is displayed separately from finite deaths.
 
-$$
-K_t := \{\sigma \in K \mid F(\sigma) \leq t\}.
-$$
+```{julia}
+#| label: fig-square-barcode-diagram
+#| fig-cap: "One filtration, two summaries. Blue marks H₀ and orange marks H₁. The three finite H₀ bars overlap at the same diagram point, labeled ×3. Infinity is drawn at an arbitrary display position, not a measured death time. Closed birth markers and open death markers illustrate the half-open interval convention."
+#| code-fold: true
+#| code-summary: "Draw and annotate the computed barcode and diagram"
+let
+    fig = Figure(size = (1050, 420))
+    ticks = ([0.0, 1.0, sqrt(2)], ["0", "1", "√2"])
+    colors = [:steelblue, :darkorange]
+    display_end = 1.8
+    bar_ax = Axis(fig[1, 1], title = "Filtration → barcode", xlabel = "scale ε",
+                  xticks = ticks, yticks = (1:5, ["H₀", "H₀", "H₀", "H₀", "H₁"]))
+    vlines!(bar_ax, [1.0, sqrt(2)]; color = (:gray, 0.5), linestyle = :dash)
+    row = 0
+    for (k, diagram) in enumerate(square_diagrams)
+        for interval in sort(collect(diagram); by = i -> (isinf(death(i)), death(i)))
+            row += 1
+            b, d = birth(interval), death(interval)
+            right = isfinite(d) ? d : display_end
+            lines!(bar_ax, [b, right], [row, row]; color = colors[k], linewidth = 4)
+            scatter!(bar_ax, [b], [row]; color = colors[k], markersize = 12)
+            if isfinite(d)
+                scatter!(bar_ax, [d], [row]; color = :white, strokecolor = colors[k],
+                         strokewidth = 2, markersize = 12)
+            else
+                scatter!(bar_ax, [right], [row]; color = colors[k],
+                         marker = :rtriangle, markersize = 16)
+            end
+        end
+    end
+    text!(bar_ax, 1.35, 4.35; text = "continues to ∞", fontsize = 16)
+    text!(bar_ax, 1.03, 5.35; text = "square loop", color = colors[2], fontsize = 16)
+    limits!(bar_ax, -0.08, 2.0, 0.4, 5.8)
 
-Then $(K_t)_{t \in \mathbb{R}}$ is a simplicial filtration (often called a lower-star filtration).
+    diagram_ax = Axis(fig[1, 2], title = "Barcode → diagram", xlabel = "birth",
+                      ylabel = "death", aspect = DataAspect(), xticks = ticks,
+                      yticks = ([0.0, 1.0, sqrt(2), display_end], ["0", "1", "√2", "∞"]))
+    lines!(diagram_ax, [0.0, 1.9], [0.0, 1.9]; color = :gray, linestyle = :dash)
+    hlines!(diagram_ax, [display_end]; color = (:gray, 0.5), linestyle = :dot)
+    for (k, diagram) in enumerate(square_diagrams)
+        for interval in diagram
+            b, d = birth(interval), death(interval)
+            scatter!(diagram_ax, [b], [isfinite(d) ? d : display_end];
+                     color = colors[k], markersize = 16,
+                     marker = isfinite(d) ? :circle : :utriangle)
+        end
+    end
+    text!(diagram_ax, 0.08, 1.03; text = "×3", color = colors[1], fontsize = 20)
+    text!(diagram_ax, 1.08, sqrt(2) + 0.05; text = "square loop",
+          color = colors[2], fontsize = 16)
+    limits!(diagram_ax, -0.08, 2.0, -0.08, 2.0)
+    fig
+end
+```
 
-Why is this valid? If $\tau \subseteq \sigma$, then $F(\tau) \leq F(\sigma)$, so every face of a simplex in $K_t$ is also in $K_t$. Hence each $K_t$ is a simplicial complex, and $K_s \subseteq K_t$ for $s \leq t$.
+To recover a Betti number at scale $t$, count bars satisfying $b\leq t<d$. At $t=1.2$, this gives one $H_0$ bar and one $H_1$ bar. At $t=\sqrt2$, the loop's bar has ended, so $\beta_1=0$. Endpoints matter!
 
-This is how sublevel-set ideas become computable persistent homology.
+### Essential versus unobserved deaths
 
-## Persistence diagrams
+An *essential* interval survives for the rest of the specified filtration. The square has one such ordinary $H_0$ interval: its final full simplex is connected.
 
-We can summarize the birth and death of every topological feature in a single picture.
+A computational threshold can also produce an infinite death in the returned diagram. If we stop the square filtration at $1.2$, the loop has not yet died; software may report $[1,\infty)$. We know from the full calculation that it actually dies at $\sqrt2$. In that truncated computation, infinity means **death not observed within the range**, rather than evidence of an eternal hole.
 
-::: {#def-}
-A *persistence diagram* is a multiset of points $(b_i, d_i) \in \mathbb{R}^2$, where $b_i$ is the birth time and $d_i$ is the death time of the $i$-th feature. Since $b_i \leq d_i$, all points lie on or above the diagonal $y = x$.
-:::
+Check the filtration's threshold and diagram metadata when interpreting infinite intervals. Different numbers of infinite intervals can also make diagram distances infinite; replacing that distance by a convenient finite constant changes the mathematics. We revisit this issue in [Comparing shapes](shapes.qmd).
 
-Points far from the diagonal represent features with long persistence — these are the "real" topological features. Points near the diagonal are short-lived and likely correspond to noise.
+### Lifetime is not significance
 
-A persistence diagram for dimension $k$ captures:
+For a finite interval, persistence is $d-b$. Long bars represent classes surviving across a wide range of the selected filtration parameter. That is useful, but “long” depends on units, scaling, and the chosen filtration.
 
-- **$k = 0$**: Connected components. A point $(b, d)$ means a component was born at scale $b$ and merged with another at scale $d$. The component that never dies (the last one standing) has $d = \infty$.
-- **$k = 1$**: Loops. A loop appeared at scale $b$ and was filled in at scale $d$.
-- **$k = 2$**: Cavities. And so on for higher dimensions.
-
-## Barcodes
-
-An equivalent representation is the *barcode*: each feature becomes an interval (drawn as a horizontal bar) from $b_i$ to $d_i$.
-
-Each bar corresponds to one generator/class in the persistence module. Birth means that class first appears; death means it becomes trivial or merges into an older class.
-
-The key algebraic theorem (Zomorodian-Carlsson structure theorem; extended in full generality by Crawley-Boevey for pointwise finite-dimensional modules) says:
-
-$$
-\mathcal{V} \cong \bigoplus_{\ell} I[b_\ell,d_\ell),
-$$
-
-where $I[b_\ell,d_\ell)$ is an interval module. So every persistence module decomposes into interval pieces, and those intervals are exactly the barcode.
-
-So:
-
-- Barcode and persistence diagram carry the same information (up to the usual conventions for infinite intervals).
-- Diagram: good for geometry and distances between summaries.
-- Barcode: good for interval counting and reading lifetimes directly.
-
-The barcode makes it easy to see:
-
-- How many features exist at any given scale (count the bars crossing a vertical line)
-- Which features are long-lived (long bars) vs. noise (short bars)
-- Natural thresholds for choosing a scale parameter
+A long bar can arise from an outlier, a sampling bias, or a poor metric. A short bar can describe a real small feature. Neither length nor distance from the diagonal, by itself, supplies a statistical significance test. Compare perturbations and suitable null models, and connect the feature to the scientific question. The [uncertainty chapter](uncertainty.qmd) develops these distinctions.
 
 ## Bottleneck distance
 
-To compare two persistence diagrams $D_1$ and $D_2$, we use the bottleneck distance.
-
-We consider bijections between the two diagrams after adding infinitely many copies of the diagonal $y=x$ (so points can be matched to the diagonal, interpreted as "feature created/destroyed as noise"). For a matching $\gamma$, its cost is the largest $L^\infty$ move:
+For finite diagram points, a matching may pair points from two diagrams or send a point to the diagonal $\Delta=\{(u,u):u\in\mathbb R\}$. Add arbitrarily many diagonal copies so diagrams with different numbers of finite features can still be matched. Then
 
 $$
-\mathrm{cost}(\gamma) = \sup_{p \in D_1 \cup \Delta} \|p-\gamma(p)\|_\infty,
+d_B(D,E)=\inf_\gamma\ \sup_p\|p-\gamma(p)\|_\infty,
 $$
 
-where $\Delta=\{(x,x)\mid x\in\mathbb{R}\}$ is the diagonal.
+where $\gamma$ ranges over these matchings. This is the smallest possible largest displacement.
 
-Then
+The cheapest diagonal match for $(b,d)$ uses $((b+d)/2,(b+d)/2)$ and costs $(d-b)/2$. Our square's finite $H_1$ point therefore has distance
+
+$$\frac{\sqrt2-1}{2}\approx0.2071$$
+
+from the empty diagram. An empty diagram is a valid summary; we do not need to assign it an arbitrary comparison value.
+
+Essential points with infinite death cannot be matched to the finite diagonal at finite cost. They must be matched to compatible essential points, with their birth difference determining the cost. If the essential counts differ, the usual extended bottleneck distance is infinite. Specify how essential or truncated intervals are handled before comparing diagrams.
+
+A zero diagram distance does not imply that the original datasets are identical. Diagram distance is a metric on suitable diagram spaces, but only a **pseudometric on datasets** after applying a summary that can send different datasets to the same diagram.
+
+## Clustering revisited: single linkage and $H_0$
+
+At a Rips scale $t$, two points belong to the same component if a path of edges of length at most $t$ joins them. This is exactly the partition produced by **single-linkage** hierarchical clustering at threshold $t$.
+
+The correspondence does not hold for arbitrary hierarchical methods. Complete linkage and average linkage use different merge rules; they do not simply take connected components of the threshold graph.
+
+A labeled dendrogram records which groups of points merge. The $H_0$ barcode records their birth and death scales, with multiplicities, but omits those memberships and much of the merge-tree structure. It is therefore a summary of the single-linkage process, rather than a dendrogram with all information preserved. Ties may be resolved differently in a binary drawing while producing the same partitions at each distinct scale.
+
+For our square, all four components join at $1$, giving three finite bars ending there. The barcode tells us the merge scale, but does not identify which square edges were used to form a spanning tree. Also, a long chain of short edges can connect distant regions: the familiar single-linkage *chaining* effect remains present in $H_0$ persistence.
+
+## Two stability statements {#sec-stability}
+
+Stability bounds changes in the **summary** under specified changes in the **input**. The bound depends on what input and filtration we use.
+
+### Perturbing a function on the same space
+
+For tame continuous real-valued functions $f,g$ on the same triangulable space, with the same coefficient field, sublevel-set persistence satisfies [@stability]
+
+$$d_B(\operatorname{Dgm}_k(f),\operatorname{Dgm}_k(g))\leq\|f-g\|_\infty.$$
+
+Finite piecewise-linear functions on a finite complex give a concrete setting where the required finiteness conditions hold. If every function value changes by at most $\delta$, every sublevel set for $f$ at $t$ lies inside the sublevel set for $g$ at $t+\delta$, and conversely. This explains why birth and death scales can be controlled by that shift.
+
+### Perturbing a finite point cloud
+
+For finite point clouds $X,Y$ in the same ambient metric space, **Rips persistence with our diameter convention** satisfies [@ripsstability]
 
 $$
-d_B(D_1,D_2)=\inf_{\gamma}\mathrm{cost}(\gamma).
+d_B(\operatorname{Dgm}_k\mathrm{VR}(X),
+     \operatorname{Dgm}_k\mathrm{VR}(Y))\leq2d_H(X,Y),
 $$
 
-Intuition:
+where $d_H$ is the Hausdorff distance: the largest distance required to find a nearby point in the other set. A more general statement uses $2d_{GH}(X,Y)$ for finite metric spaces without a shared ambient space.
 
-- It is the minimum worst-case displacement needed to transform one diagram into the other.
-- Points near the diagonal are cheap to match to the diagonal, so short-lived features are treated as low-cost noise.
-- Points far from the diagonal are expensive to remove, so long-persistent features dominate the distance.
+The factor two has a geometric reason. If each endpoint of a pair can move by at most $\delta$, its pairwise distance can change by as much as $2\delta$. A Rips simplex at scale $t$ can therefore be compared with one at scale $t+2\delta$. For example, moving every square corner by at most $0.01$ bounds the diagram change by $0.02$ under the stated metric assumptions.
 
-## Clustering revisited: dendrograms as 0-dimensional persistence
+These are bounds for the full specified filtrations. Independently truncating computations can conceal matching deaths, so an infinity in a limited output requires care. Stability is also not a guarantee that a sampled cloud recovers the topology of an unknown underlying object. It controls sensitivity to perturbation, not scientific truth or statistical significance.
 
-Here's a beautiful connection between classical clustering and persistent homology.
+## What we have gained
 
-Consider agglomerative (hierarchical) clustering: we start with $n$ clusters (one per point) and progressively merge the closest pair. The dendrogram records this merging process.
+We can now follow classes rather than merely count them at isolated scales. The square's single loop gives the interval $[1,\sqrt2)$; its components give three finite intervals and one essential interval. Barcodes and diagrams record the same interval data, and stability tells us how that data responds to certain input changes.
 
-Now consider the 0-dimensional Vietoris-Rips persistence: as we increase $\epsilon$, connected components merge. The birth of a component is at $\epsilon = 0$ (each point starts as its own component), and the death is the scale at which it merges with another.
+In the next chapter, we will compute less toy-like examples in Julia. Keep the square nearby as a sanity check: it is small enough that we do not have to trust either the computer or the author blindly.
 
-**These are the same thing!** The 0-dimensional persistence barcode is precisely the dendrogram rewritten in the language of topology. The "gap" in the dendrogram that tells you how many clusters to choose corresponds to the gap between long and short bars in the barcode.
+## Stop and predict
 
-This is the first example of how persistence provides a principled, multi-scale view of structure that classical methods handle in an ad hoc way.
+1. At scales $0.9$, $1$, and $\sqrt2$, what are the square's $\beta_0$ and $\beta_1$? Why does the answer at the endpoint matter?
 
-## The stability theorem
+::: {.callout-note collapse="true" title="Answer: count half-open bars"}
+At $0.9$, $(\beta_0,\beta_1)=(4,0)$. At $1$, the three finite component bars have ended and the loop bar has begun, giving $(1,1)$. At $\sqrt2$, the loop bar ends, giving $(1,0)$. The interval $[b,d)$ includes its birth and excludes its death.
+:::
 
-One of the most important theoretical results in TDA is the *stability theorem* (Chazal, Cohen-Steiner, Glisse, Guibas, Oudot):
+2. You stop the computation at $1.2$ and see $[1,\infty)$ in $H_1$. Can you conclude that the loop never fills? What is its bottleneck distance to the empty diagram using the full calculation?
 
-> If two datasets $X$ and $Y$ are "close" (in a precise sense), then their persistence diagrams are also close.
+::: {.callout-note collapse="true" title="Answer: a cutoff is not a death theorem"}
+The limited computation only establishes survival through $1.2$. The full square filtration kills the class at $\sqrt2$. Its finite full diagram point can be matched to the diagonal for $(\sqrt2-1)/2\approx0.2071$. A truncated infinite interval cannot simply be used as if its actual death were known.
+:::
 
-More formally, the bottleneck distance between persistence diagrams is bounded by the Hausdorff distance or the $L^\infty$ distance between the corresponding functions:
+3. Each square corner moves at most $0.01$ in Euclidean distance. What Rips bottleneck bound follows? Does that make its loop statistically significant?
 
-$$
-d_B(\text{Dgm}(f), \text{Dgm}(g)) \leq \|f - g\|_\infty.
-$$
-
-This says that if the input changes a little (in sup norm), the diagram changes a little in bottleneck distance. So persistent homology is not only descriptive, but also quantitatively robust.
-
-## Summary
-
-Persistent homology gives us:
-
-1. A **multi-scale** view of topological features (no need to choose a single $\epsilon$)
-2. A way to **distinguish signal from noise** (long-lived features vs. short-lived ones)
-3. A **stable** summary of data shape (robust to perturbations)
-4. A **unifying framework** that connects clustering, homology, and data analysis
-
-In the next chapter, we will compute persistent homology in Julia using `TDARipserer.jl` and work with persistence diagrams using `TDAPersistenceDiagrams.jl`.
+::: {.callout-note collapse="true" title="Answer: robustness and significance answer different questions"}
+The Hausdorff distance is at most $0.01$, giving $d_B\leq0.02$ under our diameter convention. This bound concerns sensitivity to the specified perturbation. Significance requires a sampling or null model and a relevant scientific interpretation; the stability inequality alone does not provide either.
+:::

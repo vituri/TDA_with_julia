@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.35">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>19&nbsp; Lum et al.&nbsp;(2013): Mapper on breast cancer expression data – Topological Data Analysis with Julia</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../reproductions/chazal2013.html" rel="next">
+<link href="../reproduction-mapper2007.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-66196b26bc71d39a5d05b86c9547f414.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../style.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reproducing-papers.html">Reproducing Famous Papers</a></li><li class="breadcrumb-item"><a href="../reproductions/lum2013.html"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Lum et al.&nbsp;(2013): Mapper on breast cancer expression data</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Topological Data Analysis with Julia</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/vituri/TDA_with_julia" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Topology</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../topology.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Topology</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../simplicial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Simplicial complexes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../homology.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Simplicial homology</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Working with Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pointclouds.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Point clouds and distances</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../clustering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Clustering</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Persistent Homology</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../persistence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Persistent homology</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../computing_ph.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Computing persistent homology in Julia</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../uncertainty.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Uncertainty: which holes should we trust?</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">TDA Methods</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tomato.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">ToMATo</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../mapper.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Classical Mapper</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../ballmapper.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ball Mapper</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../mapper-general.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Applications</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../clustering_tomato.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Clustering with ToMATo</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../digits.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Classifying hand-written digits</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../timeseries.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Time series analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../shapes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Shape analysis and comparison</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../reproducing-papers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reproducing Famous Papers</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reproduction-mapper2007.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Reproducing Mapper: the Reaven–Miller experiment</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reproductions/lum2013.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Lum et al.&nbsp;(2013): Mapper on breast cancer expression data</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reproductions/chazal2013.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">ToMATo: recovering the twin spirals</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reproductions/perea-harer2015.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Perea and Harer (2015): sliding windows, periodicity, and coefficients</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../reproductions/stability2007.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Cohen-Steiner et al.&nbsp;(2007): persistence stability</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Closing</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../summary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Summary and further reading</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-question-behind-the-graph" id="toc-the-question-behind-the-graph" class="nav-link active" data-scroll-target="#the-question-behind-the-graph"><span class="header-section-number">19.1</span> The question behind the graph</a></li>
+  <li><a href="#get-the-correct-cohort-and-outcome" id="toc-get-the-correct-cohort-and-outcome" class="nav-link" data-scroll-target="#get-the-correct-cohort-and-outcome"><span class="header-section-number">19.2</span> Get the correct cohort and outcome</a></li>
+  <li><a href="#published-settings-and-explicit-local-substitutions" id="toc-published-settings-and-explicit-local-substitutions" class="nav-link" data-scroll-target="#published-settings-and-explicit-local-substitutions"><span class="header-section-number">19.3</span> Published settings and explicit local substitutions</a></li>
+  <li><a href="#build-the-geometry-before-building-the-graph" id="toc-build-the-geometry-before-building-the-graph" class="nav-link" data-scroll-target="#build-the-geometry-before-building-the-graph"><span class="header-section-number">19.4</span> Build the geometry before building the graph</a></li>
+  <li><a href="#actual-numerical-results" id="toc-actual-numerical-results" class="nav-link" data-scroll-target="#actual-numerical-results"><span class="header-section-number">19.5</span> Actual numerical results</a></li>
+  <li><a href="#what-does-the-expression-annotation-support" id="toc-what-does-the-expression-annotation-support" class="nav-link" data-scroll-target="#what-does-the-expression-annotation-support"><span class="header-section-number">19.6</span> What does the expression annotation support?</a></li>
+  <li><a href="#outcome-is-a-filter-not-a-prediction" id="toc-outcome-is-a-filter-not-a-prediction" class="nav-link" data-scroll-target="#outcome-is-a-filter-not-a-prediction"><span class="header-section-number">19.7</span> Outcome is a filter, not a prediction</a></li>
+  <li><a href="#checks-and-how-to-rerun" id="toc-checks-and-how-to-rerun" class="nav-link" data-scroll-target="#checks-and-how-to-rerun"><span class="header-section-number">19.8</span> Checks and how to rerun</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../reproducing-papers.html">Reproducing Famous Papers</a></li><li class="breadcrumb-item"><a href="../reproductions/lum2013.html"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Lum et al.&nbsp;(2013): Mapper on breast cancer expression data</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Lum et al.&nbsp;(2013): Mapper on breast cancer expression data</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="the-question-behind-the-graph" class="level2" data-number="19.1">
+<h2 data-number="19.1" class="anchored" data-anchor-id="the-question-behind-the-graph"><span class="header-section-number">19.1</span> The question behind the graph</h2>
+<p>The widely cited <a href="https://doi.org/10.1038/srep01236">paper by Lum et al.&nbsp;(2013)</a> illustrates Mapper with cancer expression data, congressional votes, and basketball statistics. We concentrate on the public <strong>GSE2034 breast cancer cohort</strong>, the independent dataset used in its cancer example. The reported non-relapse network has a Y-shaped structure with a low-ESR1 arm; the authors associate that arm with elevated chemokine expression.</p>
+<p>Our result is a <strong>partial reconstruction with the correct patient data</strong>, not an exact replication of the published graph. We recover low-ESR1 patients and a descriptive chemokine-marker difference, but our reference graph is considerably more fragmented. The experiment also exposes a methodological issue that matters beyond this paper: when clinical outcome is a filter, outcome-pure graph regions are partly imposed by the construction.</p>
+<p>The earlier <a href="../mapper.html">Mapper chapter</a> explains the algorithm. Here we focus on what is needed to make a published application reproducible: the right clinical table, explicit preprocessing, parameter translation, graph membership, and a numerical comparison that does not depend on the drawing.</p>
+</section>
+<section id="get-the-correct-cohort-and-outcome" class="level2" data-number="19.2">
+<h2 data-number="19.2" class="anchored" data-anchor-id="get-the-correct-cohort-and-outcome"><span class="header-section-number">19.2</span> Get the correct cohort and outcome</h2>
+<p><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE2034">GSE2034 at NCBI GEO</a> contains <strong>22,283 Affymetrix probe sets measured in 286 primary tumors</strong> on platform GPL96. We download the deposited processed expression matrix rather than reprocessing CEL files. The original values are positive signal intensities, with a range of <strong>0.1 to 157,291.8</strong>. Our analysis uses their base-two logarithms.</p>
+<p>Three original files are needed:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Original source</th>
+<th>What we take from it</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>GSE2034_series_matrix.txt.gz</code></td>
+<td>Probe identifiers, GSM sample identifiers, and expression intensities</td>
+</tr>
+<tr class="even">
+<td><code>GSE2034_family.soft.gz</code></td>
+<td>The named <em>Patient clinical parameters</em> series table</td>
+</tr>
+<tr class="odd">
+<td><code>GPL96.annot.gz</code></td>
+<td>Probe-to-gene annotation, dated August 9, 2016</td>
+</tr>
+</tbody>
+</table>
+<p>The acquisition script records full SHA-256 hashes in <a href="experiments/lum2013/data/sources.toml">sources.toml</a>. The expression download starts with <code>f6a99c62f0a29185</code>; the SOFT archive with <code>1fa927dc72870434</code>. The locally retained <a href="experiments/lum2013/data/clinical.tsv">clinical table</a> is also hashed. These are identifiers of the actual downloaded bytes, not a claim that GEO files will never change.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The current sample-level characteristic is <strong>bone relapse</strong>, which is not the overall-relapse outcome used here. The overall-relapse indicator, follow-up time, and clinical estrogen-receptor status are in the separate <strong>series-level table</strong>. Its row order differs from the expression columns, so joining by row position would assign outcomes to the wrong tumors.</p>
+</div>
+</div>
+<p>For example, the clinical table starts with <code>GSM36793</code>, whereas the expression matrix starts with <code>GSM36777</code>. We enforce a one-to-one match on the complete GSM identifiers and reorder the clinical records to match expression columns:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">include</span>(<span class="st">"experiments/lum2013/scripts/common.jl"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> <span class="fu">load_data</span>()  <span class="co"># verifies hashes, dimensions, IDs, positivity and labels</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">size</span>(data.logexpr)       <span class="co"># (22283, 286): one patient per column</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(data.relapse)        <span class="co"># 107</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">count</span>(<span class="op">==</span>(<span class="st">"ER-"</span>), data.er) <span class="co"># 77</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The attached table has <strong>179 patients without recorded relapse and 107 with relapse</strong>, including 50 and 27 clinical ER- patients respectively. Its clinical ER totals are 209 ER+ and 77 ER-. GEO’s narrative summary instead says 180 and 106. We retain the explicit patient-level table values and document that discrepancy. A non-relapse label means no recorded event during the available follow-up; it does not mean permanent survival.</p>
+</section>
+<section id="published-settings-and-explicit-local-substitutions" class="level2" data-number="19.3">
+<h2 data-number="19.3" class="anchored" data-anchor-id="published-settings-and-explicit-local-substitutions"><span class="header-section-number">19.3</span> Published settings and explicit local substitutions</h2>
+<p>The paper specifies correlation distance and two filters. Its Figure 2 caption reports centrality resolution 70, gain 3.0x, and equalization, with outcome resolution 30 and gain 3.0x. <a href="https://media.springernature.com/original/springer-static/esm/art%3A10.1038%2Fsrep01236/MediaObjects/41598_2013_BFsrep01236_MOESM1_ESM.pdf">Supplementary Figure S1</a> gives 1,553 selected features for <strong>NKI</strong>, not an exact GSE2034 probe list.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Pipeline ingredient</th>
+<th>Local reference analysis</th>
+<th>Replication status</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Dataset</td>
+<td>GSE2034; all 286 deposited samples</td>
+<td>Correct public cohort</td>
+</tr>
+<tr class="even">
+<td>Expression input</td>
+<td><code>log2</code> of deposited positive intensities</td>
+<td>Local preprocessing choice</td>
+</tr>
+<tr class="odd">
+<td>Feature selection</td>
+<td>Top 1,553 probe sets by sample variance</td>
+<td>GSE2034 count/list not specified; exploratory transfer from NKI</td>
+</tr>
+<tr class="even">
+<td>Gene centering</td>
+<td>None in the reference run</td>
+<td>Additional centered runs are sensitivity checks</td>
+</tr>
+<tr class="odd">
+<td>Pairwise distance</td>
+<td>One minus Pearson correlation across selected probes</td>
+<td>Matches the stated distance family</td>
+</tr>
+<tr class="even">
+<td>Centrality</td>
+<td>Maximum distance from each patient to any other patient</td>
+<td>Matches the stated formula</td>
+</tr>
+<tr class="odd">
+<td>Equalization</td>
+<td>Empirical centrality ranks in <span class="math inline">\([0,1]\)</span></td>
+<td>Local approximation to software equalization</td>
+</tr>
+<tr class="even">
+<td>Cover</td>
+<td>70 centrality intervals, 30 outcome intervals</td>
+<td>Published resolutions; endpoint convention local</td>
+</tr>
+<tr class="odd">
+<td>Gain</td>
+<td>Interpret 3.0x as interval width divided by step</td>
+<td>Assumption: adjacent overlap is <span class="math inline">\(2/3\)</span></td>
+</tr>
+<tr class="even">
+<td>Within-cell clustering</td>
+<td>Single linkage, local first-empty-bin cutoff, 10 bins</td>
+<td>Original software settings are not fully identified</td>
+</tr>
+<tr class="odd">
+<td>Coloring</td>
+<td>ESR1; separate four-marker mean</td>
+<td>Annotation and marker aggregation are local</td>
+</tr>
+</tbody>
+</table>
+<p>The top features are <strong>probe sets</strong>, not 1,553 distinct genes. We rank all deposited probe sets, including the ten controls in this reference selection; we do not silently collapse probes to genes or standardize each gene to unit variance. The exact selected list is saved in <a href="experiments/lum2013/results/selected_probes.csv">selected_probes.csv</a>.</p>
+<p>“Gain 3.0x” must not be passed into <code>Uniform(expansion=3.0)</code> and treated as a documented equivalence. For our explicit convention, interval width <span class="math inline">\(w\)</span> and step <span class="math inline">\(s\)</span> satisfy <span class="math inline">\(w/s=3\)</span>, so adjacent overlap is <span class="math inline">\((w-s)/w=2/3\)</span>. On <span class="math inline">\([a,b]\)</span>, with <span class="math inline">\(k\)</span> intervals, we use</p>
+<p><span class="math display">\[
+w=\frac{3(b-a)}{k+2},\qquad s=\frac{w}{3}.
+\]</span></p>
+<p><code>gain_cover</code> creates those intervals through <code>ManualCover</code>. Closed endpoint handling and empirical-rank equalization are specified by our code; they need not coincide with the historical Ayasdi implementation.</p>
+</section>
+<section id="build-the-geometry-before-building-the-graph" class="level2" data-number="19.4">
+<h2 data-number="19.4" class="anchored" data-anchor-id="build-the-geometry-before-building-the-graph"><span class="header-section-number">19.4</span> Build the geometry before building the graph</h2>
+<p>Let <span class="math inline">\(A\)</span> be the selected log-expression matrix, with one patient per column. Subtract the mean of each patient column and normalize that column to unit length. The dot product of two resulting columns is their Pearson correlation:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>geometry <span class="op">=</span> <span class="fu">correlation_geometry</span>(data; nprobes<span class="op">=</span><span class="fl">1553</span>, center_genes<span class="op">=</span><span class="cn">false</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> geometry.A</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>Z <span class="op">=</span> A <span class="op">.-</span> <span class="fu">mean</span>(A; dims<span class="op">=</span><span class="fl">1</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>Z <span class="op">./=</span> <span class="fu">sqrt</span>.(<span class="fu">sum</span>(abs2, Z; dims<span class="op">=</span><span class="fl">1</span>))</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> <span class="fu">clamp</span>.(<span class="fl">1</span> <span class="op">.-</span> Z<span class="op">'</span> <span class="op">*</span> Z, <span class="fl">0</span>, <span class="fl">2</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>D[<span class="fu">diagind</span>(D)] <span class="op">.=</span> <span class="fl">0</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>centrality <span class="op">=</span> <span class="fu">vec</span>(<span class="fu">maximum</span>(D; dims<span class="op">=</span><span class="fl">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This is <strong>Pearson distance</strong>, not uncentered cosine distance. Centering each patient column for Pearson correlation is also distinct from subtracting each gene’s mean across patients, which our sensitivity analysis optionally does. One minus correlation need not satisfy the triangle inequality, so we use it as the paper’s pairwise dissimilarity and do not invoke metric-space guarantees.</p>
+<p>Do not replace this maximal-distance centrality by <code>eccentricity(X)</code> from MetricSpaces: that API averages distances. The published <span class="math inline">\(L_\infty\)</span> filter requires their maximum.</p>
+<p>The patient-to-patient matrix has only <span class="math inline">\(286^2\)</span> entries. We cache it and reuse its submatrices during cover refinement. This avoids repeated calculations over thousands of expression coordinates. A small adapter implements the public JuliaTDA refiner interface:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> CachedSingleLinkage <span class="op">&lt;:</span><span class="dt"> TDAmapper.Refiners.AbstractRefiner</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    distances<span class="op">::</span><span class="dt">Matrix{Float64}</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    bins<span class="op">::</span><span class="dt">Int</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> (r<span class="op">::</span><span class="dt">CachedSingleLinkage</span>)(ids<span class="op">::</span><span class="dt">Vector{Int}</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">length</span>(ids) <span class="op">==</span> <span class="fl">1</span> <span class="op">&amp;&amp;</span> <span class="cf">return</span> [<span class="fl">1</span>]</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    local_D <span class="op">=</span> r.distances[ids, ids]</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    tree <span class="op">=</span> Clustering.<span class="fu">hclust</span>(local_D; linkage<span class="op">=:</span>single)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    cutoff <span class="op">=</span> TDAmapper.Refiners.<span class="fu">cutoff_at_first_empty_bin</span>(</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        tree.heights, <span class="fu">maximum</span>(local_D), r.bins)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    Clustering.<span class="fu">cutree</span>(tree; h<span class="op">=</span>cutoff)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The full definition lives in <code>common.jl</code>; do not redefine the struct after including that file. The integer vectors passed to the refiner identify patients. Their numeric values are never used as scalar distances.</p>
+<p>We now use the ordinary JuliaTDA cover, refinement, and nerve pipeline:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> geometry.rank</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>cover <span class="op">=</span> <span class="fu">R2Cover</span>(<span class="fu">collect</span>(<span class="fu">zip</span>(f, data.relapse)),</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gain_cover</span>(f; resolution<span class="op">=</span><span class="fl">70</span>, gain<span class="op">=</span><span class="fl">3.0</span>),</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">gain_cover</span>(<span class="fu">Float64</span>.(data.relapse); resolution<span class="op">=</span><span class="fl">30</span>, gain<span class="op">=</span><span class="fl">3.0</span>))</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>refiner <span class="op">=</span> <span class="fu">CachedSingleLinkage</span>(geometry.D, <span class="fl">10</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> <span class="fu">classical_mapper</span>(<span class="fu">collect</span>(<span class="fl">1</span><span class="op">:</span><span class="fl">286</span>), cover, refiner, <span class="fu">SimpleNerve</span>())</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">graph_summary</span>(M, data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Nodes represent locally clustered sets of tumors. Two nodes are joined exactly when they share a patient. All 286 tumors appear in at least one node; a patient can belong to several nodes because the intervals overlap.</p>
+</section>
+<section id="actual-numerical-results" class="level2" data-number="19.5">
+<h2 data-number="19.5" class="anchored" data-anchor-id="actual-numerical-results"><span class="header-section-number">19.5</span> Actual numerical results</h2>
+<p>The script executes <strong>54 prespecified configurations</strong>: three feature counts (500, 1,553, 3,212), three centrality resolutions (20, 35, 70), three histogram counts (5, 10, 20), and two gene-centering choices. Gain stays at the declared 3.0 convention. The five exported reference/control graphs give:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 21%">
+<col style="width: 21%">
+<col style="width: 21%">
+<col style="width: 21%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Configuration</th>
+<th style="text-align: right;">Nodes</th>
+<th style="text-align: right;">Edges</th>
+<th style="text-align: right;">Components</th>
+<th style="text-align: right;">Largest component, patients</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Log2 only, 70 intervals</td>
+<td style="text-align: right;">371</td>
+<td style="text-align: right;">559</td>
+<td style="text-align: right;">37</td>
+<td style="text-align: right;">112</td>
+</tr>
+<tr class="even">
+<td>Log2 only, 20 intervals</td>
+<td style="text-align: right;">104</td>
+<td style="text-align: right;">184</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">179</td>
+</tr>
+<tr class="odd">
+<td>Gene centered, 70 intervals</td>
+<td style="text-align: right;">419</td>
+<td style="text-align: right;">632</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">47</td>
+</tr>
+<tr class="even">
+<td>Gene centered, 20 intervals</td>
+<td style="text-align: right;">140</td>
+<td style="text-align: right;">238</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">170</td>
+</tr>
+<tr class="odd">
+<td>Outcome-free control, log2 only, 70 intervals</td>
+<td style="text-align: right;">160</td>
+<td style="text-align: right;">278</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">271</td>
+</tr>
+</tbody>
+</table>
+<p>These component sizes count <strong>unique patients</strong>, not node memberships. The reference 70-interval graph contains 215 singleton nodes; these are nodes with one patient, not necessarily disconnected vertices. At 20 intervals, all 179 non-relapse patients lie in one connected component. Such merging makes the coarser graph easier to inspect but does not certify the published Y shape.</p>
+<div id="fig-lum-mapper" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-lum-mapper-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="experiments/lum2013/results/mapper_comparison.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lum-mapper-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;19.1: Computed GSE2034 graphs with fixed spring-layout seeds. The first two columns use overall relapse as a filter; the third removes that filter. Both rows use the same graph positions within each configuration. Colors summarize different expression quantities, so equal colors across rows do not have the same meaning.
+</figcaption>
+</figure>
+</div>
+<p>The local graphs show low-ESR1 regions, but the reference run does not recover the published graph closely enough to identify its exact lowERHS arm. Node placement is a visualization choice, and the dense overlaps generate triangles; we do not interpret the cycle rank of the displayed graph as the first Betti number of a fully filled nerve.</p>
+<div id="fig-lum-sensitivity" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-lum-sensitivity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="experiments/lum2013/results/sensitivity.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lum-sensitivity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;19.2: Sensitivity of connectivity to probe selection, cover resolution and local clustering. Entries are the number of unique patients in the largest non-relapse component; every configuration retains all 286 patients.
+</figcaption>
+</figure>
+</div>
+<p>The complete <a href="experiments/lum2013/results/sensitivity.csv">sensitivity table</a> is part of the result. Across the 54 configurations, the number of components ranges from <strong>2 to 131</strong>, and the largest non-relapse component contains <strong>14 to 179 patients</strong>. It records alternatives instead of selecting a drawing that happens to resemble the target.</p>
+</section>
+<section id="what-does-the-expression-annotation-support" class="level2" data-number="19.6">
+<h2 data-number="19.6" class="anchored" data-anchor-id="what-does-the-expression-annotation-support"><span class="header-section-number">19.6</span> What does the expression annotation support?</h2>
+<p>The 2016 GPL96 annotation assigns <strong>nine probe sets to ESR1</strong>. We average their log2 values for coloring. For the chemokine annotation, we average each gene’s probe values first, then weight the four named genes CCL13, CCL3, CXCL13 and PF4V1 equally. These genes use five probe sets in total. The result is a <strong>four-marker descriptive score</strong>, not the complete KEGG chemokine pathway used in the publication.</p>
+<p>Using the independently deposited clinical ER status gives:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Clinical group</th>
+<th style="text-align: right;">Patients</th>
+<th style="text-align: right;">Mean ESR1</th>
+<th style="text-align: right;">Mean four-marker score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>All patients</td>
+<td style="text-align: right;">286</td>
+<td style="text-align: right;">6.581</td>
+<td style="text-align: right;">6.956</td>
+</tr>
+<tr class="even">
+<td>ER-, relapse recorded</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">5.958</td>
+<td style="text-align: right;">7.210</td>
+</tr>
+<tr class="odd">
+<td>ER-, no relapse recorded</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">5.982</td>
+<td style="text-align: right;">7.479</td>
+</tr>
+</tbody>
+</table>
+<p>All expression values in this table are means on the log2 intensity scale. The ER- non-relapse group has a four-marker mean <strong>0.269 higher</strong> than the ER- relapse group. This is directionally compatible with the reported example, but the groups and score differ from the authors’ definitions. It therefore does not reproduce their pathway enrichment test or its significance.</p>
+<div id="fig-lum-diagnostics" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-lum-diagnostics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="experiments/lum2013/results/patient_diagnostics.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lum-diagnostics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;19.3: Patient-level diagnostics computed before graph coloring. Clinical ER labels define the displayed groups. The right panel uses only clinical ER- patients; diamonds show group means.
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="outcome-is-a-filter-not-a-prediction" class="level2" data-number="19.7">
+<h2 data-number="19.7" class="anchored" data-anchor-id="outcome-is-a-filter-not-a-prediction"><span class="header-section-number">19.7</span> Outcome is a filter, not a prediction</h2>
+<p>Our 30-interval binary cover cannot put outcomes 0 and 1 into the same cell. Consequently every refined node is outcome-pure, and no edge can cross from a relapse node to a non-relapse node. <strong>Perfect separation of these labels is guaranteed by the cover</strong>, regardless of expression geometry.</p>
+<p>We repeat the construction with one fixed random permutation of the 107 relapse indicators, preserving the total number of events. Nodes remain outcome-pure. This control is not a statistical significance test: it exposes the guaranteed separation. Removing the outcome lens produces mixed nodes and a 271-patient largest component. The numerical control results are retained in <a href="experiments/lum2013/results/outcome_control.csv">outcome_control.csv</a>.</p>
+<p>This distinction leaves Mapper useful for exploring structure <em>within</em> clinical groups. It prevents us from presenting a supervised construction as an independent predictor of relapse. We also do not infer a survival advantage from group means without a censoring-aware, independently validated analysis.</p>
+</section>
+<section id="checks-and-how-to-rerun" class="level2" data-number="19.8">
+<h2 data-number="19.8" class="anchored" data-anchor-id="checks-and-how-to-rerun"><span class="header-section-number">19.8</span> Checks and how to rerun</h2>
+<p>The scripts verify hashes and sample alignment before analysis. For all five exported graphs they check every potential nerve edge against membership intersection and compare every local single-linkage partition with connected components of an independently constructed distance-threshold graph. Cached Pearson distances agree with <code>Statistics.cor</code> to at most <span class="math inline">\(2.22\times10^{-16}\)</span> on the checked pairs. All 54 configurations retain every patient. Repeated numerical executions produced identical SHA-256 hashes for all 26 exported CSV files; this verifies deterministic outputs for the recorded data and settings.</p>
+<p>From the JuliaTDA workspace root:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> TDA_with_julia/reproductions/experiments/lum2013/scripts/download.py</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">julia</span> <span class="at">--project</span><span class="op">=</span>TDA_with_julia/reproductions/experiments/lum2013/environment <span class="dt">\</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-e</span> <span class="st">'using Pkg; Pkg.instantiate()'</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ex">julia</span> <span class="at">--startup-file</span><span class="op">=</span>no <span class="dt">\</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--project</span><span class="op">=</span>TDA_with_julia/reproductions/experiments/lum2013/environment <span class="dt">\</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  TDA_with_julia/reproductions/experiments/lum2013/scripts/run.jl</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The experiment uses a private environment with local JuliaTDA component paths; it changes no shared book or package environment. Original compressed downloads are ignored by Git and can be reacquired with the script. The environment, extracted clinical table, selected probe identifiers, node memberships, numerical tables, and precomputed figures are retained. The chapter itself performs no network requests or computations when rendered.</p>
+<p><a href="experiments/lum2013/results/run_metadata.toml">run_metadata.toml</a> records Julia version, seed, Manifest hash, local package commit identifiers, dirty status, source fingerprints, annotation probes, parameters and audits. Further details are in the <a href="experiments/lum2013/README.md">experiment README</a>.</p>
+<p>To move from this reconstruction to an exact replication, we would need the historical GSE2034 analysis matrix and selected feature list, the original equalization and clustering settings, graph-selected lowERHS membership, and the full pathway scoring definition. The current result makes those gaps visible while providing an executable analysis of the right cohort.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/vituri\.github\.io\/TDA_with_julia\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../reproduction-mapper2007.html" class="pagination-link" aria-label="Reproducing Mapper: the Reaven–Miller experiment">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Reproducing Mapper: the Reaven–Miller experiment</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../reproductions/chazal2013.html" class="pagination-link" aria-label="ToMATo: recovering the twin spirals">
+        <span class="nav-page-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">ToMATo: recovering the twin spirals</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

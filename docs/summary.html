@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>17&nbsp; Summary and further reading – Topological Data Analysis with Julia</title>
+<title>23&nbsp; Summary and further reading – Topological Data Analysis with Julia</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -23,7 +23,26 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -34,7 +53,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./references.html" rel="next">
-<link href="./shapes.html" rel="prev">
+<link href="./reproductions/stability2007.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -86,7 +105,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./summary.html">Closing</a></li><li class="breadcrumb-item"><a href="./summary.html"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Summary and further reading</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./summary.html">Closing</a></li><li class="breadcrumb-item"><a href="./summary.html"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Summary and further reading</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -96,7 +115,7 @@ ul.task-list li input[type="checkbox"] {
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
@@ -204,6 +223,12 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Computing persistent homology in Julia</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./uncertainty.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Uncertainty: which holes should we trust?</span></span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -218,25 +243,25 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./tomato.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">ToMATo</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">ToMATo</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./mapper.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">(Classical) mapper</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Classical Mapper</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ballmapper.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Ball mapper</span></span></a>
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Ball Mapper</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./mapper-general.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Mapper: the general case</span></span></a>
   </div>
 </li>
       </ul>
@@ -253,33 +278,33 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./clustering_tomato.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Clustering with ToMATo</span></span></a>
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Clustering with ToMATo</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./digits.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Classifying hand-written digits</span></span></a>
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Classifying hand-written digits</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./timeseries.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Time series analysis</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Time series analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./shapes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Shape analysis and comparison</span></span></a>
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Shape analysis and comparison</span></span></a>
   </div>
 </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
- <span class="menu-text">Closing</span></a>
+            <a href="./reproducing-papers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reproducing Famous Papers</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -287,8 +312,49 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./reproduction-mapper2007.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Reproducing Mapper: the Reaven–Miller experiment</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reproductions/lum2013.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Lum et al.&nbsp;(2013): Mapper on breast cancer expression data</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reproductions/chazal2013.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">ToMATo: recovering the twin spirals</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reproductions/perea-harer2015.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Perea and Harer (2015): sliding windows, periodicity, and coefficients</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reproductions/stability2007.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Cohen-Steiner et al.&nbsp;(2007): persistence stability</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Closing</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./summary.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Summary and further reading</span></span></a>
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Summary and further reading</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -309,30 +375,28 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#what-we-covered" id="toc-what-we-covered" class="nav-link active" data-scroll-target="#what-we-covered"><span class="header-section-number">17.1</span> What we covered</a></li>
-  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">17.2</span> Key takeaways</a></li>
-  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">17.3</span> Further reading</a>
+  <li><a href="#what-we-can-now-calculate" id="toc-what-we-can-now-calculate" class="nav-link active" data-scroll-target="#what-we-can-now-calculate"><span class="header-section-number">23.1</span> What we can now calculate</a></li>
+  <li><a href="#a-workflow-worth-carrying-to-your-next-dataset" id="toc-a-workflow-worth-carrying-to-your-next-dataset" class="nav-link" data-scroll-target="#a-workflow-worth-carrying-to-your-next-dataset"><span class="header-section-number">23.2</span> A workflow worth carrying to your next dataset</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">23.3</span> Further reading</a>
   <ul class="collapse">
-  <li><a href="#books" id="toc-books" class="nav-link" data-scroll-target="#books"><span class="header-section-number">17.3.1</span> Books</a></li>
-  <li><a href="#papers" id="toc-papers" class="nav-link" data-scroll-target="#papers"><span class="header-section-number">17.3.2</span> Papers</a></li>
-  <li><a href="#julia-packages" id="toc-julia-packages" class="nav-link" data-scroll-target="#julia-packages"><span class="header-section-number">17.3.3</span> Julia packages</a></li>
-  <li><a href="#advanced-topics-not-covered" id="toc-advanced-topics-not-covered" class="nav-link" data-scroll-target="#advanced-topics-not-covered"><span class="header-section-number">17.3.4</span> Advanced topics not covered</a></li>
+  <li><a href="#books-and-surveys" id="toc-books-and-surveys" class="nav-link" data-scroll-target="#books-and-surveys"><span class="header-section-number">23.3.1</span> Books and surveys</a></li>
+  <li><a href="#follow-the-question-into-the-original-papers" id="toc-follow-the-question-into-the-original-papers" class="nav-link" data-scroll-target="#follow-the-question-into-the-original-papers"><span class="header-section-number">23.3.2</span> Follow the question into the original papers</a></li>
+  <li><a href="#topics-beyond-this-book" id="toc-topics-beyond-this-book" class="nav-link" data-scroll-target="#topics-beyond-this-book"><span class="header-section-number">23.3.3</span> Topics beyond this book</a></li>
   </ul></li>
-  <li><a href="#final-words" id="toc-final-words" class="nav-link" data-scroll-target="#final-words"><span class="header-section-number">17.4</span> Final words</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content column-body" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./summary.html">Closing</a></li><li class="breadcrumb-item"><a href="./summary.html"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Summary and further reading</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./summary.html">Closing</a></li><li class="breadcrumb-item"><a href="./summary.html"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Summary and further reading</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Summary and further reading</span></h1>
+<h1 class="title"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Summary and further reading</span></h1>
 </div>
 
 
 
-<div class="quarto-title-meta column-body">
+<div class="quarto-title-meta">
 
     
   
@@ -345,75 +409,152 @@ ul.task-list li input[type="checkbox"] {
 
 
 <blockquote class="blockquote">
-<p>“We shall not cease from exploration, and the end of all our exploring will be to arrive where we started and know the place for the first time.”<br>
-— T. S. Eliot, in “Little Gidding”</p>
+<p>“We shall not cease from exploration”<br>
+— T. S. Eliot, in <em>Little Gidding</em></p>
 </blockquote>
-<section id="what-we-covered" class="level2" data-number="17.1">
-<h2 data-number="17.1" class="anchored" data-anchor-id="what-we-covered"><span class="header-section-number">17.1</span> What we covered</h2>
-<p>In this book, we followed a path from pure mathematics to applied data analysis:</p>
-<p><strong>Part I — Topology.</strong> We defined topological spaces and continuity, introduced simplicial complexes as finite combinatorial models of topological spaces, and developed simplicial homology as a way to count “holes” of each dimension.</p>
-<p><strong>Part II — Working with Data.</strong> We learned to handle point clouds, compute distances, estimate density, and cluster data using classical methods (k-means, DBSCAN, hierarchical clustering). We saw the limitations of each method.</p>
-<p><strong>Part III — Persistent Homology.</strong> We built the central tool of TDA: persistent homology. By examining all scales simultaneously through filtrations, we track the birth and death of topological features and represent them as persistence diagrams. We computed persistent homology in Julia using <code>Ripserer.jl</code> and learned to work with persistence images, Wasserstein distances, and barcodes.</p>
-<p><strong>Part IV — TDA Methods.</strong> We applied topological ideas to data analysis: ToMATo for density-based clustering with automatic cluster selection, Mapper for visual exploration and dimensionality reduction, and Ball Mapper as a flexible alternative.</p>
-<p><strong>Part V — Applications.</strong> We saw TDA in action: clustering with ToMATo, classifying handwritten digits using persistence images and neural networks, detecting periodicity in time series via delay embeddings, and comparing shapes through persistence diagram distances.</p>
+<section id="what-we-can-now-calculate" class="level2" data-number="23.1">
+<h2 data-number="23.1" class="anchored" data-anchor-id="what-we-can-now-calculate"><span class="header-section-number">23.1</span> What we can now calculate</h2>
+<p>We began with a cloud of observations and the question of its shape. The square showed how to turn distances into simplices, simplices into boundary matrices, and cycles modulo boundaries into homology classes. A filtration then let us follow these classes as the scale changed.</p>
+<p>The computations added choices that the abstract definitions alone do not make: units, preprocessing, metric, coefficients, filtration, sample size, and cutoff. We compared Rips, alpha, and cubical inputs; learned to read finite and essential intervals; and used shared-grid vectorizations and diagram distances.</p>
+<p>ToMATo follows density peaks through merges. Mapper builds overlapping groups from a filter and a local clustering rule. Ball Mapper builds a cover around landmarks. Their plots tell us about those constructions. Edges in a displayed graph do not automatically certify holes in the underlying space, and a graph layout is not a faithful geometric map.</p>
+<p>The applications tested those distinctions. The Target benchmark exposed a clustering failure. The digit experiment separated training, validation, and test transformations and included a pixel baseline. Delay embeddings required attention to sampling and independence. Shape comparisons required common vectorization coordinates and a decision about geometric scale.</p>
+<p>Finally, the uncertainty chapter separated a stability theorem, empirical sampling variation, and a test under a stated null model. A long interval is a lifetime; its scientific interpretation remains a question about the data.</p>
 </section>
-<section id="key-takeaways" class="level2" data-number="17.2">
-<h2 data-number="17.2" class="anchored" data-anchor-id="key-takeaways"><span class="header-section-number">17.2</span> Key takeaways</h2>
+<section id="a-workflow-worth-carrying-to-your-next-dataset" class="level2" data-number="23.2">
+<h2 data-number="23.2" class="anchored" data-anchor-id="a-workflow-worth-carrying-to-your-next-dataset"><span class="header-section-number">23.2</span> A workflow worth carrying to your next dataset</h2>
 <ol type="1">
-<li><p><strong>Data has shape, and shape matters.</strong> Classical statistics can miss geometric and topological structure that is essential for understanding data.</p></li>
-<li><p><strong>Persistence is the key idea.</strong> Instead of choosing a single scale, examine all scales and focus on features that persist. Long-lived features are signal; short-lived features are noise.</p></li>
-<li><p><strong>Stability makes it practical.</strong> The stability theorem guarantees that small perturbations in data lead to small changes in persistence diagrams. TDA is robust.</p></li>
-<li><p><strong>The tools are ready.</strong> Julia’s ecosystem — <code>MetricSpaces.jl</code>, <code>Ripserer.jl</code>, <code>PersistenceDiagrams.jl</code>, <code>ToMATo.jl</code>, <code>TDAmapper.jl</code>, and <code>TDAplots.jl</code> — provides a coherent stack for applied TDA.</p></li>
+<li><strong>State the question and sampling units.</strong> What phenomenon would a component, loop, or cavity represent? Which observations are independent?</li>
+<li><strong>Choose and record the representation.</strong> Inspect missing values, duplicates, units, and outliers. Justify the metric and filtration rather than accepting their defaults silently.</li>
+<li><strong>Predict a small result.</strong> Use a synthetic control or a hand-calculable example. Check conventions, including edge length versus ball radius and foreground versus background.</li>
+<li><strong>Separate fitting from evaluation.</strong> Fit preprocessing and diagram vectorizers on training data, select parameters with validation data, and reuse the fitted transformations on test data.</li>
+<li><strong>Check sensitivity and alternatives.</strong> Vary sample size and scientifically plausible parameters. Compare with classical methods and, when inference is intended, a justified null model or confidence procedure.</li>
+<li><strong>Report what the result cannot distinguish.</strong> A diagram is a compressed summary. Different objects can have the same diagram, and different constructions on one dataset can answer different questions.</li>
 </ol>
+<p>The six JuliaTDA packages used here are frozen with the book’s environment. The <a href="environment/README.md">setup notes</a> explain how to reproduce this edition and how to switch to development sources.</p>
 </section>
-<section id="further-reading" class="level2" data-number="17.3">
-<h2 data-number="17.3" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">17.3</span> Further reading</h2>
-<section id="books" class="level3" data-number="17.3.1">
-<h3 data-number="17.3.1" class="anchored" data-anchor-id="books"><span class="header-section-number">17.3.1</span> Books</h3>
-<ul>
-<li><strong>Computational Topology</strong> by Edelsbrunner &amp; Harer — the classic textbook on computational topology and persistent homology</li>
-<li><strong>Topology and Data</strong> by Gunnar Carlsson (2009, Bulletin of the AMS) — an influential survey paper that helped launch TDA as a field</li>
-<li><strong>Elementary Applied Topology</strong> by Robert Ghrist — a beautifully illustrated introduction to applied algebraic topology</li>
-<li><strong>Topological Data Analysis with Applications</strong> by Zomorodian — covers algorithms and applications</li>
-</ul>
+<section id="further-reading" class="level2" data-number="23.3">
+<h2 data-number="23.3" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">23.3</span> Further reading</h2>
+<section id="books-and-surveys" class="level3" data-number="23.3.1">
+<h3 data-number="23.3.1" class="anchored" data-anchor-id="books-and-surveys"><span class="header-section-number">23.3.1</span> Books and surveys</h3>
+<p>For algorithms and the underlying mathematics, read <strong>Computational Topology</strong> by Edelsbrunner and Harer <span class="citation" data-cites="edelsbrunner2010">(<a href="references.html#ref-edelsbrunner2010" role="doc-biblioref">Edelsbrunner and Harer 2010</a>)</span> or <strong>Topology for Computing</strong> by Zomorodian <span class="citation" data-cites="zomorodian2005">(<a href="references.html#ref-zomorodian2005" role="doc-biblioref">Zomorodian 2005</a>)</span>. <strong>Topological Data Analysis with Applications</strong> is by Carlsson and Vejdemo-Johansson <span class="citation" data-cites="carlsson2021">(<a href="references.html#ref-carlsson2021" role="doc-biblioref">Carlsson and Vejdemo-Johansson 2021</a>)</span>.</p>
+<p>Hatcher’s <strong>Algebraic Topology</strong> develops the homology theory beyond our finite-field examples <span class="citation" data-cites="hatcher2002">(<a href="references.html#ref-hatcher2002" role="doc-biblioref">Hatcher 2002</a>)</span>. Ghrist’s <strong>Elementary Applied Topology</strong> offers a visual route into applied topology <span class="citation" data-cites="ghrist2014">(<a href="references.html#ref-ghrist2014" role="doc-biblioref">Ghrist 2014</a>)</span>.</p>
+<p>Carlsson’s <strong>Topology and Data</strong> <span class="citation" data-cites="carlsson2009">(<a href="references.html#ref-carlsson2009" role="doc-biblioref">Carlsson 2009</a>)</span> and Ghrist’s <strong>Barcodes: The Persistent Topology of Data</strong> <span class="citation" data-cites="ghrist2008">(<a href="references.html#ref-ghrist2008" role="doc-biblioref">Ghrist 2008</a>)</span> are survey papers, useful companions to a first pass through this book.</p>
 </section>
-<section id="papers" class="level3" data-number="17.3.2">
-<h3 data-number="17.3.2" class="anchored" data-anchor-id="papers"><span class="header-section-number">17.3.2</span> Papers</h3>
-<ul>
-<li><strong>Persistence-Based Clustering in Riemannian Manifolds</strong> (Chazal et al., 2011) — the ToMATo paper</li>
-<li><strong>Topological Methods for the Analysis of High Dimensional Data Sets and 3D Object Recognition</strong> (Singh, Mémoli, Carlsson, 2007) — the original Mapper paper</li>
-<li><strong>Stability of Persistence Diagrams</strong> (Cohen-Steiner, Edelsbrunner, Harer, 2007) — the stability theorem</li>
-<li><strong>Barcodes: The Persistent Topology of Data</strong> (Ghrist, 2008) — an accessible introduction to barcodes</li>
-</ul>
+<section id="follow-the-question-into-the-original-papers" class="level3" data-number="23.3.2">
+<h3 data-number="23.3.2" class="anchored" data-anchor-id="follow-the-question-into-the-original-papers"><span class="header-section-number">23.3.2</span> Follow the question into the original papers</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>If you want to understand…</th>
+<th>Start with…</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Stability under function perturbations</td>
+<td>Cohen-Steiner, Edelsbrunner, and Harer <span class="citation" data-cites="stability">(<a href="references.html#ref-stability" role="doc-biblioref">Cohen-Steiner et al. 2007</a>)</span></td>
+</tr>
+<tr class="even">
+<td>Stability for metric-space filtrations</td>
+<td>Chazal, de Silva, and Oudot <span class="citation" data-cites="ripsstability">(<a href="references.html#ref-ripsstability" role="doc-biblioref">Chazal et al. 2014</a>)</span></td>
+</tr>
+<tr class="odd">
+<td>Confidence sets and statistical guarantees</td>
+<td>Fasy and colleagues <span class="citation" data-cites="bootstrap2014">(<a href="references.html#ref-bootstrap2014" role="doc-biblioref">Fasy et al. 2014</a>)</span></td>
+</tr>
+<tr class="even">
+<td>Density peaks and persistence-based clustering</td>
+<td>Chazal and colleagues, the 2013 ToMATo paper <span class="citation" data-cites="tomato">(<a href="references.html#ref-tomato" role="doc-biblioref">Chazal et al. 2013</a>)</span></td>
+</tr>
+<tr class="odd">
+<td>Covers, filters, and Mapper</td>
+<td>Singh, Mémoli, and Carlsson <span class="citation" data-cites="mapper">(<a href="references.html#ref-mapper" role="doc-biblioref">Singh et al. 2007</a>)</span></td>
+</tr>
+<tr class="even">
+<td>Landmark covers and Ball Mapper</td>
+<td>Dłotko <span class="citation" data-cites="ballmapper2019">(<a href="references.html#ref-ballmapper2019" role="doc-biblioref">Dłotko 2019</a>)</span></td>
+</tr>
+<tr class="odd">
+<td>Vector features on a common diagram domain</td>
+<td>Adams and colleagues <span class="citation" data-cites="persistenceimages2017">(<a href="references.html#ref-persistenceimages2017" role="doc-biblioref">Adams et al. 2017</a>)</span>; Bubenik <span class="citation" data-cites="landscapes2015">(<a href="references.html#ref-landscapes2015" role="doc-biblioref">Bubenik 2015</a>)</span></td>
+</tr>
+<tr class="even">
+<td>Sliding windows and periodicity</td>
+<td>Perea and Harer <span class="citation" data-cites="slidingwindows2015">(<a href="references.html#ref-slidingwindows2015" role="doc-biblioref">Perea and Harer 2015</a>)</span></td>
+</tr>
+<tr class="odd">
+<td>Quasiperiodic delay embeddings</td>
+<td>Gakhar and Perea <span class="citation" data-cites="quasiperiodic2024">(<a href="references.html#ref-quasiperiodic2024" role="doc-biblioref">Gakhar and Perea 2024</a>)</span></td>
+</tr>
+</tbody>
+</table>
 </section>
-<section id="julia-packages" class="level3" data-number="17.3.3">
-<h3 data-number="17.3.3" class="anchored" data-anchor-id="julia-packages"><span class="header-section-number">17.3.3</span> Julia packages</h3>
-<ul>
-<li><a href="https://github.com/mtsch/Ripserer.jl"><code>Ripserer.jl</code></a> — fast persistent homology computation</li>
-<li><a href="https://github.com/mtsch/PersistenceDiagrams.jl"><code>PersistenceDiagrams.jl</code></a> — persistence images, landscapes, distances</li>
-<li><a href="https://github.com/JuliaTDA/MetricSpaces.jl"><code>MetricSpaces.jl</code></a> — metric spaces, datasets, distances, and sampling</li>
-<li><a href="https://github.com/JuliaTDA/ToMATo.jl"><code>ToMATo.jl</code></a> — persistence-based density clustering</li>
-<li><a href="https://github.com/JuliaTDA/TDAmapper.jl"><code>TDAmapper.jl</code></a> — classical Mapper and Ball Mapper</li>
-<li><a href="https://github.com/JuliaTDA/TDAplots.jl"><code>TDAplots.jl</code></a> — Makie-based visualization for Mapper, persistence, and ToMATo</li>
-</ul>
-</section>
-<section id="advanced-topics-not-covered" class="level3" data-number="17.3.4">
-<h3 data-number="17.3.4" class="anchored" data-anchor-id="advanced-topics-not-covered"><span class="header-section-number">17.3.4</span> Advanced topics not covered</h3>
-<ul>
-<li><strong>Multi-parameter persistence</strong>: extending persistent homology to filtrations indexed by more than one parameter</li>
-<li><strong>Sheaves and cosheaves</strong>: a more general framework for local-to-global data structures</li>
-<li><strong>Persistent homology transform</strong>: encoding shapes using persistence diagrams from many directions</li>
-<li><strong>Topological optimization</strong>: using topological loss functions in neural network training (differentiable TDA)</li>
-<li><strong>Zigzag persistence</strong>: handling time-varying data with insertions and deletions</li>
-</ul>
-</section>
-</section>
-<section id="final-words" class="level2" data-number="17.4">
-<h2 data-number="17.4" class="anchored" data-anchor-id="final-words"><span class="header-section-number">17.4</span> Final words</h2>
-<p>TDA is a young and rapidly growing field. New applications, algorithms, and theoretical results appear every year. The tools in this book give you a solid foundation — both mathematical and computational — to explore this landscape.</p>
-<p>Go forth and find some holes in your data!</p>
+<section id="topics-beyond-this-book" class="level3" data-number="23.3.3">
+<h3 data-number="23.3.3" class="anchored" data-anchor-id="topics-beyond-this-book"><span class="header-section-number">23.3.3</span> Topics beyond this book</h3>
+<p>One-parameter persistence is not the end of the story. <strong>Multiparameter persistence</strong> can track, for example, distance and density together; its invariants are more complicated than a single barcode. <strong>Zigzag persistence</strong> permits objects to be added and removed, useful for changing observations over time. <strong>Cohomology and circular coordinates</strong> can turn a persistent loop into a useful coordinate rather than only a lifetime.</p>
+<p>For geometric shape analysis, the <strong>persistent homology transform</strong> compares many directional filtrations; this is a broader construction than our small family of image directions. For other computational budgets, <strong>witness and sparse complexes</strong> and approximation guarantees deserve study. <strong>Distance-to-measure filtrations</strong> address robustness using a different geometric construction, rather than expecting ordinary Rips persistence to ignore outliers.</p>
+<p><strong>Sheaves and cosheaves</strong> extend local-to-global reasoning, while <strong>differentiable topology</strong> brings topological summaries into optimization. These are directions for further study, not prerequisites for the examples we have worked through.</p>
+<p>Go forth and find some holes in your data! Then ask why they are there.</p>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-persistenceimages2017" class="csl-entry" role="listitem">
+Adams, Henry, Tegan Emerson, Michael Kirby, et al. 2017. <span>“Persistence Images: A Stable Vector Representation of Persistent Homology.”</span> <em>Journal of Machine Learning Research</em> 18 (8): 1–35. <a href="https://www.jmlr.org/papers/v18/16-337.html">https://www.jmlr.org/papers/v18/16-337.html</a>.
+</div>
+<div id="ref-landscapes2015" class="csl-entry" role="listitem">
+Bubenik, Peter. 2015. <span>“Statistical Topological Data Analysis Using Persistence Landscapes.”</span> <em>Journal of Machine Learning Research</em> 16 (3): 77–102. <a href="https://www.jmlr.org/papers/v16/bubenik15a.html">https://www.jmlr.org/papers/v16/bubenik15a.html</a>.
+</div>
+<div id="ref-carlsson2009" class="csl-entry" role="listitem">
+Carlsson, Gunnar. 2009. <span>“Topology and Data.”</span> <em>Bulletin of the American Mathematical Society</em> 46 (2): 255–308. <a href="https://doi.org/10.1090/S0273-0979-09-01249-X">https://doi.org/10.1090/S0273-0979-09-01249-X</a>.
+</div>
+<div id="ref-carlsson2021" class="csl-entry" role="listitem">
+Carlsson, Gunnar, and Mikael Vejdemo-Johansson. 2021. <em>Topological Data Analysis with Applications</em>. Cambridge University Press. <a href="https://doi.org/10.1017/9781108975704">https://doi.org/10.1017/9781108975704</a>.
+</div>
+<div id="ref-tomato" class="csl-entry" role="listitem">
+Chazal, Frédéric, Leonidas J. Guibas, Steve Y. Oudot, and Primož Škraba. 2013. <span>“Persistence-Based Clustering in Riemannian Manifolds.”</span> <em>Journal of the ACM</em> 60 (6): 1–38. <a href="https://doi.org/10.1145/2535927">https://doi.org/10.1145/2535927</a>.
+</div>
+<div id="ref-ripsstability" class="csl-entry" role="listitem">
+Chazal, Frédéric, Vin de Silva, and Steve Oudot. 2014. <span>“Persistence Stability for Geometric Complexes.”</span> <em>Geometriae Dedicata</em> 173: 193–214. <a href="https://doi.org/10.1007/s10711-013-9937-z">https://doi.org/10.1007/s10711-013-9937-z</a>.
+</div>
+<div id="ref-stability" class="csl-entry" role="listitem">
+Cohen-Steiner, David, Herbert Edelsbrunner, and John Harer. 2007. <span>“Stability of Persistence Diagrams.”</span> <em>Discrete &amp; Computational Geometry</em> 37 (1): 103–20. <a href="https://doi.org/10.1007/s00454-006-1276-5">https://doi.org/10.1007/s00454-006-1276-5</a>.
+</div>
+<div id="ref-ballmapper2019" class="csl-entry" role="listitem">
+Dłotko, Paweł. 2019. <em>Ball Mapper: A Shape Summary for Topological Data Analysis</em>. <a href="https://doi.org/10.48550/arXiv.1901.07410">https://doi.org/10.48550/arXiv.1901.07410</a>.
+</div>
+<div id="ref-edelsbrunner2010" class="csl-entry" role="listitem">
+Edelsbrunner, Herbert, and John Harer. 2010. <em>Computational Topology: An Introduction</em>. American Mathematical Society.
+</div>
+<div id="ref-bootstrap2014" class="csl-entry" role="listitem">
+Fasy, Brittany Terese, Fabrizio Lecci, Alessandro Rinaldo, Larry Wasserman, Sivaraman Balakrishnan, and Aarti Singh. 2014. <span>“Confidence Sets for Persistence Diagrams.”</span> <em>The Annals of Statistics</em> 42 (6): 2301–39. <a href="https://doi.org/10.1214/14-AOS1252">https://doi.org/10.1214/14-AOS1252</a>.
+</div>
+<div id="ref-quasiperiodic2024" class="csl-entry" role="listitem">
+Gakhar, Hitesh, and Jose A. Perea. 2024. <span>“Sliding Window Persistence of Quasiperiodic Functions.”</span> <em>Journal of Applied and Computational Topology</em> 8 (1): 55–92. <a href="https://doi.org/10.1007/s41468-023-00136-7">https://doi.org/10.1007/s41468-023-00136-7</a>.
+</div>
+<div id="ref-ghrist2008" class="csl-entry" role="listitem">
+Ghrist, Robert. 2008. <span>“Barcodes: The Persistent Topology of Data.”</span> <em>Bulletin of the American Mathematical Society</em> 45 (1): 61–75. <a href="https://doi.org/10.1090/S0273-0979-07-01191-3">https://doi.org/10.1090/S0273-0979-07-01191-3</a>.
+</div>
+<div id="ref-ghrist2014" class="csl-entry" role="listitem">
+Ghrist, Robert. 2014. <em>Elementary Applied Topology</em>. <a href="https://www2.math.upenn.edu/~ghrist/notes.html">https://www2.math.upenn.edu/~ghrist/notes.html</a>.
+</div>
+<div id="ref-hatcher2002" class="csl-entry" role="listitem">
+Hatcher, Allen. 2002. <em>Algebraic Topology</em>. Cambridge University Press. <a href="https://pi.math.cornell.edu/~hatcher/AT/ATpage.html">https://pi.math.cornell.edu/~hatcher/AT/ATpage.html</a>.
+</div>
+<div id="ref-slidingwindows2015" class="csl-entry" role="listitem">
+Perea, Jose A., and John Harer. 2015. <span>“Sliding Windows and Persistence: An Application of Topological Methods to Signal Analysis.”</span> <em>Foundations of Computational Mathematics</em> 15 (3): 799–838. <a href="https://doi.org/10.1007/s10208-014-9206-z">https://doi.org/10.1007/s10208-014-9206-z</a>.
+</div>
+<div id="ref-mapper" class="csl-entry" role="listitem">
+Singh, Gurjeet, Facundo Mémoli, and Gunnar Carlsson. 2007. <span>“Topological Methods for the Analysis of High Dimensional Data Sets and 3D Object Recognition.”</span> <em>Eurographics Symposium on Point-Based Graphics</em>, 91–100. <a href="https://doi.org/10.2312/SPBG/SPBG07/091-100">https://doi.org/10.2312/SPBG/SPBG07/091-100</a>.
+</div>
+<div id="ref-zomorodian2005" class="csl-entry" role="listitem">
+Zomorodian, Afra J. 2005. <em>Topology for Computing</em>. Cambridge University Press. <a href="https://www.cambridge.org/core/books/topology-for-computing/1171035B570105A57865CEA390BA5E74">https://www.cambridge.org/core/books/topology-for-computing/1171035B570105A57865CEA390BA5E74</a>.
+</div>
+</div>
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -817,10 +958,10 @@ ul.task-list li input[type="checkbox"] {
     }
   });
   </script>
-<nav class="page-navigation column-body">
+<nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./shapes.html" class="pagination-link" aria-label="Shape analysis and comparison">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Shape analysis and comparison</span></span>
+      <a href="./reproductions/stability2007.html" class="pagination-link" aria-label="Cohen-Steiner et al. (2007): persistence stability">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Cohen-Steiner et al.&nbsp;(2007): persistence stability</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

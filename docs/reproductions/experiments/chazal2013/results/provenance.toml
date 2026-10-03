@@ -1,0 +1,17 @@
+archive_sha256 = "15d360feb89e7f92aa3e00c0500e4ee439f6cb565932e82547364fcfd777f339"
+coordinate_max = [2005.79, 2005.63]
+coordinate_min = [1.497, 1.145]
+dataset_sha256 = "cdb64bbd14837a43bf3229c1a7500f7a662ac45ad0c40f2821473580965c82a3"
+density_range = [1.16451e-5, 0.00151124]
+distinct_density_values = 62293
+environment_manifest_sha256 = "6e6c3c58e08efcf368dc26c96facbe5837c8cb4525c0adf2ad59334c0a0c2b2f"
+julia_version = "1.12.5"
+source_access_date = "2026-10-03"
+threads = 2
+validation = "Data/graph/selected cluster checks passed. Audit disagreements are recorded, not hidden."
+
+[source_hashes]
+"MetricSpaces.jl/src/extra/filters.jl" = "ff4490b6d7afcaef04ad6242b730ebe0ea75fa6a992af15bd225f5009ad80bb1"
+"ToMATo.jl/src/density.jl" = "46d74dc11a51aee4c42c6957ba8222d1df68c444b3620a5e82f9eaca24f9bdbe"
+"ToMATo.jl/src/graph.jl" = "1d2ee4bd9c80ab40f4064944c429a9b7e0b8abe371ca167124f829983a920922"
+"ToMATo.jl/src/tomato algorithm.jl" = "b2987e32a18967805a5c9b9e2272ce508474d278ce232bb0a3875eae10587a98"

@@ -1,0 +1,4 @@
+name,nodes,edges,components,graph_cycle_rank,covered_patients,largest_component_patients,largest_nonrelapse_component_patients,largest_relapse_component_patients,singleton_nodes,all_nodes_outcome_pure
+real_relapse,371,559,37,225,286,112,112,20,215,true
+permuted_relapse,385,559,48,222,286,75,75,27,229,true
+no_outcome_lens,160,278,12,130,286,271,1,1,76,false

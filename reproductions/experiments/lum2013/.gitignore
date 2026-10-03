@@ -1,0 +1,9 @@
+# Original GEO downloads are fetched and verified by scripts/download.py.
+data/*.gz
+data/*.tgz
+data/*.html
+data/*.xml
+data/*.pdf
+data/supplement.txt
+data/GSE2034-tbl-2.txt
+preview/

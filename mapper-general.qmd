@@ -1,7 +1,8 @@
-# Mapper: the general case
+---
+jupyter: tda-book
+---
 
-> "The real voyage of discovery consists not in seeking new landscapes, but in having new eyes." \
-> --- Marcel Proust, in "In Search of Lost Time"
+# Mapper: the general case
 
 We have already seen two specific mapper-like constructions:
 
@@ -12,9 +13,9 @@ The local `TDAmapper.jl` API makes the general pattern explicit: a mapper algori
 
 1. a cover of the data;
 2. a refinement rule for each cover element;
-3. a nerve construction that turns the refined cover into a graph.
+3. a nerve construction that records intersections of the refined cover.
 
-The beauty of this decomposition is that each step can be changed independently. That gives us a whole family of Mapper-like algorithms rather than a single fixed recipe.
+Each step answers a different question. The cover selects the neighborhoods we inspect, the refiner decides which members stay together locally, and the nerve decides how their overlaps are recorded. Separating the questions makes changes easier to explain.
 
 ## The three building blocks
 
@@ -42,9 +43,11 @@ This is where "connectedness" enters the discrete picture: in the classical Reeb
 Finally, we build a graph from the refined cover:
 
 - `SimpleNerve()` adds an edge whenever two cover elements overlap;
-- more restrictive nerve constructions can require larger intersections or weighted overlaps.
+- `MinCountNerve(n)` requires at least `n` shared observations for an edge;
+- `JaccardNerve(t)` requires $|A\cap B|/|A\cup B|\geq t$;
+- `SimplicialNerve(2)` also records triangles from common three-way intersections.
 
-So the full algorithm is: cover, refine, then take a nerve.
+`SimpleNerve()` produces the **1-skeleton** of the usual nerve. Intersection thresholds change that graph; they are additional modeling choices. A triangle from a three-way intersection belongs to the full nerve and can fill a graph cycle. Three pairwise intersections alone do not imply a common three-way intersection.
 
 ## Creating a mapper directly
 
@@ -57,6 +60,11 @@ using TDAmapper
 using TDAmapper.DomainCovers
 using TDAmapper.Refiners
 using TDAmapper.Nerves
+using Random
+using Graphs
+using DataFrames
+
+Random.seed!(2026)
 ```
 
 ```{julia}
@@ -73,19 +81,44 @@ M_demo = mapper(
 M_demo
 ```
 
-That is exactly the pattern Ball Mapper uses under the hood. Writing it this way makes it easier to see what can be customized and why.
+That is the pattern Ball Mapper uses. We can also inspect the three stages directly:
+
+```{julia}
+demo_cover = EpsilonBall(X = X_demo, L = L_demo, epsilon = 0.2)
+raw_memberships = make_cover(demo_cover)
+refined_memberships = TDAmapper.Refiners.refine_cover(X_demo, raw_memberships, Trivial())
+demo_graph = make_graph(X_demo, refined_memberships, SimpleNerve())
+(raw_sets = length(raw_memberships), refined_sets = length(refined_memberships),
+ graph_nodes = nv(demo_graph), graph_edges = ne(demo_graph))
+```
+
+`Trivial()` keeps each nonempty cover element intact; it does not test whether its members form one connected group. `M_demo.C[j]` stores the original observation indices in node `j`. With a clustering refiner, one raw set may instead create several nodes. In this API DBSCAN noise points are grouped into an extra local node, so inspect that node before treating it as connected.
 
 ## Interpreting Mapper graphs
 
-Whatever choices we make, the output is still a graph, and we need to know how to read it:
+For graph-valued nerve rules, we read the output as follows:
 
 - nodes represent local groups of data points;
 - edges connect groups that overlap;
-- connected components suggest distinct macroscopic pieces of the data;
-- loops suggest circular or toroidal structure;
-- branches suggest flares, bifurcations, or tree-like behavior.
+- connected components reveal disconnection of the chosen membership-overlap graph;
+- loops and branches are exploratory features to examine through original members and alternative parameters.
 
-Coloring the nodes by a statistic of the underlying data often adds another layer of meaning to the graph.
+Node size is scaled by member count and color can summarize any observation statistic. Overlapping nodes can count an observation more than once. The default drawing uses a graph layout; its distances are not distances in the dataset. A mean node color can also hide a mixture of very different observations.
+
+### A triangle that is filled, and one that is not
+
+```{julia}
+X_three = EuclideanSpace(reshape([0.0, 1.0, 2.0], 1, :))
+pairwise_only = [[1, 2], [2, 3], [1, 3]]
+common_point = [[1, 2], [2, 3], [2]]
+
+(pairwise_graph_edges = ne(make_graph(X_three, pairwise_only, SimpleNerve())),
+ common_graph_edges = ne(make_graph(X_three, common_point, SimpleNerve())),
+ pairwise_triangles = n_triangles(make_graph(X_three, pairwise_only, SimplicialNerve(2))),
+ common_triangles = n_triangles(make_graph(X_three, common_point, SimplicialNerve(2))))
+```
+
+Both graphs have three edges. The first full nerve has no triangle, since no observation belongs to all three sets; the second has one, supplied by observation 2. Their identical graph drawings conceal different first homology. `SimplicialNerve` returns a simplicial-complex object rather than a graph, so the graph plotting and graph cycle-count formulas used here do not apply to that object directly. Enumerating higher intersections also becomes expensive as the number of sets grows.
 
 ## Example: a noisy figure-eight
 
@@ -95,7 +128,8 @@ using TDAplots
 ```
 
 ```{julia}
-X = add_noise(figure_eight(400; r = 1.0), 0.08)
+Random.seed!(2026)
+X = EuclideanSpace(add_noise(figure_eight(400; r = 1.0), 0.08))
 metricspace_plot(X, markersize = 4)
 ```
 
@@ -125,15 +159,68 @@ M_large = mapper(
 mapper_plot(M_large, node_values = node_colors(M_large, first.(X)))
 ```
 
-With the smaller radius, the two loops of the figure-eight remain visible. With the larger radius, the graph becomes much coarser and starts to collapse the structure.
+Both graphs have the same 60 nodes because we retained the same landmarks and used `Trivial()`. Increasing radius enlarges the memberships and can add edges. It makes overlap less selective; it does **not** necessarily reduce the graph cycle count or collapse the graph to fewer nodes.
+
+Inspect the changes numerically:
+
+```{julia}
+function mapper_diagnostics(M)
+    membership_counts = [count(C -> i in C, M.C) for i in eachindex(M.X)]
+    components = length(connected_components(M.g))
+    (nodes = nv(M.g), edges = ne(M.g), components = components,
+     graph_cycles = ne(M.g) - nv(M.g) + components,
+     covered_points = count(>(0), membership_counts),
+     maximum_memberships = maximum(membership_counts))
+end
+
+comparison = DataFrame()
+for (radius, M) in [(0.25, M_small), (0.4, M_large)]
+    push!(comparison, merge((radius = radius,), mapper_diagnostics(M)))
+end
+comparison
+```
+
+Both covers contain all 400 observations. The smaller radius gives 107 edges and **48 graph cycles**; the larger gives 228 edges and **169 graph cycles**. Neither count is the two holes of an ideal figure-eight. Dense overlap introduces many extra graph cycles, and no triangle fillings are stored by `SimpleNerve()`.
+
+To test whether an edge depends on one lone shared observation, keep the cover and refinement fixed but require at least five shared observations:
+
+```{julia}
+M_supported = mapper(X,
+    EpsilonBall(X = X, L = L, epsilon = 0.4), Trivial(), MinCountNerve(5))
+mapper_diagnostics(M_supported)
+```
+
+This removes weakly supported edges by an absolute count rule. A sparsely sampled genuine bridge can disappear too. A Jaccard threshold would instead compare shared membership relative to the total membership of the two nodes; the two criteria can disagree when node sizes differ.
 
 ## Choosing parameters
 
 There is no universal recipe, but a few heuristics help:
 
-- **Coverage**: every point should belong to at least one cover element.
+- **Geometry**: choose units, scaling, and a metric before radius values. A radius of 0.4 means little without that context.
+- **Coverage**: count observations absent from the final memberships; do not infer coverage from landmark count.
 - **Overlap**: if cover elements barely overlap, the graph becomes disconnected.
 - **Resolution**: fine covers reveal more detail but also more noise.
-- **Stability**: features that survive across a range of parameters are more trustworthy.
+- **Membership**: inspect the observations supporting a branch, loop, or rare node. Recoloring gives a new statistic, whereas changing the filter rebuilds the construction.
+- **Sensitivity**: vary one ingredient at a time, and inspect resampled or subsampled data too. Graph counts help compare outputs, but the memberships explain their meaning.
 
-That last point is the mapper version of the persistence philosophy: do not trust a single parameter choice more than the structure that persists across several of them.
+Parameter sensitivity is a diagnostic, not automatically a persistence filtration or a statistical significance test. Arbitrary changes to covers and refiners do not always give nested complexes or canonical maps. A rigorous comparison needs those additional structures and assumptions.
+
+## Try it yourself
+
+1. If you replace `Trivial()` by a clustering refiner, which stage can increase the number of nodes?
+
+::: {.callout-note collapse="true" title="Worked answer"}
+Refinement can split one raw cover element into several local groups. The nerve then adds intersections among those resulting groups; it does not itself split their memberships.
+:::
+
+2. Two nodes contain 20 and 200 observations and share 4. Does `MinCountNerve(5)` keep the edge? What about `JaccardNerve(0.01)`?
+
+::: {.callout-note collapse="true" title="Worked answer"}
+The count rule removes it because $4<5$. Their union has $20+200-4=216$ observations, so Jaccard similarity is $4/216\approx0.0185$ and the 0.01 threshold keeps it. Absolute support and relative overlap measure different things.
+:::
+
+3. What is lost when a full nerve is replaced by its graph?
+
+::: {.callout-note collapse="true" title="Worked answer"}
+Higher common intersections are lost. In particular, a shared observation among three nodes supplies a triangle filling that is absent from the graph. Consequently the graph's first Betti number can exceed that of the full nerve.
+:::

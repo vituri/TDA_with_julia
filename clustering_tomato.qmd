@@ -1,6 +1,10 @@
+---
+jupyter: tda-book
+---
+
 # Clustering with ToMATo
 
-This chapter applies ToMATo to two datasets from the FCPS benchmark suite stored locally in this repository. The goal is not to pretend that one set of parameters solves every problem. The goal is to see a consistent workflow in action:
+This chapter applies ToMATo to two **synthetic** datasets from the FCPS benchmark suite [@data5010013], stored locally in this repository. One will work nicely; the other will make us earn our lunch. We will follow the same workflow:
 
 1. load a point cloud;
 2. estimate a density;
@@ -16,6 +20,9 @@ using DelimitedFiles
 using MetricSpaces
 using TDAplots
 using ToMATo
+using Clustering
+using DataFrames
+using Graphs
 ```
 
 ```{julia}
@@ -25,11 +32,33 @@ function load_fcps(name)
     labels = Int.(raw[2:end, 1])
     return X, labels
 end
+
+function peak_lifetime_plot(pairs; tau)
+    finite = [p for p in values(pairs) if isfinite(p[2])]
+    survivors = [p[1] for p in values(pairs) if !isfinite(p[2])]
+    fig = Figure(size = (800, 480))
+    ax = Axis(fig[1, 1], xlabel = "Peak density (birth)",
+        ylabel = "Birth − saddle density (lifetime)")
+    if !isempty(finite)
+        scatter!(ax, first.(finite), [p[1] - p[2] for p in finite])
+    end
+    hlines!(ax, [tau], color = :red, linestyle = :dash)
+    ax_surviving = Axis(fig[2, 1], xlabel = "Peak density (birth)",
+        title = "Surviving graph components: no finite death")
+    scatter!(ax_surviving, survivors, zeros(length(survivors)), marker = :utriangle)
+    hideydecorations!(ax_surviving)
+    lo, hi = extrema([p[1] for p in values(pairs)])
+    padding = max((hi - lo) * 0.05, 0.001)
+    xlims!(ax, lo - padding, hi + padding)
+    xlims!(ax_surviving, lo - padding, hi + padding)
+    rowsize!(fig.layout, 2, Relative(0.25))
+    fig
+end
 ```
 
 ## Target
 
-The `Target` dataset is a good stress test because its clusters are non-convex. This is exactly the kind of situation where methods based on convexity assumptions start to struggle.
+`Target` has a 395-point ring, a 363-point central population, and four tiny three-point groups. Its six benchmark labels ask us to preserve the tiny groups too. Finding only a ring and a core would answer a different, coarser question.
 
 ```{julia}
 target_X, target_labels = load_fcps("Target")
@@ -45,7 +74,7 @@ scatter!(ax2, target_mat[1, :], target_mat[2, :], color = target_ds, markersize 
 fig
 ```
 
-The density plot already suggests several meaningful peaks arranged along the non-convex structure.
+The density has several peaks. Before calling them populations, remember that a density estimate can split a single labeled group into multiple modes. We retain the benchmark coordinates; bandwidth and graph radius are measured in those coordinate units.
 
 ```{julia}
 target_g = proximity_graph(target_X, 0.35; min_k_ball = 5, max_k_ball = 12, k_nn = 5)
@@ -53,15 +82,20 @@ target_g = proximity_graph(target_X, 0.35; min_k_ball = 5, max_k_ball = 12, k_nn
 tomato_graph_plot(target_X, target_g, target_ds)
 ```
 
-This graph is the geometric skeleton on which ToMATo will climb the density landscape.
+This graph specifies the paths along which ToMATo can climb or join peaks. The five-neighbor fallback may add edges beyond radius 0.35; an undirected vertex can also receive edges from other vertices despite the per-point candidate cap.
+
+```{julia}
+(degree_range = extrema(degree(target_g)),
+ graph_components = length(connected_components(target_g)))
+```
 
 ```{julia}
 _, target_births_and_deaths = tomato(target_X, target_g, target_ds, Inf)
 
-tomato_persistence_plot(target_births_and_deaths)
+peak_lifetime_plot(target_births_and_deaths, tau = 0.01)
 ```
 
-As in the previous chapter, the persistence plot tells us which peaks are stable and which ones are just small bumps.
+The horizontal axis shows birth density and the vertical axis shows lifetime above a saddle. Read the graph-component survivors separately: they have no observed finite death. Long lifetime is evidence about this landscape, not a promise of agreement with the supplied labels.
 
 ```{julia}
 τ_target = 0.01
@@ -76,7 +110,60 @@ target_clusters, _ = tomato(
 metricspace_plot(target_X, color = float.(target_clusters), markersize = 5)
 ```
 
-With this choice of $\tau$, ToMATo merges the insignificant peaks while keeping the large-scale cluster structure.
+### A result that needs explaining
+
+The clustering has **three** groups. The ring is recovered, but the central population is split into 249 and 114 points. All four tiny groups are absorbed into central clusters. This is a failure to recover the six benchmark labels, even though the colored scatter plot can look quite persuasive.
+
+Count the intersections instead of trusting the colors:
+
+```{julia}
+truth_ids = sort(unique(target_labels))
+cluster_ids = sort(unique(target_clusters))
+target_counts = [count((target_labels .== r) .& (target_clusters .== c))
+    for r in truth_ids, c in cluster_ids]
+contingency = DataFrame(target_counts, Symbol.("cluster_" .* string.(cluster_ids)))
+insertcols!(contingency, 1, :benchmark_label => truth_ids)
+contingency
+```
+
+The *adjusted Rand index* (ARI) compares whether pairs of points are together in both partitions, correcting for chance agreement. It equals 1 for identical partitions up to relabeling; values near zero indicate chance-level agreement, and negative values are possible. This comparison uses all points, including any label `0` as one predicted category.
+
+```{julia}
+target_ari = first(randindex(target_labels, target_clusters))
+```
+
+The value is approximately **0.789**. The contingency table shows which errors produce that number; the number alone would hide the swallowed tiny groups.
+
+### Change one ingredient at a time
+
+Keep `max_cluster_height = 0.01` fixed so that the following comparisons separate density estimation, graph construction, and persistence merging:
+
+```{julia}
+target_settings = [
+    (radius = 0.35, bandwidth = 0.35, tau = 0.01),
+    (radius = 0.35, bandwidth = 0.35, tau = 0.03),
+    (radius = 0.35, bandwidth = 0.50, tau = 0.01),
+    (radius = 0.55, bandwidth = 0.35, tau = 0.01),
+    (radius = 0.20, bandwidth = 0.35, tau = 0.01),
+]
+target_sensitivity = DataFrame()
+for setting in target_settings
+    ds = kde(target_X, bandwidth = setting.bandwidth)
+    g = proximity_graph(target_X, setting.radius;
+        min_k_ball = 5, max_k_ball = 12, k_nn = 5)
+    labels, _ = tomato(target_X, g, ds, setting.tau; max_cluster_height = 0.01)
+    push!(target_sensitivity, merge(setting, (
+        positive_clusters = length(filter(>(0), unique(labels))),
+        low_density_points = count(==(0), labels),
+        adjusted_rand = first(randindex(target_labels, labels)),
+    )))
+end
+target_sensitivity
+```
+
+Increasing $\tau$ to 0.03 produces two clusters and improves ARI to about **0.970** by joining the central pieces. It still loses all four tiny groups. A larger bandwidth of 0.50 produces four clusters and ARI about 0.699; a larger radius of 0.55 leaves three clusters and ARI about 0.788. None of these settings recovers the six labels. Smoothing changes the landscape, and changing the graph changes its merge paths; neither effect can be read from $\tau$ alone.
+
+These labels are available because this is a benchmark. Selecting settings by their ARI on this dataset is an exploratory comparison, not evidence of performance on unseen data. In an unlabeled application, inspect cluster membership, domain meaning, and sensitivity to resampling as well.
 
 ## Hepta
 
@@ -107,7 +194,7 @@ tomato_graph_plot(hepta_X, hepta_g, hepta_ds)
 ```{julia}
 _, hepta_births_and_deaths = tomato(hepta_X, hepta_g, hepta_ds, Inf)
 
-tomato_persistence_plot(hepta_births_and_deaths)
+peak_lifetime_plot(hepta_births_and_deaths, tau = 0.02)
 ```
 
 ```{julia}
@@ -123,7 +210,12 @@ hepta_clusters, _ = tomato(
 metricspace_plot(hepta_X, color = float.(hepta_clusters), markersize = 5)
 ```
 
-Again, the persistence threshold decides how aggressively neighboring peaks are merged.
+```{julia}
+(positive_clusters = length(filter(>(0), unique(hepta_clusters))),
+ adjusted_rand = first(randindex(hepta_labels, hepta_clusters)))
+```
+
+Here we recover **seven** positive clusters with ARI **1.0**: the memberships match the benchmark labels exactly after relabeling. Hepta's compact separated groups suit the chosen geometry, density, and graph. It is a useful successful check, alongside the less cooperative Target example.
 
 ## Remarks
 
@@ -135,6 +227,8 @@ The same recipe appears in both examples, but the parameters change:
 
 That is the practical side of ToMATo: the algorithm is simple, but the scale parameters still need to match the geometry of the dataset.
 
+The [graph construction](tomato.qmd) also caps dense radius neighborhoods by observation ID. The benchmark order is fixed here; a permutation sensitivity check is useful before treating these clusters as a property of geometry alone.
+
 ## Summary
 
 These two examples illustrate the same practical lesson:
@@ -143,4 +237,24 @@ These two examples illustrate the same practical lesson:
 - then inspect the density and the peak persistence;
 - only then settle on a final threshold $\tau$.
 
-ToMATo is not parameter-free, but it does give you a principled topological diagnostic for choosing how much merging is appropriate.
+Record the absolute peak-height threshold separately from $\tau$, too. Label `0` collects low peaks after merging; it is not a new population. The useful output of the workflow includes the failed memberships and the sensitivity table, as well as the final clustering.
+
+## Try it yourself
+
+1. Why is a two-cluster Target result with ARI 0.970 still not a recovery of the benchmark partition?
+
+::: {.callout-note collapse="true" title="Worked answer"}
+The four three-point benchmark groups are absorbed. Most pairs involve points in the two large groups, so recovering those dominates the pair-based score. The six-row contingency table makes this limitation visible.
+:::
+
+2. Suppose the proximity graph splits one true population into two disconnected components. Can increasing $\tau$ join them?
+
+::: {.callout-note collapse="true" title="Worked answer"}
+No. Persistence merging follows paths in the graph, and none joins the components. Both can have a survivor without finite death. Changing graph construction is needed; assigning both label `0` would only hide the disconnection in a shared category.
+:::
+
+3. Why keep `max_cluster_height` fixed when varying $\tau$ in the sensitivity table?
+
+::: {.callout-note collapse="true" title="Worked answer"}
+Otherwise two rules change at once: merging by lifetime and relabeling by absolute height. A changing cluster count would not tell us which rule caused it. Bandwidth changes density heights too, so its comparison still needs both thresholds recorded.
+:::

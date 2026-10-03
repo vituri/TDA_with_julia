@@ -38,3 +38,21 @@
     border-left: 0px solid #e9ecef;
 }
 
+/* Keep prose comfortable to read while allowing figures to use the page. */
+#quarto-document-content > p,
+#quarto-document-content > ul,
+#quarto-document-content > ol {
+    max-width: 75ch;
+}
+
+figcaption {
+    line-height: 1.5;
+}
+
+.callout .callout-body {
+    line-height: 1.55;
+}
+
+pre.sourceCode {
+    overflow-x: auto;
+}

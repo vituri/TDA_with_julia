@@ -1,0 +1,26 @@
+julia_version = "1.12.5"
+threads = 1
+dataset_sha256 = "2eb0e05331e681a6046a761ba14b81aaee845e24883a5b42059b1db3d31d12b7"
+config_sha256 = "d6108c55ef83a5127b394ff5460b6fce439bb984809daeb3e6e94854183fd5d9"
+manifest_sha256 = "ecabbc8dcf4f12d4c599588212b86b02a251e2860d7ebc4e105f117f8f0ff0e7"
+environment_lock_sha256 = "ecabbc8dcf4f12d4c599588212b86b02a251e2860d7ebc4e105f117f8f0ff0e7"
+
+[sources.TDAmapper]
+git_head = "frozen book source"
+dirty = false
+source_sha256 = "ab7056cb5bf47fb4dcfa821278095ea05260664bd4d6e633ae2c899cde0a9301"
+
+[sources.MetricSpaces]
+git_head = "frozen book source"
+dirty = false
+source_sha256 = "9a97f960fb82b381561844f53e1f3731b998f1ec86f21d5bd90007a1e1f79f31"
+
+[sources.TDAplots]
+git_head = "frozen book source"
+dirty = false
+source_sha256 = "1d428d6c606a7c67a55131bbc2dc7fef5c9b12607b4972a59578defa2b3f43bf"
+
+[sources.TDAPersistenceDiagrams]
+git_head = "frozen book source"
+dirty = false
+source_sha256 = "068ead13478ea76be07181f8fec0cae41059ed7a65c6cda3357fc30976969ac3"

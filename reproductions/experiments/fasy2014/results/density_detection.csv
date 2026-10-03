@@ -1,0 +1,3 @@
+method,radius,component_height,significant_component,significant_finite_H0,significant_H1,longest_H1
+finite_grid_Hoeffding,0.1900711438092789,0.2514101682918075,false,0,0,0.17257372507029453
+KDE_bootstrap,0.061703513256674836,0.2514101682918075,true,0,1,0.17257372507029453

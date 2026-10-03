@@ -1,0 +1,7 @@
+name,normalization,bandwidth_factor,bandwidth,bins,histogram_range,intervals,overlap,nodes,edges,components,graph_cycle_rank,leaves,branch_nodes,isolated_nodes,largest_component_nodes,covered_patients,smallest_node,largest_node
+k3_h1,zscore,1.0,0.48226653210763987,10,diameter,3,0.5,3,2,1,0,2,0,0,3,145,40,105
+k4_h1,zscore,1.0,0.48226653210763987,10,diameter,4,0.5,4,3,1,0,2,0,0,4,145,28,95
+k3_h4,zscore,4.0,1.9290661284305595,10,diameter,3,0.5,4,3,1,0,3,1,0,4,145,8,115
+k4_h4,zscore,4.0,1.9290661284305595,10,diameter,4,0.5,5,4,1,0,3,1,0,5,145,6,105
+k3_h8,zscore,8.0,3.858132256861119,10,diameter,3,0.5,6,5,1,0,3,1,0,6,145,3,130
+k4_h8,zscore,8.0,3.858132256861119,10,diameter,4,0.5,7,6,1,0,3,1,0,7,145,2,127
