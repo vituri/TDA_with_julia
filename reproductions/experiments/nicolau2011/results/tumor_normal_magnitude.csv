@@ -1,0 +1,3 @@
+group,samples,median_residual_norm,median_filter
+BCN_leave_one_out,13,38.95328055857069,575.0853016782247
+NKI_tumors,295,108.27453598031595,275669.4469579067

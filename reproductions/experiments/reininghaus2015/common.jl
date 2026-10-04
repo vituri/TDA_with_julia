@@ -1,6 +1,7 @@
 using TDAPersistenceDiagrams, DelimitedFiles, LinearAlgebra, SHA, Statistics, Serialization
 const ROOT = @__DIR__
-const RESULTS = joinpath(ROOT, "results")
+const NORMALIZED = "--normalized" in ARGS
+const RESULTS = NORMALIZED ? joinpath(ROOT,"results","normalized") : joinpath(ROOT,"results")
 const SOURCE_SHA256 = "80cfce72ee053ffac2ee82e7358118bc43907930262b795ef443460a3abcd042"
 const SOURCE_COMMIT = "3e217d151d09e5eed213f927960986854331c148"
 const SOURCE_URL = "https://raw.githubusercontent.com/lucho8908/adaptive_template_systems/$SOURCE_COMMIT/Examples/Shapes/Uli_data/Uli_data.csv"
@@ -65,4 +66,15 @@ function nearest_neighbors(K,labels)
     end
     accuracy=100mean(labels[predicted].==labels)
     return (;accuracy,predicted,distance)
+end
+
+function normalize_gram(K)
+    # Unit norm for nonzero embeddings; zero diagrams retain zero rows. This
+    # extension avoids the 0/0 of the authors' later MATLAB utility.
+    z=sqrt.(max.(diag(K),0.0))
+    G=zeros(size(K))
+    for j in axes(K,2),i in axes(K,1)
+        z[i]>0&&z[j]>0&&(G[i,j]=K[i,j]/(z[i]*z[j]))
+    end
+    return G
 end

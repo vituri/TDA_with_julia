@@ -16,6 +16,16 @@ project:
     - "reproductions/experiments/perea-harer2015/**"
     - "reproductions/experiments/stability2007/**"
     - "!reproductions/experiments/stability2007/Manifest.toml"
+    - "reproductions/experiments/fasy2014/**"
+    - "!reproductions/experiments/fasy2014/Manifest.toml"
+    - "reproductions/experiments/nicolau2011/**"
+    - "!reproductions/experiments/nicolau2011/data/raw/**"
+    - "!reproductions/experiments/nicolau2011/preview/**"
+    - "reproductions/experiments/circular-coordinates2011/**"
+    - "!reproductions/experiments/circular-coordinates2011/source/**"
+    - "reproductions/experiments/reininghaus2015/**"
+    - "!reproductions/experiments/**/.cache/**"
+    - "!reproductions/experiments/**/__pycache__/**"
     - "!reproductions/experiments/**/*.tmp"
   post-render:
     - scripts/cleanup_quarto_support_dirs.sh
@@ -38,6 +48,8 @@ book:
   site-url: https://vituri.github.io/TDA_with_julia/
   repo-url: https://github.com/vituri/TDA_with_julia
   author: "G. Vituri"
+  cover-image: images/cover-topology.png
+  cover-image-alt: "Cover of Topological Data Analysis with Julia by G. Vituri: a colored point cloud becomes a triangulated loop above persistence bars on a dark blue background."
   date: "2026-10-03"
   # sharing: [twitter, linkedin]
 
@@ -77,6 +89,10 @@ book:
       - reproductions/chazal2013.qmd
       - reproductions/perea-harer2015.qmd
       - reproductions/stability2007.qmd
+      - reproductions/fasy2014.qmd
+      - reproductions/nicolau2011.qmd
+      - reproductions/circular-coordinates2011.qmd
+      - reproductions/reininghaus2015.qmd
     - part: "Closing"
       chapters:
       - summary.qmd

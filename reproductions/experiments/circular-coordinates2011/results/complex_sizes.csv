@@ -1,0 +1,4 @@
+data,n,threshold,edges,triangles,total_2_skeleton,published_total
+circle,200,0.5,3028,22810,26038,23475
+torus,400,1.7320508075688772,12661,168106,181167,61522
+torus_major3_alternative,400,1.7320508075688772,7667,58944,67011,61522

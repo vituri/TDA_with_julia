@@ -1,0 +1,17 @@
+Pro25G
+variant_gridline
+G3PDH_570
+Pro25G_onG3PDH570_20bp
+Pro25G_onG3PDH570_10Ts
+r60_1
+r60_3
+r60_n9
+r60_a22
+r60_a104
+r60_a107
+r60_a135
+r60_a97
+r60_a20
+r60_n11
+zero_barcode
+one_barcode

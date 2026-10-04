@@ -1,0 +1,21 @@
+[deps]
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
+Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
+Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"
+LIBSVM = "b1bec4e5-fd48-53fe-b0cb-9723c09d164b"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+MetricSpaces = "737298cd-3e4b-40c4-a4ce-863151543a8d"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+SHA = "ea8e919c-243c-51af-8825-aaa63cd721ce"
+Serialization = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+TDAPersistenceDiagrams = "bbe17acd-c4ea-4f01-a2b8-42969f873a90"
+TOML = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+ToMATo = "9853e363-5d33-44e1-8657-922a46906663"
+
+[compat]
+CairoMakie = "0.14"
+Graphs = "1"
+julia = "1.10"

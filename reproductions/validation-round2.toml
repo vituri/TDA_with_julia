@@ -1,0 +1,46 @@
+recorded_at_utc = "2026-10-03T07:03:37.154161+00:00"
+quarto_version = "1.9.35"
+render_strategy = "Isolated book copy, Julia execution disabled; shared book render untouched"
+new_chapters = 4
+rendered_local_assets_checked = 51
+new_part_chapters_registered = 9
+resolved_local_environment_paths_valid = true
+raw_archives_and_research_caches_excluded = true
+rendered_configuration_sha256 = "3718e2f5bb65d4dc5b0d11fb4c526fa82c7d7ad5c6d99888067ea1877081551d"
+[[chapters]]
+file = "reproductions/fasy2014.qmd"
+source_sha256 = "c758f83a81495dc4791556ddfcc93a0b266470f48aec5377296b74c415b09bc2"
+html_rendered = true
+local_assets_resolve = true
+local_assets_checked = 20
+scientific_checks_passed = 18
+
+[[chapters]]
+file = "reproductions/nicolau2011.qmd"
+source_sha256 = "a759ead73e6106390db011172f24383283ee5f0b2353a7751546674d0b69a2df"
+html_rendered = true
+local_assets_resolve = true
+local_assets_checked = 9
+scientific_checks_passed = 12
+
+[[chapters]]
+file = "reproductions/circular-coordinates2011.qmd"
+source_sha256 = "dddd1048377521583b6f97f70856f5be6959c007bfcf7f7e4e7a11f554766f08"
+html_rendered = true
+local_assets_resolve = true
+local_assets_checked = 12
+scientific_checks_passed = 65
+
+[[chapters]]
+file = "reproductions/reininghaus2015.qmd"
+source_sha256 = "2391552095b0f108ad73e0a84e3fadfdd595229bf2b5ce360aaefca76c45f311"
+html_rendered = true
+local_assets_resolve = true
+local_assets_checked = 10
+scientific_checks_passed = 2162
+
+[numerical_hashes_verified]
+fasy2014 = 14
+nicolau2011 = 14
+circular_coordinates2011 = 42
+reininghaus2015 = 43

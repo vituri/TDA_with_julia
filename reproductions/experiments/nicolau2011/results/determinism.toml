@@ -1,0 +1,19 @@
+identical = true
+csv_files_compared = 14
+method = "Two complete independent Julia processes, including KNN imputation and 18 Mapper configurations; all numerical CSV SHA-256 hashes match"
+
+[csv_sha256]
+"cohort.csv" = "e758a0bebfccd2cbc0a337b8e153d8806a43c276d3b64a15e4dbbf0f6f0537d5"
+"gene_alignment.csv" = "4f2abafa3351f6379012e634d13445a2d7183ebc456410aef08783d91095887c"
+"genes.csv" = "29458c62e9b7bd309fa6b6255cbac1cd40d948864b7e330827a0441fa3da8b08"
+"power1/edges.csv" = "510cd50624dba22d74b7271c4f8ef4b74aaf914083a413a8afa0d29ce8b0b7ba"
+"power1/membership.csv" = "efec4983450c7c5b54d57f7056a2d6f83adbe2e07ea621dc395e5be111f42f7e"
+"power1/nodes.csv" = "6b51265f712b650fe70fe2555aaac6a822e1bde73aeff68f76b72f8900095551"
+"power4/edges.csv" = "fde0b9ee76a7a8cd1a043dc2b4c5a6ecb282da1d0b8477db8d39de93fd107034"
+"power4/membership.csv" = "2a02379d5bd886cc678518827938a19d5e38570db3898bf6cc8e34b0ee0fb02d"
+"power4/nodes.csv" = "7f7bd804672774931c6ba1abb386a7ac713016e5df0360d81ae43ea82e420a97"
+"samples.csv" = "0d610c28f63b6d10f14c065ffb1c9e71c679e84a2286504105c36466ec85268f"
+"selected_models.csv" = "142c81b4a6697828d1e470ef11aa1c6b490f6845711d6b4f96ce39d16d6fe904"
+"sensitivity.csv" = "14d7ad2ba7424c7a974014a185bf7ee2448b3ebe29fcc03ca2756d3b044dc58b"
+"tumor_normal_magnitude.csv" = "c12ad93eabc2f109ce86e4ac20401f405e04024b9e6e6d7a994188c6d4d7fc05"
+"wold.csv" = "ad4cd9daebb515516ff2091e4952901bc072bc8e400ee1fa611c3090c6182ef1"

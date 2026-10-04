@@ -3,6 +3,8 @@ title: Introduction
 jupyter: tda-book
 ---
 
+![](images/shape-of-data.png){.chapter-opener width=100% fig-alt="Decorative illustration of a ring-shaped point cloud, a triangulated ring with an open center, and a loop beside persistence-inspired bars."}
+
 > "Who cared? Why should it matter to anyone how I had filled my poor brain those ten years?" \
 > --- Stanisław Lem, in *Return from the Stars*
 

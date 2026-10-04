@@ -39,7 +39,7 @@ explain how to run it separately.
 
 ## Further papers
 
-Four additional chapters compare JuliaTDA computations with published targets:
+Eight additional chapters compare JuliaTDA computations with published targets:
 
 - [Lum et al. (2013)](reproductions/lum2013.qmd): a partial reconstruction of
   Mapper on the public GSE2034 breast cancer cohort, with verified clinical
@@ -52,7 +52,19 @@ Four additional chapters compare JuliaTDA computations with published targets:
 - [Cohen-Steiner et al. (2007)](reproductions/stability2007.qmd): a numerical
   verification of the stability theorem on a new cubical example. This target
   is a mathematical bound, rather than a published empirical figure.
+- [Fasy et al. (2014)](reproductions/fasy2014.qmd): the uniform-circle experiment
+  from Figure 6, recovering the density-bootstrap decision and exposing
+  subsampling sensitivity.
+- [Nicolau et al. (2011)](reproductions/nicolau2011.qmd): an executed PAD/Mapper
+  reconstruction on the historical NKI295 tumors and BCN13 normal reference,
+  with the unresolved gene mapping and subgroup comparison documented.
+- [de Silva, Morozov, and Vejdemo-Johansson (2011)](reproductions/circular-coordinates2011.qmd):
+  harmonic circular coordinates on the noisy circle and torus, with integer
+  degree certificates and an audit of the torus-radius terminology.
+- [Reininghaus et al. (2015)](reproductions/reininghaus2015.qmd): kernel SVM
+  classification and nearest-neighbor retrieval on preserved SHREC14 diagrams,
+  with all ten HKS settings and the remaining discrepancies reported.
 
 Each chapter includes executed analyses, saved results, figures, verification
-and commands for rerunning its private experiment. The PAD/Mapper analysis of
-@nicolau2011 remains a future target.
+and commands for rerunning its private experiment. The book embeds saved
+figures; numerical reproduction is a separate, explicit run.

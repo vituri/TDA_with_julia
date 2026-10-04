@@ -1,0 +1,8 @@
+circle_global: birth=0.21679040870750538, death=Inf, R=0.9741319366710027, degree=[1], RMSEcycles=0.03641339154429372, components=1, energy=24 -> 2.3100664201105845, period=1, truth winding=[1.0], maxbin=0.165, entropy=2.7157430294999467
+circle_local: birth=0.1399599471574366, death=0.14315779411654486, R=0.08660317609475857, degree=[-1], RMSEcycles=0.2709575281419485, components=17, energy=1 -> 0.5198637044027418, period=1, truth winding=[0.0], maxbin=0.845, entropy=0.4848481185872049
+torus_coordinate1: birth=0.4718459986451798, death=Inf, R=0.9769010795825321, degree=[-1, 0], RMSEcycles=0.03433240617192815, components=1, energy=630 -> 79.70554479131602, period=-1, truth winding=[1.0, 0.0], maxbin=0.09, entropy=2.927007699504838
+torus_coordinate2: birth=0.508340135343466, death=1.6485397178345247, R=0.9232508472098415, degree=[0, 1], RMSEcycles=0.06321618251118365, components=1, energy=810 -> 187.0838347235366, period=1, truth winding=[0.0, 1.0], maxbin=0.09, entropy=2.919732534610143
+torus_major3_coordinate1: birth=0.5696484551502764, death=1.6618030130641508, R=0.9254809494718182, degree=[0, 1], RMSEcycles=0.06246411796518474, components=1, energy=668 -> 115.23768701599697, period=-1, truth winding=[0.0, -1.0], maxbin=0.08, entropy=2.9394986965057335
+torus_major3_coordinate2: birth=0.6908930342259584, death=Inf, R=0.9871751684888853, degree=[-1, 0], RMSEcycles=0.02555016278014567, components=1, energy=254 -> 12.869222323913423, period=-1, truth winding=[1.0, 0.0], maxbin=0.095, entropy=2.8919503702191194
+Perea2020 API: R=0.9673010135202381, degree=[-1], smoothing_delta=0.5, phase RMSE against 2011 vertex map=0.013858161575437086
+Passed 65 checks. Degree matrix = [-1 0; 0 1]. Alternative radius matrix = [0 1; -1 0]

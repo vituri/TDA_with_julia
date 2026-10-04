@@ -115,17 +115,21 @@ def main():
                 assert count == 24496
         assert len(ids) == len(set(ids)) == 295
         header = "probe\t" + "\t".join(ids) + "\n"
-        kept, missing, excluded = [], 0, []
+        kept, missing, excluded, low_quality = [], 0, [], []
         for probe, row, valid in zip(raw_probes, values, validity):
-            if probe not in probes or sum(valid) / 295 < 0.70:
+            if probe not in probes:
                 excluded.append(probe)
+                continue
+            if sum(valid) / 295 < 0.70:
+                low_quality.append(probe)
                 continue
             kept.append(probe)
             missing += len(valid) - sum(valid)
             header += probe + "\t" + "\t".join(v if good else "NaN" for v, good in zip(row, valid)) + "\n"
-        assert len(kept) == 24479 and set(kept) == probes
+        assert len(kept) == 24453 and len(low_quality) == 26 and len(excluded) == 17
         gzwrite(DATA / "nki_log10.tsv.gz", header)
         (DATA / "excluded_controls.txt").write_text("\n".join(excluded) + "\n")
+        (DATA / "low_quality_probes.txt").write_text("\n".join(low_quality) + "\n")
     with zipfile.ZipFile(RAW / "NormalBreastData.zip") as z:
         for name in ("BCN.ugc219.pcl", "BCN.70fltr.report.html", "BCN.Samples.xlsx"):
             b = z.read("NormalBreastData/" + name)
@@ -135,11 +139,12 @@ def main():
             elif name.endswith(".html"):
                 (DATA / name).write_bytes(b)
     metadata = dict(python=platform.python_version(), r=r_info, normal_repository_commit=COMMIT,
-                    raw_nki_rows=24496, assay_probes=len(kept), excluded_controls=excluded,
+                    raw_nki_rows=24496, assay_probes=len(probes), retained_probes=len(kept), excluded_controls=excluded, low_quality_probes=low_quality,
                     patients=len(ids), missing_valid_measurements=missing,
                     mapping="NKI HUGO.gene.symbol from seventyGeneData to unique exact BCN build219 gene symbols; NOT historical NKI UniGene219 mapping",
                     sources=sources)
-    metadata["derived"] = {p.name:dict(sha256=sha(p),bytes=p.stat().st_size) for p in sorted(DATA.iterdir()) if p.is_file() and p.name != "sources.json"}
+    metadata["derived"] = {p.name:dict(sha256=sha(p),bytes=p.stat().st_size) for p in sorted(DATA.iterdir()) if p.is_file() and p.name not in ("sources.json","checksums.toml")}
+    (DATA / "checksums.toml").write_text("".join(f'"{n}" = "{v["sha256"]}"\n' for n,v in metadata["derived"].items()))
     (DATA / "sources.json").write_text(json.dumps(metadata, indent=2, sort_keys=True) + "\n")
     print(json.dumps({k:v for k,v in metadata.items() if k not in ("sources","derived")},indent=2))
 

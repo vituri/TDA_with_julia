@@ -98,7 +98,7 @@ end
 function circular_fit(theta,truth)
     best=(R=-Inf,degree=zeros(Int,size(truth,1)),offset=0.0,rmse=Inf)
     grid=CONFIG["analysis"]["integer_degree_search"]
-    candidates=size(truth,1)==1 ? [(k,) for k in grid if k!=0] :
+    candidates=size(truth,1)==1 ? [(k,) for k in (-1,1)] :
         [(m,n) for m in grid,n in grid if m!=0||n!=0]
     for degree in candidates
         target=vec(transpose(collect(degree))*truth)
@@ -214,7 +214,9 @@ check("circle_local_has_multiple_classes",length(localbars),1.0,length(localbars
 localbar=last(filter(b->isfinite(b)&&persistence(b)>1e-6,localbars))
 globalcoord=coordinate_case("circle_global",fc,first(globalbars),0.4,uc)
 clocal=coordinate_case("circle_local",fc,localbar,0.14,uc)
-check("circle_global_degree_abs_one",abs(only(globalcoord.fit.degree)),1.0,abs(only(globalcoord.fit.degree))==1)
+circle_degree=globalcoord.cycle.period/only(globalcoord.cycle.winding)
+check("circle_global_certified_degree_abs_one",abs(circle_degree),1.0,abs(circle_degree)==1)
+check("circle_global_fit_matches_certified_degree",only(globalcoord.fit.degree)-circle_degree,0.0,only(globalcoord.fit.degree)==circle_degree)
 check("circle_global_angular_association",globalcoord.fit.R,0.9,globalcoord.fit.R>0.9)
 check("circle_local_histogram_more_concentrated",clocal.largest_bin-globalcoord.largest_bin,0.0,clocal.largest_bin>globalcoord.largest_bin)
 
@@ -226,29 +228,74 @@ check("torus_two_active_classes",length(torusbars),2.0,length(torusbars)>=2)
 tcoords=[coordinate_case("torus_coordinate$(j)",ft,torusbars[j],1.6,uv) for j in 1:2]
 A=reduce(vcat,[permutedims(c.fit.degree) for c in tcoords])
 check("torus_degree_matrix_unimodular",det(Float64.(A)),1.0,abs(det(Float64.(A)))==1)
+W=hcat([round.(Int,c.cycle.winding) for c in tcoords]...)
+P=[sum((a>b ? 1 : -1)*tcoords[i].alpha[tcoords[i].skel.lookup[edgeid(a,b)]]
+       for (a,b) in tcoords[j].cycle.walk) for i in 1:2,j in 1:2]
+check("torus_known_cycle_basis_unimodular",det(Float64.(W)),1.0,abs(det(Float64.(W)))==1)
+certified_A=round.(Int,P*inv(Float64.(W)))
+check("torus_degree_fit_matches_integer_period_certificate",maximum(abs,A-certified_A),0.0,A==certified_A)
+csv(joinpath(RESULTS,"torus_degree_certificate.csv"),["coordinate","loop1_integer_period","loop2_integer_period","degree_longitude","degree_meridian"],
+    [(i,P[i,1],P[i,2],certified_A[i,1],certified_A[i,2]) for i in 1:2])
 for (j,c) in enumerate(tcoords)
     check("torus_coord$(j)_angular_association",c.fit.R,0.8,c.fit.R>0.8)
+end
+
+# Explicit sensitivity audit of the paper's radius terminology. The literal
+# inner/outer surface radii 1 and 3 yield major2/minor1. Treating "outer" as
+# the major radius instead yields major3/minor1. Reuse all phases and noise.
+major=CONFIG["torus_radius_audit"]["major_radius"]
+u=uv[1,:];v=uv[2,:]
+torus_alt=permutedims(hcat((major .+cos.(2π.*v)).*cos.(2π.*u),
+    (major .+cos.(2π.*v)).*sin.(2π.*u),sin.(2π.*v)))+noise_t
+save_sample("torus_major3_seed2011",torus_alt,uv,noise_t)
+ft_alt=Rips(EuclideanSpace(torus_alt);threshold=sqrt(3))
+dt_alt=ripserer(ft_alt;dim_max=1,modulus=PRIME,reps=true)[2]
+save_diagram("torus_major3",dt_alt,sqrt(3))
+altbars=active(dt_alt,1.6,sqrt(3))
+check("torus_major3_two_active_classes",length(altbars),2.0,length(altbars)==2)
+altcoords=[coordinate_case("torus_major3_coordinate$(j)",ft_alt,altbars[j],1.6,uv) for j in 1:2]
+alt_A=reduce(vcat,[permutedims(c.fit.degree) for c in altcoords])
+alt_W=hcat([round.(Int,c.cycle.winding) for c in altcoords]...)
+alt_P=[sum((a>b ? 1 : -1)*altcoords[i].alpha[altcoords[i].skel.lookup[edgeid(a,b)]]
+       for (a,b) in altcoords[j].cycle.walk) for i in 1:2,j in 1:2]
+check("torus_major3_known_cycle_basis_unimodular",det(Float64.(alt_W)),1.0,abs(det(Float64.(alt_W)))==1)
+alt_certified_A=round.(Int,alt_P*inv(Float64.(alt_W)))
+check("torus_major3_degree_matrix_unimodular",det(Float64.(alt_certified_A)),1.0,abs(det(Float64.(alt_certified_A)))==1)
+check("torus_major3_degree_fit_matches_integer_period_certificate",maximum(abs,alt_A-alt_certified_A),0.0,alt_A==alt_certified_A)
+csv(joinpath(RESULTS,"torus_major3_degree_certificate.csv"),
+    ["coordinate","loop1_integer_period","loop2_integer_period","degree_longitude","degree_meridian"],
+    [(i,alt_P[i,1],alt_P[i,2],alt_certified_A[i,1],alt_certified_A[i,2]) for i in 1:2])
+for (j,c) in enumerate(altcoords)
+    check("torus_major3_coord$(j)_angular_association",c.fit.R,0.8,c.fit.R>0.8)
 end
 
 # API comparison is a later-method extension, not the exact 2011 construction.
 # All points are landmarks: no random maxmin subsampling. Its full-coverage policy
 # selects smoothing delta0.5 here; the published vertex coordinate used delta0.4.
+# The local API's threshold keyword shadows its threshold() function in the
+# censored-death branch. Avoid it by computing actual finite circle deaths first;
+# derive an admissible coverage value, then call the API without that keyword.
 points=EuclideanSpace(circle)
-cc=CircularCoordinates(points,collect(eachindex(points));modulus=PRIME,threshold=0.5,coverage=1.0,dim_max=1)
+full_circle_diagram=ripserer(Rips(points);dim_max=1,modulus=PRIME)[2]
+longest_full=full_circle_diagram[argmax(persistence.(full_circle_diagram))]
+api_coverage=(0.25-birth(longest_full))/(death(longest_full)/2-birth(longest_full))
+check("later_api_coverage_admissible",api_coverage,1.0,0<=api_coverage<=1)
+cc=CircularCoordinates(points,collect(eachindex(points));modulus=PRIME,coverage=api_coverage,dim_max=1)
 api_raw=cc(points)[:,1]
 check("all_landmarks_api_no_missing",count(ismissing,api_raw),0.0,!any(ismissing,api_raw))
 api_theta=Float64.(api_raw)
 api_fit=circular_fit(api_theta,uc)
-check("all_landmarks_api_degree_abs_one",abs(only(api_fit.degree)),1.0,abs(only(api_fit.degree))==1)
+api_degree=sum(wrap(api_theta[b]-api_theta[a]) for (a,b) in globalcoord.cycle.walk)/only(globalcoord.cycle.winding)
+check("all_landmarks_api_sampled_cycle_degree_abs_one",abs(api_degree),1.0,abs(abs(api_degree)-1)<1e-12)
 api_pair=circular_fit(api_theta,reshape(globalcoord.theta,1,:))
 csv(joinpath(RESULTS,"later_api_comparison.csv"),
-    ["method","smoothing_delta","n_landmarks","angular_resultant","degree","angular_rmse_cycles","resultant_vs_2011","rmse_vs_2011_cycles"],
-    [("Perea2020_all_landmarks",2cc.coordinate_data[1].radius,length(cc.landmarks),api_fit.R,only(api_fit.degree),api_fit.rmse,api_pair.R,api_pair.rmse)])
+    ["method","smoothing_delta","coverage","n_landmarks","angular_resultant","degree","angular_rmse_cycles","resultant_vs_2011","rmse_vs_2011_cycles"],
+    [("Perea2020_all_landmarks",2cc.coordinate_data[1].radius,api_coverage,length(cc.landmarks),api_fit.R,api_degree,api_fit.rmse,api_pair.R,api_pair.rmse)])
 csv(joinpath(RESULTS,"later_api_coordinates.csv"),["vertex","coordinate"],enumerate(api_theta))
 println("Perea2020 API: R=",api_fit.R,", degree=",api_fit.degree,", smoothing_delta=",2cc.coordinate_data[1].radius,
     ", phase RMSE against 2011 vertex map=",api_pair.rmse)
 
-cases=[globalcoord,clocal,tcoords[1],tcoords[2]]
+cases=[globalcoord,clocal,tcoords[1],tcoords[2],altcoords[1],altcoords[2]]
 summary=[]
 for c in cases
     degrees=[c.fit.degree;zeros(Int,2-length(c.fit.degree))]
@@ -259,10 +306,11 @@ end
 csv(joinpath(RESULTS,"summary.csv"),["case","delta","birth","death","components","edges","triangles",
     "circular_resultant","degree_phase1","degree_phase2","offset","angular_rmse_cycles","energy_before","energy_after",
     "stationarity_inf","triangle_residual_inf","integer_cycle_period","harmonic_cycle_period","max_histogram_bin_fraction","histogram_entropy_nats"],summary)
-sc=skeleton(fc,0.5);st=skeleton(ft,sqrt(3))
+sc=skeleton(fc,0.5);st=skeleton(ft,sqrt(3));st_alt=skeleton(ft_alt,sqrt(3))
 csv(joinpath(RESULTS,"complex_sizes.csv"),["data","n","threshold","edges","triangles","total_2_skeleton","published_total"],
     [("circle",200,0.5,length(sc.edge_list),length(sc.triangles),200+length(sc.edge_list)+length(sc.triangles),23475),
-     ("torus",400,sqrt(3),length(st.edge_list),length(st.triangles),400+length(st.edge_list)+length(st.triangles),61522)])
+     ("torus",400,sqrt(3),length(st.edge_list),length(st.triangles),400+length(st.edge_list)+length(st.triangles),61522),
+     ("torus_major3_alternative",400,sqrt(3),length(st_alt.edge_list),length(st_alt.triangles),400+length(st_alt.edge_list)+length(st_alt.triangles),61522)])
 
 function draw_diagram(ax,diagram,threshold,delta)
     finitebars=filter(isfinite,diagram);censored=filter(!isfinite,diagram)
@@ -306,12 +354,25 @@ panels=[(aligned[1],uv[1,:],"Inferred 1","Original longitude"),
         (aligned[2],uv[2,:],"Inferred 2","Original meridian"),
         (uv[1,:],uv[2,:],"Original longitude","Original meridian")]
 for (k,(x,y,xname,yname)) in enumerate(panels)
-    ax=Axis(fig[(k-1)÷3+1,(k-1)%3+1],xlabel=xname,ylabel=yname,aspect=DataAspect())
-    scatter!(ax,x,y;markersize=4,color=:dodgerblue)
-    xlims!(ax,0,1);ylims!(ax,0,1)
+    panelax=Axis(fig[(k-1)÷3+1,(k-1)%3+1],xlabel=xname,ylabel=yname,aspect=DataAspect())
+    scatter!(panelax,x,y;markersize=4,color=:dodgerblue)
+    xlims!(panelax,0,1);ylims!(panelax,0,1)
 end
 save(joinpath(FIGURES,"torus_correlations.png"),fig;px_per_unit=1.3)
 save(joinpath(FIGURES,"circle_H1_barcode.png"),barcode_plot(dc;infinity=0.5);px_per_unit=1.3)
+
+fig=Figure(size=(1300,850),fontsize=17)
+for (row,(X,diagram,coords,label)) in enumerate([
+        (torus,dt,tcoords,"Major2 / minor1: literal surface radii"),
+        (torus_alt,dt_alt,altcoords,"Major3 / minor1: alternative terminology")])
+    diagax=Axis(fig[row,1],title=label,xlabel="Birth",ylabel="Death",aspect=DataAspect())
+    draw_diagram(diagax,diagram,sqrt(3),1.6)
+    for j in 1:2
+        coordax=Axis3(fig[row,j+1],title="Coordinate $(j), R = $(round(coords[j].fit.R;digits=3))",xlabel="x",ylabel="y",zlabel="z")
+        scatter!(coordax,X[1,:],X[2,:],X[3,:];color=coords[j].theta,colormap=:hsv,colorrange=(0,1),markersize=5)
+    end
+end
+save(joinpath(FIGURES,"torus_radius_audit.png"),fig;px_per_unit=1.3)
 
 csv(joinpath(RESULTS,"checks.csv"),["check","value","comparison_threshold","passed"],CHECKS)
 packages=Dict{String,Any}()
@@ -329,12 +390,15 @@ provenance=Dict("julia_version"=>string(VERSION),"active_project"=>project,
     "project_sha256"=>bytes2hex(sha256(read(project))),"manifest_sha256"=>bytes2hex(sha256(read(manifest))),
     "config_sha256"=>bytes2hex(sha256(read(joinpath(HERE,"config.toml")))),
     "script_sha256"=>bytes2hex(sha256(read(@__FILE__))),
-    "paper_pdf_sha256"=>bytes2hex(sha256(read(joinpath(HERE,"source","paper2011.pdf")))),"packages"=>packages)
+    "paper_pdf_url"=>CONFIG["paper"]["source_pdf"],
+    "paper_pdf_sha256"=>CONFIG["paper"]["source_pdf_sha256"],"packages"=>packages)
 open(joinpath(RESULTS,"environment.toml"),"w") do io
     TOML.print(io,provenance)
 end
 files=sort(vcat([joinpath(DATA,f) for f in readdir(DATA)],
-    [joinpath(RESULTS,f) for f in readdir(RESULTS) if f!="sha256.csv"&&!endswith(f,".log")]))
+    [joinpath(RESULTS,f) for f in readdir(RESULTS) if f!="sha256.csv"&&!endswith(f,".log")],
+    [joinpath(FIGURES,f) for f in readdir(FIGURES)],
+    [joinpath(HERE,f) for f in ("run.jl","setup.jl","config.toml","environment/Project.toml","environment/Manifest.toml")]))
 csv(joinpath(RESULTS,"sha256.csv"),["path","sha256"],
     [(relpath(file,HERE),bytes2hex(sha256(read(file)))) for file in files if isfile(file)])
-println("Passed ",length(CHECKS)," checks. Degree matrix = ",A)
+println("Passed ",length(CHECKS)," checks. Degree matrix = ",A,". Alternative radius matrix = ",alt_certified_A)

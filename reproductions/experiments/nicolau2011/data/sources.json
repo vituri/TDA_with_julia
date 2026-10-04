@@ -1,0 +1,182 @@
+{
+  "assay_probes": 24479,
+  "derived": {
+    "BCN.70fltr.report.html": {
+      "bytes": 2649,
+      "sha256": "8f0c18e871d79e3ad3a96d474a8affa1c3af6225c72b8e7287cac7e569afa20c"
+    },
+    "BCN.ugc219.pcl.gz": {
+      "bytes": 912681,
+      "sha256": "e01cb2e7963d0a62c6f7e3bb8a598ff6f191a1290c04b856f04f1e4eec9f14f9"
+    },
+    "clinical.tsv": {
+      "bytes": 20376,
+      "sha256": "90b6779ccd6bba75cd56ad442fc056d1a27567455fd258e24459dd7c56c9a868"
+    },
+    "excluded_controls.txt": {
+      "bytes": 183,
+      "sha256": "4f00ff9f454ac5182e33a204d41fc16ba22a35e5bbfb6ae2e1478ad6ce4954a5"
+    },
+    "low_quality_probes.txt": {
+      "bytes": 255,
+      "sha256": "14e6d20b8c9a7e321e80e85855dddb03053f8b4857cc2e30d6eb66e092df8b33"
+    },
+    "nki_annotation.tsv": {
+      "bytes": 711409,
+      "sha256": "14657060cd4366ae33b681b33a4c31763b7b27a08b8aded7297253aa5be1ddb8"
+    },
+    "nki_log10.tsv.gz": {
+      "bytes": 12376688,
+      "sha256": "2c58f95a3d697d2077fe585470a01a281acacda8805ae0778d5c3960543875ad"
+    },
+    "platform_probes.tsv": {
+      "bytes": 390453,
+      "sha256": "c1350e1d50171f189df83f5a3b46eb08d248023b81519102ea5400e9da6399c1"
+    }
+  },
+  "excluded_controls": [
+    "Pro25G",
+    "variant_gridline",
+    "G3PDH_570",
+    "Pro25G_onG3PDH570_20bp",
+    "Pro25G_onG3PDH570_10Ts",
+    "r60_1",
+    "r60_3",
+    "r60_n9",
+    "r60_a22",
+    "r60_a104",
+    "r60_a107",
+    "r60_a135",
+    "r60_a97",
+    "r60_a20",
+    "r60_n11",
+    "zero_barcode",
+    "one_barcode"
+  ],
+  "low_quality_probes": [
+    "NM_000967",
+    "NM_000972",
+    "NM_000973",
+    "NM_000984",
+    "NM_000987",
+    "NM_000993",
+    "NM_000998",
+    "X57352",
+    "M26880",
+    "NM_021019",
+    "NM_021029",
+    "NM_004355",
+    "NM_002952",
+    "NM_021104",
+    "NM_013307",
+    "X58536",
+    "NM_003973",
+    "NM_006435",
+    "Contig64691",
+    "M31212",
+    "NM_001002",
+    "Contig41977_RC",
+    "NM_001014",
+    "NM_001015",
+    "NM_001022",
+    "NM_001403"
+  ],
+  "mapping": "NKI HUGO.gene.symbol from seventyGeneData to unique exact BCN build219 gene symbols; NOT historical NKI UniGene219 mapping",
+  "missing_valid_measurements": 36476,
+  "normal_repository_commit": "2914487d9138dce2175f3a1e7918277187a11b87",
+  "patients": 295,
+  "python": "3.12.3",
+  "r": "R 4.6.1 readxl 1.4.5",
+  "raw_nki_rows": 24496,
+  "retained_probes": 24453,
+  "sources": {
+    "BCN.70fltr.report.html": {
+      "archive": "NormalBreastData.zip",
+      "bytes": 2649,
+      "sha256": "8f0c18e871d79e3ad3a96d474a8affa1c3af6225c72b8e7287cac7e569afa20c"
+    },
+    "BCN.Samples.xlsx": {
+      "archive": "NormalBreastData.zip",
+      "bytes": 9575,
+      "sha256": "3cfce88b9a12747842f735bc6b8e4fcbb54694b7ea91c8fa98102b1266c925fb"
+    },
+    "BCN.ugc219.pcl": {
+      "archive": "NormalBreastData.zip",
+      "bytes": 2768880,
+      "sha256": "356370bf8d39548e7ca109ca5a4d4879ace8f39f8d6e5e1d52b68609b5196007"
+    },
+    "GPL2567_family.soft.gz": {
+      "bytes": 124919802,
+      "sha256": "67dfde9af597634aa6ed552cca64c173b5318db52352640d07b0b1401dcaf3c6",
+      "url": "https://ftp.ncbi.nlm.nih.gov/geo/platforms/GPL2nnn/GPL2567/soft/GPL2567_family.soft.gz"
+    },
+    "NormalBreastData.zip": {
+      "bytes": 5248216,
+      "sha256": "9486ddf00de63346027023235919443ed38349a24932aaa6469adbe65a2bf626",
+      "url": "https://raw.githubusercontent.com/monkgroupie/publication_code/2914487d9138dce2175f3a1e7918277187a11b87/NormalBreastData.zip"
+    },
+    "Table1_ClinicalData_Table.xls": {
+      "archive": "nejm_table1.zip",
+      "bytes": 82944,
+      "sha256": "e77f3f000d00eda86862713e60ff0427edaf5850207f01a2ee26242f60fee97e"
+    },
+    "Table_NKI_295_1.txt": {
+      "archive": "ZipFiles295Samples.zip",
+      "bytes": 42061716,
+      "sha256": "bd39a8e3dc1afe682b7ed630cb0c153759954f86b5853abf89dd1e79f684ad1f"
+    },
+    "Table_NKI_295_2.txt": {
+      "archive": "ZipFiles295Samples.zip",
+      "bytes": 42061680,
+      "sha256": "6415d41c2409aac5caab8c5f06eace82d7d91f2510fc97bb7ef9366c7376b943"
+    },
+    "Table_NKI_295_3.txt": {
+      "archive": "ZipFiles295Samples.zip",
+      "bytes": 42061683,
+      "sha256": "413d89b7955572fd90e31bc7ca3aa6c88bc5bf5eaf1e9caac91d9d6a335aff34"
+    },
+    "Table_NKI_295_4.txt": {
+      "archive": "ZipFiles295Samples.zip",
+      "bytes": 42061679,
+      "sha256": "b02a2b1f568c49d8c35a7905e384e004a8e529d66c4f6854a648abba7e63e3e2"
+    },
+    "Table_NKI_295_5.txt": {
+      "archive": "ZipFiles295Samples.zip",
+      "bytes": 42061677,
+      "sha256": "02267a8d02078c84049278522e62e958171031950051a4de9c5e2cf17a606d59"
+    },
+    "Table_NKI_295_6.txt": {
+      "archive": "ZipFiles295Samples.zip",
+      "bytes": 33489950,
+      "sha256": "40b3e96fbcd1e673e1ecad07642a890cba74d334e0d16a8d16c213ae4342cb5a"
+    },
+    "ZipFiles295Samples.zip": {
+      "archive": "seventyGeneData_1.40.0.tar.gz",
+      "bytes": 74266816,
+      "member": "seventyGeneData/inst/extdata/vanDeVijver/ZipFiles295Samples.zip",
+      "sha256": "3aa81ec5e70aafc20da6d65bc5fb072724caf8dfae07ea28b3ca7141bdebf605"
+    },
+    "author_dsga.R": {
+      "bytes": 11482,
+      "sha256": "ac83d08f4f872bce0539af83ff84e37103c59865e7e54ac87a78a70e32010d1a",
+      "url": "https://raw.githubusercontent.com/monkgroupie/publication_code/2914487d9138dce2175f3a1e7918277187a11b87/reuten.DSGA_decomposition.nicolau.R"
+    },
+    "nejm_table1.zip": {
+      "archive": "seventyGeneData_1.40.0.tar.gz",
+      "bytes": 26033,
+      "member": "seventyGeneData/inst/extdata/vanDeVijver/nejm_table1.zip",
+      "sha256": "06e72440eb10bb3911be90d930b76db310abeb25c5600cafcb5b7c38bcacc47d"
+    },
+    "seventyGeneData_1.40.0.tar.gz": {
+      "bytes": 152115717,
+      "sha256": "723b2a0cc0f0eaa352b2d10f1578564be0c21d434ea927989cd295bcb8bfc97b",
+      "url": "https://bioconductor.posit.co/packages/3.19/data/experiment/src/contrib/seventyGeneData_1.40.0.tar.gz"
+    },
+    "vanDeVijver.rda": {
+      "archive": "seventyGeneData_1.40.0.tar.gz",
+      "bytes": 45482316,
+      "member": "seventyGeneData/data/vanDeVijver.rda",
+      "sha256": "87c8f560dcc55a757d631bd19f7955549cccf619c669641dd1172c1b483f0609"
+    }
+  }
+}

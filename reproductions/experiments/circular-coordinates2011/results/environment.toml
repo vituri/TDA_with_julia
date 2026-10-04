@@ -1,0 +1,32 @@
+project_sha256 = "778514ba5d1db7ac2ad2207ffa1816e70008b668b80bf6e778a6d31273629938"
+julia_version = "1.12.5"
+paper_pdf_sha256 = "a1860a455dae2436c28792e21f59373e962ceef462a23f4382feee5d3e22d8c7"
+active_project = "/mnt/Dados/Github/JuliaTDA/TDA_with_julia/reproductions/experiments/circular-coordinates2011/environment/Project.toml"
+script_sha256 = "afbe9dd0ccd5e83b8dca1f0b0efb96f2d4834ebf70aead4fdd9557e574adeea7"
+config_sha256 = "9b1bad1657090a85382825c4ae639c61f4ff1b697d16a6fd28ebcb483e70786a"
+paper_pdf_url = "https://mrzv.org/publications/circular/full-dcg/"
+manifest_sha256 = "a875485ba6d2c7674f4f8045014e84557a86d4766c0fef250303c1cd0504fdb6"
+
+[packages.TDARipserer]
+git_head = "514de0df6b4a667e0029e266871b89ad58932424"
+source_tree_sha256 = "1f1fbfff85e01b914022fb0f7721c070bcdfa3bb05b4ea2167467763b0a52b37"
+entrypoint = "/mnt/Dados/Github/JuliaTDA/TDARipserer.jl/src/TDARipserer.jl"
+git_worktree_clean = false
+
+[packages.MetricSpaces]
+git_head = "08f1bb4f84c7a851ad6f06ae60cc1ccedf80916b"
+source_tree_sha256 = "d53820cc2f10fb65136ecc74e0c791d313a4c0922b35a40b1c49bf54b715bc6c"
+entrypoint = "/mnt/Dados/Github/JuliaTDA/MetricSpaces.jl/src/MetricSpaces.jl"
+git_worktree_clean = false
+
+[packages.TDAplots]
+git_head = "3690d81f4dbdcf6fcabc472ddea8e1b5acfcabd1"
+source_tree_sha256 = "e17c145a15128e2cff19be9a01e50f872913624fbf61bd7af0a10ec67c6b62e6"
+entrypoint = "/mnt/Dados/Github/JuliaTDA/TDAplots.jl/src/TDAplots.jl"
+git_worktree_clean = false
+
+[packages.TDAPersistenceDiagrams]
+git_head = "89eebc224c6e38972f420e74159d6793c38eca78"
+source_tree_sha256 = "e1f3490e7ef3f54d5122d01fde4b3bda65d40d6b39ac57db03c45f9e93ee3a9b"
+entrypoint = "/mnt/Dados/Github/JuliaTDA/TDAPersistenceDiagrams.jl/src/TDAPersistenceDiagrams.jl"
+git_worktree_clean = false

@@ -1,0 +1,2 @@
+method,smoothing_delta,coverage,n_landmarks,angular_resultant,degree,angular_rmse_cycles,resultant_vs_2011,rmse_vs_2011_cycles
+Perea2020_all_landmarks,0.5,0.06672691020127573,200,0.9673010135202381,-0.9999999999999998,0.04097554706399148,0.9962146959171442,0.013858161575437086

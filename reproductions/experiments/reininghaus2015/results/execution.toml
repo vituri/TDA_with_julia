@@ -1,0 +1,12 @@
+source_sha256 = "80cfce72ee053ffac2ee82e7358118bc43907930262b795ef443460a3abcd042"
+kernel_source_sha256 = "9ffba55ef1aefce7c454d98b1b71e109518469cfac46f71cbe05eb12c79cb6c8"
+julia_version = "1.12.5"
+threads = 4
+elapsed_seconds = 558.2299869060516
+blas_threads = 1
+classified_hks = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+sigma_grid = [0.000244140625, 0.0009765625, 0.00390625, 0.015625, 0.0625, 0.25, 1.0, 4.0, 16.0, 64.0, 256.0, 1024.0, 4096.0, 16384.0, 65536.0]
+kernel_normalization = "none"
+cost_grid = [0.03125, 0.125, 0.5, 2.0, 8.0, 32.0, 128.0, 512.0, 2048.0, 8192.0, 32768.0]
+seed = 20150315
+library_kernel = "TDAPersistenceDiagrams.PersistenceScaleSpaceKernel"

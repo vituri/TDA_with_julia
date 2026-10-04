@@ -1,0 +1,14 @@
+Status `/mnt/Dados/Github/JuliaTDA/TDA_with_julia/reproductions/experiments/reininghaus2015/environment/Project.toml`
+⌅ [13f3f980] CairoMakie v0.14.0
+  [8bb1440f] DelimitedFiles v1.9.1
+  [b1bec4e5] LIBSVM v0.8.1
+  [10745b16] Statistics v1.11.5
+  [bbe17acd] TDAPersistenceDiagrams v0.1.0 `../../../../../TDAPersistenceDiagrams.jl`
+  [f43a241f] Downloads v1.7.0
+  [37e2e46d] LinearAlgebra v1.12.0
+  [9a3f8284] Random v1.11.0
+  [ea8e919c] SHA v0.7.0
+  [9e88b42a] Serialization v1.11.0
+  [fa267f1f] TOML v1.0.3
+  [8dfed614] Test v1.11.0
+Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`

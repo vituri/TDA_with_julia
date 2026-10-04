@@ -8,9 +8,17 @@ chapters:
   - reproductions/chazal2013.qmd
   - reproductions/perea-harer2015.qmd
   - reproductions/stability2007.qmd
+  - reproductions/fasy2014.qmd
+  - reproductions/nicolau2011.qmd
+  - reproductions/circular-coordinates2011.qmd
+  - reproductions/reininghaus2015.qmd
 
 # Experimental targets, not claims of exact reproduction:
 # Lum et al. (2013): public GSE2034 cohort; disclosed preprocessing choices.
 # Chazal et al. (2013): full author-released ToMATo spiral benchmark.
 # Perea and Harer (2015): Section 6.3, Figure 3, including coefficient fields.
 # Cohen-Steiner et al. (2007): numerical check of the stability theorem.
+# Fasy et al. (2014): Example 13 circle, KDE confidence and subsampling.
+# Nicolau et al. (2011): historical NKI295/BCN13 PAD reconstruction.
+# de Silva et al. (2011): global/local circle coordinates and torus radius audit.
+# Reininghaus et al. (2015): preserved SHREC14 diagrams, nested SVM and retrieval.

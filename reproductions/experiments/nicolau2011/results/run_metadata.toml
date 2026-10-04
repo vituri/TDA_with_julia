@@ -1,0 +1,94 @@
+imputed_genes = 10077
+missing_nki_values = 36476
+clinical_deaths = 79
+selected_genes = 98
+julia_version = "1.12.5"
+status = "partial historical-data reconstruction; symbol alignment replaces unavailable NKI UniGene219 mapping"
+clinical_ER_positive = 226
+blas_threads = 1
+normals = 13
+matched_genes = 8940
+input_checksums_sha256 = "b05c2ccae097d59afb929e4c56dd2299fff1d5d0518cd75fdee7a160281f4437"
+normal_ids = ["BC.N.031", "BC.N.045", "BC.N.047", "BC.N.054", "BC.N.058", "BC.N.061", "BC.N.074", "BC.N.076", "BC.N.083", "BC.N.140", "BC.NRm.146", "BC.NRm.151", "BC.NRm.156"]
+dimension = 10
+target_column_norm = 110.18357490832862
+manifest_sha256 = "24fd251dabce998e7092fcaa05db75216a5356c0a12a50e4e8a878e4fe0ed007"
+complete_donor_genes = 14376
+tumors = 295
+seed = 2011
+
+[dimension_checks.12]
+orthogonality_relative = 2.2484910505706024e-16
+decomposition_relative = 0.0
+relaxed_threshold = 2.273313548547746
+stringent_threshold = 4.386034018749377
+stringent_genes = 179
+relaxed_genes = 1341
+selected_genes = 104
+
+[dimension_checks.10]
+orthogonality_relative = 2.082814779200847e-16
+decomposition_relative = 0.0
+relaxed_threshold = 2.2792534277406387
+stringent_threshold = 4.419080660020893
+stringent_genes = 179
+relaxed_genes = 1341
+selected_genes = 98
+
+[dimension_checks.8]
+orthogonality_relative = 1.984289570299085e-16
+decomposition_relative = 0.0
+relaxed_threshold = 2.288101849332864
+stringent_threshold = 4.454402774731164
+stringent_genes = 179
+relaxed_genes = 1341
+selected_genes = 97
+
+[source_state.TDAmapper]
+git_head = "6f702a41aa1573f886b8d673010a55628e66bfdc"
+source_sha256 = "ab7056cb5bf47fb4dcfa821278095ea05260664bd4d6e633ae2c899cde0a9301"
+dirty = true
+
+[source_state.MetricSpaces]
+git_head = "08f1bb4f84c7a851ad6f06ae60cc1ccedf80916b"
+source_sha256 = "9a97f960fb82b381561844f53e1f3731b998f1ec86f21d5bd90007a1e1f79f31"
+dirty = true
+
+[source_state.TDAplots]
+git_head = "3690d81f4dbdcf6fcabc472ddea8e1b5acfcabd1"
+source_sha256 = "1d428d6c606a7c67a55131bbc2dc7fef5c9b12607b4972a59578defa2b3f43bf"
+dirty = true
+
+[source_state.TDAPersistenceDiagrams]
+git_head = "89eebc224c6e38972f420e74159d6793c38eca78"
+source_sha256 = "f162fa42b4d7affb01b26b588c59cf6fcf91d635c42c3bfd376e9b5efa43c966"
+dirty = true
+
+[singleton_pruned_graph]
+nodes = 22
+removed_samples = ["Sample 282"]
+covered_samples = 307
+components = 1
+edges = 78
+
+[baseline_graph]
+components = 2
+largest_component_samples = 307
+nodes = 26
+edges = 89
+covered_samples = 308
+singleton_nodes = 4
+cycle_rank = 65
+
+[scripts_sha256]
+"common.jl" = "aa3b1d918cb1f04c02daabd87a8aa7646edb1fa354b41edcffeb494188c3184f"
+"export_annotation.R" = "711c92fd32937014c3b62f4f12f3bb4fd9652e4d32fcb8251fa663a30257dbdd"
+"prepare.py" = "7a6944e24e965f595224b3ee94d2b54cc515c0d46b603e47879bea2bfc19077d"
+"run.jl" = "50ce8c0ceb57629cb290fbbbd523005025d534e46c2346e00fff3c413dac6655"
+"plot.jl" = "0c51adb311c23a8f4734f822945b37b37fedf0df9a787ece72ae7dae319a52b9"
+
+[baseline_audit]
+pearson_max_abs_error = 2.220446049250313e-16
+single_linkage_threshold_audit = true
+all_sample_membership_checked = true
+all_nerve_edges_checked = true

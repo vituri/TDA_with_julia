@@ -1,0 +1,7 @@
+classification_repetitions = 20
+status = "passed"
+minimum_selected_gram_eigenvalue = -6.802187726348269e-14
+analytic_max_relative_error_above_1e_minus_200 = 2.092746393593017e-15
+classified_settings = [2, 10]
+analytic_max_absolute_error = 2.2737367544323206e-12
+empty_diagrams_hks10 = 17

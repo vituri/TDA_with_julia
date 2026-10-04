@@ -56,3 +56,29 @@ figcaption {
 pre.sourceCode {
     overflow-x: auto;
 }
+
+/* The cover and chapter illustration share the book's geometric artwork. */
+.quarto-cover-image {
+    width: min(38%, 19rem);
+    max-width: 100%;
+    border-radius: 0.2rem;
+    box-shadow: 0 0.5rem 1.5rem rgba(16, 29, 46, 0.18);
+}
+
+.chapter-opener {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0.25rem 0 1.75rem;
+    border-radius: 0.25rem;
+}
+
+@media (max-width: 767.98px) {
+    .quarto-cover-image {
+        float: none;
+        display: block;
+        width: min(72%, 19rem);
+        max-width: 100%;
+        margin: 0.5rem auto 2rem;
+    }
+}

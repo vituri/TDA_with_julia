@@ -102,6 +102,7 @@ open(joinpath(RESULTS,"predictions.csv"),"w") do pio
         kernels=Matrix{Float64}[]; accuracies=Float64[]
         for s in SIGMAS
             K,seconds=get_kernel(t,s)
+            NORMALIZED&&(K=normalize_gram(K))
             nn=nearest_neighbors(K,data.labels)
             push!(kernels,K);push!(accuracies,nn.accuracy)
             println(rio,"$t,$s,$(round(Int,3nn.accuracy)),300,$(nn.accuracy),$seconds")
@@ -143,6 +144,6 @@ if !isempty(cls)
     end
 end
 open(joinpath(RESULTS,"execution.toml"),"w") do io
-    TOML.print(io,Dict("julia_version"=>string(VERSION),"threads"=>Threads.nthreads(),"blas_threads"=>BLAS.get_num_threads(),"seed"=>SEED,"source_sha256"=>SOURCE_SHA256,"sigma_grid"=>SIGMAS,"cost_grid"=>COSTS,"classified_hks"=>targets,"elapsed_seconds"=>time()-started,"kernel_normalization"=>"none","library_kernel"=>"TDAPersistenceDiagrams.PersistenceScaleSpaceKernel","kernel_source_sha256"=>bytes2hex(sha256(read(joinpath(@__DIR__,"../../../..","TDAPersistenceDiagrams.jl","src","additional_kernels.jl"))))))
+    TOML.print(io,Dict("julia_version"=>string(VERSION),"threads"=>Threads.nthreads(),"blas_threads"=>BLAS.get_num_threads(),"seed"=>SEED,"source_sha256"=>SOURCE_SHA256,"sigma_grid"=>SIGMAS,"cost_grid"=>COSTS,"classified_hks"=>targets,"elapsed_seconds"=>time()-started,"kernel_normalization"=>NORMALIZED ? "unit diagonal, zero rows retained" : "none","library_kernel"=>"TDAPersistenceDiagrams.PersistenceScaleSpaceKernel","kernel_source_sha256"=>bytes2hex(sha256(read(joinpath(@__DIR__,"../../../..","TDAPersistenceDiagrams.jl","src","additional_kernels.jl"))))))
 end
 println("Finished in $(round(time()-started;digits=2))s")
